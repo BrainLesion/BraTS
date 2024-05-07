@@ -1,0 +1,36 @@
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+
+[tool.poetry]
+name = ""
+version = "0.0.0"
+description = ""
+authors = ["Florian Kofler <florian.kofler@tum.de>"]
+repository = ""
+homepage = ""
+documentation = ""
+readme = "README.md"
+
+
+# Add the exclude field directly under [tool.poetry]
+exclude = ["examples", "benchmark"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+Sphinx  = ">=7.0.0"
+sphinx-copybutton = ">=0.5.2"
+sphinx-rtd-theme = ">=1.3.0"
+myst-parser = ">=2.0.0"

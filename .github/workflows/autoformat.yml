@@ -1,0 +1,9 @@
+name: autoformat
+
+on:
+  issue_comment:
+    types: [created, edited]
+jobs:
+  run_autoformat:
+    uses: BrainLesion/BrainLes/.github/workflows/autoformat.yml@main
+    secrets: inherit
