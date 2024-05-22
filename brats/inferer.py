@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-import tempfile
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -40,9 +40,11 @@ class Inferer:
 
     def _infer(self, data_folder: Path | str, output_folder: Path | str):
 
-        logger.info("Checking if model weights are present...")
         # ensure weights are present
         weights_folder = check_model_weights(record_id=self.algorithm.zenodo_record_id)
+
+        # ensure output folder exists
+        Path(output_folder).mkdir(parents=True, exist_ok=True)
 
         # Initialize the Docker client
         client = docker.from_env()
@@ -67,7 +69,7 @@ class Inferer:
             },
         }
 
-        logger.info(f"{'Starting inference':-^80}")
+        logger.info(f"{' Starting inference ':-^80}")
         logger.info(
             f"Algorithm: {self.algorithm_key} | Docker image: {self.algorithm.image}"
         )
@@ -80,6 +82,8 @@ class Inferer:
         container = client.containers.run(
             image=self.algorithm.image,
             volumes=volumes,
+            # run the container as the current user to ensure writte files are owned by the user
+            user=f"{os.getuid()}:{os.getgid()}",
             # TODO: how to support CPU?
             device_requests=[
                 docker.types.DeviceRequest(
@@ -102,7 +106,7 @@ class Inferer:
 
         # Wait for the container to finish
         container.wait()
-        logger.info(f"{'Finished inference':-^80}")
+        logger.info(f"{' Finished inference ':-^80}")
 
     def infer_single(
         self,
