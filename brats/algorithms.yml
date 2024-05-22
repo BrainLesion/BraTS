@@ -1,0 +1,6 @@
+BraTS23_yaziciz:
+  authors:
+    - { name: Ziya Ata Yazici }
+  paper: N/A
+  image: brainles/glims_brats23:v1
+  zenodo_record_id: "11242485"
