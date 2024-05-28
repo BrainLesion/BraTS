@@ -33,7 +33,6 @@ class Inferer:
         self.algorithm_list = load_algorithms()
         self.algorithm_key = algorithm.value
         self.algorithm = self.algorithm_list[algorithm.value]
-
         logger.info(
             f"Instantiated Inferer class with algorithm: {algorithm.value} by {[a.name for a in self.algorithm.authors]}"
         )
@@ -41,7 +40,12 @@ class Inferer:
     def _infer(self, data_folder: Path | str, output_folder: Path | str):
 
         # ensure weights are present
-        weights_folder = check_model_weights(record_id=self.algorithm.zenodo_record_id)
+        if self.algorithm.zenodo_record_id is not None:
+            weights_folder = check_model_weights(
+                record_id=self.algorithm.zenodo_record_id
+            )
+        else:
+            weights_folder = None
 
         # ensure output folder exists
         Path(output_folder).mkdir(parents=True, exist_ok=True)
@@ -54,19 +58,15 @@ class Inferer:
         # additional files (mostly weights): /mlcube_io1
         # output: /mlcube_io2
 
+        vols = [
+            v for v in [data_folder, weights_folder, output_folder] if v is not None
+        ]
         volumes = {
-            Path(data_folder).absolute(): {
-                "bind": "/mlcube_io0",
+            Path(v).absolute(): {
+                "bind": f"/mlcube_io{i}",
                 "mode": "rw",
-            },
-            Path(weights_folder).absolute(): {
-                "bind": "/mlcube_io1",
-                "mode": "rw",
-            },
-            Path(output_folder).absolute(): {
-                "bind": "/mlcube_io2",
-                "mode": "rw",
-            },
+            }
+            for i, v in enumerate(vols)
         }
 
         logger.info(f"{' Starting inference ':-^80}")
@@ -78,12 +78,21 @@ class Inferer:
             f">> Note: Outputs below are streamed from the container and subject to the respective author's logging"
         )
 
+        args = (
+            f"--data_path=/mlcube_io0 --weights=/mlcube_io1 --output_path=/mlcube_io2"
+            if weights_folder is not None
+            else f"--data_path=/mlcube_io0 --output_path=/mlcube_io1"
+        )
+
+        extra_args = {}
+        if not self.algorithm.requires_root:
+            # run the container as the current user to ensure written files are always owned by the user
+            extra_args["user"] = f"{os.getuid()}:{os.getgid()}"
+
         # Run the container
         container = client.containers.run(
             image=self.algorithm.image,
             volumes=volumes,
-            # run the container as the current user to ensure writte files are owned by the user
-            user=f"{os.getuid()}:{os.getgid()}",
             # TODO: how to support CPU?
             device_requests=[
                 docker.types.DeviceRequest(
@@ -91,10 +100,12 @@ class Inferer:
                 )
             ],
             # Constant params for the docker execution dictated by the mlcube format
-            command="infer --data_path=/mlcube_io0 --weights=/mlcube_io1 --output_path=/mlcube_io2",
+            command=f"infer {args}",
             network_mode="none",
             detach=True,
             remove=True,
+            shm_size=self.algorithm.shm_size,
+            **extra_args,
         )
 
         # Stream the output to the console

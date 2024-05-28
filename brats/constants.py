@@ -3,6 +3,7 @@ from enum import Enum
 
 class AlgorithmKeys(str, Enum):
     BraTS23_yaziciz = "BraTS23_yaziciz"
+    BraTS23_ferreira = "BraTS23_ferreira"
 
 
 class Device(str, Enum):

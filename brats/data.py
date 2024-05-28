@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import yaml
 from dacite import from_dict
@@ -19,7 +19,9 @@ class AlgorithmData:
     authors: List[Author]
     paper: str
     image: str
-    zenodo_record_id: str
+    zenodo_record_id: Optional[str]
+    shm_size: Optional[str] = "1gb"
+    requires_root: Optional[bool] = False
 
 
 @dataclass

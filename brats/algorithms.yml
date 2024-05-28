@@ -4,3 +4,10 @@ BraTS23_yaziciz:
   paper: N/A
   image: brainles/glims_brats23:v1
   zenodo_record_id: "11242485"
+BraTS23_ferreira:
+  authors:
+    - { name: Andre Ferreira }
+  paper: https://arxiv.org/abs/2402.17317v1
+  image: brainles/faking_it:latest
+  shm_size: "2gb"
+  requires_root: true
