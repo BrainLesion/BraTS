@@ -15,3 +15,6 @@ class Device(str, Enum):
     """Use GPU (CUDA)"""
     AUTO = "auto"
     """Attempt to use GPU, fallback to CPU."""
+
+
+BRATS_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
