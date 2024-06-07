@@ -80,11 +80,16 @@ class Inferer:
             f">> Note: Outputs below are streamed from the container and subject to the respective author's logging"
         )
 
-        args = (
+        command_args = (
             f"--data_path=/mlcube_io0 --weights=/mlcube_io1 --output_path=/mlcube_io2"
             if weights_folder is not None
             else f"--data_path=/mlcube_io0 --output_path=/mlcube_io1"
         )
+
+        if self.algorithm.parameters_file:
+            parameters_file = data_folder / "parameters.yaml"
+            parameters_file.touch()
+            command_args += f" --parameters_file="
 
         extra_args = {}
         if not self.algorithm.requires_root:
@@ -102,7 +107,7 @@ class Inferer:
                 )
             ],
             # Constant params for the docker execution dictated by the mlcube format
-            command=f"infer {args}",
+            command=f"infer {command_args}",
             network_mode="none",
             detach=True,
             remove=True,
@@ -183,12 +188,35 @@ class Inferer:
             segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
 
             # ensure path exists and rename output to the desired path
+            output_file = Path(output_file).absolute()
             output_file.parent.mkdir(parents=True, exist_ok=True)
-            segmentation.rename(Path(output_file))
+            shutil.move(segmentation, output_file)
 
         finally:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
 
     def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
+        """Infer all subjects in a folder. requires the following structure:
+        data_folder\n
+        ┣ A\n
+        ┃ ┣ A-t1c.nii.gz\n
+        ┃ ┣ A-t1n.nii.gz\n
+        ┃ ┣ A-t2f.nii.gz\n
+        ┃ ┗ A-t2w.nii.gz\n
+        ┣ B\n
+        ┃ ┣ B-t1c.nii.gz\n
+        ┃ ┣ ...\n
+
+
+        Args:
+            data_folder (Path | str): _description_
+            output_folder (Path | str): _description_
+        """
+
+        # map to brats names
+
+        # infer
         self._infer(data_folder=data_folder, output_folder=output_folder)
+
+        # rename outputs

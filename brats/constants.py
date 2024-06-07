@@ -4,6 +4,7 @@ from enum import Enum
 class AlgorithmKeys(str, Enum):
     BraTS23_yaziciz = "BraTS23_yaziciz"
     BraTS23_ferreira = "BraTS23_ferreira"
+    BraTS23_nvauto = "BraTS23_nvauto"
 
 
 class Device(str, Enum):

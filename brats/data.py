@@ -22,6 +22,7 @@ class AlgorithmData:
     zenodo_record_id: Optional[str]
     shm_size: Optional[str] = "1gb"
     requires_root: Optional[bool] = False
+    parameters_file: Optional[bool] = False
 
 
 @dataclass
