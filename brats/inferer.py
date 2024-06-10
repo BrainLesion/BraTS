@@ -5,12 +5,15 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from typing import Optional
-
+from typing import Dict, Optional
 import docker
+import docker.errors
 from brats.constants import AlgorithmKeys, Device, BRATS_INPUT_NAME_SCHEMA
 from brats.data import load_algorithms
 from brats.utils import check_model_weights
+import time
+from halo import Halo
+
 
 logger = logging.getLogger(__name__)
 
@@ -39,18 +42,23 @@ class Inferer:
             f"Instantiated Inferer class with algorithm: {algorithm.value} by {[a.name for a in self.algorithm.authors]}"
         )
 
-    def _infer(self, data_folder: Path | str, output_folder: Path | str):
+    def _run_docker(self, data_path: Path | str, output_path: Path | str):
 
         # ensure weights are present
         if self.algorithm.zenodo_record_id is not None:
-            weights_folder = check_model_weights(
+            weights_path = check_model_weights(
                 record_id=self.algorithm.zenodo_record_id
             )
         else:
-            weights_folder = None
+            weights_path = None
+
+        # TODO test remove
+        weights_path = Path(
+            "/home/marcel/Projects/helmholtz/brats/workspace/checkpoints"
+        )
 
         # ensure output folder exists
-        Path(output_folder).mkdir(parents=True, exist_ok=True)
+        Path(output_path).mkdir(parents=True, exist_ok=True)
 
         # Initialize the Docker client
         client = docker.from_env()
@@ -60,9 +68,7 @@ class Inferer:
         # additional files (mostly weights): /mlcube_io1
         # output: /mlcube_io2
 
-        volumes = [
-            v for v in [data_folder, weights_folder, output_folder] if v is not None
-        ]
+        volumes = [v for v in [data_path, weights_path, output_path] if v is not None]
         volume_mappings = {
             Path(v).absolute(): {
                 "bind": f"/mlcube_io{i}",
@@ -76,20 +82,17 @@ class Inferer:
             f"Algorithm: {self.algorithm_key} | Docker image: {self.algorithm.image}"
         )
         logger.info(f"Consider citing the corresponding paper: {self.algorithm.paper}")
-        logger.info(
-            f">> Note: Outputs below are streamed from the container and subject to the respective author's logging"
-        )
 
         command_args = (
-            f"--data_path=/mlcube_io0 --weights=/mlcube_io1 --output_path=/mlcube_io2"
-            if weights_folder is not None
+            f"--data_path=/mlcube_io0 --{self.algorithm.weights_parameter_name}=/mlcube_io1 --output_path=/mlcube_io2"
+            if weights_path is not None
             else f"--data_path=/mlcube_io0 --output_path=/mlcube_io1"
         )
 
         if self.algorithm.parameters_file:
-            parameters_file = data_folder / "parameters.yaml"
+            parameters_file = weights_path / "parameters.yaml"
             parameters_file.touch()
-            command_args += f" --parameters_file="
+            command_args += f" --parameters_file=/mlcube_io1/parameters.yaml"
 
         extra_args = {}
         if not self.algorithm.requires_root:
@@ -115,15 +118,30 @@ class Inferer:
             **extra_args,
         )
 
-        # Stream the output to the console
+        # capture the output
         container_output = container.attach(
             stdout=True, stderr=True, stream=True, logs=True
         )
-        for line in container_output:
-            logger.info(f">> {line.decode('utf-8')}")
+
+        # Display spinner while the container is running
+        spinner = Halo(text="Running inference...", spinner="dots")
+        spinner.start()
 
         # Wait for the container to finish
-        container.wait()
+        exit_code = container.wait()
+        # Check if the container exited with an error
+        if exit_code["StatusCode"] != 0:
+            spinner.stop_and_persist(
+                symbol="X", text="Container finished with an error."
+            )
+            for line in container_output:
+                logger.error(f">> {line.decode('utf-8')}")
+            raise Exception(
+                "Container finished with an error. See logs above for details."
+            )
+        else:
+            spinner.stop_and_persist(symbol="✔", text="Inference done.")
+
         logger.info(f"{' Finished inference ':-^80}")
 
     def _standardize_subject_inputs(
@@ -182,8 +200,12 @@ class Inferer:
                 t2w=t2w,
             )
 
-            self._infer(data_folder=temp_data_folder, output_folder=temp_output_folder)
-
+            # self._run_docker(data_folder=temp_data_folder, output_folder=temp_output_folder)
+            self._run_docker(
+                data_path=temp_data_folder,
+                output_path=temp_output_folder,
+            )
+            print(os.listdir(temp_output_folder))
             # rename output
             segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
 
@@ -217,6 +239,6 @@ class Inferer:
         # map to brats names
 
         # infer
-        self._infer(data_folder=data_folder, output_folder=output_folder)
+        self._run_docker(data_folder=data_folder, output_folder=output_folder)
 
         # rename outputs

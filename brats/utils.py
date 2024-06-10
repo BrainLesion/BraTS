@@ -8,7 +8,7 @@ import zipfile
 from io import BytesIO
 from pathlib import Path
 from typing import Dict, List
-
+from tqdm import tqdm
 import requests
 
 logger = logging.getLogger(__name__)
@@ -131,15 +131,30 @@ def _download_model_weights(zenodo_metadata: Dict, record_id: str) -> Path:
 
     logger.info(f"Downloading model weights from Zenodo. This might take a while...")
     # Make a GET request to the URL
-    response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}/files-archive")
+    response = requests.get(
+        f"{ZENODO_RECORD_BASE_URL}/{record_id}/files-archive", stream=True
+    )
     # Ensure the request was successful
     if response.status_code != 200:
         logger.error(
             f"Failed to download model weights. Status code: {response.status_code}"
         )
         return
+
+    # Download with progress bar
+    chunk_size = 1024  # 1KB
+    bytes_io = BytesIO()
+    with tqdm(
+        total=0,  # unknown size since content length not given
+        unit="B",
+        unit_scale=True,
+    ) as pbar:
+        for data in response.iter_content(chunk_size=chunk_size):
+            bytes_io.write(data)
+            pbar.update(len(data))
+
     # Extract the downloaded zip file to the target folder
-    with zipfile.ZipFile(BytesIO(response.content)) as zip_ref:
+    with zipfile.ZipFile(bytes_io) as zip_ref:
         zip_ref.extractall(record_weights_folder)
     logger.info(f"Zip file extracted successfully to {record_weights_folder}")
     return record_weights_folder
