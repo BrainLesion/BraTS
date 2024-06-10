@@ -5,6 +5,7 @@ class AlgorithmKeys(str, Enum):
     BraTS23_yaziciz = "BraTS23_yaziciz"
     BraTS23_ferreira = "BraTS23_ferreira"
     BraTS23_nvauto = "BraTS23_nvauto"
+    BraTS23_biomedmbz = "BraTS23_biomedmbz"
 
 
 class Device(str, Enum):

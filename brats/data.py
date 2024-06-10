@@ -23,6 +23,7 @@ class AlgorithmData:
     shm_size: Optional[str] = "1gb"
     requires_root: Optional[bool] = False
     parameters_file: Optional[bool] = False
+    weights_parameter_name: Optional[str] = "weights"
 
 
 @dataclass

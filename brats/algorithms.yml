@@ -17,4 +17,12 @@ BraTS23_nvauto:
   paper: N/A
   image: brainles/nvauto:latest
   shm_size: "32gb"
+  requires_root: true
   parameters_file: true
+BraTS23_biomedmbz:
+  authors:
+    - { name: Anees Hashmi }
+  paper: N/A
+  image: brainles/biomedmbz
+  parameters_file: true
+  weights_parameter_name: "checkpoint_dir"
