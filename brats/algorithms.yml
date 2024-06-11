@@ -17,7 +17,7 @@ algorithms:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
     run_args:
-      docker_image: brainles/faking_it:latest
+      docker_image: brainles/brats23_faking_it:latest
       requires_root: true
       parameters_file: false
       shm_size: "2gb"
@@ -37,7 +37,7 @@ algorithms:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
     run_args:
-      docker_image: brainles/biomedmbz
+      docker_image: brainles/brats23_biomedmbz:latest
       requires_root: false
       parameters_file: true
       shm_size: "2gb"

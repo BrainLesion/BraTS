@@ -97,8 +97,8 @@ class Inferer:
             # self._run_docker(data_folder=temp_data_folder, output_folder=temp_output_folder)
             _run_docker(
                 algorithm=self.algorithm,
-                data_folder=temp_data_folder,
-                output_folder=temp_output_folder,
+                data_path=temp_data_folder,
+                output_path=temp_output_folder,
                 cuda_devices=self.cuda_devices,
             )
             print(os.listdir(temp_output_folder))
@@ -137,8 +137,8 @@ class Inferer:
         # infer
         _run_docker(
             algorithm=self.algorithm,
-            data_folder=data_folder,
-            output_folder=output_folder,
+            data_path=data_folder,
+            output_path=output_folder,
             cuda_devices=self.cuda_devices,
         )
 
