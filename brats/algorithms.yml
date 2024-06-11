@@ -12,15 +12,15 @@ algorithms:
   #     record_id: "11242485"
   #     param_name: "weights"
 
-  BraTS23_ferreira:
+  BraTS23_faking_it:
     meta:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
     run_args:
       docker_image: brainles/faking_it:latest
-      shm_size: "2gb"
       requires_root: true
       parameters_file: false
+      shm_size: "2gb"
 
   BraTS23_nvauto:
     meta:
@@ -28,9 +28,9 @@ algorithms:
       paper: N/A
     run_args:
       docker_image: brainles/nvauto:latest
-      shm_size: "32gb"
       requires_root: true
       parameters_file: true
+      shm_size: "32gb"
 
   BraTS23_biomedmbz:
     meta:
@@ -38,9 +38,9 @@ algorithms:
       paper: N/A
     run_args:
       docker_image: brainles/biomedmbz
-      shm_size: "2gb"
       requires_root: false
       parameters_file: true
+      shm_size: "2gb"
     weights:
       record_id: "11573316"
       param_name: "checkpoint_dir"

@@ -2,8 +2,7 @@ from enum import Enum
 
 
 class AlgorithmKeys(str, Enum):
-    BraTS23_yaziciz = "BraTS23_yaziciz"
-    BraTS23_ferreira = "BraTS23_ferreira"
+    BraTS23_faking_it = "BraTS23_faking_it"
     BraTS23_nvauto = "BraTS23_nvauto"
     BraTS23_biomedmbz = "BraTS23_biomedmbz"
 

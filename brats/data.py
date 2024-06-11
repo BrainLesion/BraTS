@@ -25,12 +25,12 @@ class RunArgs:
 
     docker_image: str
     """The Docker image containing the algorithm"""
-    shm_size: Optional[str] = "2gb"
-    """The required shared memory size for the Docker container"""
     parameters_file: bool
     """Whether the algorithm requires a parameters file"""
     requires_root: bool
     """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
+    shm_size: Optional[str] = "2gb"
+    """The required shared memory size for the Docker container"""
 
 
 @dataclass
@@ -67,7 +67,7 @@ def load_algorithms() -> Dict[str, AlgorithmData]:
         FileNotFoundError: If the file is not found
 
     Returns:
-        Dict[str, AlgorithmData]: Dict of algorithm key:AlgorithmData  pairs
+        Dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
     """
     try:
         with open(META_DATA_FILE, "r") as file:
