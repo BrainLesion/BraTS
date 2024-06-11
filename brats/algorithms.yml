@@ -1,28 +1,46 @@
-BraTS23_yaziciz:
-  authors:
-    - { name: Ziya Ata Yazici }
-  paper: N/A
-  image: brainles/glims_brats23:v1
-  zenodo_record_id: "11242485"
-BraTS23_ferreira:
-  authors:
-    - { name: Andre Ferreira }
-  paper: https://arxiv.org/abs/2402.17317v1
-  image: brainles/faking_it:latest
-  shm_size: "2gb"
-  requires_root: true
-BraTS23_nvauto:
-  authors:
-    - { name: Andriy Myronenko }
-  paper: N/A
-  image: brainles/nvauto:latest
-  shm_size: "32gb"
-  requires_root: true
-  parameters_file: true
-BraTS23_biomedmbz:
-  authors:
-    - { name: Anees Hashmi }
-  paper: N/A
-  image: brainles/biomedmbz
-  parameters_file: true
-  weights_parameter_name: "checkpoint_dir"
+algorithms:
+  BraTS23_yaziciz:
+    meta:
+      authors: Ziya Ata Yazici
+      paper: N/A
+    run_args:
+      docker_image: brainles/glims_brats23:v1
+      shm_size: "2gb"
+      requires_root: false
+      parameters_file: false
+    weights:
+      record_id: "11242485"
+      param_name: "weights"
+
+  BraTS23_ferreira:
+    meta:
+      authors: Andre Ferreira
+      paper: https://arxiv.org/abs/2402.17317v1
+    run_args:
+      docker_image: brainles/faking_it:latest
+      shm_size: "2gb"
+      requires_root: true
+      parameters_file: false
+
+  BraTS23_nvauto:
+    meta:
+      authors: Andriy Myronenko
+      paper: N/A
+    run_args:
+      docker_image: brainles/nvauto:latest
+      shm_size: "32gb"
+      requires_root: true
+      parameters_file: true
+
+  BraTS23_biomedmbz:
+    meta:
+      authors: Anees Hashmi
+      paper: N/A
+    run_args:
+      docker_image: brainles/biomedmbz
+      shm_size: "2gb"
+      requires_root: false
+      parameters_file: true
+    weights:
+      record_id: ""
+      param_name: "checkpoint_dir"

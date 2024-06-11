@@ -10,20 +10,49 @@ META_DATA_FILE = PACKAGE_DIR / "algorithms.yml"
 
 
 @dataclass
-class Author:
-    name: str
+class MetaData:
+    """Dataclass for the meta data"""
+
+    authors: str
+    """The authors of the algorithm"""
+    paper: str
+    """If available, a url to the paper of the algorithm"""
+
+
+@dataclass
+class WeightsData:
+    """Dataclass for the weights data"""
+
+    record_id: str
+    """The Zenodo record ID of the weights"""
+    param_name: Optional[str] = "weights"
+    """The parameter that specifies the weights folder in the algorithm execution, typically 'weights' but differs for some"""
+
+
+@dataclass
+class RunArgs:
+    """Dataclass for the run arguments"""
+
+    docker_image: str
+    """The Docker image containing the algorithm"""
+    parameters_file: Optional[bool] = False
+    """Whether the algorithm requires a parameters file"""
+    shm_size: Optional[str] = "2gb"
+    """The required shared memory size for the Docker container"""
+    requires_root: Optional[bool] = False
+    """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
 
 
 @dataclass
 class AlgorithmData:
-    authors: List[Author]
-    paper: str
-    image: str
-    zenodo_record_id: Optional[str]
-    shm_size: Optional[str] = "1gb"
-    requires_root: Optional[bool] = False
-    parameters_file: Optional[bool] = False
-    weights_parameter_name: Optional[str] = "weights"
+    """Dataclass for the algorithm data"""
+
+    meta: MetaData
+    """The meta data of the algorithm"""
+    run_args: RunArgs
+    """The run arguments of the algorithm"""
+    weights: Optional[WeightsData]
+    """The weights data of the algorithm"""
 
 
 @dataclass
