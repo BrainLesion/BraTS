@@ -20,16 +20,6 @@ class MetaData:
 
 
 @dataclass
-class WeightsData:
-    """Dataclass for the weights data"""
-
-    record_id: str
-    """The Zenodo record ID of the weights"""
-    param_name: Optional[str] = "weights"
-    """The parameter that specifies the weights folder in the algorithm execution, typically 'weights' but differs for some"""
-
-
-@dataclass
 class RunArgs:
     """Dataclass for the run arguments"""
 
@@ -41,6 +31,16 @@ class RunArgs:
     """The required shared memory size for the Docker container"""
     requires_root: Optional[bool] = False
     """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
+
+
+@dataclass
+class WeightsData:
+    """Dataclass for the weights data"""
+
+    record_id: str
+    """The Zenodo record ID of the weights"""
+    param_name: Optional[str] = "weights"
+    """The parameter that specifies the weights folder in the algorithm execution, typically 'weights' but differs for some"""
 
 
 @dataclass
@@ -67,8 +67,5 @@ def load_algorithms() -> Dict[str, AlgorithmData]:
     except FileNotFoundError:
         raise FileNotFoundError("Algorithm meta data file not found")
 
-    # Wrap the data to fit into the AlgorithmList dataclass
-    wrapped_data = {"algorithms": data}
-
     # Convert the dictionary to the dataclass
-    return from_dict(data_class=AlgorithmList, data=wrapped_data).algorithms
+    return from_dict(data_class=AlgorithmList, data=data).algorithms

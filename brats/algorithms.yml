@@ -1,20 +1,20 @@
 algorithms:
-  BraTS23_yaziciz:
-    meta:
-      authors: Ziya Ata Yazici
-      paper: N/A
-    run_args:
-      docker_image: brainles/glims_brats23:v1
-      shm_size: "2gb"
-      requires_root: false
-      parameters_file: false
-    weights:
-      record_id: "11242485"
-      param_name: "weights"
+  # BraTS23_yaziciz:
+  #   meta:
+  #     authors: Ziya Ata Yazici
+  #     paper: N/A
+  #   run_args:
+  #     docker_image: brainles/glims_brats23:v1
+  #     shm_size: "2gb"
+  #     requires_root: false
+  #     parameters_file: false
+  #   weights:
+  #     record_id: "11242485"
+  #     param_name: "weights"
 
   BraTS23_ferreira:
     meta:
-      authors: Andre Ferreira
+      authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
     run_args:
       docker_image: brainles/faking_it:latest
@@ -24,7 +24,7 @@ algorithms:
 
   BraTS23_nvauto:
     meta:
-      authors: Andriy Myronenko
+      authors: Andriy Myronenko, et al.
       paper: N/A
     run_args:
       docker_image: brainles/nvauto:latest
@@ -34,7 +34,7 @@ algorithms:
 
   BraTS23_biomedmbz:
     meta:
-      authors: Anees Hashmi
+      authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
     run_args:
       docker_image: brainles/biomedmbz
