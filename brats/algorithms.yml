@@ -42,5 +42,5 @@ algorithms:
       requires_root: false
       parameters_file: true
     weights:
-      record_id: ""
+      record_id: "11573316"
       param_name: "checkpoint_dir"
