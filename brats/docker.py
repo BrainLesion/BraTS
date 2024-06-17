@@ -8,8 +8,37 @@ import docker
 from brats.data import AlgorithmData
 from brats.utils import check_model_weights
 from halo import Halo
+from rich.progress import Progress
+
 
 logger = logging.getLogger(__name__)
+client = docker.from_env()
+
+
+def show_progress(tasks, line, progress: Progress):
+    if line["status"] == "Downloading":
+        task_key = f'[Download {line["id"]}]'
+    elif line["status"] == "Extracting":
+        task_key = f'[Extract  {line["id"]}]'
+    else:
+        return
+
+    if task_key not in tasks.keys():
+        tasks[task_key] = progress.add_task(
+            f"{task_key}", total=line["progressDetail"]["total"]
+        )
+    else:
+        progress.update(tasks[task_key], completed=line["progressDetail"]["current"])
+
+
+def _ensure_image(image: str):
+    if not client.images.list(name=image):
+        logger.info(f"Pulling docker image {image}")
+        tasks = {}
+        with Progress() as progress:
+            resp = client.api.pull(image, stream=True, decode=True)
+            for line in resp:
+                show_progress(tasks, line, progress)
 
 
 def _run_docker(
@@ -19,6 +48,9 @@ def _run_docker(
     cuda_devices: str,
 ):
 
+    # ensure image is present, if not pull it
+    _ensure_image(algorithm.run_args.docker_image)
+
     # ensure weights are present
     if algorithm.weights is not None:
         weights_path = check_model_weights(record_id=algorithm.weights.record_id)
@@ -27,9 +59,6 @@ def _run_docker(
 
     # ensure output folder exists
     Path(output_path).mkdir(parents=True, exist_ok=True)
-
-    # Initialize the Docker client
-    client = docker.from_env()
 
     # Define the volumes expected by the mlcube standard
     # data input: /mlcube_io0

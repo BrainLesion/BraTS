@@ -42,5 +42,5 @@ algorithms:
       parameters_file: true
       shm_size: "2gb"
     weights:
-      record_id: "11573316"
+      record_id: "11573315"
       param_name: "checkpoint_dir"
