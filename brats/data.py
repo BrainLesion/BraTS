@@ -5,8 +5,7 @@ from typing import Dict, Optional
 import yaml
 from dacite import from_dict
 
-PACKAGE_DIR = Path(__file__).parent
-META_DATA_FILE = PACKAGE_DIR / "algorithms.yml"
+
 
 
 @dataclass
@@ -60,7 +59,7 @@ class AlgorithmList:
     algorithms: Dict[str, AlgorithmData]
 
 
-def load_algorithms() -> Dict[str, AlgorithmData]:
+def load_algorithms(file_path: str) -> Dict[str, AlgorithmData]:
     """Load the algorithms data from the yaml data file
 
     Raises:
@@ -70,7 +69,7 @@ def load_algorithms() -> Dict[str, AlgorithmData]:
         Dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
     """
     try:
-        with open(META_DATA_FILE, "r") as file:
+        with open(file_path, "r") as file:
             data = yaml.safe_load(file)
     except FileNotFoundError:
         raise FileNotFoundError("Algorithm meta data file not found")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 import logging
 import os
 import shutil
@@ -7,17 +8,16 @@ import tempfile
 from pathlib import Path
 from typing import Optional
 
-from brats.constants import BRATS_INPUT_NAME_SCHEMA, AlgorithmKeys, Device
+from brats.constants import BRATS_INPUT_NAME_SCHEMA,  Device, AdultGliomaAlgorithmKeys, ADULT_GLIOMA_SEGMENTATION_ALGORITHMS, MENINGIOMA_SEGMENTATION_ALGORITHMS
 from brats.data import load_algorithms
 from brats.docker import _run_docker
 
 logger = logging.getLogger(__name__)
 
 
-class Inferer:
+class BraTSInferer(ABC):
     def __init__(
         self,
-        algorithm: AlgorithmKeys = AlgorithmKeys.BraTS23_faking_it,
         device: Device = Device.AUTO,
         cuda_devices: Optional[str] = "0",
     ):
@@ -30,14 +30,6 @@ class Inferer:
         self.device = device
         self.cuda_devices = cuda_devices
 
-        # load algorithm data
-        self.algorithm_list = load_algorithms()
-        self.algorithm_key = algorithm.value
-        self.algorithm = self.algorithm_list[algorithm.value]
-        logger.info(
-            f"Instantiated Inferer class with algorithm: {algorithm.value} by {self.algorithm.meta.authors}"
-        )
-
     def _standardize_subject_inputs(
         self,
         data_folder: Path,
@@ -48,7 +40,7 @@ class Inferer:
         t2w: Path | str,
     ):
         """Standardize the input images for a single subject to match requirements of all algorithms.
-            Meaning, e.g.:
+            Meaning, e.g. for adult glioma:
                 BraTS-GLI-00000-000 \n
                 ┣ BraTS-GLI-00000-000-t1c.nii.gz \n
                 ┣ BraTS-GLI-00000-000-t1n.nii.gz \n
@@ -71,7 +63,7 @@ class Inferer:
         shutil.copy(t2f, subject_folder / f"{subject_id}-t2f.nii.gz")
         shutil.copy(t2w, subject_folder / f"{subject_id}-t2w.nii.gz")
 
-    def infer_single(
+    def _infer_single(
         self,
         t1c: Path | str,
         t1n: Path | str,
@@ -94,7 +86,6 @@ class Inferer:
                 t2w=t2w,
             )
 
-            # self._run_docker(data_folder=temp_data_folder, output_folder=temp_output_folder)
             _run_docker(
                 algorithm=self.algorithm,
                 data_path=temp_data_folder,
@@ -114,7 +105,7 @@ class Inferer:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
 
-    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
+    def _infer_batch(self, data_folder: Path | str, output_folder: Path | str):
         """Infer all subjects in a folder. requires the following structure:
         data_folder\n
         ┣ A\n
@@ -143,3 +134,36 @@ class Inferer:
         )
 
         # rename outputs
+
+
+class AdultGliomaInferer(BraTSInferer):
+    
+    def __init__(
+        self,
+        algorithm: AdultGliomaAlgorithmKeys = AdultGliomaAlgorithmKeys.BraTS23_glioma_faking_it,
+        device: Device = Device.AUTO,
+        cuda_devices: Optional[str] = "0",
+    ):
+        super().__init__(device=device, cuda_devices=cuda_devices)
+        # load algorithm data
+        self.algorithm_list = load_algorithms(file_path=ADULT_GLIOMA_SEGMENTATION_ALGORITHMS)
+        self.algorithm_key = algorithm.value
+        self.algorithm = self.algorithm_list[algorithm.value]
+        logger.info(
+            f"Instantiated Inferer class with algorithm: {algorithm.value} by {self.algorithm.meta.authors}"
+        )
+
+    def infer_single(
+        self,
+        t1c: Path | str,
+        t1n: Path | str,
+        t2f: Path | str,
+        t2w: Path | str,
+        output_file: Path | str,
+    ):
+        self._infer_single(
+            t1c=t1c, t1n=t1n, t2f=t2f, t2w=t2w, output_file=output_file
+        )
+
+    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
+        self._infer_batch(data_folder=data_folder, output_folder=output_folder)

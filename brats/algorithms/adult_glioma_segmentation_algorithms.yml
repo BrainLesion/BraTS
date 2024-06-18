@@ -1,41 +1,32 @@
 algorithms:
-  # BraTS23_yaziciz:
-  #   meta:
-  #     authors: Ziya Ata Yazici
-  #     paper: N/A
-  #   run_args:
-  #     docker_image: brainles/glims_brats23:v1
-  #     shm_size: "2gb"
-  #     requires_root: false
-  #     parameters_file: false
-  #   weights:
-  #     record_id: "11242485"
-  #     param_name: "weights"
 
-  BraTS23_faking_it:
+  BraTS23_glioma_faking_it:
     meta:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
+      challenge: BraTS23 Adult Glioma Segmentation
     run_args:
       docker_image: brainles/brats23_faking_it:latest
       requires_root: true
       parameters_file: false
       shm_size: "2gb"
 
-  BraTS23_nvauto:
+  BraTS23_glioma_nvauto:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
+      challenge: BraTS23 Adult Glioma Segmentation
     run_args:
       docker_image: brainles/brats23_nvauto:latest
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
 
-  BraTS23_biomedmbz:
+  BraTS23_glioma_biomedmbz:
     meta:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
+      challenge: BraTS23 Adult Glioma Segmentation
     run_args:
       docker_image: brainles/brats23_biomedmbz:latest
       requires_root: false
