@@ -6,9 +6,12 @@ class AdultGliomaAlgorithmKeys(str, Enum):
     BraTS23_glioma_faking_it = "BraTS23_glioma_faking_it"
     BraTS23_glioma_nvauto = "BraTS23_glioma_nvauto"
     BraTS23_glioma_biomedmbz = "BraTS23_glioma_biomedmbz"
-    
+
+
 class MeningiomaAlgorithmKeys(str, Enum):
     BraTS23_meningioma_nvauto = "BraTS23_meningioma_nvauto"
+    BraTS23_meningioma_blackbean = "BraTS23_meningioma_blackbean"
+    BraTS23_meningioma_CNMC_PMI2023 = "BraTS23_meningioma_CNMC_PMI2023"
 
 
 class Device(str, Enum):
@@ -22,11 +25,14 @@ class Device(str, Enum):
     """Attempt to use GPU, fallback to CPU."""
 
 
-
 # meta data file paths
 PACKAGE_DIR = Path(__file__).parent / "algorithms"
-ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = PACKAGE_DIR / "adult_glioma_segmentation_algorithms.yml"
-MENINGIOMA_SEGMENTATION_ALGORITHMS = PACKAGE_DIR / "meningioma_segmentation_algorithms.yml"
+ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = (
+    PACKAGE_DIR / "adult_glioma_segmentation_algorithms.yml"
+)
+MENINGIOMA_SEGMENTATION_ALGORITHMS = (
+    PACKAGE_DIR / "meningioma_segmentation_algorithms.yml"
+)
 
 # name formats
 ADULT_GLIOMA_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"

@@ -14,6 +14,8 @@ class MetaData:
     """The authors of the algorithm"""
     paper: str
     """If available, a url to the paper of the algorithm"""
+    challenge: str
+    """The challenge the algorithm was submitted to"""
 
 
 @dataclass

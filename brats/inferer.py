@@ -95,6 +95,9 @@ class BraTSInferer(ABC):
                 t2w=t2w,
             )
 
+            logger.info(
+                f"Running algorithm: {self.algorithm_key} from challenge: {self.algorithm.meta.challenge}"
+            )
             _run_docker(
                 algorithm=self.algorithm,
                 data_path=temp_data_folder,

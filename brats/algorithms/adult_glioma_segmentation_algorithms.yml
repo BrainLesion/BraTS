@@ -4,7 +4,7 @@ algorithms:
     meta:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
-      challenge: BraTS23 Adult Glioma Segmentation
+      challenge: BraTS23 Adult Glioma Segmentation (1st place)
     run_args:
       docker_image: brainles/brats23_faking_it:latest
       requires_root: true
@@ -15,7 +15,7 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 Adult Glioma Segmentation
+      challenge: BraTS23 Adult Glioma Segmentation (2nd place)
     run_args:
       docker_image: brainles/brats23_nvauto:latest
       requires_root: true
@@ -26,7 +26,7 @@ algorithms:
     meta:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
-      challenge: BraTS23 Adult Glioma Segmentation
+      challenge: BraTS23 Adult Glioma Segmentation (3rd place)
     run_args:
       docker_image: brainles/brats23_biomedmbz:latest
       requires_root: false
