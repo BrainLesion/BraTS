@@ -9,6 +9,7 @@ algorithms:
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
+
   BraTS23_meningioma_blackbean:
     meta:
       authors: Ziyan Huang
@@ -19,6 +20,7 @@ algorithms:
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"
+      
   BraTS23_meningioma_CNMC_PMI2023:
     meta:
       authors: Zhifan Jiang et al.
