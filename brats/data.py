@@ -6,8 +6,6 @@ import yaml
 from dacite import from_dict
 
 
-
-
 @dataclass
 class MetaData:
     """Dataclass for the meta data"""
@@ -60,7 +58,10 @@ class AlgorithmList:
 
 
 def load_algorithms(file_path: str) -> Dict[str, AlgorithmData]:
-    """Load the algorithms data from the yaml data file
+    """Load the algorithms data from the yaml file
+
+    Params:
+        file_path (str): The path to the yaml file
 
     Raises:
         FileNotFoundError: If the file is not found

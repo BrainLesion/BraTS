@@ -1,14 +1,22 @@
 from __future__ import annotations
 
-from abc import ABC
 import logging
 import os
 import shutil
 import tempfile
+from abc import ABC
 from pathlib import Path
 from typing import Optional
 
-from brats.constants import BRATS_INPUT_NAME_SCHEMA,  Device, AdultGliomaAlgorithmKeys, ADULT_GLIOMA_SEGMENTATION_ALGORITHMS, MENINGIOMA_SEGMENTATION_ALGORITHMS
+from brats.constants import (
+    ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_INPUT_NAME_SCHEMA,
+    MENINGIOMA_INPUT_NAME_SCHEMA,
+    MENINGIOMA_SEGMENTATION_ALGORITHMS,
+    AdultGliomaAlgorithmKeys,
+    Device,
+    MeningiomaAlgorithmKeys,
+)
 from brats.data import load_algorithms
 from brats.docker import _run_docker
 
@@ -70,13 +78,14 @@ class BraTSInferer(ABC):
         t2f: Path | str,
         t2w: Path | str,
         output_file: Path | str,
+        subject_format: str,
     ):
         # setup temp input folder with the provided images
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         try:
             # for a single inference we use a fixed subject id since it is renamed to the desired output afterwards
-            subject_id = BRATS_INPUT_NAME_SCHEMA.format(id=0)
+            subject_id = subject_format.format(id=0)
             self._standardize_subject_inputs(
                 data_folder=temp_data_folder,
                 subject_id=subject_id,
@@ -137,7 +146,7 @@ class BraTSInferer(ABC):
 
 
 class AdultGliomaInferer(BraTSInferer):
-    
+
     def __init__(
         self,
         algorithm: AdultGliomaAlgorithmKeys = AdultGliomaAlgorithmKeys.BraTS23_glioma_faking_it,
@@ -146,11 +155,13 @@ class AdultGliomaInferer(BraTSInferer):
     ):
         super().__init__(device=device, cuda_devices=cuda_devices)
         # load algorithm data
-        self.algorithm_list = load_algorithms(file_path=ADULT_GLIOMA_SEGMENTATION_ALGORITHMS)
+        self.algorithm_list = load_algorithms(
+            file_path=ADULT_GLIOMA_SEGMENTATION_ALGORITHMS
+        )
         self.algorithm_key = algorithm.value
         self.algorithm = self.algorithm_list[algorithm.value]
         logger.info(
-            f"Instantiated Inferer class with algorithm: {algorithm.value} by {self.algorithm.meta.authors}"
+            f"Instantiated AdultGliomaInferer class with algorithm: {algorithm.value} by {self.algorithm.meta.authors}"
         )
 
     def infer_single(
@@ -162,7 +173,54 @@ class AdultGliomaInferer(BraTSInferer):
         output_file: Path | str,
     ):
         self._infer_single(
-            t1c=t1c, t1n=t1n, t2f=t2f, t2w=t2w, output_file=output_file
+            t1c=t1c,
+            t1n=t1n,
+            t2f=t2f,
+            t2w=t2w,
+            output_file=output_file,
+            subject_format=ADULT_GLIOMA_INPUT_NAME_SCHEMA,
+        )
+
+    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
+        self._infer_batch(data_folder=data_folder, output_folder=output_folder)
+
+
+class MeningiomaInferer(BraTSInferer):
+
+    def __init__(
+        self,
+        algorithm: MeningiomaAlgorithmKeys = MeningiomaAlgorithmKeys.BraTS23_meningioma_nvauto,
+        device: Device = Device.AUTO,
+        cuda_devices: Optional[str] = "0",
+    ):
+        super().__init__(device=device, cuda_devices=cuda_devices)
+
+        # TODO: make this more dry since it is the same as in AdultGliomaInferer etc.
+        # load algorithm data
+        self.algorithm_list = load_algorithms(
+            file_path=MENINGIOMA_SEGMENTATION_ALGORITHMS
+        )
+        self.algorithm_key = algorithm.value
+        self.algorithm = self.algorithm_list[algorithm.value]
+        logger.info(
+            f"Instantiated MeningiomaInferer class with algorithm: {algorithm.value} by {self.algorithm.meta.authors}"
+        )
+
+    def infer_single(
+        self,
+        t1c: Path | str,
+        t1n: Path | str,
+        t2f: Path | str,
+        t2w: Path | str,
+        output_file: Path | str,
+    ):
+        self._infer_single(
+            t1c=t1c,
+            t1n=t1n,
+            t2f=t2f,
+            t2w=t2w,
+            output_file=output_file,
+            subject_format=MENINGIOMA_INPUT_NAME_SCHEMA,
         )
 
     def infer_batch(self, data_folder: Path | str, output_folder: Path | str):

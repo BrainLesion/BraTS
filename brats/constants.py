@@ -28,4 +28,6 @@ PACKAGE_DIR = Path(__file__).parent / "algorithms"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = PACKAGE_DIR / "adult_glioma_segmentation_algorithms.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = PACKAGE_DIR / "meningioma_segmentation_algorithms.yml"
 
-BRATS_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
+# name formats
+ADULT_GLIOMA_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
+MENINGIOMA_INPUT_NAME_SCHEMA = "BraTS-MEN-{id:05d}-000"
