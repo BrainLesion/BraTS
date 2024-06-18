@@ -6,7 +6,7 @@ from pathlib import Path
 
 import docker
 from brats.data import AlgorithmData
-from brats.utils import check_model_weights
+from brats.utils import check_model_weights, get_dummy_weights_path
 from halo import Halo
 from rich.progress import Progress
 
@@ -51,29 +51,25 @@ def _run_docker(
     # ensure image is present, if not pull it
     _ensure_image(algorithm.run_args.docker_image)
 
-    # ensure weights are present
+    # ensure weights are present and get path
     if algorithm.weights is not None:
-        weights_path = check_model_weights(record_id=algorithm.weights.record_id)
+        additional_files_path = check_model_weights(record_id=algorithm.weights.record_id)
     else:
-        weights_path = None
+        # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for paramter files etc.
+        additional_files_path = get_dummy_weights_path()
 
     # ensure output folder exists
     Path(output_path).mkdir(parents=True, exist_ok=True)
 
-    # Define the volumes expected by the mlcube standard
-    # data input: /mlcube_io0
-    # additional files (mostly weights): /mlcube_io1
-    # output: /mlcube_io2
-
-    volumes = [v for v in [data_path, weights_path, output_path] if v is not None]
+    # data = mlcube_io0, weights = mlcube_io1, output = mlcube_io2
     volume_mappings = {
         Path(v).absolute(): {
             "bind": f"/mlcube_io{i}",
             "mode": "rw",
         }
-        for i, v in enumerate(volumes)
+        for i, v in enumerate([data_path, additional_files_path, output_path])
     }
-
+    
     logger.info(f"{' Starting inference ':-^80}")
     logger.info(f"Docker image: {algorithm.run_args.docker_image}")
     logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
@@ -81,13 +77,13 @@ def _run_docker(
     command_args = (
         f"--data_path=/mlcube_io0 --{algorithm.weights.param_name}=/mlcube_io1 --output_path=/mlcube_io2"
         if algorithm.weights is not None
-        else f"--data_path=/mlcube_io0 --output_path=/mlcube_io1"
+        else f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     )
 
     if algorithm.run_args.parameters_file:
         # The algorithms do not seem to actually use the parameters file  for inference but just need it to exist
         # so we create an empty file
-        parameters_file = weights_path / "parameters.yaml"
+        parameters_file = additional_files_path / "parameters.yaml"
         parameters_file.touch()
         command_args += f" --parameters_file=/mlcube_io1/parameters.yaml"
 
