@@ -13,7 +13,8 @@ from brats.constants import AdultGliomaAlgorithmKeys, MeningiomaAlgorithmKeys
 #     output_file="single_out/nvauto_seg.nii.gz",
 # )
 
-inferer = MeningiomaInferer(cuda_devices="1")
+alg = MeningiomaAlgorithmKeys.BraTS23_meningioma_CNMC_PMI2023
+inferer = MeningiomaInferer(algorithm=alg, cuda_devices="1")
 
 base = Path("/home/marcelrosier/brats_data/adult_meningioma/BraTS-MEN-00000-000")
 inferer.infer_single(
@@ -21,5 +22,5 @@ inferer.infer_single(
     t1n=base / "BraTS-MEN-00000-000-t1n.nii.gz",
     t2f=base / "BraTS-MEN-00000-000-t2f.nii.gz",
     t2w=base / "BraTS-MEN-00000-000-t2w.nii.gz",
-    output_file="single_out/nvauto_men_seg.nii.gz",
+    output_file=f"single_out/seg-{alg.value}.nii.gz",
 )
