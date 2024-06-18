@@ -10,9 +10,9 @@ name = ""
 version = "0.0.0"
 description = ""
 authors = ["Florian Kofler <florian.kofler@tum.de>"]
-repository = ""
-homepage = ""
-documentation = ""
+#repository = ""
+#homepage = ""
+#documentation = ""
 readme = "README.md"
 
 
@@ -21,7 +21,12 @@ exclude = ["examples", "benchmark"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
+docker = ">=7.0.0"
+rich = ">=13.0.0"
+pyyaml = ">=6.0.1"
+dacite = ">=1.8.0"
+halo = ">=0.0.31"
+tqdm = ">=4.66.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
