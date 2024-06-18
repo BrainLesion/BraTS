@@ -53,7 +53,9 @@ def _run_docker(
 
     # ensure weights are present and get path
     if algorithm.weights is not None:
-        additional_files_path = check_model_weights(record_id=algorithm.weights.record_id)
+        additional_files_path = check_model_weights(
+            record_id=algorithm.weights.record_id
+        )
     else:
         # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for paramter files etc.
         additional_files_path = get_dummy_weights_path()
@@ -62,6 +64,7 @@ def _run_docker(
     Path(output_path).mkdir(parents=True, exist_ok=True)
 
     # data = mlcube_io0, weights = mlcube_io1, output = mlcube_io2
+    # TODO: add support for recommended "ro" mount mode for input data
     volume_mappings = {
         Path(v).absolute(): {
             "bind": f"/mlcube_io{i}",
@@ -69,7 +72,7 @@ def _run_docker(
         }
         for i, v in enumerate([data_path, additional_files_path, output_path])
     }
-    
+
     logger.info(f"{' Starting inference ':-^80}")
     logger.info(f"Docker image: {algorithm.run_args.docker_image}")
     logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
