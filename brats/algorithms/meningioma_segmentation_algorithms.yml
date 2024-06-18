@@ -1,11 +1,11 @@
 algorithms:
-  BraTS23_nvauto:
+  BraTS23_meningioma_nvauto:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
       challenge: BraTS23 Meningioma Segmentation
     run_args:
-      docker_image: brainles/brats23_nvauto:latest
+      docker_image: brainles/brats23_meningioma_nvauto:latest
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
