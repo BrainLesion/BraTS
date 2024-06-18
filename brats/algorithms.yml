@@ -27,7 +27,7 @@ algorithms:
       authors: Andriy Myronenko, et al.
       paper: N/A
     run_args:
-      docker_image: brainles/nvauto:latest
+      docker_image: brainles/brats23_nvauto:latest
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
