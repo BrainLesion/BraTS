@@ -12,9 +12,12 @@ from brats.constants import (
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_INPUT_NAME_SCHEMA,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
+    PEDIATRIC_SEGMENTATION_ALGORITHMS,
+    PEDIATRIC_INPUT_NAME_SCHEMA,
     AdultGliomaAlgorithmKeys,
     AlgorithmKeys,
     MeningiomaAlgorithmKeys,
+    PediatricAlgorithmKeys,
 )
 from brats.data import load_algorithms, standardize_subject_inputs
 from brats.docker import run_docker
@@ -224,6 +227,45 @@ class MeningiomaInferer(BraTSInferer):
             t2w=t2w,
             output_file=output_file,
             subject_format=MENINGIOMA_INPUT_NAME_SCHEMA,
+        )
+
+    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
+        self._infer_batch(data_folder=data_folder, output_folder=output_folder)
+
+
+class PediatricInferer(BraTSInferer):
+
+    def __init__(
+        self,
+        algorithm: PediatricAlgorithmKeys,
+        cuda_devices: Optional[str] = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+        logger.info(
+            f"Instantiated PediatricInferer class with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
+        )
+
+    def infer_single(
+        self,
+        t1c: Path | str,
+        t1n: Path | str,
+        t2f: Path | str,
+        t2w: Path | str,
+        output_file: Path | str,
+    ):
+        self._infer_single(
+            t1c=t1c,
+            t1n=t1n,
+            t2f=t2f,
+            t2w=t2w,
+            output_file=output_file,
+            subject_format=PEDIATRIC_INPUT_NAME_SCHEMA,
         )
 
     def infer_batch(self, data_folder: Path | str, output_folder: Path | str):

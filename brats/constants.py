@@ -24,6 +24,10 @@ class MeningiomaAlgorithmKeys(AlgorithmKeys):
     """BraTS23 Meningioma Segmentation 3rd place (GPU only)"""
 
 
+class PediatricAlgorithmKeys(AlgorithmKeys):
+    BraTS23_pediatric_3 = "BraTS23_pediatric_3"
+
+
 # meta data file paths
 PACKAGE_DIR = Path(__file__).parent / "algorithms"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = (
@@ -32,9 +36,13 @@ ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = (
 MENINGIOMA_SEGMENTATION_ALGORITHMS = (
     PACKAGE_DIR / "meningioma_segmentation_algorithms.yml"
 )
+PEDIATRIC_SEGMENTATION_ALGORITHMS = (
+    PACKAGE_DIR / "pediatric_segmentation_algorithms.yml"
+)
 
 # name formats
 # All algorithms are designed to work with the following input file name format (validation set),
 # hence all processed files will be mapped to the respective name space to ensure compatibility.
 ADULT_GLIOMA_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
 MENINGIOMA_INPUT_NAME_SCHEMA = "BraTS-MEN-{id:05d}-000"
+PEDIATRIC_INPUT_NAME_SCHEMA = "BraTS-PED-{id:05d}-000"
