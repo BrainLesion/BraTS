@@ -102,11 +102,11 @@ def run_docker(
     cuda_devices: str,
     force_cpu: bool,
 ):
-    """Run the docker container with the provided data and output paths.
+    """Run a docker container for the provided algorithm.
 
     Args:
-        algorithm (AlgorithmData): The algorithm to run
-        data_path (Path | str): The path to the data
+        algorithm (AlgorithmData): The data of the algorithm to run
+        data_path (Path | str): The path to the input data
         output_path (Path | str): The path to save the output
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution

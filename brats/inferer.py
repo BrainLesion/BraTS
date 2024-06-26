@@ -8,17 +8,16 @@ from pathlib import Path
 from typing import Optional
 
 from brats.constants import (
-    ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_INPUT_NAME_SCHEMA,
+    ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_INPUT_NAME_SCHEMA,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     AdultGliomaAlgorithmKeys,
-    MeningiomaAlgorithmKeys,
     AlgorithmKeys,
+    MeningiomaAlgorithmKeys,
 )
 from brats.data import load_algorithms, standardize_subject_inputs
 from brats.docker import run_docker
-
 
 # configure logging
 logger = logging.getLogger(__name__)
