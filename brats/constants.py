@@ -2,27 +2,20 @@ from enum import Enum
 from pathlib import Path
 
 
-class AdultGliomaAlgorithmKeys(str, Enum):
+class AlgorithmKeys(str, Enum):
+    pass
+
+
+class AdultGliomaAlgorithmKeys(AlgorithmKeys):
     BraTS23_glioma_faking_it = "BraTS23_glioma_faking_it"
     BraTS23_glioma_nvauto = "BraTS23_glioma_nvauto"
     BraTS23_glioma_biomedmbz = "BraTS23_glioma_biomedmbz"
 
 
-class MeningiomaAlgorithmKeys(str, Enum):
+class MeningiomaAlgorithmKeys(AlgorithmKeys):
     BraTS23_meningioma_nvauto = "BraTS23_meningioma_nvauto"
     BraTS23_meningioma_blackbean = "BraTS23_meningioma_blackbean"
     BraTS23_meningioma_CNMC_PMI2023 = "BraTS23_meningioma_CNMC_PMI2023"
-
-
-class Device(str, Enum):
-    """Enum representing device for model inference."""
-
-    CPU = "cpu"
-    """Use CPU"""
-    GPU = "cuda"
-    """Use GPU (CUDA)"""
-    AUTO = "auto"
-    """Attempt to use GPU, fallback to CPU."""
 
 
 # meta data file paths
@@ -35,5 +28,7 @@ MENINGIOMA_SEGMENTATION_ALGORITHMS = (
 )
 
 # name formats
+# All algorithms are designed to work with the following input file name format (validation set),
+# hence all processed files will be mapped to the respective name space to ensure compatibility.
 ADULT_GLIOMA_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
 MENINGIOMA_INPUT_NAME_SCHEMA = "BraTS-MEN-{id:05d}-000"

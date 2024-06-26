@@ -3,10 +3,12 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+import subprocess
+from typing import Dict, List
 
 import docker
 from brats.data import AlgorithmData
-from brats.utils import check_model_weights, get_dummy_weights_path
+from brats.weights import check_model_weights, get_dummy_weights_path
 from halo import Halo
 from rich.progress import Progress
 
@@ -15,7 +17,14 @@ logger = logging.getLogger(__name__)
 client = docker.from_env()
 
 
-def show_progress(tasks, line, progress: Progress):
+def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
+    """Show the progress of a docker pull operation.
+
+    Args:
+        tasks (Dict): The tasks to update
+        progress (Progress): The progress bar to update
+        line (Dict): the next line from docker.client.api.pull stream
+    """
     if line["status"] == "Downloading":
         task_key = f'[Download {line["id"]}]'
     elif line["status"] == "Extracting":
@@ -32,21 +41,76 @@ def show_progress(tasks, line, progress: Progress):
 
 
 def _ensure_image(image: str):
+    """Ensure the docker image is present on the system. If not, pull it.
+
+    Args:
+        image (str): The docker image to pull
+    """
     if not client.images.list(name=image):
         logger.info(f"Pulling docker image {image}")
         tasks = {}
         with Progress() as progress:
             resp = client.api.pull(image, stream=True, decode=True)
             for line in resp:
-                show_progress(tasks, line, progress)
+                _show_docker_pull_progress(tasks, line, progress)
 
 
-def _run_docker(
+def _is_cuda_available() -> bool:
+    """Check if CUDA is available on the system by trying to run nvidia-smi."""
+    try:
+        # Attempt to run `nvidia-smi` to check for CUDA.
+        # This command should run successfully if NVIDIA drivers are installed and GPUs are present.
+        subprocess.run(
+            ["nvidia-smi"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
+        return True
+    except:
+        return False
+
+
+def _handle_device_requests(
+    algorithm: AlgorithmData, cuda_devices: str, force_cpu: bool
+) -> List[docker.types.DeviceRequest]:
+    """Handle the device requests for the docker container (request cuda or cpu).
+
+    Args:
+        algorithm (AlgorithmData): Algorithm data
+        cuda_devices (str): The CUDA devices to use
+        force_cpu (bool): Whether to force CPU execution
+    """
+    cuda_available = _is_cuda_available()
+    if not cuda_available or force_cpu:
+        if not algorithm.run_args.cpu_compatible:
+            raise Exception(
+                f"No Cuda installation/ GPU was found and the chosen algorithm is not compatible with CPU. Aborting..."
+            )
+        # empty device requests => run on CPU
+        return []
+    # request gpu with chosen devices
+    return [
+        docker.types.DeviceRequest(device_ids=[cuda_devices], capabilities=[["gpu"]])
+    ]
+
+
+def run_docker(
     algorithm: AlgorithmData,
     data_path: Path | str,
     output_path: Path | str,
     cuda_devices: str,
+    force_cpu: bool,
 ):
+    """Run the docker container with the provided data and output paths.
+
+    Args:
+        algorithm (AlgorithmData): The algorithm to run
+        data_path (Path | str): The path to the data
+        output_path (Path | str): The path to save the output
+        cuda_devices (str): The CUDA devices to use
+        force_cpu (bool): Whether to force CPU execution
+    """
 
     # ensure image is present, if not pull it
     _ensure_image(algorithm.run_args.docker_image)
@@ -57,7 +121,7 @@ def _run_docker(
             record_id=algorithm.weights.record_id
         )
     else:
-        # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for paramter files etc.
+        # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for parameter files etc.
         additional_files_path = get_dummy_weights_path()
 
     # ensure output folder exists
@@ -77,6 +141,7 @@ def _run_docker(
     logger.info(f"Docker image: {algorithm.run_args.docker_image}")
     logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
 
+    # Build command that will be run in the docker container
     command_args = (
         f"--data_path=/mlcube_io0 --{algorithm.weights.param_name}=/mlcube_io1 --output_path=/mlcube_io2"
         if algorithm.weights is not None
@@ -96,16 +161,16 @@ def _run_docker(
         # also overall better security-wise
         extra_args["user"] = f"{os.getuid()}:{os.getgid()}"
 
+    # device setup
+    device_requests = _handle_device_requests(
+        algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
+    )
+
     # Run the container
     container = client.containers.run(
         image=algorithm.run_args.docker_image,
         volumes=volume_mappings,
-        # TODO: how to support CPU?
-        device_requests=[
-            docker.types.DeviceRequest(
-                device_ids=[cuda_devices], capabilities=[["gpu"]]
-            )
-        ],
+        device_requests=device_requests,
         # Constant params for the docker execution dictated by the mlcube format
         command=f"infer {command_args}",
         network_mode="none",
@@ -134,5 +199,7 @@ def _run_docker(
         raise Exception("Container finished with an error. See logs above for details.")
     else:
         spinner.stop_and_persist(symbol="✔", text="Inference done.")
+
+    # TODO add option to print/ save container output
 
     logger.info(f"{' Finished inference ':-^80}")

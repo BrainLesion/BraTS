@@ -20,6 +20,7 @@ algorithms:
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"
+      cpu_compatible: true
       
   BraTS23_meningioma_CNMC_PMI2023:
     meta:
@@ -31,3 +32,4 @@ algorithms:
       requires_root: true
       parameters_file: false 
       shm_size: "2gb"
+      
