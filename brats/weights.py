@@ -16,10 +16,12 @@ logger = logging.getLogger(__name__)
 ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
 WEIGHTS_FOLDER = Path(__file__).parent / "weights"
 
+
 def get_dummy_weights_path() -> Path:
     dummy = WEIGHTS_FOLDER / "dummy"
     dummy.mkdir(exist_ok=True, parents=True)
     return dummy
+
 
 def check_model_weights(record_id: str) -> Path:
     """Check if latest model weights are present and download them otherwise.
