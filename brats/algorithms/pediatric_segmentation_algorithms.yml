@@ -1,5 +1,5 @@
 algorithms:
-  # BraTS23_pediatric_nvauto:
+  # BraTS23_1:
   #   meta:
   #     authors: Andriy Myronenko, et al.
   #     paper: N/A
@@ -11,7 +11,7 @@ algorithms:
   #     shm_size: "32gb"
 
       
-  # BraTS23_pediatric_CNMC_PMI2023:
+  # BraTS23_2:
   #   meta:
   #     authors: Zhifan Jiang et al.
   #     paper: N/A
@@ -22,7 +22,7 @@ algorithms:
   #     parameters_file: false 
   #     shm_size: "2gb"
       
-  BraTS23_pediatric_3:
+  BraTS23_3:
     meta:
       authors: Yubo Zhou
       paper: N/A

@@ -1,6 +1,6 @@
 algorithms:
 
-  BraTS23_glioma_faking_it:
+  BraTS23_1:
     meta:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
@@ -11,7 +11,7 @@ algorithms:
       parameters_file: false
       shm_size: "2gb"
 
-  BraTS23_glioma_nvauto:
+  BraTS23_2:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
@@ -22,7 +22,7 @@ algorithms:
       parameters_file: true
       shm_size: "32gb"
 
-  BraTS23_glioma_biomedmbz:
+  BraTS23_3:
     meta:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A

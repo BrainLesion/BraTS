@@ -1,9 +1,9 @@
 from pathlib import Path
 from brats.inferer import AdultGliomaInferer, MeningiomaInferer, PediatricInferer
 from brats.constants import (
-    AdultGliomaAlgorithmKeys,
-    MeningiomaAlgorithmKeys,
-    PediatricAlgorithmKeys,
+    AdultGliomaAlgorithms,
+    MeningiomaAlgorithms,
+    PediatricAlgorithms,
 )
 
 
@@ -20,7 +20,7 @@ from brats.constants import (
 # import time
 
 # start = time.time()
-# alg = MeningiomaAlgorithmKeys.BraTS23_meningioma_blackbean
+# alg = MeningiomaAlgorithms.BraTS23_2
 # inferer = MeningiomaInferer(algorithm=alg, cuda_devices="0")
 
 # base = Path("/home/marcelrosier/brats_data/adult_meningioma/BraTS-MEN-00000-000")
@@ -35,8 +35,8 @@ from brats.constants import (
 
 
 # pediatric
-alg = PediatricAlgorithmKeys.BraTS23_pediatric_3
-inferer = PediatricInferer(algorithm=alg, cuda_devices="0")
+alg = PediatricAlgorithms.BraTS23_3
+inferer = PediatricInferer(algorithm=alg, cuda_devices="0", force_cpu=True)
 
 base = Path("/home/marcelrosier/brats_data/pediatric/BraTS-PED-00030-000")
 inferer.infer_single(

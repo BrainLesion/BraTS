@@ -14,10 +14,10 @@ from brats.constants import (
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_INPUT_NAME_SCHEMA,
-    AdultGliomaAlgorithmKeys,
-    AlgorithmKeys,
-    MeningiomaAlgorithmKeys,
-    PediatricAlgorithmKeys,
+    Algorithms,
+    AdultGliomaAlgorithms,
+    MeningiomaAlgorithms,
+    PediatricAlgorithms,
 )
 from brats.data import load_algorithms, standardize_subject_inputs
 from brats.docker import run_docker
@@ -34,7 +34,7 @@ logging.basicConfig(
 class BraTSInferer(ABC):
     def __init__(
         self,
-        algorithm: AlgorithmKeys,
+        algorithm: Algorithms,
         algorithms_file_path: Path,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
@@ -150,7 +150,7 @@ class AdultGliomaInferer(BraTSInferer):
 
     def __init__(
         self,
-        algorithm: AdultGliomaAlgorithmKeys = AdultGliomaAlgorithmKeys.BraTS23_glioma_faking_it,
+        algorithm: AdultGliomaAlgorithms = AdultGliomaAlgorithms.BraTS23_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
@@ -160,6 +160,7 @@ class AdultGliomaInferer(BraTSInferer):
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
+        # TODO move to parent init
         logger.info(
             f"Instantiated AdultGliomaInferer class with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
         )
@@ -198,7 +199,7 @@ class MeningiomaInferer(BraTSInferer):
 
     def __init__(
         self,
-        algorithm: MeningiomaAlgorithmKeys = MeningiomaAlgorithmKeys.BraTS23_meningioma_nvauto,
+        algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS23_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
@@ -237,7 +238,7 @@ class PediatricInferer(BraTSInferer):
 
     def __init__(
         self,
-        algorithm: PediatricAlgorithmKeys,
+        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS23_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
