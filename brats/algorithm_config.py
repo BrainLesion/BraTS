@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from pathlib import Path
 import shutil
 from typing import Dict, Optional
+from brats.exceptions import AlgorithmConfigException
 
 import yaml
-from dacite import from_dict
+from dacite import DaciteError, from_dict
 
 
 @dataclass
@@ -80,8 +81,12 @@ def load_algorithms(file_path: Path) -> Dict[str, AlgorithmData]:
     except FileNotFoundError:
         raise FileNotFoundError("Algorithm meta data file not found")
 
-    # Convert the dictionary to the dataclass
-    return from_dict(data_class=AlgorithmList, data=data).algorithms
+    try:
+        # Convert the dictionary to the dataclass
+        algorithms = from_dict(data_class=AlgorithmList, data=data).algorithms
+    except DaciteError as e:
+        raise AlgorithmConfigException(f"Error loading algorithm data: {e}")
+    return algorithms
 
 
 def standardize_subject_inputs(

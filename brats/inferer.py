@@ -19,7 +19,7 @@ from brats.constants import (
     MeningiomaAlgorithms,
     PediatricAlgorithms,
 )
-from brats.data import load_algorithms, standardize_subject_inputs
+from brats.algorithm_config import load_algorithms, standardize_subject_inputs
 from brats.docker import run_docker
 
 # configure logging

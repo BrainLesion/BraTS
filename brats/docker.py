@@ -10,7 +10,7 @@ import docker
 from halo import Halo
 from rich.progress import Progress
 
-from brats.data import AlgorithmData
+from brats.algorithm_config import AlgorithmData
 from brats.weights import check_model_weights, get_dummy_weights_path
 from brats.exceptions import CPUNotCompatibleException
 
