@@ -4,7 +4,7 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import docker
 from halo import Halo
@@ -101,52 +101,59 @@ def _handle_device_requests(
     ]
 
 
-def run_docker(
-    algorithm: AlgorithmData,
-    data_path: Path | str,
-    output_path: Path | str,
-    cuda_devices: str,
-    force_cpu: bool,
-):
-    """Run a docker container for the provided algorithm.
+def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
+    """Get the path to the additional files for @algorithm.
 
     Args:
-        algorithm (AlgorithmData): The data of the algorithm to run
-        data_path (Path | str): The path to the input data
-        output_path (Path | str): The path to save the output
-        cuda_devices (str): The CUDA devices to use
-        force_cpu (bool): Whether to force CPU execution
+        algorithm (AlgorithmData): The algorithm data
+
+    Returns:
+        Path to the additional files
     """
-
-    # ensure image is present, if not pull it
-    _ensure_image(algorithm.run_args.docker_image)
-
     # ensure weights are present and get path
     if algorithm.weights is not None:
-        additional_files_path = check_model_weights(
-            record_id=algorithm.weights.record_id
-        )
+        return check_model_weights(record_id=algorithm.weights.record_id)
     else:
         # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for parameter files etc.
-        additional_files_path = get_dummy_weights_path()
+        return get_dummy_weights_path()
 
-    # ensure output folder exists
-    Path(output_path).mkdir(parents=True, exist_ok=True)
 
-    # data = mlcube_io0, weights = mlcube_io1, output = mlcube_io2
+def _get_volume_mappings(
+    data_path: Path, additional_files_path: Path, output_path: Path
+) -> Dict:
+    """Get the volume mappings for the docker container.
+
+    Args:
+        data_path (Path): The path to the input data
+        additional_files_path (Path): The path to the additional files
+        output_path (Path): The path to save the output
+
+    Returns:
+        Dict: The volume mappings
+    """
     # TODO: add support for recommended "ro" mount mode for input data
-    volume_mappings = {
-        Path(v).absolute(): {
+    # data = mlcube_io0, additional files = mlcube_io1, output = mlcube_io2
+    return {
+        volume.absolute(): {
             "bind": f"/mlcube_io{i}",
             "mode": "rw",
         }
-        for i, v in enumerate([data_path, additional_files_path, output_path])
+        for i, volume in enumerate([data_path, additional_files_path, output_path])
     }
 
-    logger.info(f"{' Starting inference ':-^80}")
-    logger.info(f"Docker image: {algorithm.run_args.docker_image}")
-    logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
 
+def _build_args(
+    algorithm: AlgorithmData, additional_files_path: Path
+) -> Tuple[str, str]:
+    """Build the command and extra arguments for the docker container.
+
+    Args:
+        algorithm (AlgorithmData): The algorithm data
+        additional_files_path (Path): The path to the additional files
+
+    Returns:
+        command_args, extra_args (Tuple): The command arguments and extra arguments
+    """
     # Build command that will be run in the docker container
     command_args = (
         f"--data_path=/mlcube_io0 --{algorithm.weights.param_name}=/mlcube_io1 --output_path=/mlcube_io2"
@@ -155,8 +162,8 @@ def run_docker(
     )
 
     if algorithm.run_args.parameters_file:
-        # The algorithms do not seem to actually use the parameters file  for inference but just need it to exist
-        # so we create an empty file
+        # The algorithms that need a parameters file do not seem to actually use it but just need it to exist
+        # As a workaround we simply create an empty file
         parameters_file = additional_files_path / "parameters.yaml"
         parameters_file.touch()
         command_args += f" --parameters_file=/mlcube_io1/parameters.yaml"
@@ -167,25 +174,15 @@ def run_docker(
         # also overall better security-wise
         extra_args["user"] = f"{os.getuid()}:{os.getgid()}"
 
-    # device setup
-    device_requests = _handle_device_requests(
-        algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
-    )
+    return command_args, extra_args
 
-    # Run the container
-    container = client.containers.run(
-        image=algorithm.run_args.docker_image,
-        volumes=volume_mappings,
-        device_requests=device_requests,
-        # Constant params for the docker execution dictated by the mlcube format
-        command=f"infer {command_args}",
-        network_mode="none",
-        detach=True,
-        remove=True,
-        shm_size=algorithm.run_args.shm_size,
-        **extra_args,
-    )
 
+def _observe_docker_output(container: docker.models.containers.Container):
+    """Observe the output of a running docker container and display a spinner. On Errors log container output.
+
+    Args:
+        container (docker.models.containers.Container): The container to observe
+    """
     # capture the output
     container_output = container.attach(
         stdout=True, stderr=True, stream=True, logs=True
@@ -207,5 +204,64 @@ def run_docker(
         spinner.stop_and_persist(symbol="✔", text="Inference done.")
 
     # TODO add option to print/ save container output
+
+
+def run_docker(
+    algorithm: AlgorithmData,
+    data_path: Path,
+    output_path: Path,
+    cuda_devices: str,
+    force_cpu: bool,
+):
+    """Run a docker container for the provided algorithm.
+
+    Args:
+        algorithm (AlgorithmData): The data of the algorithm to run
+        data_path (Path | str): The path to the input data
+        output_path (Path | str): The path to save the output
+        cuda_devices (str): The CUDA devices to use
+        force_cpu (bool): Whether to force CPU execution
+    """
+
+    # ensure image is present, if not pull it
+    _ensure_image(image=algorithm.run_args.docker_image)
+
+    additional_files_path = _get_additional_files_path(algorithm)
+
+    # ensure output folder exists
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    volume_mappings = _get_volume_mappings(
+        data_path=data_path,
+        additional_files_path=additional_files_path,
+        output_path=output_path,
+    )
+
+    logger.info(f"{' Starting inference ':-^80}")
+    logger.info(f"Docker image: {algorithm.run_args.docker_image}")
+    logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
+
+    command_args, extra_args = _build_args(
+        algorithm=algorithm, additional_files_path=additional_files_path
+    )
+
+    # device setup
+    device_requests = _handle_device_requests(
+        algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
+    )
+
+    # Run the container
+    container = client.containers.run(
+        image=algorithm.run_args.docker_image,
+        volumes=volume_mappings,
+        device_requests=device_requests,
+        command=f"infer {command_args}",
+        network_mode="none",
+        detach=True,
+        remove=True,
+        shm_size=algorithm.run_args.shm_size,
+        **extra_args,
+    )
+    _observe_docker_output(container=container)
 
     logger.info(f"{' Finished inference ':-^80}")

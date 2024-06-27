@@ -133,7 +133,8 @@ class BraTSInferer(ABC):
         """
 
         # map to brats names
-
+        data_folder = Path(data_folder)
+        output_folder = Path(output_folder)
         # infer
         run_docker(
             algorithm=self.algorithm,
