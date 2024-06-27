@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import logging
 import os
-from pathlib import Path
 import subprocess
+from pathlib import Path
 from typing import Dict, List
 
 import docker
-from brats.data import AlgorithmData
-from brats.weights import check_model_weights, get_dummy_weights_path
 from halo import Halo
 from rich.progress import Progress
 
+from brats.data import AlgorithmData
+from brats.weights import check_model_weights, get_dummy_weights_path
+from brats.exceptions import CPUNotCompatibleException
 
 logger = logging.getLogger(__name__)
 client = docker.from_env()
@@ -84,8 +85,13 @@ def _handle_device_requests(
     cuda_available = _is_cuda_available()
     if not cuda_available or force_cpu:
         if not algorithm.run_args.cpu_compatible:
-            raise Exception(
-                f"No Cuda installation/ GPU was found and the chosen algorithm is not compatible with CPU. Aborting..."
+            cause = (
+                "User tried to force CPU execution but"
+                if cuda_available
+                else "No Cuda installation/ GPU was found and"
+            )
+            raise CPUNotCompatibleException(
+                f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
         # empty device requests => run on CPU
         return []
