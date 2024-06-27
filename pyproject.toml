@@ -6,10 +6,13 @@ build-backend = "poetry_dynamic_versioning.backend"
 enable = true
 
 [tool.poetry]
-name = ""
+name = "brainles_brats"
 version = "0.0.0"
-description = ""
-authors = ["Florian Kofler <florian.kofler@tum.de>"]
+description = "BraTS algorithms"
+authors = [
+  "Marcel Rosier <marcel.rosier@tum.de>",
+  "Florian Kofler <florian.kofler@tum.de>",
+]
 #repository = ""
 #homepage = ""
 #documentation = ""
