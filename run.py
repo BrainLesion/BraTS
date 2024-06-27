@@ -35,8 +35,8 @@ from brats.constants import (
 
 
 # pediatric
-alg = PediatricAlgorithms.BraTS23_3
-inferer = PediatricInferer(algorithm=alg, cuda_devices="0", force_cpu=True)
+alg = PediatricAlgorithms.BraTS23_1
+inferer = PediatricInferer(algorithm=alg, cuda_devices="0")
 
 base = Path("/home/marcelrosier/brats_data/pediatric/BraTS-PED-00030-000")
 inferer.infer_single(
