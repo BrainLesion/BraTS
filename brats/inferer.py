@@ -7,20 +7,21 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional
 
+from brats.algorithm_config import load_algorithms
 from brats.constants import (
     ADULT_GLIOMA_INPUT_NAME_SCHEMA,
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_INPUT_NAME_SCHEMA,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
-    PEDIATRIC_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_INPUT_NAME_SCHEMA,
-    Algorithms,
+    PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaAlgorithms,
+    Algorithms,
     MeningiomaAlgorithms,
     PediatricAlgorithms,
 )
-from brats.algorithm_config import load_algorithms, standardize_subject_inputs
 from brats.docker import run_docker
+from brats.utils import standardize_subject_inputs
 
 # configure logging
 logger = logging.getLogger(__name__)
