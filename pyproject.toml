@@ -6,7 +6,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 enable = true
 
 [tool.poetry]
-name = "brainles_brats"
+name = "brats"
 version = "0.0.0"
 description = "BraTS algorithms"
 authors = [
