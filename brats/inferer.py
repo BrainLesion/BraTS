@@ -50,6 +50,10 @@ class BraTSInferer(ABC):
         # data for selected algorithm
         self.algorithm = self.algorithm_list[algorithm.value]
 
+        logger.info(
+            f"Instantiated {self.__class__.__name__} with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
+        )
+
     @abstractmethod
     def infer_single():
         pass
@@ -161,10 +165,6 @@ class AdultGliomaInferer(BraTSInferer):
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
-        # TODO move to parent init
-        logger.info(
-            f"Instantiated AdultGliomaInferer class with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
-        )
 
     def infer_single(
         self,
@@ -210,9 +210,6 @@ class MeningiomaInferer(BraTSInferer):
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
-        logger.info(
-            f"Instantiated MeningiomaInferer class with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
-        )
 
     def infer_single(
         self,
@@ -248,9 +245,6 @@ class PediatricInferer(BraTSInferer):
             algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
-        )
-        logger.info(
-            f"Instantiated PediatricInferer class with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
         )
 
     def infer_single(
