@@ -34,21 +34,18 @@ class PediatricAlgorithms(Algorithms):
     """Constants for the available pediatric segmentation algorithms."""
 
     BraTS23_1 = "BraTS23_1"
+    """BraTS23 Pediatric Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
+    """BraTS23 Pediatric Segmentation 2nd place (GPU only)"""
     BraTS23_3 = "BraTS23_3"
+    """BraTS23 Pediatric Segmentation 3rd place (GPU only)"""
 
 
 # meta data file paths
 ALGORITHM_DIR = Path(__file__).parent / "algorithms"
-ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = (
-    ALGORITHM_DIR / "adult_glioma_segmentation_algorithms.yml"
-)
-MENINGIOMA_SEGMENTATION_ALGORITHMS = (
-    ALGORITHM_DIR / "meningioma_segmentation_algorithms.yml"
-)
-PEDIATRIC_SEGMENTATION_ALGORITHMS = (
-    ALGORITHM_DIR / "pediatric_segmentation_algorithms.yml"
-)
+ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
+MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
+PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
 
 # name formats
 # All algorithms are designed to work with the following input file name format (validation set),
