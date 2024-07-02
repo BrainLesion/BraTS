@@ -161,3 +161,4 @@ cython_debug/
 
 brats/weights
 workspace
+.vscode
