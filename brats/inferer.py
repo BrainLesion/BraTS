@@ -23,14 +23,14 @@ from brats.constants import (
 )
 from brats.docker import run_docker
 from brats.utils import standardize_subject_inputs
+import sys
 
-# configure logging
-# logger = logging.getLogger(__name__)
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format="[%(levelname)s] %(asctime)s: %(message)s",
-#     datefmt="%Y-%m-%d %H:%M:%S%z",
-# )
+logger.remove(0)  # remove default stderr logger in order to add custom
+logger.add(
+    sys.stderr,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+    level="INFO",
+)
 
 
 class BraTSInferer(ABC):
@@ -64,6 +64,18 @@ class BraTSInferer(ABC):
     def infer_batch():
         pass
 
+    def _log_algorithm_info(self):
+        """Log information about the selected algorithm."""
+        logger.opt(colors=True).info(
+            f"Running algorithm: <light-green>{self.algorithm.meta.challenge}</>"
+        )
+        logger.opt(colors=True).info(
+            f"<blue>(Docker image)</>: {self.algorithm.run_args.docker_image}"
+        )
+        logger.opt(colors=True).info(
+            f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
+        )
+
     def _infer_single(
         self,
         t1c: Path | str,
@@ -72,6 +84,7 @@ class BraTSInferer(ABC):
         t2w: Path | str,
         output_file: Path | str,
         subject_format: str,
+        log_file: Path | str = None,
     ):
         """Perform inference on a single subject with the provided images and save the segmentation to the output file.
 
@@ -82,11 +95,19 @@ class BraTSInferer(ABC):
             t2w (Path | str): Path to the T2w image
             output_file (Path | str): Path to save the segmentation
             subject_format (str): Format string for the subject id
+            log_file (Path | str): Save logs to this file
         """
         # setup temp input folder with the provided images
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
+        if log_file is not None:
+            inference_log_file = logger.add(log_file, level="INFO")
+
         try:
+            logger.info(f"Performing single inference ")
+
+            if log_file is not None:
+                logger.info(f"Logging to: {log_file}")
             # for a single inference we use a fixed subject id since it is renamed to the desired output afterwards
             subject_id = subject_format.format(id=0)
             standardize_subject_inputs(
@@ -98,9 +119,7 @@ class BraTSInferer(ABC):
                 t2w=t2w,
             )
 
-            logger.info(
-                f"Running algorithm: {self.algorithm_key} from challenge: {self.algorithm.meta.challenge}"
-            )
+            self._log_algorithm_info()
             run_docker(
                 algorithm=self.algorithm,
                 data_path=temp_data_folder,
@@ -115,10 +134,13 @@ class BraTSInferer(ABC):
             output_file = Path(output_file).absolute()
             output_file.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(segmentation, output_file)
+            logger.info(f"Saved segmentation to: {output_file}")
 
         finally:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
+            if log_file is not None:
+                logger.remove(inference_log_file)
 
     def _infer_batch(self, data_folder: Path | str, output_folder: Path | str):
         """Infer all subjects in a folder. requires the following structure:

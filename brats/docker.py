@@ -221,10 +221,10 @@ def run_docker(
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
     """
-
     # ensure image is present, if not pull it
     _ensure_image(image=algorithm.run_args.docker_image)
 
+    # Log the message
     additional_files_path = _get_additional_files_path(algorithm)
 
     # ensure output folder exists
@@ -236,9 +236,7 @@ def run_docker(
         output_path=output_path,
     )
 
-    logger.info(f"{' Starting inference ':-^80}")
-    logger.info(f"Docker image: {algorithm.run_args.docker_image}")
-    logger.info(f"Consider citing the corresponding paper: {algorithm.meta.paper}")
+    logger.info(f"{'Starting inference'}")
 
     command_args, extra_args = _build_args(
         algorithm=algorithm, additional_files_path=additional_files_path
@@ -263,4 +261,4 @@ def run_docker(
     )
     _observe_docker_output(container=container)
 
-    logger.info(f"{' Finished inference ':-^80}")
+    logger.info(f"{'Finished inference'}")
