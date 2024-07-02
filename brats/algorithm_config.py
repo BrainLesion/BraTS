@@ -26,6 +26,8 @@ class RunArgs:
 
     docker_image: str
     """The Docker image containing the algorithm"""
+    input_name_schema: str
+    """The input name schema for the algorithm"""
     parameters_file: bool
     """Whether the algorithm requires a parameters file"""
     requires_root: bool

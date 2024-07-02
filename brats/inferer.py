@@ -22,18 +22,20 @@ from brats.constants import (
     PediatricAlgorithms,
 )
 from brats.docker import run_docker
-from brats.utils import standardize_subject_inputs
+from brats.utils import standardize_subject_inputs, handle_signals
 import sys
 
+# logger setup
 logger.remove(0)  # remove default stderr logger in order to add custom
 logger.add(
     sys.stderr,
     format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>",
     level="INFO",
 )
+handle_signals()
 
 
-class BraTSInferer(ABC):
+class BraTSInferer:
     def __init__(
         self,
         algorithm: Algorithms,
@@ -56,14 +58,6 @@ class BraTSInferer(ABC):
             f"Instantiated {self.__class__.__name__} with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
         )
 
-    @abstractmethod
-    def infer_single():
-        pass
-
-    @abstractmethod
-    def infer_batch():
-        pass
-
     def _log_algorithm_info(self):
         """Log information about the selected algorithm."""
         logger.opt(colors=True).info(
@@ -76,17 +70,16 @@ class BraTSInferer(ABC):
             f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
         )
 
-    def _infer_single(
+    def infer_single(
         self,
         t1c: Path | str,
         t1n: Path | str,
         t2f: Path | str,
         t2w: Path | str,
         output_file: Path | str,
-        subject_format: str,
-        log_file: Path | str = None,
+        log_file: Optional[Path | str] = None,
     ):
-        """Perform inference on a single subject with the provided images and save the segmentation to the output file.
+        """Perform inference on a single subject with the provided images and save the result to the output file.
 
         Args:
             t1c (Path | str): Path to the T1c image
@@ -94,22 +87,21 @@ class BraTSInferer(ABC):
             t2f (Path | str): Path to the T2f image
             t2w (Path | str): Path to the T2w image
             output_file (Path | str): Path to save the segmentation
-            subject_format (str): Format string for the subject id
-            log_file (Path | str): Save logs to this file
+            log_file (Path | str, optional): Save logs to this file
         """
         # setup temp input folder with the provided images
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file is not None:
             inference_log_file = logger.add(log_file, level="INFO")
+            logger.info(f"Logging to: {log_file}")
 
         try:
             logger.info(f"Performing single inference ")
 
-            if log_file is not None:
-                logger.info(f"Logging to: {log_file}")
-            # for a single inference we use a fixed subject id since it is renamed to the desired output afterwards
-            subject_id = subject_format.format(id=0)
+            # the id here is arbitrary
+            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
+
             standardize_subject_inputs(
                 data_folder=temp_data_folder,
                 subject_id=subject_id,
@@ -142,8 +134,14 @@ class BraTSInferer(ABC):
             if log_file is not None:
                 logger.remove(inference_log_file)
 
-    def _infer_batch(self, data_folder: Path | str, output_folder: Path | str):
-        """Infer all subjects in a folder. requires the following structure:
+    def infer_batch(
+        self,
+        data_folder: Path | str,
+        output_folder: Path | str,
+        log_file: Optional[Path | str] = None,
+    ):
+        """Perform segmentation on a batch of subjects with the provided images and save the segmentations to the output folder. \n
+        Requires the following structure:\n
         data_folder\n
         ┣ A\n
         ┃ ┣ A-t1c.nii.gz\n
@@ -156,23 +154,62 @@ class BraTSInferer(ABC):
 
 
         Args:
-            data_folder (Path | str): _description_
-            output_folder (Path | str): _description_
+            data_folder (Path | str): Folder containing the subjects with required structure
+            output_folder (Path | str): Output folder to save the segmentations
+            log_file (Path | str, optional): Save logs to this file
         """
 
-        # map to brats names
         data_folder = Path(data_folder)
         output_folder = Path(output_folder)
-        # infer
-        run_docker(
-            algorithm=self.algorithm,
-            data_path=data_folder,
-            output_path=output_folder,
-            cuda_devices=self.cuda_devices,
-            force_cpu=self.force_cpu,
-        )
 
-        # rename outputs
+        temp_data_folder = Path(tempfile.mkdtemp())
+        temp_output_folder = Path(tempfile.mkdtemp())
+        if log_file:
+            inference_log_file = logger.add(log_file, level="INFO")
+            logger.info(f"Logging to: {log_file}")
+        try:
+            self._log_algorithm_info()
+            # find subjects
+            subjects = [f for f in data_folder.iterdir() if f.is_dir()]
+            logger.info(
+                f"Found {len(subjects)} subjects: {', '.join([s.name for s in subjects][:5])} {' ...' if len(subjects) > 5 else '' }"
+            )
+            # map to brats names
+            subject_id_name_map = {}
+            for i, subject in enumerate(subjects):
+                subject_id = self.algorithm.run_args.input_name_schema.format(id=i)
+                subject_id_name_map[subject_id] = subject.name
+                # TODO Add support for .nii files
+                standardize_subject_inputs(
+                    data_folder=temp_data_folder,
+                    subject_id=subject_id,
+                    t1c=subject / f"{subject.name}-t1c.nii.gz",
+                    t1n=subject / f"{subject.name}-t1n.nii.gz",
+                    t2f=subject / f"{subject.name}-t2f.nii.gz",
+                    t2w=subject / f"{subject.name}-t2w.nii.gz",
+                )
+
+            # infer
+            run_docker(
+                algorithm=self.algorithm,
+                data_path=temp_data_folder,
+                output_path=temp_output_folder,
+                cuda_devices=self.cuda_devices,
+                force_cpu=self.force_cpu,
+            )
+            # move outputs and change name
+            count = 0
+            for subject_id, subject_name in subject_id_name_map.items():
+                segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
+                output_file = output_folder / f"{subject_name}.nii.gz"
+                shutil.move(segmentation, output_file)
+                count += 1
+            logger.info(f"Saved segmentations to: {output_folder}")
+        finally:
+            shutil.rmtree(temp_data_folder)
+            shutil.rmtree(temp_output_folder)
+            if log_file:
+                logger.remove(inference_log_file)
 
 
 class AdultGliomaInferer(BraTSInferer):
@@ -190,35 +227,6 @@ class AdultGliomaInferer(BraTSInferer):
             force_cpu=force_cpu,
         )
 
-    def infer_single(
-        self,
-        t1c: Path | str,
-        t1n: Path | str,
-        t2f: Path | str,
-        t2w: Path | str,
-        output_file: Path | str,
-    ):
-        """Perform inference on a single subject with the provided images and save the segmentation to the output file.
-
-        Args:
-            t1c (Path | str): Path to the T1c image
-            t1n (Path | str): Path to the T1n image
-            t2f (Path | str): Path to the T2f image
-            t2w (Path | str): Path to the T2w image
-            output_file (Path | str): Path to save the segmentation
-        """
-        self._infer_single(
-            t1c=t1c,
-            t1n=t1n,
-            t2f=t2f,
-            t2w=t2w,
-            output_file=output_file,
-            subject_format=ADULT_GLIOMA_INPUT_NAME_SCHEMA,
-        )
-
-    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
-        self._infer_batch(data_folder=data_folder, output_folder=output_folder)
-
 
 class MeningiomaInferer(BraTSInferer):
 
@@ -235,26 +243,6 @@ class MeningiomaInferer(BraTSInferer):
             force_cpu=force_cpu,
         )
 
-    def infer_single(
-        self,
-        t1c: Path | str,
-        t1n: Path | str,
-        t2f: Path | str,
-        t2w: Path | str,
-        output_file: Path | str,
-    ):
-        self._infer_single(
-            t1c=t1c,
-            t1n=t1n,
-            t2f=t2f,
-            t2w=t2w,
-            output_file=output_file,
-            subject_format=MENINGIOMA_INPUT_NAME_SCHEMA,
-        )
-
-    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
-        self._infer_batch(data_folder=data_folder, output_folder=output_folder)
-
 
 class PediatricInferer(BraTSInferer):
 
@@ -270,23 +258,3 @@ class PediatricInferer(BraTSInferer):
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
-
-    def infer_single(
-        self,
-        t1c: Path | str,
-        t1n: Path | str,
-        t2f: Path | str,
-        t2w: Path | str,
-        output_file: Path | str,
-    ):
-        self._infer_single(
-            t1c=t1c,
-            t1n=t1n,
-            t2f=t2f,
-            t2w=t2w,
-            output_file=output_file,
-            subject_format=PEDIATRIC_INPUT_NAME_SCHEMA,
-        )
-
-    def infer_batch(self, data_folder: Path | str, output_folder: Path | str):
-        self._infer_batch(data_folder=data_folder, output_folder=output_folder)

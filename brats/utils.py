@@ -1,5 +1,9 @@
 import shutil
+import signal
+import sys
 from pathlib import Path
+
+from loguru import logger
 
 
 def standardize_subject_inputs(
@@ -35,3 +39,15 @@ def standardize_subject_inputs(
     shutil.copy(t1n, subject_folder / f"{subject_id}-t1n.nii.gz")
     shutil.copy(t2f, subject_folder / f"{subject_id}-t2f.nii.gz")
     shutil.copy(t2w, subject_folder / f"{subject_id}-t2w.nii.gz")
+
+
+def handle_signals():
+    """Handle signals to exit gracefully and log the signal received."""
+
+    def signal_handler(sig, frame):
+        signame = signal.Signals(sig).name
+        logger.error(f"Received signal {sig} ({signame}), exiting...")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
