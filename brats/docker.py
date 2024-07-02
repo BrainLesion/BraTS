@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 import subprocess
 from pathlib import Path
@@ -8,13 +7,13 @@ from typing import Dict, List, Tuple
 
 import docker
 from halo import Halo
+from loguru import logger
 from rich.progress import Progress
 
 from brats.algorithm_config import AlgorithmData
-from brats.weights import check_model_weights, get_dummy_weights_path
 from brats.exceptions import CPUNotCompatibleException
+from brats.weights import check_model_weights, get_dummy_weights_path
 
-logger = logging.getLogger(__name__)
 client = docker.from_env()
 
 

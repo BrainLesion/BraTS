@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import shutil
 import sys
 import zipfile
@@ -9,9 +8,8 @@ from pathlib import Path
 from typing import Dict, List
 
 import requests
+from loguru import logger
 from tqdm import tqdm
-
-logger = logging.getLogger(__name__)
 
 ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
 WEIGHTS_FOLDER = Path(__file__).parent / "weights"

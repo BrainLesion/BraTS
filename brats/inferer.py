@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import logging
 import shutil
 import tempfile
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional
+
+from loguru import logger
 
 from brats.algorithm_config import load_algorithms
 from brats.constants import (
@@ -24,12 +25,12 @@ from brats.docker import run_docker
 from brats.utils import standardize_subject_inputs
 
 # configure logging
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(levelname)s] %(asctime)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S%z",
-)
+# logger = logging.getLogger(__name__)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="[%(levelname)s] %(asctime)s: %(message)s",
+#     datefmt="%Y-%m-%d %H:%M:%S%z",
+# )
 
 
 class BraTSInferer(ABC):
