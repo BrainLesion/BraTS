@@ -7,6 +7,7 @@ algorithms:
       challenge: BraTS23 Adult Glioma Segmentation (1st place)
     run_args:
       docker_image: brainles/brats23_faking_it:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: true
       parameters_file: false
       shm_size: "2gb"
@@ -18,6 +19,7 @@ algorithms:
       challenge: BraTS23 Adult Glioma Segmentation (2nd place)
     run_args:
       docker_image: brainles/brats23_nvauto:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -29,6 +31,7 @@ algorithms:
       challenge: BraTS23 Adult Glioma Segmentation (3rd place)
     run_args:
       docker_image: brainles/brats23_biomedmbz:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
