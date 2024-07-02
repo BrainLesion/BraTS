@@ -46,13 +46,3 @@ ALGORITHM_DIR = Path(__file__).parent / "algorithms"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
-
-# name formats
-# All algorithms are designed to work with the following input file name format (validation set),
-# hence all processed files will be mapped to the respective name space to ensure compatibility.
-ADULT_GLIOMA_INPUT_NAME_SCHEMA = "BraTS-GLI-{id:05d}-000"
-"""Adult Glioma input file name schema. E.g. BraTS-GLI-00001-000"""
-MENINGIOMA_INPUT_NAME_SCHEMA = "BraTS-MEN-{id:05d}-000"
-"""Meningioma input file name schema. E.g. BraTS-MEN-00001-000"""
-PEDIATRIC_INPUT_NAME_SCHEMA = "BraTS-PED-{id:05d}-000"
-"""Pediatric input file name schema. E.g. BraTS-PED-00001-000"""

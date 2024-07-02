@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import shutil
 import tempfile
-from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional
 
@@ -10,11 +9,8 @@ from loguru import logger
 
 from brats.algorithm_config import load_algorithms
 from brats.constants import (
-    ADULT_GLIOMA_INPUT_NAME_SCHEMA,
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
-    MENINGIOMA_INPUT_NAME_SCHEMA,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
-    PEDIATRIC_INPUT_NAME_SCHEMA,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaAlgorithms,
     Algorithms,
@@ -43,7 +39,6 @@ class BraTSInferer:
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
-
         # inference device setup
         self.force_cpu = force_cpu
         self.cuda_devices = cuda_devices
@@ -220,6 +215,13 @@ class AdultGliomaInferer(BraTSInferer):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
+        """Provides algorithms to perform tumor segmentation on adult glioma MRI data.
+
+        Args:
+            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaAlgorithms.BraTS23_1.
+            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
@@ -236,6 +238,13 @@ class MeningiomaInferer(BraTSInferer):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
+        """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
+
+        Args:
+            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
+            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=MENINGIOMA_SEGMENTATION_ALGORITHMS,
@@ -252,6 +261,13 @@ class PediatricInferer(BraTSInferer):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
+        """Provides algorithms to perform tumor segmentation on pediatric MRI data
+
+        Args:
+            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
+            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
