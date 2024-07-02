@@ -184,7 +184,8 @@ class BraTSInferer:
                     t2w=subject / f"{subject.name}-t2w.nii.gz",
                 )
 
-            # infer
+            logger.info(f"Standardized input names to match algorithm requirements.")
+            # run inference in container
             run_docker(
                 algorithm=self.algorithm,
                 data_path=temp_data_folder,
@@ -192,14 +193,14 @@ class BraTSInferer:
                 cuda_devices=self.cuda_devices,
                 force_cpu=self.force_cpu,
             )
-            # move outputs and change name
-            count = 0
+
+            # move outputs and change name back to initially provided one
             for subject_id, subject_name in subject_id_name_map.items():
                 segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
                 output_file = output_folder / f"{subject_name}.nii.gz"
                 shutil.move(segmentation, output_file)
-                count += 1
-            logger.info(f"Saved segmentations to: {output_folder}")
+
+            logger.info(f"Saved results to: {output_folder}")
         finally:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)

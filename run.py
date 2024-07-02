@@ -35,10 +35,10 @@ from brats.constants import (
 
 
 # pediatric
-alg = PediatricAlgorithms.BraTS23_1
-inferer = PediatricInferer(algorithm=alg, cuda_devices="0")
+alg = PediatricAlgorithms.BraTS23_3
+inferer = PediatricInferer(algorithm=alg, cuda_devices="4")
 
-base = Path("/home/marcelrosier/brats_data/pediatric/BraTS-PED-00030-000")
+base = Path("/home/ivan_marcel/test_data/PED/BraTS-PED-00030-000")
 inferer.infer_single(
     t1c=base / "BraTS-PED-00030-000-t1c.nii.gz",
     t1n=base / "BraTS-PED-00030-000-t1n.nii.gz",
@@ -46,3 +46,8 @@ inferer.infer_single(
     t2w=base / "BraTS-PED-00030-000-t2w.nii.gz",
     output_file=f"single_out/seg-{alg.value}.nii.gz",
 )
+# inferer.infer_batch(
+#     data_folder=base.parent,
+#     output_folder=Path("batch_out"),
+#     log_file=Path("batch_out/log.txt"),
+# )
