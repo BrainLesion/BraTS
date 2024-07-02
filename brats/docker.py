@@ -53,7 +53,7 @@ def _ensure_image(image: str):
         with Progress() as progress:
             resp = client.api.pull(image, stream=True, decode=True)
             for line in resp:
-                _show_docker_pull_progress(tasks, line, progress)
+                _show_docker_pull_progress(tasks=tasks, progress=progress, line=line)
 
 
 def _is_cuda_available() -> bool:
