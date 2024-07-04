@@ -31,7 +31,7 @@ logger.add(
 handle_signals()
 
 
-class BraTSInferer:
+class BraTSAlgorithm:
     def __init__(
         self,
         algorithm: Algorithms,
@@ -135,7 +135,7 @@ class BraTSInferer:
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
     ):
-        """Perform segmentation on a batch of subjects with the provided images and save the segmentations to the output folder. \n
+        """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
         data_folder\n
         ┣ A\n
@@ -208,7 +208,7 @@ class BraTSInferer:
                 logger.remove(inference_log_file)
 
 
-class AdultGliomaInferer(BraTSInferer):
+class AdultGliomaSegmenter(BraTSAlgorithm):
 
     def __init__(
         self,
@@ -231,7 +231,7 @@ class AdultGliomaInferer(BraTSInferer):
         )
 
 
-class MeningiomaInferer(BraTSInferer):
+class MeningiomaSegmenter(BraTSAlgorithm):
 
     def __init__(
         self,
@@ -254,7 +254,7 @@ class MeningiomaInferer(BraTSInferer):
         )
 
 
-class PediatricInferer(BraTSInferer):
+class PediatricSegmenter(BraTSAlgorithm):
 
     def __init__(
         self,

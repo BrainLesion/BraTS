@@ -1,5 +1,5 @@
 from pathlib import Path
-from brats.inferer import AdultGliomaInferer, MeningiomaInferer, PediatricInferer
+from brats import AdultGliomaSegmenter, MeningiomaSegmenter, PediatricSegmenter
 from brats.constants import (
     AdultGliomaAlgorithms,
     MeningiomaAlgorithms,
@@ -7,14 +7,14 @@ from brats.constants import (
 )
 
 
-# alg = AdultGliomaAlgorithmKeys.BraTS23_glioma_faking_it
-# inferer = AdultGliomaInferer(algorithm=alg, cuda_devices="0")
-# base = Path("/home/marcelrosier/brats_data/adult_glioma/BraTS-GLI-00001-000/")
+# alg = AdultGliomaAlgorithms.BraTS23_1
+# inferer = AdultGliomaInferer(algorithm=alg, cuda_devices="4")
+# base = Path("/home/ivan_marcel/test_data/GLI/BraTS-GLI-00001-000/")
 # inferer.infer_single(
-#     t1c=base / "t1c.nii.gz",
-#     t1n=base / "t1n.nii.gz",
-#     t2f=base / "t2f.nii.gz",
-#     t2w=base / "t2w.nii.gz",
+#     t1c=base / "BraTS-GLI-00001-000-t1c.nii.gz",
+#     t1n=base / "BraTS-GLI-00001-000-t1n.nii.gz",
+#     t2f=base / "BraTS-GLI-00001-000-t2f.nii.gz",
+#     t2w=base / "BraTS-GLI-00001-000-t2w.nii.gz",
 #     output_file=f"single_out/seg-{alg.value}.nii.gz",
 # )
 # import time
@@ -34,17 +34,18 @@ from brats.constants import (
 # print("Took: ", time.time() - start)
 
 
-# pediatric
+# # pediatric
 alg = PediatricAlgorithms.BraTS23_3
-inferer = PediatricInferer(algorithm=alg, cuda_devices="4")
+segmenter = PediatricSegmenter(algorithm=alg, cuda_devices="4")
 
 base = Path("/home/ivan_marcel/test_data/PED/BraTS-PED-00030-000")
-inferer.infer_single(
+segmenter.infer_single(
     t1c=base / "BraTS-PED-00030-000-t1c.nii.gz",
     t1n=base / "BraTS-PED-00030-000-t1n.nii.gz",
     t2f=base / "BraTS-PED-00030-000-t2f.nii.gz",
     t2w=base / "BraTS-PED-00030-000-t2w.nii.gz",
     output_file=f"single_out/seg-{alg.value}.nii.gz",
+    log_file=f"single_out/log-{alg.value}.txt",
 )
 # inferer.infer_batch(
 #     data_folder=base.parent,
