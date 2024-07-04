@@ -1,7 +1,7 @@
 from dacite import DaciteError
 
 
-class CPUNotCompatibleException(Exception):
+class AlgorithmNotCPUCompatibleException(Exception):
     """Exception raised when an CPU-incompatible algorithm tries to run on CPU."""
 
     def __init__(self, message: str):

@@ -11,7 +11,7 @@ from loguru import logger
 from rich.progress import Progress
 
 from brats.algorithm_config import AlgorithmData
-from brats.exceptions import CPUNotCompatibleException
+from brats.exceptions import AlgorithmNotCPUCompatibleException
 from brats.weights import check_model_weights, get_dummy_weights_path
 
 client = docker.from_env()
@@ -89,7 +89,7 @@ def _handle_device_requests(
                 if cuda_available
                 else "No Cuda installation/ GPU was found and"
             )
-            raise CPUNotCompatibleException(
+            raise AlgorithmNotCPUCompatibleException(
                 f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
         # empty device requests => run on CPU
