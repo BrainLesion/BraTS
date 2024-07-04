@@ -188,21 +188,18 @@ def _observe_docker_output(container: docker.models.containers.Container):
     )
 
     # Display spinner while the container is running
-    spinner = Halo(text="Running inference...", spinner="dots")
-    spinner.start()
+    with Halo(text="Running inference...", spinner="dots"):
+        # Wait for the container to finish
+        exit_code = container.wait()
+        # Check if the container exited with an error
+        if exit_code["StatusCode"] != 0:
+            for line in container_output:
+                logger.error(f">> {line.decode('utf-8')}")
+            raise Exception(
+                "Container finished with an error. See logs above for details."
+            )
 
-    # Wait for the container to finish
-    exit_code = container.wait()
-    # Check if the container exited with an error
-    if exit_code["StatusCode"] != 0:
-        spinner.stop_and_persist(symbol="X", text="Container finished with an error.")
-        for line in container_output:
-            logger.error(f">> {line.decode('utf-8')}")
-        raise Exception("Container finished with an error. See logs above for details.")
-    else:
-        spinner.stop_and_persist(symbol="✔", text="Inference done.")
-
-    # TODO add option to print/ save container output
+        # TODO add option to print/ save container output
 
 
 def run_docker(
