@@ -18,17 +18,10 @@ from brats.constants import (
     PediatricAlgorithms,
 )
 from brats.docker import run_docker
-from brats.utils import standardize_subject_inputs, handle_signals
-import sys
-
-# logger setup
-logger.remove(0)  # remove default stderr logger in order to add custom
-logger.add(
-    sys.stderr,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-    level="INFO",
+from brats.utils import (
+    standardize_subject_inputs,
+    standardize_subjects_inputs_list,
 )
-handle_signals()
 
 
 class BraTSAlgorithm:
@@ -121,7 +114,7 @@ class BraTSAlgorithm:
             output_file = Path(output_file).absolute()
             output_file.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(segmentation, output_file)
-            logger.info(f"Saved segmentation to: {output_file}")
+            logger.info(f"Saved segmentation to: {output_file.absolute()}")
 
         finally:
             shutil.rmtree(temp_data_folder)
@@ -160,8 +153,8 @@ class BraTSAlgorithm:
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file:
-            inference_log_file = logger.add(log_file, level="INFO")
-            logger.info(f"Logging to: {log_file}")
+            inference_log_file = logger.add(log_file, level="INFO", catch=True)
+            logger.info(f"Logging to: {log_file.absolute()}")
         try:
             self._log_algorithm_info()
             # find subjects
@@ -170,21 +163,13 @@ class BraTSAlgorithm:
                 f"Found {len(subjects)} subjects: {', '.join([s.name for s in subjects][:5])} {' ...' if len(subjects) > 5 else '' }"
             )
             # map to brats names
-            subject_id_name_map = {}
-            for i, subject in enumerate(subjects):
-                subject_id = self.algorithm.run_args.input_name_schema.format(id=i)
-                subject_id_name_map[subject_id] = subject.name
-                # TODO Add support for .nii files
-                standardize_subject_inputs(
-                    data_folder=temp_data_folder,
-                    subject_id=subject_id,
-                    t1c=subject / f"{subject.name}-t1c.nii.gz",
-                    t1n=subject / f"{subject.name}-t1n.nii.gz",
-                    t2f=subject / f"{subject.name}-t2f.nii.gz",
-                    t2w=subject / f"{subject.name}-t2w.nii.gz",
-                )
-
+            internal_external_name_map = standardize_subjects_inputs_list(
+                subjects=subjects,
+                temp_data_folder=temp_data_folder,
+                input_name_schema=self.algorithm.run_args.input_name_schema,
+            )
             logger.info(f"Standardized input names to match algorithm requirements.")
+
             # run inference in container
             run_docker(
                 algorithm=self.algorithm,
@@ -195,12 +180,12 @@ class BraTSAlgorithm:
             )
 
             # move outputs and change name back to initially provided one
-            for subject_id, subject_name in subject_id_name_map.items():
-                segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
-                output_file = output_folder / f"{subject_name}.nii.gz"
+            for internal_name, external_name in internal_external_name_map.items():
+                segmentation = Path(temp_output_folder) / f"{internal_name}.nii.gz"
+                output_file = output_folder / f"{external_name}.nii.gz"
                 shutil.move(segmentation, output_file)
 
-            logger.info(f"Saved results to: {output_folder}")
+            logger.info(f"Saved results to: {output_folder.absolute()}")
         finally:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
