@@ -1,6 +1,7 @@
-from pathlib import Path
-from brats.algorithm_config import load_algorithms
 import unittest
+from pathlib import Path
+
+from brats.algorithm_config import load_algorithms
 
 PACKAGE_DIR = Path(__file__).parent.parent
 
