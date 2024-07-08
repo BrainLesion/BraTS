@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from pathlib import Path
-import shutil
 from typing import Dict, Optional
 from brats.exceptions import AlgorithmConfigException
 
