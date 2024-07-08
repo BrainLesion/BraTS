@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import shutil
-import signal
 import sys
 from pathlib import Path
 from typing import Dict, List
@@ -36,8 +35,7 @@ def standardize_subject_inputs(
     subject_folder = data_folder / subject_id
     subject_folder.mkdir(parents=True, exist_ok=True)
 
-    # os.symlink would be more efficient but can cause issues on windows
-    # TODO: use symlink on unix systems
+    # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
     try:
         shutil.copy(t1c, subject_folder / f"{subject_id}-t1c.nii.gz")
         shutil.copy(t1n, subject_folder / f"{subject_id}-t1n.nii.gz")
