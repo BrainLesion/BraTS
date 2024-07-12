@@ -1,0 +1,40 @@
+algorithms:
+
+  BraTS23_1:
+    meta:
+      authors: André Ferreira, et al.
+      paper: https://arxiv.org/abs/2402.17317v1
+      challenge: BraTS23 Adult Glioma Segmentation (1st place)
+    run_args:
+      docker_image: brainles/brats23_faking_it:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: true
+      parameters_file: false
+      shm_size: "2gb"
+
+  BraTS23_2:
+    meta:
+      authors: Andriy Myronenko, et al.
+      paper: N/A
+      challenge: BraTS23 Adult Glioma Segmentation (2nd place)
+    run_args:
+      docker_image: brainles/brats23_nvauto:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: true
+      parameters_file: true
+      shm_size: "32gb"
+
+  BraTS23_3:
+    meta:
+      authors: Fadillah Adamsyah Maani, et al.
+      paper: N/A
+      challenge: BraTS23 Adult Glioma Segmentation (3rd place)
+    run_args:
+      docker_image: brainles/brats23_biomedmbz:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+    weights:
+      record_id: "11573315"
+      param_name: "checkpoint_dir"
