@@ -10,18 +10,22 @@ Challenge Algorithms
 
 
 .. autoclass:: brats.AdultGliomaSegmenter
+    :members:
 
 
 .. autoclass:: brats.MeningiomaSegmenter
+    :members:
 
 
 .. autoclass:: brats.PediatricSegmenter
+    :members:
 
 
 Abstract Base Class
 --------------------------------------
 
 .. autoclass:: brats.algorithms.BraTSAlgorithm
-    
+    :members:
+
 
 
