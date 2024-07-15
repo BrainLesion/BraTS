@@ -29,6 +29,7 @@ Installation instructions:
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit) 
 
+
 ## Use Cases and Tutorials
 
 A minimal example to create a segmentation could look like this:
@@ -46,6 +47,19 @@ segmenter.infer_single(
 ```
 
 For more examples and details please refer to our extensive Notebook tutorials [**TODO**]
+
+## Algorithms
+| Challenge | Year | Position | Authors | Paper | CPU support |
+|---|---|---|---|---|---|
+| *Meningioma Segmentation* | 2023 | 1st | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
+|     | 2023 | 2nd | Ziyan Huang | N/A | :white_check_mark: |
+|     | 2023 | 3rd | Zhifan Jiang et al. | N/A | :heavy_multiplication_x: |
+| *Pediatric Segmentation* | 2023 | 1st | Zhifan Jiang et al. | N/A | :heavy_multiplication_x: |
+|     | 2023 | 2nd | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
+|     | 2023 | 3rd | Yubo Zhou | N/A | :heavy_multiplication_x: |
+| *Adult Glioma Segmentation* | 2023 | 1st | André Ferreira, et al. | [Link](https://arxiv.org/abs/2402.17317v1) | :heavy_multiplication_x: |
+|     | 2023 | 2nd | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
+|     | 2023 | 3rd | Fadillah Adamsyah Maani, et al. | N/A | :heavy_multiplication_x: |
 
 ## Contributing
 
