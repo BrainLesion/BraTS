@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import docker
-from halo import Halo
 from loguru import logger
 from rich.progress import Progress
+from rich.console import Console
 
 from brats.algorithm_config import AlgorithmData
 from brats.exceptions import AlgorithmNotCPUCompatibleException
@@ -188,7 +188,7 @@ def _observe_docker_output(container: docker.models.containers.Container):
     )
 
     # Display spinner while the container is running
-    with Halo(text="Running inference...", spinner="dots"):
+    with Console().status("Running inference..."):
         # Wait for the container to finish
         exit_code = container.wait()
         # Check if the container exited with an error

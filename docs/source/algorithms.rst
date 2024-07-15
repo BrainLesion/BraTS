@@ -9,13 +9,13 @@ Challenge Algorithms
 --------------------------------------
 
 
-.. autoclass:: brats.algorithms.AdultGliomaSegmenter
+.. autoclass:: brats.AdultGliomaSegmenter
 
 
-.. autoclass:: brats.algorithms.MeningiomaSegmenter
+.. autoclass:: brats.MeningiomaSegmenter
 
 
-.. autoclass:: brats.algorithms.PediatricSegmenter
+.. autoclass:: brats.PediatricSegmenter
 
 
 Abstract Base Class

@@ -1,38 +1,53 @@
-[![PyPI version brats-algorithms](https://badge.fury.io/py/brats-algorithms.svg)](https://pypi.python.org/pypi/brats-algorithms/)
-[![Documentation Status](https://readthedocs.org/projects/brats-algorithms/badge/?version=latest)](http://brats-algorithms.readthedocs.io/?badge=latest)
-[![tests](https://github.com/BrainLesion/brats-algorithms/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats-algorithms/actions/workflows/tests.yml)
+[![PyPI version brats-algorithms](https://badge.fury.io/py/brats.svg)](https://pypi.python.org/pypi/brats/)
+[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](http://brats.readthedocs.io/?badge=latest)
+[![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
 
-# brats-algorithms
+# BraTS
 
-Top performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, providing state-of-the-art models for brain lesion segmentation.
+Providing the top performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy to use Python API powered by docker.
 
 ## Features
 
-- Access to top-performing algorithms from recent BraTS challenges.
-- Easy-to-use inference API.
-- Extensive documentation and examples. (TODO!)
+- Access to top-performing algorithms from recent BraTS challenges
+- Easy-to-use minimal API
+- Extensive documentation and examples
 
 ## Installation
 
-With a Python 3.10+ environment, you can install `PACKAGE_NAME` directly from [PyPI](https://pypi.org/project/PACKAGE_NAME/):
+With a Python 3.8+ environment, you can install `brats` directly from [PyPI](https://pypi.org/project/brats/):
 
 ```sh
-pip install PACKAGE_NAME
+pip install brats
 ```
 
 ### Docker and NVIDIA Container Toolkit Setup
 
-To run `PACKAGE_NAME` in a Docker container with GPU support (required for most algorithms), ensure you have Docker and NVIDIA Docker installed. Instructions:
+To run `brats` you need a working Docker installation.
+Most algorithms also require GPU support (NVIDIA Docker). 
+
+Installation instructions:
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
-- **NVIDIA Container Toolkit**: Installation instructions on the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit) 
+- **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit) 
 
 ## Use Cases and Tutorials
 
-*TODO*
+A minimal example to create a segmentation could look like this:
+
+```python
+from brats import AdultGliomaSegmenter
+segmenter = AdultGliomaSegmenter()
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
+For more examples and details please refer to our extensive Notebook tutorials [**TODO**]
 
 ## Contributing
 
-We welcome contributions from the community, including bug reports, feature requests, and code contributions. For more information on how to contribute, please see our [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## License
-*TODO*
+We welcome contributions from the community, including bug reports, feature requests, and code contributions. 
+For more information on how to contribute, please see our [CONTRIBUTING.md](CONTRIBUTING.md) file.
