@@ -25,6 +25,8 @@ from brats.utils import (
 
 
 class BraTSAlgorithm:
+    """This class serves as the basis for all BraTS algorithms. It provides a common interface and implements the logic for single and batch inference."""
+
     def __init__(
         self,
         algorithm: Algorithms,
@@ -82,7 +84,7 @@ class BraTSAlgorithm:
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file is not None:
             inference_log_file = logger.add(log_file, level="INFO")
-            logger.info(f"Logging to: {log_file}")
+            logger.info(f"Logging to: {Path(log_file).absolute()}")
 
         try:
             logger.info(f"Performing single inference ")
@@ -194,6 +196,13 @@ class BraTSAlgorithm:
 
 
 class AdultGliomaSegmenter(BraTSAlgorithm):
+    """Provides algorithms to perform tumor segmentation on adult glioma MRI data.
+
+    Args:
+        algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
 
     def __init__(
         self,
@@ -201,13 +210,6 @@ class AdultGliomaSegmenter(BraTSAlgorithm):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
-        """Provides algorithms to perform tumor segmentation on adult glioma MRI data.
-
-        Args:
-            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaAlgorithms.BraTS23_1.
-            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
@@ -217,6 +219,13 @@ class AdultGliomaSegmenter(BraTSAlgorithm):
 
 
 class MeningiomaSegmenter(BraTSAlgorithm):
+    """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
+
+    Args:
+        algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
 
     def __init__(
         self,
@@ -224,13 +233,6 @@ class MeningiomaSegmenter(BraTSAlgorithm):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
-        """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
-
-        Args:
-            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
-            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=MENINGIOMA_SEGMENTATION_ALGORITHMS,
@@ -240,6 +242,13 @@ class MeningiomaSegmenter(BraTSAlgorithm):
 
 
 class PediatricSegmenter(BraTSAlgorithm):
+    """Provides algorithms to perform tumor segmentation on pediatric MRI data
+
+    Args:
+        algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
 
     def __init__(
         self,
@@ -247,13 +256,6 @@ class PediatricSegmenter(BraTSAlgorithm):
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
-        """Provides algorithms to perform tumor segmentation on pediatric MRI data
-
-        Args:
-            algorithm (AdultGliomaAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
-            cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-            force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-        """
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
