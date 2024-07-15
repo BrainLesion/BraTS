@@ -13,8 +13,15 @@ from rich.console import Console
 from brats.algorithm_config import AlgorithmData
 from brats.exceptions import AlgorithmNotCPUCompatibleException
 from brats.weights import check_model_weights, get_dummy_weights_path
+from docker.errors import DockerException
 
-client = docker.from_env()
+try:
+    client = docker.from_env()
+except DockerException as e:
+    logger.error(
+        f"Failed to connect to docker daemon. Please make sure docker is installed and running. Error: {e}"
+    )
+    # not aborting since this happens during read the docs builds. not a great solution tbf
 
 
 def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
