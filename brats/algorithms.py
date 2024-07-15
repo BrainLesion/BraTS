@@ -82,7 +82,7 @@ class BraTSAlgorithm:
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file is not None:
             inference_log_file = logger.add(log_file, level="INFO")
-            logger.info(f"Logging to: {log_file}")
+            logger.info(f"Logging to: {Path(log_file).absolute()}")
 
         try:
             logger.info(f"Performing single inference ")
