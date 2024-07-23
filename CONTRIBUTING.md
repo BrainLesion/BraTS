@@ -5,19 +5,9 @@
 
 First off, thanks for taking the time to contribute! 🎉
 
-## Feature Requests
-We welcome new feature requests! Please open an issue [here](https://github.com/BrainLesion/BraTS/issues) and describe:
-
-- The problem you're facing.
-- A possible solution or feature.
-
-## Reporting Bugs
-
-If you find a bug, please open an issue [here](https://github.com/BrainLesion/BraTS/issues) and include:
-
-- A clear, descriptive title.
-- Steps to reproduce the bug.
-- Your environment (OS, Python version, etc.).
+## Reporting Bugs, Feature Requests and Questions
+Please open a new issue [here](https://github.com/BrainLesion/BraTS/issues).
+Using our issue templates will make the process easier and faster for us all!
 
 ## Contribute Code 
 Fork the repository, clone it and implement your contribution.
