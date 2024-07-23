@@ -13,11 +13,22 @@ authors = [
   "Marcel Rosier <marcel.rosier@tum.de>",
   "Florian Kofler <florian.kofler@tum.de>",
 ]
-#repository = ""
-#homepage = ""
-#documentation = ""
-readme = "README.md"
 
+license = "AGPL-3.0"
+readme = "README.md"
+repository = "https://github.com/BrainLesion/BraTS"
+homepage = "https://github.com/BrainLesion/BraTS"
+documentation = "https://brats.readthedocs.io/en/latest/"
+
+keywords = [
+  "brain tumor",
+  "glioma",
+  "BraTS",
+  "brain lesion",
+  "segmentation",
+  "synthesis",
+  "inpainting"
+]
 
 # Add the exclude field directly under [tool.poetry]
 exclude = ["examples", "benchmark"]
