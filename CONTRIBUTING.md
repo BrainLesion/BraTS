@@ -17,11 +17,11 @@ Fork the repository, clone it and implement your contribution.
 - Install dependencies by running: `poetry install`
 
 **Requirements:**
-- Our project follows the [black code style](https://github.com/psf/black). Make sure your code is formatted correctly.
+- Our project follows the [black code style](https://github.com/psf/black). Make sure your code is formatted accordingly.
 - Please add _meaningful_ docstring for your functions and annotate types
 - Please add _meaningful_ tests for your contribution in `/tests` and make sure _all_ tests are passing by running `python -m pytest`
 
 
 
-Once done, create a Pull Request to integrate the code in to our project!
+Once done, create a Pull Request to integrate the code into our project!
 
