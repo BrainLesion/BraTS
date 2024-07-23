@@ -157,7 +157,7 @@ class BraTSAlgorithm:
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file:
             inference_log_file = logger.add(log_file, level="INFO", catch=True)
-            logger.info(f"Logging to: {log_file.absolute()}")
+            logger.info(f"Logging to: {Path(log_file).absolute()}")
         try:
             self._log_algorithm_info()
             # find subjects
