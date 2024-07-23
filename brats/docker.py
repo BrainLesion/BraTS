@@ -239,19 +239,21 @@ def run_docker(
         additional_files_path=additional_files_path,
         output_path=output_path,
     )
-
-    logger.info(f"{'Starting inference'}")
+    logger.debug(f"Volume mappings: {volume_mappings}")
 
     command_args, extra_args = _build_args(
         algorithm=algorithm, additional_files_path=additional_files_path
     )
+    logger.debug(f"Command args: {command_args}, Extra args: {extra_args}")
 
     # device setup
     device_requests = _handle_device_requests(
         algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
     )
+    logger.debug(f"Device requests: {device_requests}")
 
     # Run the container
+    logger.info(f"{'Starting inference'}")
     container = client.containers.run(
         image=algorithm.run_args.docker_image,
         volumes=volume_mappings,

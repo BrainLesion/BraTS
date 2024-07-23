@@ -151,12 +151,13 @@ class BraTSAlgorithm:
 
         data_folder = Path(data_folder)
         output_folder = Path(output_folder)
+        output_folder.mkdir(parents=True, exist_ok=True)
 
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file:
             inference_log_file = logger.add(log_file, level="INFO", catch=True)
-            logger.info(f"Logging to: {log_file.absolute()}")
+            logger.info(f"Logging to: {Path(log_file).absolute()}")
         try:
             self._log_algorithm_info()
             # find subjects
