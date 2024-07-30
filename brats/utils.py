@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List
 
+import nibabel as nib
 from loguru import logger
 
 
@@ -32,6 +33,7 @@ def standardize_subject_inputs(
         t2f (Path | str): T2f image path
         t2w (Path | str): T2w image path
     """
+
     subject_folder = data_folder / subject_id
     subject_folder.mkdir(parents=True, exist_ok=True)
     # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
@@ -46,6 +48,9 @@ def standardize_subject_inputs(
             "Please make sure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
         )
         sys.exit(1)
+
+    # sanity check inputs
+    input_sanity_check(t1c=t1c, t1n=t1n, t2f=t2f, t2w=t2w)
 
 
 def standardize_subjects_inputs_list(
@@ -76,3 +81,20 @@ def standardize_subjects_inputs_list(
             t2w=subject / f"{subject.name}-t2w.nii.gz",
         )
     return internal_external_name_map
+
+
+def input_sanity_check(
+    t1c: Path | str,
+    t1n: Path | str,
+    t2f: Path | str,
+    t2w: Path | str,
+):
+    shapes = {str(img): nib.load(img).shape for img in [t1c, t1n, t2f, t2w]}
+    if any(shape != (240, 240, 155) for shape in shapes.values()):
+        logger.warning(
+            "Input images do not have the default shape (240, 240, 155). This might cause issues with some algorithms and could lead to errors."
+        )
+        logger.warning(f"Image shapes: {shapes}")
+        logger.warning(
+            "If your data is not preprocessed yet, consider using our preprocessing package: https://github.com/BrainLesion/preprocessing"
+        )
