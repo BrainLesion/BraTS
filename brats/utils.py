@@ -89,6 +89,15 @@ def input_sanity_check(
     t2f: Path | str,
     t2w: Path | str,
 ):
+    """
+    Check if input images have the default shape (240, 240, 155) and log a warning if not.
+
+    Args:
+        t1c (Path | str): T1c image path
+        t1n (Path | str): T1n image path
+        t2f (Path | str): T2f image path
+        t2w (Path | str): T2w image path
+    """
     shapes = {str(img): nib.load(img).shape for img in [t1c, t1n, t2f, t2w]}
     if any(shape != (240, 240, 155) for shape in shapes.values()):
         logger.warning(
