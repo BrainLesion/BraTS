@@ -4,6 +4,7 @@ import os
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Tuple
+import time
 
 import docker
 from loguru import logger
@@ -11,7 +12,7 @@ from rich.progress import Progress
 from rich.console import Console
 
 from brats.algorithm_config import AlgorithmData
-from brats.exceptions import AlgorithmNotCPUCompatibleException
+from brats.exceptions import AlgorithmNotCPUCompatibleException, BraTSContainerException
 from brats.weights import check_model_weights, get_dummy_weights_path
 from docker.errors import DockerException
 
@@ -183,7 +184,7 @@ def _build_args(
     return command_args, extra_args
 
 
-def _observe_docker_output(container: docker.models.containers.Container):
+def _observe_docker_output(container: docker.models.containers.Container) -> str:
     """Observe the output of a running docker container and display a spinner. On Errors log container output.
 
     Args:
@@ -198,15 +199,43 @@ def _observe_docker_output(container: docker.models.containers.Container):
     with Console().status("Running inference..."):
         # Wait for the container to finish
         exit_code = container.wait()
+        container_output = "\n\r".join(
+            [line.decode("utf-8") for line in container_output]
+        )
         # Check if the container exited with an error
         if exit_code["StatusCode"] != 0:
-            for line in container_output:
-                logger.error(f">> {line.decode('utf-8')}")
-            raise Exception(
+            logger.error(f">> {container_output}")
+            raise BraTSContainerException(
                 "Container finished with an error. See logs above for details."
             )
 
-        # TODO add option to print/ save container output
+    return container_output
+
+
+def _sanity_check_output(
+    data_path: Path, output_path: Path, container_output: str
+) -> None:
+    """Sanity check that the number of output files matches the number of input files.
+
+    Args:
+        data_path (Path): The path to the input data
+        output_path (Path): The path to the output data
+
+    Raises:
+        BraTSContainerException: If not enough output files exist
+    """
+
+    inputs = list(data_path.iterdir())
+    outputs = list(output_path.iterdir())
+
+    if len(inputs) == len(outputs) and len(outputs) > 0:
+        return
+
+    if len(outputs) < len(inputs):
+        logger.error(f"Docker container output: \n\r{container_output}")
+        raise BraTSContainerException(
+            f"Not enough output files were created by the algorithm. Expected: {len(inputs)} Got: {len(outputs)}. Please check the logging output of the docker container for more information."
+        )
 
 
 def run_docker(
@@ -225,9 +254,10 @@ def run_docker(
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
     """
+    logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
+
     # ensure image is present, if not pull it
     _ensure_image(image=algorithm.run_args.docker_image)
-
     # Log the message
     additional_files_path = _get_additional_files_path(algorithm)
 
@@ -254,6 +284,7 @@ def run_docker(
 
     # Run the container
     logger.info(f"{'Starting inference'}")
+    start_time = time.time()
     container = client.containers.run(
         image=algorithm.run_args.docker_image,
         volumes=volume_mappings,
@@ -265,6 +296,11 @@ def run_docker(
         shm_size=algorithm.run_args.shm_size,
         **extra_args,
     )
-    _observe_docker_output(container=container)
+    container_output = _observe_docker_output(container=container)
+    _sanity_check_output(
+        data_path=data_path, output_path=output_path, container_output=container_output
+    )
 
-    logger.info(f"{'Finished inference'}")
+    logger.debug(f"Docker container output: \n\r{container_output}")
+
+    logger.info(f"Finished inference in {time.time() - start_time:.2f} seconds")
