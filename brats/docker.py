@@ -220,6 +220,7 @@ def _sanity_check_output(
     Args:
         data_path (Path): The path to the input data
         output_path (Path): The path to the output data
+        container_output (str): The output of the docker container
 
     Raises:
         BraTSContainerException: If not enough output files exist

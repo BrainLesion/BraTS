@@ -63,7 +63,15 @@ class BraTSAlgorithm:
         )
 
     def _add_log_file_handler(self, log_file: Path | str) -> int:
-        """Add a log file handler to the logger."""
+        """
+        Add a log file handler to the logger.
+
+        Args:
+            log_file (Path | str): Path to the log file
+
+        Returns:
+            int: The logger id
+        """
         log_file = Path(log_file)
         logger_id = logger.add(log_file, level="DEBUG", catch=True)
         logger.info(
