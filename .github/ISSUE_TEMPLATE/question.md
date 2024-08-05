@@ -2,10 +2,12 @@
 name: Question
 about: Please ask your question, make sure to read the FAQ before
 title: ''
-labels: ''
+labels: 'question'
 assignees: ''
 
 ---
 
-**Your question**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+# Your question
+Have you already checked out our [tutorial](https://github.com/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)? 
+
+If you didn't find the answer, we are here to help :)
