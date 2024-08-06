@@ -1,6 +1,8 @@
-[![PyPI version brats-algorithms](https://badge.fury.io/py/brats.svg)](https://pypi.python.org/pypi/brats/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/brats?logo=python&color=2EC553)](https://pypi.org/project/brats/)
 [![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](http://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
+[![PyPI version brats-algorithms](https://badge.fury.io/py/brats.svg)](https://pypi.python.org/pypi/brats/)
+[![License: GPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg?color=2EC553)](https://www.gnu.org/licenses/agpl-3.0)
 
 # BraTS
 
@@ -61,7 +63,20 @@ For more examples and details please refer to our extensive Notebook tutorials [
 |     | 2023 | 2nd | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
 |     | 2023 | 3rd | Fadillah Adamsyah Maani, et al. | N/A | :heavy_multiplication_x: |
 
+## Citation
+If you use BraTS in your research, please cite it to support the development!
+
+```
+TODO: citation will be added asap
+```
+
+
 ## Contributing
 
-We welcome contributions from the community, including bug reports, feature requests, and code contributions. 
-For more information on how to contribute, please see our [CONTRIBUTING.md](CONTRIBUTING.md) file.
+We welcome all kinds if contributions from the community!
+
+### Reporting Bugs, Feature Requests and Questions
+Please open a new issue [here](https://github.com/BrainLesion/BraTS/issues).
+
+### Code contributions
+Nice to have you on board! Please have a look at our [CONTRIBUTING.md](CONTRIBUTING.md) file.
