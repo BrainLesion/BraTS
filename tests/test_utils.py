@@ -2,11 +2,15 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from loguru import logger
 
-from brats.utils import standardize_subject_inputs, standardize_subjects_inputs_list
+from brats.utils import (
+    standardize_subject_inputs,
+    standardize_subjects_inputs_list,
+    input_sanity_check,
+)
 
 
 class TestStandardizeInputs(unittest.TestCase):
@@ -33,7 +37,8 @@ class TestStandardizeInputs(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    def test_successful_standardization(self):
+    @patch("brats.utils.input_sanity_check")
+    def test_successful_standardization(self, mock_input_sanity_check):
         subject_id = "test_subject"
         standardize_subject_inputs(
             data_folder=self.temp_data_folder,
@@ -50,9 +55,12 @@ class TestStandardizeInputs(unittest.TestCase):
                 (subject_folder / f"{subject_id}-{img_type}.nii.gz").exists()
             )
 
+    @patch("brats.utils.input_sanity_check")
     @patch("sys.exit")
     @patch.object(logger, "error")
-    def test_handle_file_not_found_error(self, mock_logger, mock_exit):
+    def test_handle_file_not_found_error(
+        self, mock_logger, mock_exit, mock_input_sanity_check
+    ):
         subject_id = "test_subject"
         # Provide a non-existent file path for t1c
         t1c = "non_existent_file.nii.gz"
@@ -82,3 +90,40 @@ class TestStandardizeInputs(unittest.TestCase):
             },
         )
         mock_standardize_subject_inputs.assert_called_once()
+
+    @patch("brats.utils.nib.load")
+    @patch("brats.utils.logger.warning")
+    def test_correct_shape(self, mock_warning, mock_nib_load):
+        # Mock nib.load to return an object with shape (240, 240, 155)
+        mock_img = MagicMock()
+        mock_img.shape = (240, 240, 155)
+        mock_nib_load.return_value = mock_img
+
+        # Call the function with correct shapes
+        input_sanity_check("t1c.nii.gz", "t1n.nii.gz", "t2f.nii.gz", "t2w.nii.gz")
+
+        # Ensure no warnings are logged
+        mock_warning.assert_not_called()
+
+    @patch("brats.utils.nib.load")
+    @patch("brats.utils.logger.warning")
+    def test_incorrect_shape(self, mock_warning, mock_nib_load):
+        # Mock nib.load to return an object with shape (240, 240, 100) for one image
+        mock_img_correct = MagicMock()
+        mock_img_correct.shape = (240, 240, 155)
+        mock_img_incorrect = MagicMock()
+        mock_img_incorrect.shape = (191, 512, 512)
+
+        def side_effect(arg):
+            if arg == "t1c.nii.gz":
+                return mock_img_incorrect
+            else:
+                return mock_img_correct
+
+        mock_nib_load.side_effect = side_effect
+
+        # Call the function with one incorrect shape
+        input_sanity_check("t1c.nii.gz", "t1n.nii.gz", "t2f.nii.gz", "t2w.nii.gz")
+
+        # Ensure warnings are logged
+        self.assertTrue(mock_warning.called)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from typing import Optional
@@ -18,9 +19,13 @@ from brats.constants import (
     PediatricAlgorithms,
 )
 from brats.docker import run_docker
-from brats.utils import (
-    standardize_subject_inputs,
-    standardize_subjects_inputs_list,
+from brats.utils import standardize_subject_inputs, standardize_subjects_inputs_list
+
+# Remove the default logger and add one with level INFO
+logger.remove()
+logger.add(
+    sys.stderr,
+    level="INFO",
 )
 
 
@@ -54,11 +59,26 @@ class BraTSAlgorithm:
             f"Running algorithm: <light-green>{self.algorithm.meta.challenge}</>"
         )
         logger.opt(colors=True).info(
-            f"<blue>(Docker image)</>: {self.algorithm.run_args.docker_image}"
-        )
-        logger.opt(colors=True).info(
             f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
         )
+
+    def _add_log_file_handler(self, log_file: Path | str) -> int:
+        """
+        Add a log file handler to the logger.
+
+        Args:
+            log_file (Path | str): Path to the log file
+
+        Returns:
+            int: The logger id
+        """
+        log_file = Path(log_file)
+        logger_id = logger.add(log_file, level="DEBUG", catch=True)
+        logger.info(
+            f"Logging console logs and further debug information to: {log_file.absolute()}"
+        )
+
+        return logger_id
 
     def infer_single(
         self,
@@ -83,9 +103,7 @@ class BraTSAlgorithm:
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file is not None:
-            inference_log_file = logger.add(log_file, level="INFO")
-            logger.info(f"Logging to: {Path(log_file).absolute()}")
-
+            logger_id = self._add_log_file_handler(log_file)
         try:
             logger.info(f"Performing single inference ")
 
@@ -122,7 +140,7 @@ class BraTSAlgorithm:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
             if log_file is not None:
-                logger.remove(inference_log_file)
+                logger.remove(logger_id)
 
     def infer_batch(
         self,
@@ -156,8 +174,7 @@ class BraTSAlgorithm:
         temp_data_folder = Path(tempfile.mkdtemp())
         temp_output_folder = Path(tempfile.mkdtemp())
         if log_file:
-            inference_log_file = logger.add(log_file, level="INFO", catch=True)
-            logger.info(f"Logging to: {Path(log_file).absolute()}")
+            logger_id = self._add_log_file_handler(log_file)
         try:
             self._log_algorithm_info()
             # find subjects
@@ -193,7 +210,7 @@ class BraTSAlgorithm:
             shutil.rmtree(temp_data_folder)
             shutil.rmtree(temp_output_folder)
             if log_file:
-                logger.remove(inference_log_file)
+                logger.remove(logger_id)
 
 
 class AdultGliomaSegmenter(BraTSAlgorithm):

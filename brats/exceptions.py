@@ -7,6 +7,12 @@ class AlgorithmNotCPUCompatibleException(Exception):
     pass
 
 
+class BraTSContainerException(Exception):
+    """Exception raised when an algorithm container fails"""
+
+    pass
+
+
 class AlgorithmConfigException(DaciteError):
     """Exception raised when the algorithm config file has issues."""
 
