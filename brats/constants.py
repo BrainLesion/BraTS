@@ -41,7 +41,7 @@ class PediatricAlgorithms(Algorithms):
     """BraTS23 Pediatric Segmentation 3rd place (GPU only)"""
 
 
-class BraTSAfricaAlgorithms(Algorithms):
+class AfricaAlgorithms(Algorithms):
     """Constants for the available pediatric segmentation algorithms."""
 
     BraTS23_1 = "BraTS23_1"
@@ -57,4 +57,4 @@ ALGORITHM_DIR = Path(__file__).parent / "algorithms"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
-BRATS_AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
+AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
