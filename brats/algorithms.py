@@ -58,7 +58,7 @@ class BraTSAlgorithm:
     def _log_algorithm_info(self):
         """Log information about the selected algorithm."""
         logger.opt(colors=True).info(
-            f"Running algorithm: <light-green>{self.algorithm.meta.challenge}</>"
+            f"Running algorithm: <light-green>{self.algorithm.meta.challenge} [{self.algorithm.meta.rank} place]</>"
         )
         logger.opt(colors=True).info(
             f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
@@ -81,6 +81,24 @@ class BraTSAlgorithm:
         )
 
         return logger_id
+
+    def _cleanup(
+        self, temp_data_folder: Path, temp_output_folder: Path, logger_id: Optional[int]
+    ) -> None:
+        try:
+            shutil.rmtree(temp_data_folder)
+        except PermissionError as e:
+            logger.warning(
+                f"Failed to remove temporary folder {temp_data_folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
+            )
+        try:
+            shutil.rmtree(temp_output_folder)
+        except PermissionError as e:
+            logger.warning(
+                f"Failed to remove temporary folder {temp_output_folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
+            )
+        if logger_id is not None:
+            logger.remove(logger_id)
 
     def infer_single(
         self,
@@ -139,10 +157,11 @@ class BraTSAlgorithm:
             logger.info(f"Saved segmentation to: {output_file.absolute()}")
 
         finally:
-            shutil.rmtree(temp_data_folder)
-            shutil.rmtree(temp_output_folder)
-            if log_file is not None:
-                logger.remove(logger_id)
+            self._cleanup(
+                temp_data_folder=temp_data_folder,
+                temp_output_folder=temp_output_folder,
+                logger_id=logger_id if log_file else None,
+            )
 
     def infer_batch(
         self,
@@ -209,10 +228,11 @@ class BraTSAlgorithm:
 
             logger.info(f"Saved results to: {output_folder.absolute()}")
         finally:
-            shutil.rmtree(temp_data_folder)
-            shutil.rmtree(temp_output_folder)
-            if log_file:
-                logger.remove(logger_id)
+            self._cleanup(
+                temp_data_folder=temp_data_folder,
+                temp_output_folder=temp_output_folder,
+                logger_id=logger_id if log_file else None,
+            )
 
 
 class AdultGliomaSegmenter(BraTSAlgorithm):
