@@ -55,7 +55,11 @@ class AfricaAlgorithms(Algorithms):
 # meta data file paths
 ALGORITHM_DIR = Path(__file__).parent / "algorithms"
 PARAMETERS_DIR = ALGORITHM_DIR / "parameters"
+DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
+
+WEIGHTS_FOLDER = Path(__file__).parent / "weights"
+ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
