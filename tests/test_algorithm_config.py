@@ -11,7 +11,7 @@ class TestAlgorithmConfig(unittest.TestCase):
     def test_configs_valid(self):
         algorithms_folder = PACKAGE_DIR / "brats" / "algorithms"
 
-        configs = algorithms_folder.iterdir()
+        configs = [f for f in algorithms_folder.iterdir() if f.is_file()]
 
         for config in configs:
             try:
