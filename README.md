@@ -73,7 +73,7 @@ TODO: citation will be added asap
 
 ## Contributing
 
-We welcome all kinds if contributions from the community!
+We welcome all kinds of contributions from the community!
 
 ### Reporting Bugs, Feature Requests and Questions
 Please open a new issue [here](https://github.com/BrainLesion/BraTS/issues).
