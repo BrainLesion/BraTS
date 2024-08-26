@@ -41,8 +41,25 @@ class PediatricAlgorithms(Algorithms):
     """BraTS23 Pediatric Segmentation 3rd place (GPU only)"""
 
 
+class AfricaAlgorithms(Algorithms):
+    """Constants for the available africa segmentation algorithms."""
+
+    BraTS23_1 = "BraTS23_1"
+    """BraTS23 BraTS-Africa Segmentation 1st place (GPU only)"""
+    BraTS23_2 = "BraTS23_2"
+    """BraTS23 BraTS-Africa Segmentation 2nd place (GPU only)"""
+    BraTS23_3 = "BraTS23_3"
+    """BraTS23 BraTS-Africa Segmentation 3rd place (GPU and CPU)"""
+
+
 # meta data file paths
 ALGORITHM_DIR = Path(__file__).parent / "algorithms"
+PARAMETERS_DIR = ALGORITHM_DIR / "parameters"
+DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
+AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
+
+WEIGHTS_FOLDER = Path(__file__).parent / "weights"
+ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"

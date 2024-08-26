@@ -11,8 +11,7 @@ import requests
 from loguru import logger
 from tqdm import tqdm
 
-ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
-WEIGHTS_FOLDER = Path(__file__).parent / "weights"
+from brats.constants import WEIGHTS_FOLDER, ZENODO_RECORD_BASE_URL
 
 
 def get_dummy_weights_path() -> Path:
@@ -115,6 +114,7 @@ def _get_zenodo_metadata_and_archive_url(record_id: str) -> Dict | None:
             logger.error(
                 f"Cant find model weights for record_id '{record_id}' on Zenodo. Exiting..."
             )
+            # TODO add proper exit exception
         data = response.json()
         return data["metadata"], data["links"]["archive"]
 

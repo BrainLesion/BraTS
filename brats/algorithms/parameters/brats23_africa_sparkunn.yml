@@ -1,0 +1,63 @@
+# Arguments of the data_preparation.py script
+
+# Arguments of the preprocess.py script
+prep_exec_mode: test
+ohe: true
+verbose: true
+task: "12" # testing
+dim: 3
+n_jobs: -1
+
+# Arguments of the main.py script
+exec_mode: predict
+config: None
+logname : logs.json
+gpus: 1
+nodes: 1
+learning_rate: 0.0003
+gradient_clip_val: 0
+negative_slope: 0.01
+tta: true
+brats: true
+deep_supervision: false
+invert_resampled_y: false
+amp: true
+benchmark: false
+focal: false
+save_ckpt: false
+nfolds: 10
+seed: null # "Random seed 
+skip_first_n_eval: 0 # Skip the evaluation for the first n epochs.
+# ckpt_path: null # Path for loading checkpoint #?
+# ckpt_store_dir: $results # Path for saving checkpoint #?
+# fold: 2 # Fold number
+patience: 100 # Early stopping patience
+batch_size: 2 # Batch size
+val_batch_size: 4 # Validation batch size
+momentum: 0.99 # Momentum factor
+weight_decay: 0.0001  #Weight decay (L2 penalty)
+save_preds: true # Enable prediction saving
+dim: 3 # UNet dimension
+resume_training: false # Resume training from the last checkpoint
+num_workers: 8 # Number of subprocesses to use for data loading
+epochs: 150 # Number of training epochs.
+warmup: 5 # Warmup iterations before collecting statistics
+nvol: 4  #Number of volumes which come into single batch size for 2D model
+depth: 5 # The depth of the encoder
+min_fmap: 4  #Minimal dimension of feature map in the bottleneck
+deep_supr_num: 2 # Number of deep supervision heads
+res_block: false # Enable residual blocks
+filters: null #  nargs="+", help="[Optional] Set U-Net filters"
+layout: NCDHW 
+brats22_model: true # Use BraTS22 model
+norm: instance # Normalization layer
+data2d_dim: 3 # Input data dimension for 2d model
+oversampling: 0.4 # Probability of crop to have some region with positive label
+overlap: 0.25 # Amount of overlap between scans during sliding window inference
+scheduler: true # Enable cosine rate scheduler with warmup
+optimizer: adam # Optimizer
+blend: constant # How to blend output of overlapping windows
+train_batches: 0 # Limit number of batches for training (used for benchmarking mode only)
+test_batches: 0 # Limit number of batches for inference (used for benchmarking mode only)
+
+#  Argument for the postprocess.py script

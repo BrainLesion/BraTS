@@ -1,20 +1,22 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
-from pathlib import Path
-from typing import Dict, List, Tuple
 import time
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 import docker
+from docker.errors import DockerException
 from loguru import logger
-from rich.progress import Progress
 from rich.console import Console
+from rich.progress import Progress
 
 from brats.algorithm_config import AlgorithmData
+from brats.constants import PARAMETERS_DIR, DUMMY_PARAMETERS
 from brats.exceptions import AlgorithmNotCPUCompatibleException, BraTSContainerException
 from brats.weights import check_model_weights, get_dummy_weights_path
-from docker.errors import DockerException
 
 try:
     client = docker.from_env()
@@ -97,10 +99,12 @@ def _handle_device_requests(
                 if cuda_available
                 else "No Cuda installation/ GPU was found and"
             )
+            # TODO add reference to table of cpu capable algos as help!
             raise AlgorithmNotCPUCompatibleException(
                 f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
         # empty device requests => run on CPU
+        logger.info("Forcing CPU execution")
         return []
     # request gpu with chosen devices
     return [
@@ -126,7 +130,10 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
 
 
 def _get_volume_mappings(
-    data_path: Path, additional_files_path: Path, output_path: Path
+    data_path: Path,
+    additional_files_path: Path,
+    output_path: Path,
+    parameters_path: Path,
 ) -> Dict:
     """Get the volume mappings for the docker container.
 
@@ -134,29 +141,51 @@ def _get_volume_mappings(
         data_path (Path): The path to the input data
         additional_files_path (Path): The path to the additional files
         output_path (Path): The path to save the output
+        parameters_path (Path): The path to mount for the parameters file
 
     Returns:
         Dict: The volume mappings
     """
     # TODO: add support for recommended "ro" mount mode for input data
-    # data = mlcube_io0, additional files = mlcube_io1, output = mlcube_io2
+    # data = mlcube_io0, additional files = mlcube_io1, output = mlcube_io2, parameters = mlcube_io3
     return {
         volume.absolute(): {
             "bind": f"/mlcube_io{i}",
             "mode": "rw",
         }
-        for i, volume in enumerate([data_path, additional_files_path, output_path])
+        for i, volume in enumerate(
+            [data_path, additional_files_path, output_path, parameters_path]
+        )
     }
 
 
+def _get_parameters_arg(algorithm: AlgorithmData) -> Optional[str]:
+    """Get the parameters argument for the docker container.
+
+    Args:
+        algorithm (AlgorithmData): The algorithm data
+
+    Returns:
+        Optional[str]: The parameters argument for the docker container or None if a parameter file is not required
+    """
+    if algorithm.run_args.parameters_file:
+        # Docker image name is used as the identifier for the param file
+        identifier = algorithm.run_args.docker_image.split(":")[0].split("/")[-1]
+        file = PARAMETERS_DIR / f"{identifier}.yml"
+        # Some algorithms do require a param file to be present but don't actually use it
+        # In this case we simply use a dummy file
+        param_file = file if file.exists() else DUMMY_PARAMETERS
+        return f" --parameters_file=/mlcube_io3/{param_file.name}"
+    return None
+
+
 def _build_args(
-    algorithm: AlgorithmData, additional_files_path: Path
+    algorithm: AlgorithmData,
 ) -> Tuple[str, str]:
     """Build the command and extra arguments for the docker container.
 
     Args:
         algorithm (AlgorithmData): The algorithm data
-        additional_files_path (Path): The path to the additional files
 
     Returns:
         command_args, extra_args (Tuple): The command arguments and extra arguments
@@ -168,12 +197,10 @@ def _build_args(
         else f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     )
 
-    if algorithm.run_args.parameters_file:
-        # The algorithms that need a parameters file do not seem to actually use it but just need it to exist
-        # As a workaround we simply create an empty file
-        parameters_file = additional_files_path / "parameters.yaml"
-        parameters_file.touch()
-        command_args += f" --parameters_file=/mlcube_io1/parameters.yaml"
+    # Add parameters file arg if required
+    params_arg = _get_parameters_arg(algorithm=algorithm)
+    if params_arg:
+        command_args += params_arg
 
     extra_args = {}
     if not algorithm.run_args.requires_root:
@@ -226,11 +253,10 @@ def _sanity_check_output(
         BraTSContainerException: If not enough output files exist
     """
 
-    inputs = list(data_path.iterdir())
+    # some algorithms create extra files in the data folder, so we only check for files starting with "BraTS"
+    # (should result in only counting actual inputs)
+    inputs = [e for e in data_path.iterdir() if e.name.startswith("BraTS")]
     outputs = list(output_path.iterdir())
-
-    if len(inputs) == len(outputs) and len(outputs) > 0:
-        return
 
     if len(outputs) < len(inputs):
         logger.error(f"Docker container output: \n\r{container_output}")
@@ -259,7 +285,7 @@ def run_docker(
 
     # ensure image is present, if not pull it
     _ensure_image(image=algorithm.run_args.docker_image)
-    # Log the message
+
     additional_files_path = _get_additional_files_path(algorithm)
 
     # ensure output folder exists
@@ -269,19 +295,18 @@ def run_docker(
         data_path=data_path,
         additional_files_path=additional_files_path,
         output_path=output_path,
+        parameters_path=PARAMETERS_DIR,
     )
     logger.debug(f"Volume mappings: {volume_mappings}")
 
-    command_args, extra_args = _build_args(
-        algorithm=algorithm, additional_files_path=additional_files_path
-    )
+    command_args, extra_args = _build_args(algorithm=algorithm)
     logger.debug(f"Command args: {command_args}, Extra args: {extra_args}")
 
     # device setup
     device_requests = _handle_device_requests(
         algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
     )
-    logger.debug(f"Device requests: {device_requests}")
+    logger.debug(f"GPU Device requests: {device_requests}")
 
     # Run the container
     logger.info(f"{'Starting inference'}")
