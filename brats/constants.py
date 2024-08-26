@@ -42,14 +42,14 @@ class PediatricAlgorithms(Algorithms):
 
 
 class AfricaAlgorithms(Algorithms):
-    """Constants for the available pediatric segmentation algorithms."""
+    """Constants for the available africa segmentation algorithms."""
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 BraTS-Africa Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
     """BraTS23 BraTS-Africa Segmentation 2nd place (GPU only)"""
     BraTS23_3 = "BraTS23_3"
-    """BraTS23 BraTS-Africa Segmentation 3rd place (GPU only)"""
+    """BraTS23 BraTS-Africa Segmentation 3rd place (GPU and CPU)"""
 
 
 # meta data file paths
