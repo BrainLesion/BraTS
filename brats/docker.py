@@ -1,20 +1,22 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
-from pathlib import Path
-from typing import Dict, List, Tuple
 import time
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 import docker
+from docker.errors import DockerException
 from loguru import logger
-from rich.progress import Progress
 from rich.console import Console
+from rich.progress import Progress
 
 from brats.algorithm_config import AlgorithmData
+from brats.constants import PARAMETERS_DIR
 from brats.exceptions import AlgorithmNotCPUCompatibleException, BraTSContainerException
 from brats.weights import check_model_weights, get_dummy_weights_path
-from docker.errors import DockerException
 
 try:
     client = docker.from_env()
@@ -97,10 +99,12 @@ def _handle_device_requests(
                 if cuda_available
                 else "No Cuda installation/ GPU was found and"
             )
+            # TODO add reference to table of cpu capable algos as help!
             raise AlgorithmNotCPUCompatibleException(
                 f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
         # empty device requests => run on CPU
+        logger.info("Forcing CPU execution")
         return []
     # request gpu with chosen devices
     return [
@@ -149,6 +153,36 @@ def _get_volume_mappings(
     }
 
 
+def _get_parameters_arg(
+    algorithm: AlgorithmData, additional_files_path: Path
+) -> Optional[str]:
+    """Get the parameters argument for the docker container.
+
+    Args:
+        algorithm (AlgorithmData): The algorithm data
+        additional_files_path (Path): The path to the additional files
+
+    Returns:
+        Optional[str]: The parameters argument for the docker container or None if a parameter file is not required
+    """
+    if algorithm.run_args.parameters_file:
+        # Some algorithms require an additional parameters file
+        parameters_file = additional_files_path / "parameters.yaml"
+
+        # Use the docker image name as the identifier
+        identifier = algorithm.run_args.docker_image.split(":")[0].split("/")[-1]
+        file = PARAMETERS_DIR / f"{identifier}.yml"
+        if file.exists():
+            # copy content
+            shutil.copy(file, parameters_file)
+        else:
+            # if there is no dedicated file it means that the algorithms requires a file to exist but does not actually use it
+            # hence we just create a dummy file
+            parameters_file.touch()
+        return " --parameters_file=/mlcube_io1/parameters.yaml"
+    return None
+
+
 def _build_args(
     algorithm: AlgorithmData, additional_files_path: Path
 ) -> Tuple[str, str]:
@@ -168,12 +202,12 @@ def _build_args(
         else f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     )
 
-    if algorithm.run_args.parameters_file:
-        # The algorithms that need a parameters file do not seem to actually use it but just need it to exist
-        # As a workaround we simply create an empty file
-        parameters_file = additional_files_path / "parameters.yaml"
-        parameters_file.touch()
-        command_args += f" --parameters_file=/mlcube_io1/parameters.yaml"
+    # Add parameters file arg if required
+    params_arg = _get_parameters_arg(
+        algorithm=algorithm, additional_files_path=additional_files_path
+    )
+    if params_arg:
+        command_args += params_arg
 
     extra_args = {}
     if not algorithm.run_args.requires_root:
@@ -281,7 +315,7 @@ def run_docker(
     device_requests = _handle_device_requests(
         algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
     )
-    logger.debug(f"Device requests: {device_requests}")
+    logger.debug(f"GPU Device requests: {device_requests}")
 
     # Run the container
     logger.info(f"{'Starting inference'}")
