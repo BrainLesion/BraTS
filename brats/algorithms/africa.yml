@@ -6,6 +6,7 @@ algorithms:
       paper: TODO
       challenge: BraTS23 BraTS-Africa Segmentation
       rank: 1st
+      year: 2023
     run_args:
       docker_image: brainles/brats23_africa_nvauto:latest
       input_name_schema: "BraTS-SSA-{id:05d}-000"
@@ -19,6 +20,7 @@ algorithms:
       paper: N/A
       challenge: BraTS23 BraTS-Africa Segmentation
       rank: 2nd
+      year: 2023
     run_args:
       docker_image: brainles/brats23_africa_sparkunn:latest
       input_name_schema: "BraTS-SSA-{id:05d}-000"
@@ -33,6 +35,7 @@ algorithms:
       paper: N/A
       challenge: BraTS23 BraTS-Africa Segmentation
       rank: 3rd
+      year: 2023
     run_args:
       docker_image: brainles/brats23_africa_blackbean:latest
       input_name_schema: "BraTS-SSA-{id:05d}-000"

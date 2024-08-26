@@ -19,6 +19,8 @@ class MetaData:
     """The challenge the algorithm was submitted to"""
     rank: str
     """The rank of the algorithm in the challenge"""
+    year: int
+    """The year the algorithm was submitted"""
 
 
 @dataclass

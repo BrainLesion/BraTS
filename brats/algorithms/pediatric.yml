@@ -5,8 +5,9 @@ algorithms:
     meta:
       authors: Zhifan Jiang et al.
       paper: N/A
-      challenge: BraTS23 pediatric Segmentation
+      challenge: BraTS23 Pediatric Segmentation
       rank: 1st
+      year: 2023
     run_args:
       docker_image: brainles/brats23_pediatric_cnmc_pmi2023:latest
       input_name_schema: "BraTS-PED-{id:05d}-000"
@@ -18,8 +19,9 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 pediatric Segmentation
+      challenge: BraTS23 Pediatric Segmentation
       rank: 2nd
+      year: 2023
     run_args:
       docker_image: brainles/brats23_pediatric_nvauto:latest 
       input_name_schema: "BraTS-PED-{id:05d}-000"
@@ -31,8 +33,9 @@ algorithms:
     meta:
       authors: Yubo Zhou
       paper: N/A
-      challenge: BraTS23 pediatric Segmentation
+      challenge: BraTS23 Pediatric Segmentation
       rank: 3rd
+      year: 2023
     run_args:
       docker_image: brainles/brats23_pediatric_sherlock_zyb:latest
       input_name_schema: "BraTS-PED-{id:05d}-000"
