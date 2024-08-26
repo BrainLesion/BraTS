@@ -25,12 +25,12 @@ pip install brats
 ### Docker and NVIDIA Container Toolkit Setup
 
 To run `brats` you need a working Docker installation.
-Most algorithms also require GPU support (NVIDIA Docker). 
+Most algorithms also require GPU support (NVIDIA Docker).
 
 Installation instructions:
-- **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
-- **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit) 
 
+- **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
+- **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
 ## Use Cases and Tutorials
 
@@ -51,32 +51,72 @@ segmenter.infer_single(
 For more examples and details please refer to our extensive Notebook tutorials [**TODO**]
 
 ## Algorithms
-| Challenge | Year | Position | Authors | Paper | CPU support |
-|---|---|---|---|---|---|
-| *Meningioma Segmentation* | 2023 | 1st | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
-|     | 2023 | 2nd | Ziyan Huang | N/A | :white_check_mark: |
-|     | 2023 | 3rd | Zhifan Jiang et al. | N/A | :heavy_multiplication_x: |
-| *Pediatric Segmentation* | 2023 | 1st | Zhifan Jiang et al. | N/A | :heavy_multiplication_x: |
-|     | 2023 | 2nd | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
-|     | 2023 | 3rd | Yubo Zhou | N/A | :heavy_multiplication_x: |
-| *Adult Glioma Segmentation* | 2023 | 1st | André Ferreira, et al. | [Link](https://arxiv.org/abs/2402.17317v1) | :heavy_multiplication_x: |
-|     | 2023 | 2nd | Andriy Myronenko, et al. | N/A | :heavy_multiplication_x: |
-|     | 2023 | 3rd | Fadillah Adamsyah Maani, et al. | N/A | :heavy_multiplication_x: |
+
+<details open>
+
+<summary> <strong> Adult Glioma Segmentation </strong> </summary>
+<br>
+
+| Year | Rank | Author                            | Paper                                      | CPU Support |
+| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- |
+| 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    |
+| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                        | &#x274C;    |
+| 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | N/A                                        | &#x274C;    |
+
+</details>
+
+<details>
+<summary> <strong> BraTS-Africa Segmentation </strong> </summary>
+<br>
+
+| Year | Rank | Author                     | Paper | CPU Support |
+| ---- | ---- | -------------------------- | ----- | ----------- |
+| 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
+| 2023 | 2nd  | _Alyssa R Amod, et al._    | N/A   | &#x274C;    |
+| 2023 | 3rd  | _Ziyan Huang, et al._      | N/A   | &#x2705;    |
+
+</details>
+
+<details>
+<summary> <strong> Meningioma Segmentation </strong> </summary>
+<br>
+
+| Year | Rank | Author                     | Paper | CPU Support |
+| ---- | ---- | -------------------------- | ----- | ----------- |
+| 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
+| 2023 | 2nd  | _Ziyan Huang_              | N/A   | &#x2705;    |
+| 2023 | 3rd  | _Zhifan Jiang et al._      | N/A   | &#x274C;    |
+
+</details>
+
+<details>
+<summary> <strong> Pediatric Segmentation </strong> </summary>
+<br>
+
+| Year | Rank | Author                     | Paper | CPU Support |
+| ---- | ---- | -------------------------- | ----- | ----------- |
+| 2023 | 1st  | _Zhifan Jiang et al._      | N/A   | &#x274C;    |
+| 2023 | 2nd  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
+| 2023 | 3rd  | _Yubo Zhou_                | N/A   | &#x274C;    |
+
+</details>
 
 ## Citation
+
 If you use BraTS in your research, please cite it to support the development!
 
 ```
 TODO: citation will be added asap
 ```
 
-
 ## Contributing
 
 We welcome all kinds of contributions from the community!
 
 ### Reporting Bugs, Feature Requests and Questions
+
 Please open a new issue [here](https://github.com/BrainLesion/BraTS/issues).
 
 ### Code contributions
+
 Nice to have you on board! Please have a look at our [CONTRIBUTING.md](CONTRIBUTING.md) file.
