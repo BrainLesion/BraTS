@@ -22,7 +22,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_africa_sparkunn:latest
       input_name_schema: "BraTS-SSA-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: true
     weights:
       record_id: "13373752"
