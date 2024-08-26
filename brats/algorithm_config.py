@@ -17,6 +17,8 @@ class MetaData:
     """If available, a url to the paper of the algorithm"""
     challenge: str
     """The challenge the algorithm was submitted to"""
+    rank: str
+    """The rank of the algorithm in the challenge"""
 
 
 @dataclass

@@ -3,7 +3,8 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation (1st place)
+      challenge: BraTS23 Meningioma Segmentation
+      rank: 1st
     run_args:
       docker_image: brainles/brats23_meningioma_nvauto:latest 
       input_name_schema: "BraTS-MEN-{id:05d}-000"
@@ -15,7 +16,8 @@ algorithms:
     meta:
       authors: Ziyan Huang
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation (2nd place)
+      challenge: BraTS23 Meningioma Segmentation
+      rank: 2nd
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
       input_name_schema: "BraTS-MEN-{id:05d}-000"
@@ -28,7 +30,8 @@ algorithms:
     meta:
       authors: Zhifan Jiang et al.
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation (3rd place)
+      challenge: BraTS23 Meningioma Segmentation
+      rank: 3rd
     run_args:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
       input_name_schema: "BraTS-MEN-{id:05d}-000"
