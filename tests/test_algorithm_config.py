@@ -2,16 +2,14 @@ import unittest
 from pathlib import Path
 
 from brats.algorithm_config import load_algorithms
-
-PACKAGE_DIR = Path(__file__).parent.parent
+from brats.constants import ALGORITHM_DIR
 
 
 class TestAlgorithmConfig(unittest.TestCase):
 
     def test_configs_valid(self):
-        algorithms_folder = PACKAGE_DIR / "brats" / "algorithms"
 
-        configs = [f for f in algorithms_folder.iterdir() if f.is_file()]
+        configs = [f for f in ALGORITHM_DIR.iterdir() if f.is_file()]
 
         for config in configs:
             try:
