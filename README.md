@@ -90,6 +90,18 @@ For more examples and details please refer to our extensive Notebook tutorials [
 </details>
 
 <details>
+<summary> <strong> Brain Metastases Segmentation </strong> </summary>
+<br>
+
+| Year | Rank | Author | Paper | CPU Support |
+|------|-------|--------|-------|-------------|
+| 2023 | 1st | _Andriy Myronenko, et al._ | N/A | &#x274C; |
+| 2023 | 2nd | _Siwei Yang, et al._ | N/A | &#x274C; |
+| 2023 | 3rd | _Ziyan Huang, et al._ | N/A | &#x2705; |
+
+</details>
+
+<details>
 <summary> <strong> Pediatric Segmentation </strong> </summary>
 <br>
 
