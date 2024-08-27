@@ -3,4 +3,5 @@ from brats.algorithms import (
     MeningiomaSegmenter,
     PediatricSegmenter,
     AfricaSegmenter,
+    MetastasesSegmenter,
 )

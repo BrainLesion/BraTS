@@ -12,11 +12,13 @@ from brats.algorithm_config import load_algorithms
 from brats.constants import (
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
+    METASTASES_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaAlgorithms,
     Algorithms,
     AfricaAlgorithms,
+    MetastasesAlgorithms,
     MeningiomaAlgorithms,
     PediatricAlgorithms,
 )
@@ -322,6 +324,29 @@ class AfricaSegmenter(BraTSAlgorithm):
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=AFRICA_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class MetastasesSegmenter(BraTSAlgorithm):
+    """Provides algorithms to perform tumor segmentation on data from the Brain Metastases Segmentation challenge
+
+    Args:
+        algorithm (MetastasesAlgorithms, optional): Select an algorithm. Defaults to MetastasesAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS23_1,
+        cuda_devices: Optional[str] = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
