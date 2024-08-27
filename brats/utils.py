@@ -45,7 +45,7 @@ def standardize_subject_inputs(
     except FileNotFoundError as e:
         logger.error(f"Error while standardizing files: {e}")
         logger.error(
-            "Please make sure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
+            "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
         )
         sys.exit(1)
 

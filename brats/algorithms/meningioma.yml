@@ -15,7 +15,7 @@ algorithms:
 
   BraTS23_2:
     meta:
-      authors: Ziyan Huang
+      authors: Ziyan Huang, et al.
       paper: N/A
       challenge: BraTS23 Meningioma Segmentation
       rank: 2nd
