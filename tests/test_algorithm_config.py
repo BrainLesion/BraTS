@@ -2,14 +2,14 @@ import unittest
 from pathlib import Path
 
 from brats.algorithm_config import load_algorithms
-from brats.constants import ALGORITHM_DIR
+from brats.constants import META_DIR
 
 
 class TestAlgorithmConfig(unittest.TestCase):
 
     def test_configs_valid(self):
 
-        configs = [f for f in ALGORITHM_DIR.iterdir() if f.is_file()]
+        configs = [f for f in META_DIR.iterdir() if f.is_file()]
 
         for config in configs:
             try:
