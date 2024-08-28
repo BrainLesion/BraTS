@@ -49,6 +49,8 @@ class WeightsData:
     """The Zenodo record ID of the weights"""
     param_name: Optional[str] = "weights"
     """The parameter that specifies the weights folder in the algorithm execution, typically 'weights' but differs for some"""
+    checkpoint_path: Optional[str] = None
+    """The path to a specific checkpoint file in the weights folder. Not required since some algorithms accept the entire weights folder"""
 
 
 @dataclass
