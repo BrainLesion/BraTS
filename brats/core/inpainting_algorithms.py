@@ -54,6 +54,35 @@ class Inpainter(BraTSAlgorithm):
         # sanity check inputs
         input_sanity_check(t1n=t1n, mask=mask)
 
+    def _standardize_batch_inputs(
+        self, data_folder: Path, subjects: list[Path], input_name_schema: str
+    ) -> None:
+        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+
+        Args:
+            subjects (List[Path]): List of subject folders, each with a voided t1n and a mask image
+            data_folder (Path): Parent folder where the subject folders will be created
+            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+
+        Returns:
+            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+        """
+        internal_external_name_map = {}
+        for i, subject in enumerate(subjects):
+            internal_name = input_name_schema.format(id=i)
+            internal_external_name_map[internal_name] = subject.name
+            # TODO Add support for .nii files
+
+            self._standardize_single_inputs(
+                data_folder=data_folder,
+                subject_id=internal_name,
+                inputs={
+                    "t1n": subject / f"{subject.name}-t1n-voided.nii.gz",
+                    "mask": subject / f"{subject.name}-mask.nii.gz",
+                },
+            )
+        return internal_external_name_map
+
     def infer_single(
         self,
         t1n: Path | str,
@@ -73,4 +102,31 @@ class Inpainter(BraTSAlgorithm):
             inputs={"t1n": t1n, "mask": mask},
             output_file=output_file,
             log_file=log_file,
+        )
+
+    def infer_batch(
+        self,
+        data_folder: Path | str,
+        output_folder: Path | str,
+        log_file: Path | str | None = None,
+    ) -> None:
+        """Perform inpainting on a batch of subjects with the provided images and save the results to the output folder. \n
+        Requires the following structure:\n
+        data_folder\n
+        ┣ A\n
+        ┃ ┣ A-t1n-voided.nii.gz\n
+        ┃ ┣ A-mask.nii.gz\n
+        ┣ B\n
+        ┃ ┣ B-t1n-voided.nii.gz\n
+        ┃ ┣ B-mask.nii.gz\n
+        ┣ C ...\n
+
+
+        Args:
+            data_folder (Path | str): Folder containing the subjects with required structure
+            output_folder (Path | str): Output folder to save the segmentations
+            log_file (Path | str, optional): Save logs to this file
+        """
+        return self._infer_batch(
+            data_folder=data_folder, output_folder=output_folder, log_file=log_file
         )
