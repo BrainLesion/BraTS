@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
+import sys
 from typing import Optional
+
+from loguru import logger
 
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task
-from brats.utils.data_handling import standardize_inpainting_inputs
+from brats.utils.data_handling import input_sanity_check
 
 
 class Inpainter(BraTSAlgorithm):
@@ -24,7 +28,7 @@ class Inpainter(BraTSAlgorithm):
             force_cpu=force_cpu,
         )
 
-    def _standardize_inputs(
+    def _standardize_single_inputs(
         self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
     ) -> None:
         """
@@ -35,12 +39,20 @@ class Inpainter(BraTSAlgorithm):
             subject_id (str): Subject ID
             inputs (dict[str, Path | str]): Dictionary with the input data
         """
-        standardize_inpainting_inputs(
-            data_folder=data_folder,
-            subject_id=subject_id,
-            t1n=inputs["t1n"],
-            mask=inputs["mask"],
-        )
+
+        subject_folder = data_folder / subject_id
+        subject_folder.mkdir(parents=True, exist_ok=True)
+        # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
+        t1n, mask = inputs["t1n"], inputs["mask"]
+        try:
+            shutil.copy(t1n, subject_folder / f"{subject_id}-t1n-voided.nii.gz")
+            shutil.copy(mask, subject_folder / f"{subject_id}-mask.nii.gz")
+        except FileNotFoundError as e:
+            logger.error(f"Error while standardizing files: {e}")
+            sys.exit(1)
+
+        # sanity check inputs
+        input_sanity_check(t1n=t1n, mask=mask)
 
     def infer_single(
         self,
