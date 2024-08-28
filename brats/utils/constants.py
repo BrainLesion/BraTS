@@ -1,6 +1,21 @@
 from enum import Enum
 from pathlib import Path
 
+# TASK ENUM
+
+
+class Task(str, Enum):
+    """Available tasks."""
+
+    SEGMENTATION = "SEGMENTATION"
+    """Segmentation task."""
+
+    INPAINTING = "INPAINTING"
+    """Inpainting task."""
+
+
+# ALGORITHM ENUMS
+
 
 class Algorithms(str, Enum):
     """Parent class for constants of the available algorithms."""
@@ -53,7 +68,7 @@ class AfricaAlgorithms(Algorithms):
 
 
 class MetastasesAlgorithms(Algorithms):
-    """Constants for the available Brain Metastases segmentation algorithms."""
+    """Constants for the available Inpainting algorithms."""
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
@@ -63,15 +78,37 @@ class MetastasesAlgorithms(Algorithms):
     """BraTS23  Brain Metastases Segmentation 3rd place (GPU only)"""
 
 
-# meta data file paths
-ALGORITHM_DIR = Path(__file__).parent / "algorithms"
-PARAMETERS_DIR = ALGORITHM_DIR / "parameters"
-DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
-ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
-MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
-PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
-AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
-METASTASES_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "metastases.yml"
+class InpaintingAlgorithms(Algorithms):
+    """Constants for the available BraTS Inpainting algorithms."""
 
-WEIGHTS_FOLDER = Path(__file__).parent / "weights"
+    BraTS23_1 = "BraTS23_1"
+    """BraTS23  Inpainting 1st place (GPU only)"""
+    BraTS23_2 = "BraTS23_2"
+    """BraTS23  Inpainting 2nd place (GPU only) (Very Slow)"""
+    BraTS23_3 = "BraTS23_3"
+    """BraTS23  Inpainting 3rd place (GPU only)"""
+
+
+# DIRECTORIES
+DATA_DIR = Path(__file__).parent.parent / "data"
+META_DIR = DATA_DIR / "meta"
+PARAMETERS_DIR = DATA_DIR / "parameters"
+ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"
+
+# META DATA FILE PATHS
+ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "adult_glioma.yml"
+MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
+PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
+AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"
+METASTASES_SEGMENTATION_ALGORITHMS = META_DIR / "metastases.yml"
+INPAINTING_ALGORITHMS = META_DIR / "inpainting.yml"
+
+DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
+
+# ZENODO
 ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
+
+OUTPUT_NAME_SCHEMA = {
+    Task.SEGMENTATION: "{subject_id}.nii.gz",
+    Task.INPAINTING: "{subject_id}-t1n-inference.nii.gz",
+}

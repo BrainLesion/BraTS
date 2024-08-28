@@ -1,0 +1,51 @@
+algorithms:
+
+  BraTS23_1:
+    meta:
+      authors: Juexin Zhang, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 1st
+      year: 2023
+    run_args:
+      docker_image: brainles/brats23_inpainting_ying_weng:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: true
+      parameters_file: true
+    weights:
+      record_id: "13382922"
+      param_name: "checkpoint_path"
+
+  BraTS23_2:
+    meta:
+      authors: Alicia Durrer, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 2nd
+      year: 2023
+    run_args:
+      docker_image: brainles/brats23_inpainting_domaso
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: true
+      parameters_file: true
+    weights:
+      record_id: "13383452"
+      param_name: "weights"
+      checkpoint_path: "savedmodel2850000.pt"
+
+  BraTS23_3:
+    meta:
+      authors: Jiayu Huo, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 3rd
+      year: 2023
+    run_args:
+      docker_image: brainles/brats23_inpainting_medsegctrl
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: true
+      parameters_file: true
+    weights:
+      record_id: "13383287"
+      param_name: "weight_path"
+      checkpoint_path: "epoch-19-step-197499.ckpt"
