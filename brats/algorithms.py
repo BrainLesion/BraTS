@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import shutil
 import sys
-import tempfile
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
+
 
 from loguru import logger
 
@@ -15,15 +15,25 @@ from brats.constants import (
     METASTASES_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
+    INPAINTING_ALGORITHMS,
+    OUTPUT_NAME_SCHEMA,
     AdultGliomaAlgorithms,
     Algorithms,
     AfricaAlgorithms,
+    InpaintingAlgorithms,
     MetastasesAlgorithms,
     MeningiomaAlgorithms,
     PediatricAlgorithms,
+    Task,
 )
 from brats.docker import run_docker
-from brats.utils import standardize_subject_inputs, standardize_subjects_inputs_list
+from brats.utils import (
+    InferenceSetup,
+    standardize_inpainting_inputs,
+    standardize_segmentation_inputs,
+)
+from abc import ABC, abstractmethod
+
 
 # Remove the default logger and add one with level INFO
 logger.remove()
@@ -33,13 +43,14 @@ logger.add(
 )
 
 
-class BraTSAlgorithm:
+class BraTSAlgorithm(ABC):
     """This class serves as the basis for all BraTS algorithms. It provides a common interface and implements the logic for single and batch inference."""
 
     def __init__(
         self,
         algorithm: Algorithms,
         algorithms_file_path: Path,
+        task: Task,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
@@ -47,6 +58,7 @@ class BraTSAlgorithm:
         self.force_cpu = force_cpu
         self.cuda_devices = cuda_devices
 
+        self.task = task
         self.algorithm_list = load_algorithms(file_path=algorithms_file_path)
         # save algorithm identifier for logging etc.
         self.algorithm_key = algorithm.value
@@ -57,6 +69,13 @@ class BraTSAlgorithm:
             f"Instantiated {self.__class__.__name__} with algorithm: {self.algorithm_key} by {self.algorithm.meta.authors}"
         )
 
+    @abstractmethod
+    def _standardize_inputs(
+        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+    ) -> None:
+        """Standardize the input data to match the requirements of the selected algorithm."""
+        pass
+
     def _log_algorithm_info(self):
         """Log information about the selected algorithm."""
         logger.opt(colors=True).info(
@@ -66,41 +85,126 @@ class BraTSAlgorithm:
             f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
         )
 
-    def _add_log_file_handler(self, log_file: Path | str) -> int:
-        """
-        Add a log file handler to the logger.
+    def _process_output(
+        self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
+    ) -> None:
+        # rename output
+        algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
+            self.task
+        ].format(subject_id=subject_id)
 
-        Args:
-            log_file (Path | str): Path to the log file
+        # ensure path exists and rename output to the desired path
+        output_file = Path(output_file).absolute()
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(algorithm_output, output_file)
 
-        Returns:
-            int: The logger id
-        """
-        log_file = Path(log_file)
-        logger_id = logger.add(log_file, level="DEBUG", catch=True)
-        logger.info(
-            f"Logging console logs and further debug information to: {log_file.absolute()}"
+    def _infer_single(
+        self,
+        inputs: dict[str, Path | str],
+        output_file: Path | str,
+        log_file: Optional[Path | str] = None,
+    ):
+        with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
+            logger.info(f"Performing single inference")
+
+            # the id here is arbitrary
+            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
+
+            self._standardize_inputs(
+                data_folder=tmp_data_folder,
+                subject_id=subject_id,
+                inputs=inputs,
+            )
+
+            self._log_algorithm_info()
+            run_docker(
+                algorithm=self.algorithm,
+                data_path=tmp_data_folder,
+                output_path=tmp_output_folder,
+                cuda_devices=self.cuda_devices,
+                force_cpu=self.force_cpu,
+            )
+            self._process_output(
+                tmp_output_folder=tmp_output_folder,
+                subject_id=subject_id,
+                output_file=output_file,
+            )
+            logger.info(f"Saved output to: {Path(output_file).absolute()}")
+
+    # def _infer_batch(
+    #     self,
+    #     data_folder: Path | str,
+    #     output_folder: Path | str,
+    #     log_file: Optional[Path | str] = None,
+    # ):
+
+    #     with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
+    #         data_folder = Path(data_folder)
+
+    #         output_folder.mkdir(parents=True, exist_ok=True)
+    #         self._log_algorithm_info()
+    #         # find subjects
+    #         subjects = [f for f in data_folder.iterdir() if f.is_dir()]
+    #         logger.info(
+    #             f"Found {len(subjects)} subjects: {', '.join([s.name for s in subjects][:5])} {' ...' if len(subjects) > 5 else '' }"
+    #         )
+    #         # map to brats names
+    #         internal_external_name_map = standardize_segmentation_inputs_list(
+    #             subjects=subjects,
+    #             tmp_data_folder=tmp_data_folder,
+    #             input_name_schema=self.algorithm.run_args.input_name_schema,
+    #         )
+    #         logger.info(f"Standardized input names to match algorithm requirements.")
+
+    #         # run inference in container
+    #         run_docker(
+    #             algorithm=self.algorithm,
+    #             data_path=tmp_data_folder,
+    #             output_path=tmp_output_folder,
+    #             cuda_devices=self.cuda_devices,
+    #             force_cpu=self.force_cpu,
+    #         )
+
+    # # move outputs and change name back to initially provided one
+    # output_folder = Path(output_folder)
+    # for internal_name, external_name in internal_external_name_map.items():
+    #     segmentation = Path(tmp_output_folder) / f"{internal_name}.nii.gz"
+    #     output_file = output_folder / f"{external_name}.nii.gz"
+    #     shutil.move(segmentation, output_file)
+
+    # logger.info(f"Saved outputs to: {output_folder.absolute()}")
+
+
+class SegmentationAlgorithm(BraTSAlgorithm):
+    """This class provides algorithms to perform tumor segmentation on MRI data. It is the base class for all segmentation algorithms and provides the common interface for single and batch inference."""
+
+    def __init__(
+        self,
+        algorithm: Algorithms,
+        algorithms_file_path: Path,
+        cuda_devices: Optional[str] = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=algorithms_file_path,
+            task=Task.SEGMENTATION,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
         )
 
-        return logger_id
-
-    def _cleanup(
-        self, temp_data_folder: Path, temp_output_folder: Path, logger_id: Optional[int]
+    def _standardize_inputs(
+        self, data_folder: Path, subject_id: str, inputs: Dict[str, Path | str]
     ) -> None:
-        try:
-            shutil.rmtree(temp_data_folder)
-        except PermissionError as e:
-            logger.warning(
-                f"Failed to remove temporary folder {temp_data_folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
-            )
-        try:
-            shutil.rmtree(temp_output_folder)
-        except PermissionError as e:
-            logger.warning(
-                f"Failed to remove temporary folder {temp_output_folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
-            )
-        if logger_id is not None:
-            logger.remove(logger_id)
+        """Standardize the input data to match the requirements of the selected algorithm."""
+        standardize_segmentation_inputs(
+            data_folder=data_folder,
+            subject_id=subject_id,
+            t1c=inputs["t1c"],
+            t1n=inputs["t1n"],
+            t2f=inputs["t2f"],
+            t2w=inputs["t2w"],
+        )
 
     def infer_single(
         self,
@@ -110,8 +214,8 @@ class BraTSAlgorithm:
         t2w: Path | str,
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-    ):
-        """Perform inference on a single subject with the provided images and save the result to the output file.
+    ) -> None:
+        """Perform segmentation on a single subject with the provided images and save the result to the output file.
 
         Args:
             t1c (Path | str): Path to the T1c image
@@ -121,123 +225,14 @@ class BraTSAlgorithm:
             output_file (Path | str): Path to save the segmentation
             log_file (Path | str, optional): Save logs to this file
         """
-        # setup temp input folder with the provided images
-        temp_data_folder = Path(tempfile.mkdtemp())
-        temp_output_folder = Path(tempfile.mkdtemp())
-        if log_file is not None:
-            logger_id = self._add_log_file_handler(log_file)
-        try:
-            logger.info(f"Performing single inference ")
-
-            # the id here is arbitrary
-            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
-
-            standardize_subject_inputs(
-                data_folder=temp_data_folder,
-                subject_id=subject_id,
-                t1c=t1c,
-                t1n=t1n,
-                t2f=t2f,
-                t2w=t2w,
-            )
-
-            self._log_algorithm_info()
-            run_docker(
-                algorithm=self.algorithm,
-                data_path=temp_data_folder,
-                output_path=temp_output_folder,
-                cuda_devices=self.cuda_devices,
-                force_cpu=self.force_cpu,
-            )
-            # rename output
-            segmentation = Path(temp_output_folder) / f"{subject_id}.nii.gz"
-
-            # ensure path exists and rename output to the desired path
-            output_file = Path(output_file).absolute()
-            output_file.parent.mkdir(parents=True, exist_ok=True)
-            shutil.move(segmentation, output_file)
-            logger.info(f"Saved segmentation to: {output_file.absolute()}")
-
-        finally:
-            self._cleanup(
-                temp_data_folder=temp_data_folder,
-                temp_output_folder=temp_output_folder,
-                logger_id=logger_id if log_file else None,
-            )
-
-    def infer_batch(
-        self,
-        data_folder: Path | str,
-        output_folder: Path | str,
-        log_file: Optional[Path | str] = None,
-    ):
-        """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
-        Requires the following structure:\n
-        data_folder\n
-        ┣ A\n
-        ┃ ┣ A-t1c.nii.gz\n
-        ┃ ┣ A-t1n.nii.gz\n
-        ┃ ┣ A-t2f.nii.gz\n
-        ┃ ┗ A-t2w.nii.gz\n
-        ┣ B\n
-        ┃ ┣ B-t1c.nii.gz\n
-        ┃ ┣ ...\n
+        self._infer_single(
+            inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
+            output_file=output_file,
+            log_file=log_file,
+        )
 
 
-        Args:
-            data_folder (Path | str): Folder containing the subjects with required structure
-            output_folder (Path | str): Output folder to save the segmentations
-            log_file (Path | str, optional): Save logs to this file
-        """
-
-        data_folder = Path(data_folder)
-        output_folder = Path(output_folder)
-        output_folder.mkdir(parents=True, exist_ok=True)
-
-        temp_data_folder = Path(tempfile.mkdtemp())
-        temp_output_folder = Path(tempfile.mkdtemp())
-        if log_file:
-            logger_id = self._add_log_file_handler(log_file)
-        try:
-            self._log_algorithm_info()
-            # find subjects
-            subjects = [f for f in data_folder.iterdir() if f.is_dir()]
-            logger.info(
-                f"Found {len(subjects)} subjects: {', '.join([s.name for s in subjects][:5])} {' ...' if len(subjects) > 5 else '' }"
-            )
-            # map to brats names
-            internal_external_name_map = standardize_subjects_inputs_list(
-                subjects=subjects,
-                temp_data_folder=temp_data_folder,
-                input_name_schema=self.algorithm.run_args.input_name_schema,
-            )
-            logger.info(f"Standardized input names to match algorithm requirements.")
-
-            # run inference in container
-            run_docker(
-                algorithm=self.algorithm,
-                data_path=temp_data_folder,
-                output_path=temp_output_folder,
-                cuda_devices=self.cuda_devices,
-                force_cpu=self.force_cpu,
-            )
-
-            # move outputs and change name back to initially provided one
-            for internal_name, external_name in internal_external_name_map.items():
-                segmentation = Path(temp_output_folder) / f"{internal_name}.nii.gz"
-                output_file = output_folder / f"{external_name}.nii.gz"
-                shutil.move(segmentation, output_file)
-
-            logger.info(f"Saved results to: {output_folder.absolute()}")
-        finally:
-            self._cleanup(
-                temp_data_folder=temp_data_folder,
-                temp_output_folder=temp_output_folder,
-                logger_id=logger_id if log_file else None,
-            )
-
-
-class AdultGliomaSegmenter(BraTSAlgorithm):
+class AdultGliomaSegmenter(SegmentationAlgorithm):
     """Provides algorithms to perform tumor segmentation on adult glioma MRI data.
 
     Args:
@@ -260,7 +255,7 @@ class AdultGliomaSegmenter(BraTSAlgorithm):
         )
 
 
-class MeningiomaSegmenter(BraTSAlgorithm):
+class MeningiomaSegmenter(SegmentationAlgorithm):
     """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
 
     Args:
@@ -283,7 +278,7 @@ class MeningiomaSegmenter(BraTSAlgorithm):
         )
 
 
-class PediatricSegmenter(BraTSAlgorithm):
+class PediatricSegmenter(SegmentationAlgorithm):
     """Provides algorithms to perform tumor segmentation on pediatric MRI data
 
     Args:
@@ -306,7 +301,7 @@ class PediatricSegmenter(BraTSAlgorithm):
         )
 
 
-class AfricaSegmenter(BraTSAlgorithm):
+class AfricaSegmenter(SegmentationAlgorithm):
     """Provides algorithms to perform tumor segmentation on data from the BraTSAfrica challenge
 
     Args:
@@ -329,7 +324,7 @@ class AfricaSegmenter(BraTSAlgorithm):
         )
 
 
-class MetastasesSegmenter(BraTSAlgorithm):
+class MetastasesSegmenter(SegmentationAlgorithm):
     """Provides algorithms to perform tumor segmentation on data from the Brain Metastases Segmentation challenge
 
     Args:
@@ -349,4 +344,53 @@ class MetastasesSegmenter(BraTSAlgorithm):
             algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
+        )
+
+
+class Inpainter(BraTSAlgorithm):
+
+    def __init__(
+        self,
+        algorithm: InpaintingAlgorithms = InpaintingAlgorithms.BraTS23_1,
+        cuda_devices: str | None = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=INPAINTING_ALGORITHMS,
+            task=Task.INPAINTING,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+    def _standardize_inputs(
+        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+    ) -> None:
+        """Standardize the input data to match the requirements of the selected algorithm."""
+        standardize_inpainting_inputs(
+            data_folder=data_folder,
+            subject_id=subject_id,
+            t1n=inputs["t1n"],
+            mask=inputs["mask"],
+        )
+
+    def infer_single(
+        self,
+        t1n: Path | str,
+        mask: Path | str,
+        output_file: Path | str,
+        log_file: Optional[Path | str] = None,
+    ) -> None:
+        """Perform segmentation on a single subject with the provided images and save the result to the output file.
+
+        Args:
+            t1n (Path | str): Path to the T1n image
+            mask (Path | str): Path to the mask image
+            output_file (Path | str): Path to save the segmentation
+            log_file (Path | str, optional): Save logs to this file
+        """
+        self._infer_single(
+            inputs={"t1n": t1n, "mask": mask},
+            output_file=output_file,
+            log_file=log_file,
         )
