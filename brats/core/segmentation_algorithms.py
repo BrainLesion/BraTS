@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import shutil
+import sys
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
+
+from loguru import logger
 
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.constants import (
@@ -18,7 +22,7 @@ from brats.utils.constants import (
     PediatricAlgorithms,
     Task,
 )
-from brats.utils.data_handling import standardize_segmentation_inputs
+from brats.utils.data_handling import input_sanity_check
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):
@@ -39,25 +43,76 @@ class SegmentationAlgorithm(BraTSAlgorithm):
             force_cpu=force_cpu,
         )
 
-    def _standardize_inputs(
+    def _standardize_single_inputs(
         self, data_folder: Path, subject_id: str, inputs: Dict[str, Path | str]
     ) -> None:
-        """
-        Standardize the input data to match the requirements of the selected algorithm.
+        """Standardize the input images for a single subject to match requirements of all algorithms and save them in @data_folder/@subject_id.
+        Example:
+            Meaning, e.g. for adult glioma:
+                BraTS-GLI-00000-000 \n
+                ┣ BraTS-GLI-00000-000-t1c.nii.gz \n
+                ┣ BraTS-GLI-00000-000-t1n.nii.gz \n
+                ┣ BraTS-GLI-00000-000-t2f.nii.gz \n
+                ┗ BraTS-GLI-00000-000-t2w.nii.gz \n
 
         Args:
-            data_folder (Path): Path to the data folder
-            subject_id (str): Subject ID
-            inputs (dict[str, Path | str]): Dictionary with the input data
+            data_folder (Path): Parent folder where the subject folder will be created
+            subject_id (str): Subject ID to be used for the folder and filenames
+            inputs (Dict[str, Path | str]): Dictionary with the input images
         """
-        standardize_segmentation_inputs(
-            data_folder=data_folder,
-            subject_id=subject_id,
-            t1c=inputs["t1c"],
-            t1n=inputs["t1n"],
-            t2f=inputs["t2f"],
-            t2w=inputs["t2w"],
-        )
+
+        subject_folder = data_folder / subject_id
+        subject_folder.mkdir(parents=True, exist_ok=True)
+        # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
+        t1c, t1n, t2f, t2w = inputs["t1c"], inputs["t1n"], inputs["t2f"], inputs["t2w"]
+        try:
+            shutil.copy(t1c, subject_folder / f"{subject_id}-t1c.nii.gz")
+            shutil.copy(t1n, subject_folder / f"{subject_id}-t1n.nii.gz")
+            shutil.copy(t2f, subject_folder / f"{subject_id}-t2f.nii.gz")
+            shutil.copy(t2w, subject_folder / f"{subject_id}-t2w.nii.gz")
+        except FileNotFoundError as e:
+            logger.error(f"Error while standardizing files: {e}")
+            logger.error(
+                "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
+            )
+            sys.exit(1)
+
+        # sanity check inputs
+        input_sanity_check(t1c=t1c, t1n=t1n, t2f=t2f, t2w=t2w)
+
+    def _standardize_batch_inputs(
+        self,
+        data_folder: Path,
+        subjects: List[Path],
+        input_name_schema: str,
+    ) -> Dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+
+        Args:
+            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
+            data_folder (Path): Parent folder where the subject folders will be created
+            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+
+        Returns:
+            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+        """
+        internal_external_name_map = {}
+        for i, subject in enumerate(subjects):
+            internal_name = input_name_schema.format(id=i)
+            internal_external_name_map[internal_name] = subject.name
+            # TODO Add support for .nii files
+
+            self._standardize_single_inputs(
+                data_folder=data_folder,
+                subject_id=internal_name,
+                inputs={
+                    "t1c": subject / f"{subject.name}-t1c.nii.gz",
+                    "t1n": subject / f"{subject.name}-t1n.nii.gz",
+                    "t2f": subject / f"{subject.name}-t2f.nii.gz",
+                    "t2w": subject / f"{subject.name}-t2w.nii.gz",
+                },
+            )
+        return internal_external_name_map
 
     def infer_single(
         self,
