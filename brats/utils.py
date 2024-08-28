@@ -3,13 +3,13 @@ from __future__ import annotations
 import shutil
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import nibabel as nib
 from loguru import logger
 
 
-def standardize_subject_inputs(
+def standardize_segmentation_inputs(
     data_folder: Path,
     subject_id: str,
     t1c: Path | str,
@@ -44,16 +44,37 @@ def standardize_subject_inputs(
         shutil.copy(t2w, subject_folder / f"{subject_id}-t2w.nii.gz")
     except FileNotFoundError as e:
         logger.error(f"Error while standardizing files: {e}")
-        logger.error(
-            "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
-        )
+        # logger.error(
+        #     "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
+        # )
         sys.exit(1)
 
     # sanity check inputs
     input_sanity_check(t1c=t1c, t1n=t1n, t2f=t2f, t2w=t2w)
 
 
-def standardize_subjects_inputs_list(
+def standardize_inpainting_inputs(
+    data_folder: Path,
+    subject_id: str,
+    t1n: Path | str,
+    mask: Path | str,
+):
+
+    subject_folder = data_folder / subject_id
+    subject_folder.mkdir(parents=True, exist_ok=True)
+    # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
+    try:
+        shutil.copy(t1n, subject_folder / f"{subject_id}-t1n-voided.nii.gz")
+        shutil.copy(mask, subject_folder / f"{subject_id}-mask.nii.gz")
+    except FileNotFoundError as e:
+        logger.error(f"Error while standardizing files: {e}")
+        sys.exit(1)
+
+    # sanity check inputs
+    input_sanity_check(t1n=t1n, mask=mask)
+
+
+def standardize_segmentation_inputs_list(
     subjects: List[Path], temp_data_folder: Path, input_name_schema: str
 ) -> Dict[str, str]:
     """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @temp_data_folder/@subject_id.
@@ -72,7 +93,7 @@ def standardize_subjects_inputs_list(
         internal_external_name_map[internal_name] = subject.name
         # TODO Add support for .nii files
 
-        standardize_subject_inputs(
+        standardize_segmentation_inputs(
             data_folder=temp_data_folder,
             subject_id=internal_name,
             t1c=subject / f"{subject.name}-t1c.nii.gz",
@@ -84,21 +105,37 @@ def standardize_subjects_inputs_list(
 
 
 def input_sanity_check(
-    t1c: Path | str,
     t1n: Path | str,
-    t2f: Path | str,
-    t2w: Path | str,
+    t1c: Optional[Path | str] = None,
+    t2f: Optional[Path | str] = None,
+    t2w: Optional[Path | str] = None,
+    mask: Optional[Path | str] = None,
 ):
     """
     Check if input images have the default shape (240, 240, 155) and log a warning if not.
+    Supports different input combinations for segmentation and inpainting tasks.
 
     Args:
-        t1c (Path | str): T1c image path
-        t1n (Path | str): T1n image path
-        t2f (Path | str): T2f image path
-        t2w (Path | str): T2w image path
+        t1n (Path | str): T1n image path (required for segmentation and inpainting)
+        t1c (Path | str, optional): T1c image path (required for segmentation)
+        t2f (Path | str, optional): T2f image path (required for segmentation)
+        t2w (Path | str, optional): T2w image path (required for segmentation)
+        mask (Path | str, optional): Mask image path (required for inpainting)
     """
-    shapes = {str(img): nib.load(img).shape for img in [t1c, t1n, t2f, t2w]}
+    # Filter out None values to only include provided images
+    images = {
+        "t1n": t1n,
+        "t1c": t1c,
+        "t2f": t2f,
+        "t2w": t2w,
+        "mask": mask,
+    }
+
+    # Load and check shapes
+    shapes = {
+        label: nib.load(img).shape for label, img in images.items() if img is not None
+    }
+
     if any(shape != (240, 240, 155) for shape in shapes.values()):
         logger.warning(
             "Input images do not have the default shape (240, 240, 155). This might cause issues with some algorithms and could lead to errors."
