@@ -84,7 +84,7 @@ class InpaintingAlgorithms(Algorithms):
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Inpainting 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
-    """BraTS23  Inpainting 2nd place (GPU only)"""
+    """BraTS23  Inpainting 2nd place (GPU only) (Very Slow)"""
     BraTS23_3 = "BraTS23_3"
     """BraTS23  Inpainting 3rd place (GPU only)"""
 
