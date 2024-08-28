@@ -1,0 +1,49 @@
+algorithms:
+
+  BraTS23_1:
+    meta:
+      authors: Juexin Zhang, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 1st
+      year: 2023
+    run_args:
+      docker_image: TODO
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: false
+    weights:
+      record_id: "TODO"
+      param_name: "weights"
+
+  BraTS23_2:
+    meta:
+      authors: Alicia Durrer, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 2nd
+      year: 2023
+    run_args:
+      docker_image: TODO
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: false
+    weights:
+      record_id: "TODO"
+      param_name: "weights"
+
+  BraTS23_3:
+    meta:
+      authors: Jiayu Huo, et al.
+      paper: N/A
+      challenge: BraTS23 Inpainting
+      rank: 3rd
+      year: 2023
+    run_args:
+      docker_image: TODO
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: false
+    weights:
+      record_id: "TODO"
+      param_name: "weights"
