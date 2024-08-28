@@ -146,7 +146,7 @@ def InferenceSetup(
     log_file: Optional[Path | str] = None,
 ) -> Generator[Tuple[Path, Path], None, None]:
     """
-    Context manager that provides two temporary folders for input and output data and ensures cleanup afterward.
+    Context manager for setting up the inference process. Creates temporary data and output folders and adds a log file handler if requested.
 
     Yields:
         (data folder, output folder) (Tuple[Path, Path]): Two temporary folders (data folder, output folder)
