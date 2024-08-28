@@ -90,10 +90,10 @@ class InpaintingAlgorithms(Algorithms):
 
 
 # DIRECTORIES
-ALGORITHM_DIR = Path(__file__).parent / "algorithms"
-META_DIR = ALGORITHM_DIR / "meta"
-PARAMETERS_DIR = ALGORITHM_DIR / "parameters"
-ADDITIONAL_FILES_FOLDER = ALGORITHM_DIR / "additional_files"
+DATA_DIR = Path(__file__).parent / "data"
+META_DIR = DATA_DIR / "meta"
+PARAMETERS_DIR = DATA_DIR / "parameters"
+ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"
 
 # META DATA FILE PATHS
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "adult_glioma.yml"
