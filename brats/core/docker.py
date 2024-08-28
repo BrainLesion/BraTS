@@ -270,6 +270,21 @@ def _sanity_check_output(
         )
 
 
+def _log_algorithm_info(algorithm: AlgorithmData):
+    """Log information about the algorithm.
+
+    Args:
+        algorithm (AlgorithmData): algorithm data
+    """
+    logger.opt(colors=True).info(
+        f"Running algorithm: <light-green>{algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
+    )
+    logger.opt(colors=True).info(
+        f"<blue>(Paper)</> Consider citing the corresponding paper: {algorithm.meta.paper} by {algorithm.meta.authors}"
+    )
+    logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
+
+
 def run_docker(
     algorithm: AlgorithmData,
     data_path: Path,
@@ -286,7 +301,7 @@ def run_docker(
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
     """
-    logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
+    _log_algorithm_info(algorithm=algorithm)
 
     # ensure image is present, if not pull it
     _ensure_image(image=algorithm.run_args.docker_image)
