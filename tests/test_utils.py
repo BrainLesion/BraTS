@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, patch
 from loguru import logger
 
 from brats.utils import (
-    standardize_subject_inputs,
-    standardize_subjects_inputs_list,
+    standardize_segmentation_inputs,
+    standardize_segmentation_inputs_list,
     input_sanity_check,
 )
 
@@ -19,8 +19,8 @@ class TestStandardizeInputs(unittest.TestCase):
         self.test_dir = Path(tempfile.mkdtemp())
         self.data_folder = self.test_dir / "data"
         self.data_folder.mkdir(parents=True, exist_ok=True)
-        self.temp_data_folder = self.test_dir / "tmp_std_data"
-        self.temp_data_folder.mkdir(parents=True, exist_ok=True)
+        self.tmp_data_folder = self.test_dir / "tmp_std_data"
+        self.tmp_data_folder.mkdir(parents=True, exist_ok=True)
 
         # Create mock paths for input images
         self.subject_folder = self.data_folder / "subject"
@@ -40,15 +40,15 @@ class TestStandardizeInputs(unittest.TestCase):
     @patch("brats.utils.input_sanity_check")
     def test_successful_standardization(self, mock_input_sanity_check):
         subject_id = "test_subject"
-        standardize_subject_inputs(
-            data_folder=self.temp_data_folder,
+        standardize_segmentation_inputs(
+            data_folder=self.tmp_data_folder,
             subject_id=subject_id,
             t1c=self.t1c,
             t1n=self.t1n,
             t2f=self.t2f,
             t2w=self.t2w,
         )
-        subject_folder = self.temp_data_folder / subject_id
+        subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
         for img_type in ["t1c", "t1n", "t2f", "t2w"]:
             self.assertTrue(
@@ -64,7 +64,7 @@ class TestStandardizeInputs(unittest.TestCase):
         subject_id = "test_subject"
         # Provide a non-existent file path for t1c
         t1c = "non_existent_file.nii.gz"
-        standardize_subject_inputs(
+        standardize_segmentation_inputs(
             data_folder=self.data_folder,
             subject_id=subject_id,
             t1c=t1c,
@@ -75,12 +75,14 @@ class TestStandardizeInputs(unittest.TestCase):
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)
 
-    @patch("brats.utils.standardize_subject_inputs")
-    def test_standardize_subjects_inputs_list(self, mock_standardize_subject_inputs):
+    @patch("brats.utils.standardize_segmentation_inputs")
+    def test_standardize_segmentation_inputs_list(
+        self, mock_standardize_segmentation_inputs
+    ):
         subjects = [f for f in self.data_folder.iterdir() if f.is_dir()]
-        mapping = standardize_subjects_inputs_list(
+        mapping = standardize_segmentation_inputs_list(
             subjects=subjects,
-            temp_data_folder=self.temp_data_folder,
+            tmp_data_folder=self.tmp_data_folder,
             input_name_schema="BraTS-PED-{id:05d}-000",
         )
         self.assertDictEqual(
@@ -89,7 +91,7 @@ class TestStandardizeInputs(unittest.TestCase):
                 "BraTS-PED-00000-000": "subject",
             },
         )
-        mock_standardize_subject_inputs.assert_called_once()
+        mock_standardize_segmentation_inputs.assert_called_once()
 
     @patch("brats.utils.nib.load")
     @patch("brats.utils.logger.warning")
