@@ -7,9 +7,10 @@ from io import BytesIO
 from pathlib import Path
 from typing import Dict, List
 
+
+from rich.progress import Progress, SpinnerColumn, TextColumn
 import requests
 from loguru import logger
-from tqdm import tqdm
 
 from brats.constants import WEIGHTS_FOLDER, ZENODO_RECORD_BASE_URL
 
@@ -155,14 +156,19 @@ def _download_model_weights(
     # Download with progress bar
     chunk_size = 1024  # 1KB
     bytes_io = BytesIO()
-    with tqdm(
-        total=0,  # unknown size since content length not given
-        unit="B",
-        unit_scale=True,
-    ) as pbar:
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[cyan]Downloading weights..."),
+        TextColumn("{task.completed:.2f} MB"),
+    ) as progress:
+        task = progress.add_task("", total=None)  # Indeterminate progress
+
         for data in response.iter_content(chunk_size=chunk_size):
             bytes_io.write(data)
-            pbar.update(len(data))
+            progress.update(
+                task, advance=len(data) / (chunk_size**2)
+            )  # Convert bytes to MB
 
     # Extract the downloaded zip file to the target folder
     with zipfile.ZipFile(bytes_io) as zip_ref:
@@ -172,7 +178,16 @@ def _download_model_weights(
     for f in record_weights_folder.iterdir():
         if f.is_file() and f.suffix == ".zip":
             with zipfile.ZipFile(f) as zip_ref:
-                zip_ref.extractall(record_weights_folder)
+                files = zip_ref.namelist()
+                with Progress() as progress:
+                    task = progress.add_task(
+                        "[cyan]Extracting files...", total=len(files)
+                    )
+                    # Iterate over the files and extract them
+                    for i, file in enumerate(files):
+                        zip_ref.extract(file, record_weights_folder)
+                        # Update the progress bar
+                        progress.update(task, completed=i + 1)
             f.unlink()  # remove zip after extraction
 
     logger.info(f"Zip file extracted successfully to {record_weights_folder}")

@@ -39,7 +39,6 @@ docker = ">=7.0.0"
 rich = ">=13.0.0"
 PyYAML = ">=6.0.1"
 dacite = ">=1.8.0"
-tqdm = ">=4.66.4"
 loguru = ">=0.6.0"
 nibabel = ">=5.0.0"
 
