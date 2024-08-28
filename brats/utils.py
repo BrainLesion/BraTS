@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 import shutil
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+import tempfile
+from typing import Dict, Generator, List, Optional, Tuple
 
 import nibabel as nib
 from loguru import logger
@@ -75,13 +77,13 @@ def standardize_inpainting_inputs(
 
 
 def standardize_segmentation_inputs_list(
-    subjects: List[Path], temp_data_folder: Path, input_name_schema: str
+    subjects: List[Path], tmp_data_folder: Path, input_name_schema: str
 ) -> Dict[str, str]:
-    """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @temp_data_folder/@subject_id.
+    """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
 
     Args:
         subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
-        temp_data_folder (Path): Parent folder where the subject folders will be created
+        tmp_data_folder (Path): Parent folder where the subject folders will be created
         input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
 
     Returns:
@@ -94,7 +96,7 @@ def standardize_segmentation_inputs_list(
         # TODO Add support for .nii files
 
         standardize_segmentation_inputs(
-            data_folder=temp_data_folder,
+            data_folder=tmp_data_folder,
             subject_id=internal_name,
             t1c=subject / f"{subject.name}-t1c.nii.gz",
             t1n=subject / f"{subject.name}-t1n.nii.gz",
@@ -102,6 +104,67 @@ def standardize_segmentation_inputs_list(
             t2w=subject / f"{subject.name}-t2w.nii.gz",
         )
     return internal_external_name_map
+
+
+def remove_tmp_folder(folder: Path):
+    """Remove a temporary folder and log a warning if it fails.
+
+    Args:
+        folder (Path): Path to the folder to be removed
+    """
+    try:
+        shutil.rmtree(folder)
+    except PermissionError as e:
+        logger.warning(
+            f"Failed to remove temporary folder {folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
+        )
+    except FileNotFoundError as e:
+        logger.warning(f"Failed to delete folder {folder}. {e}")
+
+
+def add_log_file_handler(log_file: Path | str) -> int:
+    """
+    Add a log file handler to the logger.
+
+    Args:
+        log_file (Path | str): Path to the log file
+
+    Returns:
+        int: The logger id
+    """
+    log_file = Path(log_file)
+    logger_id = logger.add(log_file, level="DEBUG", catch=True)
+    logger.info(
+        f"Logging console logs and further debug information to: {log_file.absolute()}"
+    )
+
+    return logger_id
+
+
+@contextmanager
+def InferenceSetup(
+    log_file: Optional[Path | str] = None,
+) -> Generator[Tuple[Path, Path], None, None]:
+    """
+    Context manager that provides two temporary folders for input and output data and ensures cleanup afterward.
+
+    Yields:
+        (data folder, output folder) (Tuple[Path, Path]): Two temporary folders (data folder, output folder)
+    """
+    if log_file is not None:
+        logger_id = add_log_file_handler(log_file)
+
+    tmp_data_folder = Path(tempfile.mkdtemp(prefix="data_"))
+    tmp_output_folder = Path(tempfile.mkdtemp(prefix="output_"))
+
+    try:
+        yield tmp_data_folder, tmp_output_folder
+    finally:
+        remove_tmp_folder(tmp_data_folder)
+        remove_tmp_folder(tmp_output_folder)
+
+        if log_file is not None:
+            logger.remove(logger_id)
 
 
 def input_sanity_check(
