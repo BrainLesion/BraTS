@@ -64,7 +64,7 @@ class MetastasesAlgorithms(Algorithms):
 
 
 # meta data file paths
-ALGORITHM_DIR = Path(__file__).parent / "algorithms"
+ALGORITHM_DIR = Path(__file__).parent / "algorithms" / "meta"
 PARAMETERS_DIR = ALGORITHM_DIR / "parameters"
 DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
