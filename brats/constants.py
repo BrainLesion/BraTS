@@ -1,6 +1,18 @@
 from enum import Enum
 from pathlib import Path
 
+# TASK ENUM
+
+
+class Task(str, Enum):
+    """Available tasks."""
+
+    SEGMENTATION = "SEGMENTATION"
+    """Segmentation task."""
+
+    INPAINTING = "INPAINTING"
+    """Inpainting task."""
+
 
 # ALGORITHM ENUMS
 
@@ -83,15 +95,19 @@ PARAMETERS_DIR = Path(__file__).parent / "algorithms" / "parameters"
 WEIGHTS_FOLDER = Path(__file__).parent / "weights"
 
 # META DATA FILE PATHS
-DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 ADULT_GLIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "adult_glioma.yml"
 MENINGIOMA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "africa.yml"
 METASTASES_SEGMENTATION_ALGORITHMS = ALGORITHM_DIR / "metastases.yml"
+INPAINTING_ALGORITHMS = ALGORITHM_DIR / "inpainting.yml"
+
+DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 
 # ZENODO
 ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
 
-SEGMENTATION_OUTPUT_NAME_SCHEMA = "{subject_id}.nii.gz"
-INPAINTING_OUTPUT_NAME_SCHEMA = "{subject_id}-t1n-inference.nii.gz"
+OUTPUT_NAME_SCHEMA = {
+    Task.SEGMENTATION: "{subject_id}.nii.gz",
+    Task.INPAINTING: "{subject_id}-t1n-inference.nii.gz",
+}
