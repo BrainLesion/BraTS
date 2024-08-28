@@ -4,4 +4,5 @@ from brats.algorithms import (
     PediatricSegmenter,
     AfricaSegmenter,
     MetastasesSegmenter,
+    Inpainter,
 )
