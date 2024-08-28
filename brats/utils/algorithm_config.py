@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
-from brats.exceptions import AlgorithmConfigException
+from brats.utils.exceptions import AlgorithmConfigException
 
 import yaml
 from dacite import DaciteError, from_dict

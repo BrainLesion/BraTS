@@ -3,9 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from brats.brats_algorithm import BraTSAlgorithm
-from brats.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task
-from brats.utils import standardize_inpainting_inputs
+from brats.core.brats_algorithm import BraTSAlgorithm
+from brats.utils.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task
+from brats.utils.data_handling import standardize_inpainting_inputs
 
 
 class Inpainter(BraTSAlgorithm):

@@ -7,16 +7,15 @@ from io import BytesIO
 from pathlib import Path
 from typing import Dict, List
 
-
-from rich.progress import Progress, SpinnerColumn, TextColumn
 import requests
 from loguru import logger
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from brats.constants import WEIGHTS_FOLDER, ZENODO_RECORD_BASE_URL
+from brats.utils.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
 
 
 def get_dummy_weights_path() -> Path:
-    dummy = WEIGHTS_FOLDER / "dummy"
+    dummy = ADDITIONAL_FILES_FOLDER / "dummy"
     dummy.mkdir(exist_ok=True, parents=True)
     return dummy
 
@@ -33,7 +32,7 @@ def check_model_weights(record_id: str) -> Path:
     )
 
     record_weights_pattern = f"{record_id}_v*.*.*"
-    matching_folders = list(WEIGHTS_FOLDER.glob(record_weights_pattern))
+    matching_folders = list(ADDITIONAL_FILES_FOLDER.glob(record_weights_pattern))
     # Get the latest downloaded weights
     latest_downloaded_weights = _get_latest_version_folder_name(matching_folders)
 
@@ -57,21 +56,21 @@ def check_model_weights(record_id: str) -> Path:
         logger.warning(
             "Zenodo server could not be reached. Using the latest downloaded weights."
         )
-        return WEIGHTS_FOLDER / latest_downloaded_weights
+        return ADDITIONAL_FILES_FOLDER / latest_downloaded_weights
 
     # Compare the latest downloaded weights with the latest Zenodo version
     if zenodo_metadata["version"] == latest_downloaded_weights.split("_v")[1]:
         logger.info(
             f"Latest model weights ({latest_downloaded_weights}) are already present."
         )
-        return WEIGHTS_FOLDER / latest_downloaded_weights
+        return ADDITIONAL_FILES_FOLDER / latest_downloaded_weights
 
     logger.info(
         f"New model weights available on Zenodo ({zenodo_metadata['version']}). Deleting old and fetching new weights..."
     )
     # delete old weights
     shutil.rmtree(
-        WEIGHTS_FOLDER / latest_downloaded_weights,
+        ADDITIONAL_FILES_FOLDER / latest_downloaded_weights,
         onerror=lambda func, path, excinfo: logger.warning(
             f"Failed to delete {path}: {excinfo}"
         ),
@@ -130,18 +129,18 @@ def _download_model_weights(
     """Download the latest model weights from Zenodo for the requested record and extract them to the target folder.
 
     Args:
-        weights_folder (Path): General weights folder path in which the requested model weights will be stored.
+        ADDITIONAL_FILES_FOLDER (Path): General weights folder path in which the requested model weights will be stored.
         zenodo_metadata (Dict): Metadata for the Zenodo record.
         record_id (str): Zenodo record ID.
 
     Returns:
         Path: Path to the model weights folder for the requested record.
     """
-    record_weights_folder = (
-        WEIGHTS_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
+    record_ADDITIONAL_FILES_FOLDER = (
+        ADDITIONAL_FILES_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
     )
     # ensure folder exists
-    record_weights_folder.mkdir(parents=True, exist_ok=True)
+    record_ADDITIONAL_FILES_FOLDER.mkdir(parents=True, exist_ok=True)
 
     logger.info(f"Downloading model weights from Zenodo. This might take a while...")
     # Make a GET request to the URL
@@ -172,10 +171,10 @@ def _download_model_weights(
 
     # Extract the downloaded zip file to the target folder
     with zipfile.ZipFile(bytes_io) as zip_ref:
-        zip_ref.extractall(record_weights_folder)
+        zip_ref.extractall(record_ADDITIONAL_FILES_FOLDER)
 
     # check if the extracted file is still a zip
-    for f in record_weights_folder.iterdir():
+    for f in record_ADDITIONAL_FILES_FOLDER.iterdir():
         if f.is_file() and f.suffix == ".zip":
             with zipfile.ZipFile(f) as zip_ref:
                 files = zip_ref.namelist()
@@ -185,10 +184,10 @@ def _download_model_weights(
                     )
                     # Iterate over the files and extract them
                     for i, file in enumerate(files):
-                        zip_ref.extract(file, record_weights_folder)
+                        zip_ref.extract(file, record_ADDITIONAL_FILES_FOLDER)
                         # Update the progress bar
                         progress.update(task, completed=i + 1)
             f.unlink()  # remove zip after extraction
 
-    logger.info(f"Zip file extracted successfully to {record_weights_folder}")
-    return record_weights_folder
+    logger.info(f"Zip file extracted successfully to {record_ADDITIONAL_FILES_FOLDER}")
+    return record_ADDITIONAL_FILES_FOLDER

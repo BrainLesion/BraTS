@@ -6,10 +6,10 @@ from unittest.mock import MagicMock, patch
 
 from loguru import logger
 
-from brats.utils import (
+from brats.utils.data_handling import (
+    input_sanity_check,
     standardize_segmentation_inputs,
     standardize_segmentation_inputs_list,
-    input_sanity_check,
 )
 
 
@@ -37,7 +37,7 @@ class TestStandardizeInputs(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    @patch("brats.utils.input_sanity_check")
+    @patch("brats.utils.data_handling.input_sanity_check")
     def test_successful_standardization(self, mock_input_sanity_check):
         subject_id = "test_subject"
         standardize_segmentation_inputs(
@@ -55,7 +55,7 @@ class TestStandardizeInputs(unittest.TestCase):
                 (subject_folder / f"{subject_id}-{img_type}.nii.gz").exists()
             )
 
-    @patch("brats.utils.input_sanity_check")
+    @patch("brats.utils.data_handling.input_sanity_check")
     @patch("sys.exit")
     @patch.object(logger, "error")
     def test_handle_file_not_found_error(
@@ -75,7 +75,7 @@ class TestStandardizeInputs(unittest.TestCase):
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)
 
-    @patch("brats.utils.standardize_segmentation_inputs")
+    @patch("brats.utils.data_handling.standardize_segmentation_inputs")
     def test_standardize_segmentation_inputs_list(
         self, mock_standardize_segmentation_inputs
     ):
@@ -93,8 +93,8 @@ class TestStandardizeInputs(unittest.TestCase):
         )
         mock_standardize_segmentation_inputs.assert_called_once()
 
-    @patch("brats.utils.nib.load")
-    @patch("brats.utils.logger.warning")
+    @patch("brats.utils.data_handling.nib.load")
+    @patch("brats.utils.data_handling.logger.warning")
     def test_correct_shape(self, mock_warning, mock_nib_load):
         # Mock nib.load to return an object with shape (240, 240, 155)
         mock_img = MagicMock()
@@ -107,8 +107,8 @@ class TestStandardizeInputs(unittest.TestCase):
         # Ensure no warnings are logged
         mock_warning.assert_not_called()
 
-    @patch("brats.utils.nib.load")
-    @patch("brats.utils.logger.warning")
+    @patch("brats.utils.data_handling.nib.load")
+    @patch("brats.utils.data_handling.logger.warning")
     def test_incorrect_shape(self, mock_warning, mock_nib_load):
         # Mock nib.load to return an object with shape (240, 240, 100) for one image
         mock_img_correct = MagicMock()

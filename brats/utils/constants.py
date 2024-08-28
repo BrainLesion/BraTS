@@ -90,7 +90,7 @@ class InpaintingAlgorithms(Algorithms):
 
 
 # DIRECTORIES
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "data"
 META_DIR = DATA_DIR / "meta"
 PARAMETERS_DIR = DATA_DIR / "parameters"
 ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"

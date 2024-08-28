@@ -8,10 +8,13 @@ from typing import Optional
 
 from loguru import logger
 
-from brats.algorithm_config import load_algorithms
-from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
-from brats.docker import run_docker
-from brats.utils import InferenceSetup, standardize_segmentation_inputs_list
+from brats.core.docker import run_docker
+from brats.utils.algorithm_config import load_algorithms
+from brats.utils.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
+from brats.utils.data_handling import (
+    InferenceSetup,
+    standardize_segmentation_inputs_list,
+)
 
 # Remove the default logger and add one with level INFO
 logger.remove()

@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, Optional
 
-from brats.brats_algorithm import BraTSAlgorithm
-from brats.constants import (
+from brats.core.brats_algorithm import BraTSAlgorithm
+from brats.utils.constants import (
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
@@ -18,7 +18,7 @@ from brats.constants import (
     PediatricAlgorithms,
     Task,
 )
-from brats.utils import standardize_segmentation_inputs
+from brats.utils.data_handling import standardize_segmentation_inputs
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):

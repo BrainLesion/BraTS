@@ -1,9 +1,8 @@
-from brats.segmentation_algorithms import (
+from brats.core.inpainting_algorithms import Inpainter
+from brats.core.segmentation_algorithms import (
     AdultGliomaSegmenter,
-    MeningiomaSegmenter,
-    PediatricSegmenter,
     AfricaSegmenter,
+    MeningiomaSegmenter,
     MetastasesSegmenter,
+    PediatricSegmenter,
 )
-
-from brats.inpainting_algorithms import Inpainter

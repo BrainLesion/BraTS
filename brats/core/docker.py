@@ -13,10 +13,13 @@ from loguru import logger
 from rich.console import Console
 from rich.progress import Progress
 
-from brats.algorithm_config import AlgorithmData
-from brats.constants import PARAMETERS_DIR, DUMMY_PARAMETERS
-from brats.exceptions import AlgorithmNotCPUCompatibleException, BraTSContainerException
-from brats.weights import check_model_weights, get_dummy_weights_path
+from brats.utils.algorithm_config import AlgorithmData
+from brats.utils.constants import DUMMY_PARAMETERS, PARAMETERS_DIR
+from brats.utils.exceptions import (
+    AlgorithmNotCPUCompatibleException,
+    BraTSContainerException,
+)
+from brats.utils.zenodo import check_model_weights, get_dummy_weights_path
 
 try:
     client = docker.from_env()
