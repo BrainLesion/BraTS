@@ -144,8 +144,28 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-    ):
-        return self._infer_batch(data_folder, output_folder, log_file)
+    ) -> None:
+        """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
+        Requires the following structure:\n
+        data_folder\n
+        ┣ A\n
+        ┃ ┣ A-t1c.nii.gz\n
+        ┃ ┣ A-t1n.nii.gz\n
+        ┃ ┣ A-t2f.nii.gz\n
+        ┃ ┗ A-t2w.nii.gz\n
+        ┣ B\n
+        ┃ ┣ B-t1c.nii.gz\n
+        ┃ ┣ ...\n
+
+
+        Args:
+            data_folder (Path | str): Folder containing the subjects with required structure
+            output_folder (Path | str): Output folder to save the segmentations
+            log_file (Path | str, optional): Save logs to this file
+        """
+        return self._infer_batch(
+            data_folder=data_folder, output_folder=output_folder, log_file=log_file
+        )
 
 
 class AdultGliomaSegmenter(SegmentationAlgorithm):
