@@ -122,10 +122,11 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
         Path to the additional files
     """
     # ensure weights are present and get path
+    # TODO refactor this rename weights to additional files
     if algorithm.weights is not None:
         return check_model_weights(record_id=algorithm.weights.record_id)
     else:
-        # if no weights are directly specified a dummy weights folder will be mounted that is potentially used for parameter files etc.
+        # if no weights are directly specified a dummy weights folder will be mounted
         return get_dummy_weights_path()
 
 
@@ -191,11 +192,12 @@ def _build_args(
         command_args, extra_args (Tuple): The command arguments and extra arguments
     """
     # Build command that will be run in the docker container
-    command_args = (
-        f"--data_path=/mlcube_io0 --{algorithm.weights.param_name}=/mlcube_io1 --output_path=/mlcube_io2"
-        if algorithm.weights is not None
-        else f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
-    )
+    command_args = f"--data_path=/mlcube_io0  --output_path=/mlcube_io2"
+    if algorithm.weights is not None:
+        weights_arg = f"--{algorithm.weights.param_name}=/mlcube_io1"
+        if algorithm.weights.checkpoint_path:
+            weights_arg += f"/{algorithm.weights.checkpoint_path}"
+        command_args += f" {weights_arg}"
 
     # Add parameters file arg if required
     params_arg = _get_parameters_arg(algorithm=algorithm)
