@@ -160,6 +160,7 @@ def _download_model_weights(
         SpinnerColumn(),
         TextColumn("[cyan]Downloading weights..."),
         TextColumn("{task.completed:.2f} MB"),
+        transient=True,
     ) as progress:
         task = progress.add_task("", total=None)  # Indeterminate progress
 
@@ -178,7 +179,7 @@ def _download_model_weights(
         if f.is_file() and f.suffix == ".zip":
             with zipfile.ZipFile(f) as zip_ref:
                 files = zip_ref.namelist()
-                with Progress() as progress:
+                with Progress(transient=True) as progress:
                     task = progress.add_task(
                         "[cyan]Extracting files...", total=len(files)
                     )
