@@ -26,8 +26,8 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_inpainting_domaso
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: false
-      parameters_file: false
+      requires_root: true
+      parameters_file: true
     weights:
       record_id: "13383452"
       param_name: "weights"
