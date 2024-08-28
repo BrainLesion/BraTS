@@ -11,10 +11,7 @@ from loguru import logger
 from brats.core.docker import run_docker
 from brats.utils.algorithm_config import load_algorithms
 from brats.utils.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
-from brats.utils.data_handling import (
-    InferenceSetup,
-    standardize_segmentation_inputs_list,
-)
+from brats.utils.data_handling import InferenceSetup
 
 # Remove the default logger and add one with level INFO
 logger.remove()
@@ -51,24 +48,23 @@ class BraTSAlgorithm(ABC):
         )
 
     @abstractmethod
-    def _standardize_inputs(
+    def _standardize_single_inputs(
         self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
     ) -> None:
         """Standardize the input data to match the requirements of the selected algorithm."""
         pass
 
-    def _log_algorithm_info(self):
-        """Log information about the selected algorithm."""
-        logger.opt(colors=True).info(
-            f"Running algorithm: <light-green>{self.algorithm.meta.challenge} [{self.algorithm.meta.rank} place]</>"
-        )
-        logger.opt(colors=True).info(
-            f"<blue>(Paper)</> Consider citing the corresponding paper: {self.algorithm.meta.paper} by {self.algorithm.meta.authors}"
-        )
+    @abstractmethod
+    def _standardize_batch_inputs(
+        self, data_folder: Path, subjects: list[Path], input_name_schema: str
+    ) -> None:
+        """Standardize the input data to match the requirements of the selected algorithm."""
+        pass
 
     def _process_single_output(
         self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
     ) -> None:
+        # TODO add docstring
         # rename output
         algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
             self.task
@@ -85,6 +81,7 @@ class BraTSAlgorithm(ABC):
         output_folder: Path,
         mapping: dict[str, str],
     ) -> None:
+        # TODO add docstring
         # move outputs and change name back to initially provided one
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
@@ -107,13 +104,12 @@ class BraTSAlgorithm(ABC):
             # the id here is arbitrary
             subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
 
-            self._standardize_inputs(
+            self._standardize_single_inputs(
                 data_folder=tmp_data_folder,
                 subject_id=subject_id,
                 inputs=inputs,
             )
 
-            self._log_algorithm_info()
             run_docker(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
@@ -137,16 +133,15 @@ class BraTSAlgorithm(ABC):
 
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
 
-            self._log_algorithm_info()
             # find subjects
             subjects = [f for f in Path(data_folder).iterdir() if f.is_dir()]
             logger.info(
                 f"Found {len(subjects)} subjects: {', '.join([s.name for s in subjects][:5])} {' ...' if len(subjects) > 5 else '' }"
             )
             # map to brats names
-            internal_external_name_map = standardize_segmentation_inputs_list(
+            internal_external_name_map = self._standardize_batch_inputs(
+                data_folder=tmp_data_folder,
                 subjects=subjects,
-                tmp_data_folder=tmp_data_folder,
                 input_name_schema=self.algorithm.run_args.input_name_schema,
             )
             logger.info(f"Standardized input names to match algorithm requirements.")
