@@ -50,7 +50,7 @@ segmenter.infer_single(
 )
 ```
 
-For more examples and details please refer to our extensive Notebook tutorials [**TODO**]
+For more examples and details please refer to our extensive Notebook tutorials here [NBViewer](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb) ([GitHub](https://github.com/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)). For the best experience open the notebook in Colab.
 
 ## Algorithms
 
