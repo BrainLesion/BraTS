@@ -38,7 +38,9 @@ A minimal example to create a segmentation could look like this:
 
 ```python
 from brats import AdultGliomaSegmenter
-segmenter = AdultGliomaSegmenter()
+from brats.utils.constants import AdultGliomaAlgorithms
+
+segmenter = AdultGliomaSegmenter(algorithm=AdultGliomaAlgorithms.BraTS23_1, cuda_devices="0") # these are optional args and show the default values
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
@@ -57,11 +59,14 @@ For more examples and details please refer to our extensive Notebook tutorials [
 <summary> <strong> Adult Glioma Segmentation </strong> </summary>
 <br>
 
-| Year | Rank | Author                            | Paper                                      | CPU Support |
-| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- |
-| 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    |
-| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                        | &#x274C;    |
-| 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | N/A                                        | &#x274C;    |
+**Class:** `brats.AdultGliomaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.segmentation_algorithms.AdultGliomaSegmenter))
+
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AdultGliomaAlgorithms)|
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _André Ferreira, et al._ | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Andriy Myronenko, et al._ | N/A | &#x274C; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Fadillah Adamsyah Maani, et al._ | N/A | &#x274C; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_3) |
 
 </details>
 
@@ -69,11 +74,13 @@ For more examples and details please refer to our extensive Notebook tutorials [
 <summary> <strong> BraTS-Africa Segmentation </strong> </summary>
 <br>
 
-| Year | Rank | Author                     | Paper | CPU Support |
-| ---- | ---- | -------------------------- | ----- | ----------- |
-| 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
-| 2023 | 2nd  | _Alyssa R Amod, et al._    | N/A   | &#x274C;    |
-| 2023 | 3rd  | _Ziyan Huang, et al._      | N/A   | &#x2705;    |
+**Class:** `brats.AfricaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.segmentation_algorithms.AfricaSegmenter))
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AfricaAlgorithms)|
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _Andriy Myronenko, et al._ | TODO | &#x274C; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AfricaAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Alyssa R Amod, et al._ | N/A | &#x274C; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AfricaAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Ziyan Huang, et al._ | N/A | &#x2705; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.AfricaAlgorithms.BraTS23_3) |
 
 </details>
 
@@ -81,11 +88,14 @@ For more examples and details please refer to our extensive Notebook tutorials [
 <summary> <strong> Meningioma Segmentation </strong> </summary>
 <br>
 
-| Year | Rank | Author                     | Paper | CPU Support |
-| ---- | ---- | -------------------------- | ----- | ----------- |
-| 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
-| 2023 | 2nd  | _Ziyan Huang_              | N/A   | &#x2705;    |
-| 2023 | 3rd  | _Zhifan Jiang et al._      | N/A   | &#x274C;    |
+**Class:** `brats.MeningiomaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.segmentation_algorithms.MeningiomaSegmenter))
+
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MeningiomaAlgorithms)|
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _Andriy Myronenko, et al._ | N/A | &#x274C; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Ziyan Huang, et al._ | N/A | &#x2705; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Zhifan Jiang et al._ | N/A | &#x274C; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_3) |
 
 </details>
 
@@ -93,11 +103,13 @@ For more examples and details please refer to our extensive Notebook tutorials [
 <summary> <strong> Brain Metastases Segmentation </strong> </summary>
 <br>
 
-| Year | Rank | Author | Paper | CPU Support |
-|------|-------|--------|-------|-------------|
-| 2023 | 1st | _Andriy Myronenko, et al._ | N/A | &#x274C; |
-| 2023 | 2nd | _Siwei Yang, et al._ | N/A | &#x274C; |
-| 2023 | 3rd | _Ziyan Huang, et al._ | N/A | &#x2705; |
+**Class:** `brats.MetastasesSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.segmentation_algorithms.MetastasesSegmenter))
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MetastasesAlgorithms)|
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _Andriy Myronenko, et al._ | N/A | &#x274C; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Siwei Yang, et al._ | N/A | &#x274C; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Ziyan Huang, et al._ | N/A | &#x2705; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_3) |
 
 </details>
 
@@ -105,13 +117,34 @@ For more examples and details please refer to our extensive Notebook tutorials [
 <summary> <strong> Pediatric Segmentation </strong> </summary>
 <br>
 
-| Year | Rank | Author                     | Paper | CPU Support |
-| ---- | ---- | -------------------------- | ----- | ----------- |
-| 2023 | 1st  | _Zhifan Jiang et al._      | N/A   | &#x274C;    |
-| 2023 | 2nd  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    |
-| 2023 | 3rd  | _Yubo Zhou_                | N/A   | &#x274C;    |
+**Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.PediatricAlgorithms)|
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _Zhifan Jiang et al._ | N/A | &#x274C; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.PediatricAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Andriy Myronenko, et al._ | N/A | &#x274C; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.PediatricAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Yubo Zhou_ | N/A | &#x274C; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.PediatricAlgorithms.BraTS23_3) |
 
 </details>
+
+---
+
+<details>
+<summary> <strong> Inpainting </strong> </summary>
+<br>
+
+**Class:** `brats.Inpainter` ([Docs](https://brats.readthedocs.io/en/latest/algorithms.html#brats.core.inpainting_algorithms.Inpainter))
+
+| Year | Rank | Author | Paper | CPU Support | [Key Enum](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.InpaintingAlgorithms) |
+|------|-------|--------|-------|-------------|-------------|
+| 2023 | 1st | _Juexin Zhang, et al._ | N/A | &#x2705; | [BraTS23_1](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_1) |
+| 2023 | 2nd | _Alicia Durrer, et al._ | N/A | &#x274C; | [BraTS23_2](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_2) |
+| 2023 | 3rd | _Jiayu Huo, et al._ | N/A | &#x2705; | [BraTS23_3](https://brats.readthedocs.io/en/latest/constants.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_3) |
+
+
+</details>
+
 
 ## Citation
 
