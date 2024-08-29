@@ -40,7 +40,7 @@ def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
     if line["status"] == "Downloading":
         task_key = f'[Download {line["id"]}]'
     elif line["status"] == "Extracting":
-        task_key = f'[Extract  {line["id"]}]'
+        task_key = f'[Extract {line["id"]}]'
     else:
         return
 
@@ -192,7 +192,7 @@ def _build_args(
         command_args, extra_args (Tuple): The command arguments and extra arguments
     """
     # Build command that will be run in the docker container
-    command_args = f"--data_path=/mlcube_io0  --output_path=/mlcube_io2"
+    command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     if algorithm.weights is not None:
         weights_arg = f"--{algorithm.weights.param_name}=/mlcube_io1"
         if algorithm.weights.checkpoint_path:
