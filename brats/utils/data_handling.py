@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from contextlib import contextmanager
 import shutil
-from pathlib import Path
 import tempfile
+from contextlib import contextmanager
+from pathlib import Path
 from typing import Generator, Optional, Tuple
 
 import nibabel as nib
