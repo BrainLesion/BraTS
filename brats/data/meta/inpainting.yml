@@ -12,6 +12,7 @@ algorithms:
       input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: true
       parameters_file: true
+      cpu_compatible: true
     weights:
       record_id: "13382922"
       param_name: "checkpoint_path"
@@ -45,6 +46,7 @@ algorithms:
       input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: true
       parameters_file: true
+      cpu_compatible: true
     weights:
       record_id: "13383287"
       param_name: "weight_path"
