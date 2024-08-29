@@ -5,30 +5,26 @@ The following classes provide the top performing algorithms from several BraTS c
 All algorithms can be used for a single subject inference (one set of MRI scans) or for a batch of multiple subjects with the respective methods inherited from the base class (BraTSAlgorithm).
 
 
-Challenge Algorithms
+Segmentation Algorithms
 --------------------------------------
 
 
-.. autoclass:: brats.AdultGliomaSegmenter
+.. automodule:: brats.core.segmentation_algorithms
 
 
-.. autoclass:: brats.AfricaSegmenter
+Inpainting Algorithms
+--------------------------------------
 
 
-.. autoclass:: brats.MeningiomaSegmenter
+.. automodule:: brats.core.inpainting_algorithms
 
-
-.. autoclass:: brats.MetastasesSegmenter
-
-
-.. autoclass:: brats.PediatricSegmenter
 
 
 
 Abstract Base Class
 --------------------------------------
 
-.. autoclass:: brats.algorithms.BraTSAlgorithm
+.. automodule:: brats.core.brats_algorithm
     
 
 
