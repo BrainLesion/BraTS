@@ -40,7 +40,8 @@ A minimal example to create a segmentation could look like this:
 from brats import AdultGliomaSegmenter
 from brats.utils.constants import AdultGliomaAlgorithms
 
-segmenter = AdultGliomaSegmenter(algorithm=AdultGliomaAlgorithms.BraTS23_1, cuda_devices="0") # these are optional args and show the default values
+segmenter = AdultGliomaSegmenter(algorithm=AdultGliomaAlgorithms.BraTS23_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
