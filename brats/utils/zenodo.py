@@ -21,10 +21,13 @@ def get_dummy_path() -> Path:
 
 
 def check_additional_files_path(record_id: str) -> Path:
-    """Check if latest model weights are present and download them otherwise.
+    """Check if latest additional files are present and download them otherwise.
+
+    Args:
+        record_id (str): Zenodo record ID.
 
     Returns:
-        Path: Path to the model weights folder.
+        Path: Path to the additional files folder.
     """
 
     zenodo_metadata, archive_url = _get_zenodo_metadata_and_archive_url(
@@ -97,6 +100,9 @@ def _get_latest_version_folder_name(folders: List[Path]) -> str | None:
         key=lambda x: tuple(map(int, str(x).split("_v")[1].split("."))),
     )[0]
     # check folder is not empty
+    print(latest_downloaded_folder)
+    print(list(latest_downloaded_folder.glob("*")))
+    print("#" * 20)
     if not list(latest_downloaded_folder.glob("*")):
         return None
     return latest_downloaded_folder.name
