@@ -64,7 +64,7 @@ class BraTSAlgorithm(ABC):
     def _process_single_output(
         self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
     ) -> None:
-        """ Process the output of a single inference run and save it in the specified file.
+        """Process the output of a single inference run and save it in the specified file.
 
         Args:
             tmp_output_folder (Path | str): Folder with the algorithm output
@@ -87,7 +87,7 @@ class BraTSAlgorithm(ABC):
         output_folder: Path,
         mapping: dict[str, str],
     ) -> None:
-        """ Process the outputs of a batch inference run and save them in the specified folder.
+        """Process the outputs of a batch inference run and save them in the specified folder.
 
         Args:
             tmp_output_folder (Path | str): Folder with the algorithm outputs
@@ -110,7 +110,7 @@ class BraTSAlgorithm(ABC):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
     ) -> None:
-        """ Perform a single inference run with the provided inputs and save the output in the specified file.
+        """Perform a single inference run with the provided inputs and save the output in the specified file.
 
         Args:
             inputs (dict[str, Path  |  str]): Input Images for the task
@@ -149,7 +149,7 @@ class BraTSAlgorithm(ABC):
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
     ):
-        """ Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
+        """Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
 
         Args:
             data_folder (Path | str): Folder with the input data
