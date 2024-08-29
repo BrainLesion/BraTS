@@ -3,7 +3,7 @@ algorithms:
   BraTS23_1:
     meta:
       authors: Andriy Myronenko, et al.
-      paper: TODO
+      paper: N/A
       challenge: BraTS23 BraTS-Africa Segmentation
       rank: 1st
       year: 2023
