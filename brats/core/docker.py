@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -19,7 +18,7 @@ from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
 )
-from brats.utils.zenodo import check_model_weights, get_dummy_weights_path
+from brats.utils.zenodo import check_additional_files_path, get_dummy_path
 
 try:
     client = docker.from_env()
@@ -102,7 +101,6 @@ def _handle_device_requests(
                 if cuda_available
                 else "No Cuda installation/ GPU was found and"
             )
-            # TODO add reference to table of cpu capable algos as help!
             raise AlgorithmNotCPUCompatibleException(
                 f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
@@ -125,12 +123,11 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
         Path to the additional files
     """
     # ensure weights are present and get path
-    # TODO refactor this rename weights to additional files
     if algorithm.weights is not None:
-        return check_model_weights(record_id=algorithm.weights.record_id)
+        return check_additional_files_path(record_id=algorithm.weights.record_id)
     else:
         # if no weights are directly specified a dummy weights folder will be mounted
-        return get_dummy_weights_path()
+        return get_dummy_path()
 
 
 def _get_volume_mappings(

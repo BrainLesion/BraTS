@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import shutil
-import sys
 from pathlib import Path
 import tempfile
-from typing import Dict, Generator, List, Optional, Tuple
+from typing import Generator, Optional, Tuple
 
 import nibabel as nib
 from loguru import logger
@@ -90,6 +89,7 @@ def input_sanity_check(
         t2w (Path | str, optional): T2w image path (required for segmentation)
         mask (Path | str, optional): Mask image path (required for inpainting)
     """
+    
     # Filter out None values to only include provided images
     images = {
         "t1n": t1n,

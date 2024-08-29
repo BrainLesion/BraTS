@@ -14,13 +14,13 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from brats.utils.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
 
 
-def get_dummy_weights_path() -> Path:
+def get_dummy_path() -> Path:
     dummy = ADDITIONAL_FILES_FOLDER / "dummy"
     dummy.mkdir(exist_ok=True, parents=True)
     return dummy
 
 
-def check_model_weights(record_id: str) -> Path:
+def check_additional_files_path(record_id: str) -> Path:
     """Check if latest model weights are present and download them otherwise.
 
     Returns:
