@@ -14,17 +14,20 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from brats.utils.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
 
 
-def get_dummy_weights_path() -> Path:
+def get_dummy_path() -> Path:
     dummy = ADDITIONAL_FILES_FOLDER / "dummy"
     dummy.mkdir(exist_ok=True, parents=True)
     return dummy
 
 
-def check_model_weights(record_id: str) -> Path:
-    """Check if latest model weights are present and download them otherwise.
+def check_additional_files_path(record_id: str) -> Path:
+    """Check if latest additional files are present and download them otherwise.
+
+    Args:
+        record_id (str): Zenodo record ID.
 
     Returns:
-        Path: Path to the model weights folder.
+        Path: Path to the additional files folder.
     """
 
     zenodo_metadata, archive_url = _get_zenodo_metadata_and_archive_url(
@@ -44,7 +47,7 @@ def check_model_weights(record_id: str) -> Path:
             sys.exit()
         logger.info(f"Model weights not found locally")
 
-        return _download_model_weights(
+        return _download_additional_files(
             zenodo_metadata=zenodo_metadata,
             record_id=record_id,
             archive_url=archive_url,
@@ -75,7 +78,7 @@ def check_model_weights(record_id: str) -> Path:
             f"Failed to delete {path}: {excinfo}"
         ),
     )
-    return _download_model_weights(
+    return _download_additional_files(
         zenodo_metadata=zenodo_metadata, record_id=record_id, archive_url=archive_url
     )
 
@@ -123,24 +126,24 @@ def _get_zenodo_metadata_and_archive_url(record_id: str) -> Dict | None:
         return None
 
 
-def _download_model_weights(
+def _download_additional_files(
     zenodo_metadata: Dict, record_id: str, archive_url: str
 ) -> Path:
-    """Download the latest model weights from Zenodo for the requested record and extract them to the target folder.
+    """Download the latest additional files from Zenodo for the requested record and extract them to the target folder.
 
     Args:
-        ADDITIONAL_FILES_FOLDER (Path): General weights folder path in which the requested model weights will be stored.
         zenodo_metadata (Dict): Metadata for the Zenodo record.
         record_id (str): Zenodo record ID.
+        archive_url (str): URL to the archive file.
 
     Returns:
-        Path: Path to the model weights folder for the requested record.
+        Path: Path to the additional files folder for the requested record.
     """
-    record_ADDITIONAL_FILES_FOLDER = (
+    record_folder = (
         ADDITIONAL_FILES_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
     )
     # ensure folder exists
-    record_ADDITIONAL_FILES_FOLDER.mkdir(parents=True, exist_ok=True)
+    record_folder.mkdir(parents=True, exist_ok=True)
 
     logger.info(f"Downloading model weights from Zenodo. This might take a while...")
     # Make a GET request to the URL
@@ -152,6 +155,13 @@ def _download_model_weights(
         )
         return
 
+    _extract_archive(response=response, record_folder=record_folder)
+
+    logger.info(f"Zip file extracted successfully to {record_folder}")
+    return record_folder
+
+
+def _extract_archive(response: requests.Response, record_folder: Path):
     # Download with progress bar
     chunk_size = 1024  # 1KB
     bytes_io = BytesIO()
@@ -159,7 +169,7 @@ def _download_model_weights(
     with Progress(
         SpinnerColumn(),
         TextColumn("[cyan]Downloading weights..."),
-        TextColumn("{task.completed:.2f} MB"),
+        TextColumn("[cyan]{task.completed:.2f} MB"),
         transient=True,
     ) as progress:
         task = progress.add_task("", total=None)  # Indeterminate progress
@@ -172,10 +182,10 @@ def _download_model_weights(
 
     # Extract the downloaded zip file to the target folder
     with zipfile.ZipFile(bytes_io) as zip_ref:
-        zip_ref.extractall(record_ADDITIONAL_FILES_FOLDER)
+        zip_ref.extractall(record_folder)
 
     # check if the extracted file is still a zip
-    for f in record_ADDITIONAL_FILES_FOLDER.iterdir():
+    for f in record_folder.iterdir():
         if f.is_file() and f.suffix == ".zip":
             with zipfile.ZipFile(f) as zip_ref:
                 files = zip_ref.namelist()
@@ -185,10 +195,7 @@ def _download_model_weights(
                     )
                     # Iterate over the files and extract them
                     for i, file in enumerate(files):
-                        zip_ref.extract(file, record_ADDITIONAL_FILES_FOLDER)
+                        zip_ref.extract(file, record_folder)
                         # Update the progress bar
                         progress.update(task, completed=i + 1)
             f.unlink()  # remove zip after extraction
-
-    logger.info(f"Zip file extracted successfully to {record_ADDITIONAL_FILES_FOLDER}")
-    return record_ADDITIONAL_FILES_FOLDER

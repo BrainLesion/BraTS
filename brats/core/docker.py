@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -19,7 +18,7 @@ from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
 )
-from brats.utils.zenodo import check_model_weights, get_dummy_weights_path
+from brats.utils.zenodo import check_additional_files_path, get_dummy_path
 
 try:
     client = docker.from_env()
@@ -41,7 +40,7 @@ def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
     if line["status"] == "Downloading":
         task_key = f'[Download {line["id"]}]'
     elif line["status"] == "Extracting":
-        task_key = f'[Extract  {line["id"]}]'
+        task_key = f'[Extract {line["id"]}]'
     else:
         return
 
@@ -102,7 +101,6 @@ def _handle_device_requests(
                 if cuda_available
                 else "No Cuda installation/ GPU was found and"
             )
-            # TODO add reference to table of cpu capable algos as help!
             raise AlgorithmNotCPUCompatibleException(
                 f"{cause} the chosen algorithm is not CPU-compatible. Aborting..."
             )
@@ -125,12 +123,11 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
         Path to the additional files
     """
     # ensure weights are present and get path
-    # TODO refactor this rename weights to additional files
     if algorithm.weights is not None:
-        return check_model_weights(record_id=algorithm.weights.record_id)
+        return check_additional_files_path(record_id=algorithm.weights.record_id)
     else:
         # if no weights are directly specified a dummy weights folder will be mounted
-        return get_dummy_weights_path()
+        return get_dummy_path()
 
 
 def _get_volume_mappings(
@@ -195,7 +192,7 @@ def _build_args(
         command_args, extra_args (Tuple): The command arguments and extra arguments
     """
     # Build command that will be run in the docker container
-    command_args = f"--data_path=/mlcube_io0  --output_path=/mlcube_io2"
+    command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     if algorithm.weights is not None:
         weights_arg = f"--{algorithm.weights.param_name}=/mlcube_io1"
         if algorithm.weights.checkpoint_path:
@@ -285,7 +282,7 @@ def _log_algorithm_info(algorithm: AlgorithmData):
     logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
 
 
-def run_docker(
+def run_container(
     algorithm: AlgorithmData,
     data_path: Path,
     output_path: Path,
