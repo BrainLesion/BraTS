@@ -31,7 +31,11 @@ keywords = [
 ]
 
 # Add the exclude field directly under [tool.poetry]
-exclude = ["examples", "benchmark"]
+exclude = [
+  "tests",       # Test files
+  "docs",        # Documentation files
+  ".github",     # GitHub workflows, actions, etc.
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
