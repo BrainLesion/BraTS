@@ -6,7 +6,12 @@ from unittest.mock import MagicMock, patch
 
 from loguru import logger
 
-from brats.utils.data_handling import InferenceSetup, add_log_file_handler, input_sanity_check, remove_tmp_folder
+from brats.utils.data_handling import (
+    InferenceSetup,
+    add_log_file_handler,
+    input_sanity_check,
+    remove_tmp_folder,
+)
 
 
 class TestDataHandlingUtils(unittest.TestCase):
@@ -32,12 +37,15 @@ class TestDataHandlingUtils(unittest.TestCase):
     def tearDown(self):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
-        
+
     def test_inference_setup_with_log_file(self):
         # Create a temporary log file
         tmp_log_file = Path(tempfile.mktemp())
-        
-        with InferenceSetup(log_file=tmp_log_file) as (tmp_data_folder, tmp_output_folder):
+
+        with InferenceSetup(log_file=tmp_log_file) as (
+            tmp_data_folder,
+            tmp_output_folder,
+        ):
             # Check that the folders are created
             self.assertTrue(tmp_data_folder.is_dir())
             self.assertTrue(tmp_output_folder.is_dir())
@@ -51,23 +59,23 @@ class TestDataHandlingUtils(unittest.TestCase):
 
         # Remove the temporary log file
         tmp_log_file.unlink(missing_ok=True)
-        
+
     def test_inference_setup_without_log_file(self):
         # Create a temporary log file
         tmp_log_file = Path(tempfile.mktemp())
-        
+
         with InferenceSetup() as (tmp_data_folder, tmp_output_folder):
             # Check that the folders are created
             self.assertTrue(tmp_data_folder.is_dir())
             self.assertTrue(tmp_output_folder.is_dir())
 
             # Check that the log file exists
-            self.assertFalse(tmp_log_file.exists()) # Log file should not be created
+            self.assertFalse(tmp_log_file.exists())  # Log file should not be created
 
         # Check if folders are cleaned up
         self.assertFalse(tmp_data_folder.exists())
         self.assertFalse(tmp_output_folder.exists())
-        
+
     def test_remove_tmp_folder_success(self):
         # Test successful removal of a folder
         temp_folder = Path(tempfile.mkdtemp())
@@ -106,8 +114,6 @@ class TestDataHandlingUtils(unittest.TestCase):
         logger.remove(handler_id)
         log_file.unlink(missing_ok=True)
 
-
-   
     @patch("brats.utils.data_handling.nib.load")
     @patch("brats.utils.data_handling.logger.warning")
     def test_input_sanity_check_correct_shape(self, mock_warning, mock_nib_load):

@@ -6,11 +6,20 @@ from unittest.mock import patch
 
 from loguru import logger
 
-from brats import (AdultGliomaSegmenter, AfricaSegmenter, MeningiomaSegmenter,
-                   MetastasesSegmenter, PediatricSegmenter)
-from brats.utils.constants import (AdultGliomaAlgorithms, AfricaAlgorithms,
-                                   MeningiomaAlgorithms, MetastasesAlgorithms,
-                                   PediatricAlgorithms)
+from brats import (
+    AdultGliomaSegmenter,
+    AfricaSegmenter,
+    MeningiomaSegmenter,
+    MetastasesSegmenter,
+    PediatricSegmenter,
+)
+from brats.utils.constants import (
+    AdultGliomaAlgorithms,
+    AfricaAlgorithms,
+    MeningiomaAlgorithms,
+    MetastasesAlgorithms,
+    PediatricAlgorithms,
+)
 
 
 class TestSegmentationAlgorithms(unittest.TestCase):
@@ -32,15 +41,15 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Create dummy files
         for img in [self.t1c, self.t1n, self.t2f, self.t2w]:
             img.touch(exist_ok=True)
-            
+
         self.segmenter = AdultGliomaSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
-        
+
     ### Standardization tests
-    
+
     @patch("brats.core.segmentation_algorithms.input_sanity_check")
     def test_successful_single_standardization(self, mock_input_sanity_check):
         subject_id = "test_subject"
@@ -52,7 +61,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t1n": self.t1n,
                 "t2f": self.t2f,
                 "t2w": self.t2w,
-            }
+            },
         )
         subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
@@ -78,15 +87,15 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t1n": self.t1n,
                 "t2f": self.t2f,
                 "t2w": self.t2w,
-            }
+            },
         )
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)
 
-    @patch("brats.core.segmentation_algorithms.SegmentationAlgorithm._standardize_single_inputs")
-    def test_standardize_segmentation_inputs_list(
-        self, mock_standardize_single_inputs
-    ):
+    @patch(
+        "brats.core.segmentation_algorithms.SegmentationAlgorithm._standardize_single_inputs"
+    )
+    def test_standardize_segmentation_inputs_list(self, mock_standardize_single_inputs):
         subjects = [f for f in self.data_folder.iterdir() if f.is_dir()]
         mapping = self.segmenter._standardize_batch_inputs(
             data_folder=self.tmp_data_folder,
@@ -100,19 +109,17 @@ class TestSegmentationAlgorithms(unittest.TestCase):
             },
         )
         mock_standardize_single_inputs.assert_called_once()
-        
+
     ### Initialization tests
-    
+
     def test_adult_glioma_segmenter_initialization(self):
         # Test default initialization
         segmenter = AdultGliomaSegmenter()
         self.assertIsInstance(segmenter, AdultGliomaSegmenter)
-        
+
         # Test with custom arguments
         custom_segmenter = AdultGliomaSegmenter(
-            algorithm=AdultGliomaAlgorithms.BraTS23_2,
-            cuda_devices="1",
-            force_cpu=True
+            algorithm=AdultGliomaAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, AdultGliomaSegmenter)
 
@@ -120,12 +127,10 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Test default initialization
         segmenter = MeningiomaSegmenter()
         self.assertIsInstance(segmenter, MeningiomaSegmenter)
-        
+
         # Test with custom arguments
         custom_segmenter = MeningiomaSegmenter(
-            algorithm=MeningiomaAlgorithms.BraTS23_2,
-            cuda_devices="1",
-            force_cpu=True
+            algorithm=MeningiomaAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, MeningiomaSegmenter)
 
@@ -133,12 +138,10 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Test default initialization
         segmenter = PediatricSegmenter()
         self.assertIsInstance(segmenter, PediatricSegmenter)
-        
+
         # Test with custom arguments
         custom_segmenter = PediatricSegmenter(
-            algorithm=PediatricAlgorithms.BraTS23_2,
-            cuda_devices="1",
-            force_cpu=True
+            algorithm=PediatricAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, PediatricSegmenter)
 
@@ -146,12 +149,10 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Test default initialization
         segmenter = AfricaSegmenter()
         self.assertIsInstance(segmenter, AfricaSegmenter)
-        
+
         # Test with custom arguments
         custom_segmenter = AfricaSegmenter(
-            algorithm=AfricaAlgorithms.BraTS23_2,
-            cuda_devices="1",
-            force_cpu=True
+            algorithm=AfricaAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, AfricaSegmenter)
 
@@ -159,13 +160,9 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Test default initialization
         segmenter = MetastasesSegmenter()
         self.assertIsInstance(segmenter, MetastasesSegmenter)
-        
+
         # Test with custom arguments
         custom_segmenter = MetastasesSegmenter(
-            algorithm=MetastasesAlgorithms.BraTS23_2,
-            cuda_devices="1",
-            force_cpu=True
+            algorithm=MetastasesAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, MetastasesSegmenter)
-
-
