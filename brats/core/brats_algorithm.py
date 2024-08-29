@@ -64,7 +64,13 @@ class BraTSAlgorithm(ABC):
     def _process_single_output(
         self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
     ) -> None:
-        # TODO add docstring
+        """ Process the output of a single inference run and save it in the specified file.
+
+        Args:
+            tmp_output_folder (Path | str): Folder with the algorithm output
+            subject_id (str): Subject ID of the output
+            output_file (Path): Path to the desired output file
+        """
         # rename output
         algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
             self.task
@@ -81,7 +87,13 @@ class BraTSAlgorithm(ABC):
         output_folder: Path,
         mapping: dict[str, str],
     ) -> None:
-        # TODO add docstring
+        """ Process the outputs of a batch inference run and save them in the specified folder.
+
+        Args:
+            tmp_output_folder (Path | str): Folder with the algorithm outputs
+            output_folder (Path): Folder to save the outputs
+            mapping (dict[str, str]): Mapping from internal to external subject names
+        """
         # move outputs and change name back to initially provided one
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
@@ -97,7 +109,14 @@ class BraTSAlgorithm(ABC):
         inputs: dict[str, Path | str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-    ):
+    ) -> None:
+        """ Perform a single inference run with the provided inputs and save the output in the specified file.
+
+        Args:
+            inputs (dict[str, Path  |  str]): Input Images for the task
+            output_file (Path | str): File to save the output
+            log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
+        """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
             logger.info(f"Performing single inference")
 
@@ -130,7 +149,13 @@ class BraTSAlgorithm(ABC):
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
     ):
+        """ Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
 
+        Args:
+            data_folder (Path | str): Folder with the input data
+            output_folder (Path | str): Folder to save the outputs
+            log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
+        """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
 
             # find subjects

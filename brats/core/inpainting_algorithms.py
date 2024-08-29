@@ -93,7 +93,7 @@ class Inpainter(BraTSAlgorithm):
         """Perform inpainting task on a single subject with the provided images and save the result to the output file.
 
         Args:
-            t1n (Path | str): Path to the T1n image
+            t1n (Path | str): Path to the voided T1n image
             mask (Path | str): Path to the mask image
             output_file (Path | str): Path to save the segmentation
             log_file (Path | str, optional): Save logs to this file
