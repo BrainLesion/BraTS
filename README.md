@@ -1,7 +1,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/brats?logo=python&color=2EC553)](https://pypi.org/project/brats/)
-[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](http://brats.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest&color=2EC553)](http://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
-[![PyPI version brats-algorithms](https://badge.fury.io/py/brats.svg)](https://pypi.python.org/pypi/brats/)
+[![PyPI version brats-algorithms](https://img.shields.io/pypi/v/brats?color=2EC553)](https://pypi.python.org/pypi/brats/)
 [![License: GPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg?color=2EC553)](https://www.gnu.org/licenses/agpl-3.0)
 
 # BraTS
