@@ -2,6 +2,7 @@
 [![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest&color=2EC553)](http://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
 [![PyPI version brats-algorithms](https://img.shields.io/pypi/v/brats?color=2EC553)](https://pypi.python.org/pypi/brats/)
+[![codecov](https://codecov.io/gh/BrainLesion/BraTS/graph/badge.svg?token=A7FWUKO9Y4)](https://codecov.io/gh/BrainLesion/BraTS)
 [![License: GPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg?color=2EC553)](https://www.gnu.org/licenses/agpl-3.0)
 
 # BraTS
