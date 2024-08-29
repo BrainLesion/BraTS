@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 
 from brats.core.docker import (
+    _log_algorithm_info,
     _show_docker_pull_progress,
     _ensure_image,
     _is_cuda_available,
@@ -16,6 +17,7 @@ from brats.core.docker import (
     _build_args,
     _observe_docker_output,
     _sanity_check_output,
+    run_container,
 )
 from rich.progress import Progress
 from brats.utils.algorithm_config import AlgorithmData
@@ -270,3 +272,51 @@ class TestDockerHelpers(unittest.TestCase):
                 output_path=mock_output_path,
                 container_output=container_output,
             )
+
+    @patch("brats.core.docker.logger.debug")
+    def test_log_algorithm_info(self, MockLoggerDebug):
+        _log_algorithm_info(algorithm=self.algorithm_gpu)
+
+        MockLoggerDebug.assert_called_once()
+
+    @patch("brats.core.docker._log_algorithm_info")
+    @patch("brats.core.docker._ensure_image")
+    @patch("brats.core.docker._get_additional_files_path")
+    @patch("brats.core.docker._get_volume_mappings")
+    @patch("brats.core.docker._build_args")
+    @patch("brats.core.docker._handle_device_requests")
+    @patch("brats.core.docker._observe_docker_output")
+    @patch("brats.core.docker.client")
+    def test_run_container(
+        self,
+        mock_client,
+        mock_observe_docker_output,
+        mock_handle_device_requests,
+        mock_build_args,
+        mock_get_volume_mappings,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+    ):
+
+        # setup mocks
+        mock_build_args.return_value = ("args", {})
+
+        # run
+        cuda_devices = "0"
+        force_cpu = False
+        run_container(
+            algorithm=self.algorithm_gpu,
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+        # Verify mocks were called as expected
+        mock_log_algorithm_info.assert_called_once_with(algorithm=self.algorithm_gpu)
+        mock_ensure_image.assert_called_once()
+        mock_get_additional_files_path.assert_called_once()
+        mock_get_volume_mappings.assert_called_once()
+        mock_build_args.assert_called_once()
+        mock_handle_device_requests.assert_called_once()
