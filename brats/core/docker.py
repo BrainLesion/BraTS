@@ -285,7 +285,7 @@ def _log_algorithm_info(algorithm: AlgorithmData):
     logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
 
 
-def run_docker(
+def run_container(
     algorithm: AlgorithmData,
     data_path: Path,
     output_path: Path,

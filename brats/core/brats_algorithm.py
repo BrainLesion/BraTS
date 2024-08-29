@@ -8,7 +8,7 @@ from typing import Optional
 
 from loguru import logger
 
-from brats.core.docker import run_docker
+from brats.core.docker import run_container
 from brats.utils.algorithm_config import load_algorithms
 from brats.utils.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
@@ -129,7 +129,7 @@ class BraTSAlgorithm(ABC):
                 inputs=inputs,
             )
 
-            run_docker(
+            run_container(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
@@ -172,7 +172,7 @@ class BraTSAlgorithm(ABC):
             logger.info(f"Standardized input names to match algorithm requirements.")
 
             # run inference in container
-            run_docker(
+            run_container(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
