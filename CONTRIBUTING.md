@@ -1,5 +1,5 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![License: GPLv3](https://img.shields.io/badge/License-AGPLv3-blue.svg?color=2EC553)](https://www.gnu.org/licenses/agpl-3.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # Contributing to BraTS
 
@@ -21,4 +21,3 @@ Fork the repository, clone it and implement your contribution.
 
 
 Once done, create a Pull Request to integrate the code into our project!
-
