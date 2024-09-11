@@ -9,9 +9,6 @@ BraTS documentation
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
 
 
 
@@ -24,8 +21,8 @@ Indices and tables
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: API Reference:
 
-   algorithms
-   constants
+   core/core
+   utils/utils
 
