@@ -14,7 +14,7 @@ authors = [
   "Florian Kofler <florian.kofler@tum.de>",
 ]
 
-license = "AGPL-3.0"
+license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/BrainLesion/BraTS"
 homepage = "https://github.com/BrainLesion/BraTS"
