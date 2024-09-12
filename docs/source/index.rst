@@ -6,26 +6,25 @@
 BraTS documentation
 ===================
 
-.. include:: ../../README.md
+.. include:: ../README_preprocessed.md
    :parser: myst_parser.sphinx_
 
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
 
-
-
-Indices and tables
+Sections
 ===================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Getting Started:
+
+   readme
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: API Reference:
 
-   algorithms
-   constants
+   core/core
+   utils/utils
 
