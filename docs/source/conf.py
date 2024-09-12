@@ -5,8 +5,13 @@
 
 import os
 import sys
+from subprocess import run
+
 
 sys.path.insert(0, os.path.abspath("../../"))
+
+
+run(["python", "preprocess_readme.py"])
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
