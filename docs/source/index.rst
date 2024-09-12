@@ -6,18 +6,20 @@
 BraTS documentation
 ===================
 
-.. include:: ../../README.md
+.. include:: ../README_preprocessed.md
    :parser: myst_parser.sphinx_
 
 
-
-
-Indices and tables
+Sections
 ===================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Getting Started:
+
+   readme
 
 .. toctree::
    :maxdepth: 2
