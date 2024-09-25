@@ -1,25 +1,27 @@
-import unittest
-from unittest.mock import MagicMock, patch, call
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import MagicMock, call, patch
+
+import numpy as np
+from rich.progress import Progress
 
 from brats.core.docker import (
-    _log_algorithm_info,
-    _show_docker_pull_progress,
-    _ensure_image,
-    _is_cuda_available,
-    _handle_device_requests,
-    _get_additional_files_path,
-    _get_volume_mappings,
-    _get_parameters_arg,
     _build_args,
+    _ensure_image,
+    _get_additional_files_path,
+    _get_parameters_arg,
+    _get_volume_mappings,
+    _handle_device_requests,
+    _is_cuda_available,
+    _log_algorithm_info,
     _observe_docker_output,
     _sanity_check_output,
+    _show_docker_pull_progress,
     run_container,
 )
-from rich.progress import Progress
 from brats.utils.algorithm_config import AlgorithmData
 from brats.utils.constants import PARAMETERS_DIR
 from brats.utils.exceptions import (
@@ -220,7 +222,9 @@ class TestDockerHelpers(unittest.TestCase):
         result = _observe_docker_output(mock_container)
         self.assertEqual(result, "output log line")
 
-    def test_sanity_check_output(self):
+    @patch("brats.core.docker.logger")
+    @patch("brats.core.docker.nib.load")
+    def test_sanity_check_output(self, mock_nib_load, mock_logger):
         # Create mock paths
         mock_data_path = MagicMock(spec=Path)
         mock_output_path = MagicMock(spec=Path)
@@ -234,6 +238,13 @@ class TestDockerHelpers(unittest.TestCase):
             MagicMock(name="file1", spec=Path),
             MagicMock(name="file2", spec=Path),
         ]
+
+        # Create a mock object for the fdata
+        mock_nifti_img = MagicMock()
+        mock_nifti_img.get_fdata.return_value = np.ones((2, 2, 2))
+
+        # Mock the nib.load to return the mock nifti image
+        mock_nib_load.return_value = mock_nifti_img
 
         # Define container_output
         container_output = "Sample container output"
@@ -247,8 +258,11 @@ class TestDockerHelpers(unittest.TestCase):
             )
         except BraTSContainerException:
             self.fail("BraTSContainerException was raised unexpectedly")
+        mock_logger.warning.assert_not_called()
 
-    def test_sanity_check_output_fail(self):
+    @patch("brats.core.docker.logger")
+    @patch("brats.core.docker.nib.load")
+    def test_sanity_check_output_not_enough_outputs(self, mock_nib_load, mock_logger):
         # Create mock paths
         mock_data_path = MagicMock(spec=Path)
         mock_output_path = MagicMock(spec=Path)
@@ -262,6 +276,13 @@ class TestDockerHelpers(unittest.TestCase):
             MagicMock(name="file1", spec=Path),
         ]
 
+        # Create a mock object for the fdata
+        mock_nifti_img = MagicMock()
+        mock_nifti_img.get_fdata.return_value = np.ones((2, 2, 2))
+
+        # Mock the nib.load to return the mock nifti image
+        mock_nib_load.return_value = mock_nifti_img
+
         # Define container_output
         container_output = "Sample container output"
 
@@ -272,6 +293,44 @@ class TestDockerHelpers(unittest.TestCase):
                 output_path=mock_output_path,
                 container_output=container_output,
             )
+            mock_logger.assert_not_called()
+
+    @patch("brats.core.docker.logger")
+    @patch("brats.core.docker.nib.load")
+    def test_sanity_check_output_empty_warning(self, mock_nib_load, mock_logger):
+        # Create mock paths
+        mock_data_path = MagicMock(spec=Path)
+        mock_output_path = MagicMock(spec=Path)
+
+        # Simulate input files starting with "BraTS" and output files
+        mock_data_path.iterdir.return_value = [
+            MagicMock(name="file1", spec=Path),
+        ]
+        mock_output_path.iterdir.return_value = [
+            MagicMock(name="file1", spec=Path),
+        ]
+
+        # Create a mock object for the fdata
+        mock_nifti_img = MagicMock()
+        # zeros!
+        mock_nifti_img.get_fdata.return_value = np.zeros((2, 2, 2))
+
+        # Mock the nib.load to return the mock nifti image
+        mock_nib_load.return_value = mock_nifti_img
+
+        # Define container_output
+        container_output = "Sample container output"
+
+        # Check that no exception is raised
+
+        _sanity_check_output(
+            data_path=mock_data_path,
+            output_path=mock_output_path,
+            container_output=container_output,
+        )
+
+        # assertions
+        mock_logger.warning.assert_called_once()
 
     @patch("brats.core.docker.logger.debug")
     def test_log_algorithm_info(self, MockLoggerDebug):
