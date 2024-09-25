@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import docker
+import nibabel as nib
+import numpy as np
 from docker.errors import DockerException
 from loguru import logger
 from rich.console import Console
@@ -244,7 +246,7 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
 def _sanity_check_output(
     data_path: Path, output_path: Path, container_output: str
 ) -> None:
-    """Sanity check that the number of output files matches the number of input files.
+    """Sanity check that the number of output files matches the number of input files and the output is not empty.
 
     Args:
         data_path (Path): The path to the input data
@@ -265,6 +267,15 @@ def _sanity_check_output(
         raise BraTSContainerException(
             f"Not enough output files were created by the algorithm. Expected: {len(inputs)} Got: {len(outputs)}. Please check the logging output of the docker container for more information."
         )
+
+    for i, output in enumerate(outputs, start=1):
+        content = nib.load(output).get_fdata()
+        if np.count_nonzero(content) == 0:
+            logger.warning(
+                f"""Output file {i} contains only zeros.
+                Potentially the selected algorithm might not work properly with your data unless this behavior is correct for your use case.
+                If this seems wrong please try to use one of the other provided algorithms and file an issue on GitHub if the problem persists."""
+            )
 
 
 def _log_algorithm_info(algorithm: AlgorithmData):

@@ -45,6 +45,7 @@ PyYAML = ">=6.0.1"
 dacite = ">=1.8.0"
 loguru = ">=0.7.0"
 nibabel = ">=5.0.0"
+numpy = ">=1.21.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=8.0.0"
