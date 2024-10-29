@@ -113,7 +113,7 @@ class TestDockerHelpers(unittest.TestCase):
         MockPull.assert_called_once_with("test-image:latest", stream=True, decode=True)
 
     @patch("subprocess.run")
-    def test_is_cuda_available(self, MockRun):
+    def test_is_cuda_available_ok(self, MockRun):
         MockRun.return_value = None
         self.assertTrue(_is_cuda_available())
         MockRun.assert_called_once_with(
@@ -124,7 +124,7 @@ class TestDockerHelpers(unittest.TestCase):
         )
 
     @patch("subprocess.run")
-    def test_is_cuda_available(self, MockRun):
+    def test_is_cuda_available_fail(self, MockRun):
         MockRun.side_effect = Exception()
         self.assertFalse(_is_cuda_available())
         MockRun.assert_called_once_with(
