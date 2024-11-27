@@ -231,7 +231,7 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
         # Wait for the container to finish
         exit_code = container.wait()
         container_output = "\n\r".join(
-            [line.decode("utf-8") for line in container_output]
+            [line.decode("utf-8", errors="replace") for line in container_output]
         )
         # Check if the container exited with an error
         if exit_code["StatusCode"] != 0:
