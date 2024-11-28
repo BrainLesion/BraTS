@@ -10,7 +10,7 @@ from loguru import logger
 
 from brats.core.docker import run_container
 from brats.utils.algorithm_config import load_algorithms
-from brats.utils.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
+from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
 
 # Remove the default logger and add one with level INFO

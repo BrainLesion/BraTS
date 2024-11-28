@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from loguru import logger
 
 from brats.core.brats_algorithm import BraTSAlgorithm
-from brats.utils.constants import (
+from brats.constants import (
     ADULT_GLIOMA_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,

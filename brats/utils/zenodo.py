@@ -11,7 +11,7 @@ import requests
 from loguru import logger
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from brats.utils.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
+from brats.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
 
 
 def get_dummy_path() -> Path:

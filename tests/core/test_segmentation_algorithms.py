@@ -13,7 +13,7 @@ from brats import (
     MetastasesSegmenter,
     PediatricSegmenter,
 )
-from brats.utils.constants import (
+from brats.constants import (
     AdultGliomaAlgorithms,
     AfricaAlgorithms,
     MeningiomaAlgorithms,
