@@ -12,7 +12,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats24_inpainting_ying_weng:latest
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: true
       cpu_compatible: true
     weights:
@@ -29,7 +29,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats24_inpainting_faking_it:latest
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: false
       shm_size: "4gb"
 
@@ -43,9 +43,8 @@ algorithms:
     run_args:
       docker_image: brainles/brats24_inpainting_smint:latest
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: true
-      cpu_compatible: true
     weights:
       record_id: "14231079"
       param_name: "weights"
@@ -63,7 +62,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_inpainting_ying_weng:latest
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: true
       cpu_compatible: true
     weights:
