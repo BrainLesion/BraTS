@@ -26,7 +26,7 @@ pip install brats
 > [!IMPORTANT]  
 > To run `brats` you require a Docker installation. <br>
 > Many algorithms also require GPU support (NVIDIA Docker). <br>
-> In case you do not have access to a Cuda-capable GPU, the overview tables in the [Algorithms](#algorithms) section indicate which algorithms are CPU compatible.
+> In case you do not have access to a Cuda-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-Usage) section indicate which algorithms are CPU compatible.
 
 
 
