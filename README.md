@@ -36,13 +36,19 @@ pip install brats
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
-## Use Cases and Tutorials
 
-A minimal example to create a segmentation could look like this:
+## Available Algorithms and Usage
+
+### Segmentation
+<details open>
+
+<summary> <strong> Adult Glioma Segmentation </strong> </summary>
+<br>
+
 
 ```python
 from brats import AdultGliomaSegmenter
-from brats.utils.constants import AdultGliomaAlgorithms
+from brats.constants import AdultGliomaAlgorithms
 
 segmenter = AdultGliomaSegmenter(algorithm=AdultGliomaAlgorithms.BraTS23_1, cuda_devices="0")
 # these parameters are optional, by default the winning algorithm will be used on cuda:0
@@ -55,19 +61,10 @@ segmenter.infer_single(
 )
 ```
 
-For more examples and details please refer to our extensive Notebook tutorials here [NBViewer](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb) ([GitHub](https://github.com/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)). For the best experience open the notebook in Colab.
-
-## Algorithms
-
-<details open>
-
-<summary> <strong> Adult Glioma Segmentation </strong> </summary>
-<br>
-
 **Class:** `brats.AdultGliomaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaSegmenter))
 
-| Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum |
-| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum                                                                                                                   |
+| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
 | 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | N/A                                        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AdultGliomaAlgorithms.BraTS23_3) |
@@ -78,10 +75,25 @@ For more examples and details please refer to our extensive Notebook tutorials h
 <summary> <strong> BraTS-Africa Segmentation </strong> </summary>
 <br>
 
+```python
+from brats import AfricaSegmenter
+from brats.constants import AfricaAlgorithms
+
+segmenter = AfricaSegmenter(algorithm=AfricaAlgorithms.BraTS23_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
 **Class:** `brats.AfricaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AfricaSegmenter))
 
-| Year | Rank | Author                     | Paper | CPU Support | Key Enum |
-| ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                              |
+| ---- | ---- | -------------------------- | ----- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | TODO  | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AfricaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Alyssa R Amod, et al._    | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AfricaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | N/A   | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.AfricaAlgorithms.BraTS23_3) |
@@ -92,10 +104,25 @@ For more examples and details please refer to our extensive Notebook tutorials h
 <summary> <strong> Meningioma Segmentation </strong> </summary>
 <br>
 
+```python
+from brats import MeningiomaSegmenter
+from brats.constants import MeningiomaAlgorithms
+
+segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
 **Class:** `brats.MeningiomaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.MeningiomaSegmenter))
 
-| Year | Rank | Author                     | Paper | CPU Support | Key Enum |
-| ---- | ---- | -------------------------- | ----- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                                  |
+| ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Ziyan Huang, et al._      | N/A   | &#x2705;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Zhifan Jiang et al._      | N/A   | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MeningiomaAlgorithms.BraTS23_3) |
@@ -106,10 +133,25 @@ For more examples and details please refer to our extensive Notebook tutorials h
 <summary> <strong> Brain Metastases Segmentation </strong> </summary>
 <br>
 
+```python
+from brats import MetastasesSegmenter
+from brats.constants import MetastasesAlgorithms
+
+segmenter = MetastasesSegmenter(algorithm=MetastasesAlgorithms.BraTS23_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
 **Class:** `brats.MetastasesSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.MetastasesSegmenter))
 
-| Year | Rank | Author                     | Paper | CPU Support | Key Enum |
-| ---- | ---- | -------------------------- | ----- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                                  |
+| ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Siwei Yang, et al._       | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | N/A   | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.MetastasesAlgorithms.BraTS23_3) |
@@ -120,31 +162,65 @@ For more examples and details please refer to our extensive Notebook tutorials h
 <summary> <strong> Pediatric Segmentation </strong> </summary>
 <br>
 
+```python
+from brats import PediatricSegmenter
+from brats.constants import PediatricAlgorithms
+
+segmenter = PediatricSegmenter(algorithm=PediatricAlgorithms.BraTS23_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 
-| Year | Rank | Author                     | Paper | CPU Support | Key Enum |
-| ---- | ---- | -------------------------- | ----- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                                 |
+| ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------ |
 | 2023 | 1st  | _Zhifan Jiang et al._      | N/A   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.PediatricAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.PediatricAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Yubo Zhou_                | N/A   | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.PediatricAlgorithms.BraTS23_3) |
 
 </details>
 
----
+### Inpainting
 
 <details>
 <summary> <strong> Inpainting </strong> </summary>
 <br>
 
+```python
+from brats import Inpainter
+from brats.constants import InpaintingAlgorithms
+
+inpainter = Inpainter(algorithm=InpaintingAlgorithms.BraTS24_1)
+inpainter.infer_single(
+    t1n="path/to/voided_t1n.nii.gz",
+    mask="path/to/mask.nii.gz",
+    output_file="inpainting.nii.gz",
+)
+```
+
 **Class:** `brats.Inpainter` ([Docs](https://brats.readthedocs.io/en/latest/core/inpainting_algorithms.html#brats.core.inpainting_algorithms.Inpainter))
 
-| Year | Rank | Author                  | Paper | CPU Support | Key Enum         |
-| ---- | ---- | ----------------------- | ----- | ----------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 2023 | 1st  | _Juexin Zhang, et al._  | N/A   | &#x2705;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_1) |
-| 2023 | 2nd  | _Alicia Durrer, et al._ | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_2) |
-| 2023 | 3rd  | _Jiayu Huo, et al._     | N/A   | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_3) |
+| Year | Rank | Author                             | Paper | CPU Support | Key Enum                                                                                                                  |
+| ---- | ---- | ---------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 2024 | 1st  | _Ke Chen, Juexin Zhang, Ying Weng_ | N/A   | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS24_1) |
+| 2024 | 2nd  | _André Ferreira, et al._           | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS24_2) |
+| 2024 | 3rd  | _Team SMINT_                       | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS24_3) |
+| 2023 | 1st  | _Juexin Zhang, et al._             | N/A   | &#x2705;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_1) |
+| 2023 | 2nd  | _Alicia Durrer, et al._            | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_2) |
+| 2023 | 3rd  | _Jiayu Huo, et al._                | N/A   | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.utils.constants.InpaintingAlgorithms.BraTS23_3) |
 
 </details>
+
+>[!TIP]
+>For a full notebook examples with more details please check here:  
+> [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)
 
 ## Citation
 
