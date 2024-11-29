@@ -219,7 +219,7 @@ inpainter.infer_single(
 </details>
 
 >[!TIP]
->For a full notebook examples with more details please check here:  
+>For a full notebook example with more details please check here:  
 > [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)
 
 ## Citation
