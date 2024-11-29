@@ -197,7 +197,7 @@ segmenter.infer_single(
 from brats import Inpainter
 from brats.constants import InpaintingAlgorithms
 
-inpainter = Inpainter(algorithm=InpaintingAlgorithms.BraTS24_1)
+inpainter = Inpainter(algorithm=InpaintingAlgorithms.BraTS24_1, cuda_devices="0")
 inpainter.infer_single(
     t1n="path/to/voided_t1n.nii.gz",
     mask="path/to/mask.nii.gz",
