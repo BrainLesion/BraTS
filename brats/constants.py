@@ -81,16 +81,22 @@ class MetastasesAlgorithms(Algorithms):
 class InpaintingAlgorithms(Algorithms):
     """Constants for the available BraTS Inpainting algorithms."""
 
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24  Inpainting 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24  Inpainting 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24  Inpainting 3rd place """
     BraTS23_1 = "BraTS23_1"
-    """BraTS23  Inpainting 1st place (GPU only)"""
+    """ BraTS23  Inpainting 1st place """
     BraTS23_2 = "BraTS23_2"
-    """BraTS23  Inpainting 2nd place (GPU only) (Very Slow)"""
+    """ BraTS23  Inpainting 2nd place (Very Slow) """
     BraTS23_3 = "BraTS23_3"
-    """BraTS23  Inpainting 3rd place (GPU only)"""
+    """ BraTS23  Inpainting 3rd place """
 
 
 # DIRECTORIES
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent / "data"
 META_DIR = DATA_DIR / "meta"
 PARAMETERS_DIR = DATA_DIR / "parameters"
 ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"

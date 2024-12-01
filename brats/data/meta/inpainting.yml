@@ -1,5 +1,57 @@
 algorithms:
 
+  ######## 2024 Algorithms ########
+
+  BraTS24_1:
+    meta:
+      authors: Ke Chen, Juexin Zhang, Ying Weng
+      paper: N/A
+      challenge: BraTS24 Inpainting
+      rank: 1st
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_inpainting_ying_weng:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+      cpu_compatible: true
+    weights:
+      record_id: "14230865"
+      param_name: "checkpoint_path"
+
+  BraTS24_2:
+    meta:
+      authors: André Ferreira, et al.
+      paper: N/A
+      challenge: BraTS24 Inpainting
+      rank: 2nd
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_inpainting_faking_it:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: false
+      shm_size: "4gb"
+
+  BraTS24_3:
+    meta:
+      authors: Team SMINT
+      paper: N/A
+      challenge: BraTS24 Inpainting
+      rank: 3rd
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_inpainting_smint:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+    weights:
+      record_id: "14231079"
+      param_name: "weights"
+      checkpoint_path: "savedmodel395000.pt"
+      
+  ######## 2023 Algorithms ########
+
   BraTS23_1:
     meta:
       authors: Juexin Zhang, et al.
@@ -10,7 +62,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_inpainting_ying_weng:latest
       input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      requires_root: false
       parameters_file: true
       cpu_compatible: true
     weights:

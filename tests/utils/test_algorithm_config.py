@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 
 from brats.utils.algorithm_config import load_algorithms
-from brats.utils.constants import META_DIR
+from brats.constants import META_DIR
 
 
 class TestAlgorithmConfig(unittest.TestCase):

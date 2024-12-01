@@ -23,7 +23,7 @@ from brats.core.docker import (
     run_container,
 )
 from brats.utils.algorithm_config import AlgorithmData
-from brats.utils.constants import PARAMETERS_DIR
+from brats.constants import PARAMETERS_DIR
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,

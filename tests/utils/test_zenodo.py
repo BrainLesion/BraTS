@@ -6,7 +6,7 @@ from io import BytesIO
 import requests
 
 # Import the module that contains the functions
-from brats.utils.constants import ADDITIONAL_FILES_FOLDER
+from brats.constants import ADDITIONAL_FILES_FOLDER
 from brats.utils.zenodo import (
     _extract_archive,
     check_additional_files_path,

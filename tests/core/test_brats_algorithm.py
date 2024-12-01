@@ -5,7 +5,7 @@ import tempfile
 import shutil
 
 from brats import AdultGliomaSegmenter
-from brats.utils.constants import OUTPUT_NAME_SCHEMA
+from brats.constants import OUTPUT_NAME_SCHEMA
 
 
 class TestBraTSAlgorithm(unittest.TestCase):

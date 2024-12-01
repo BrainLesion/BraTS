@@ -7,7 +7,7 @@ from unittest.mock import patch
 from loguru import logger
 
 from brats import Inpainter
-from brats.utils.constants import InpaintingAlgorithms
+from brats.constants import InpaintingAlgorithms
 
 
 class TestInpaintingAlgorithms(unittest.TestCase):
