@@ -4,7 +4,7 @@ Utils
 Constants
 ------------------------------
 
-.. automodule:: brats.utils.constants 
+.. automodule:: brats.constants 
     :members:
 
 
