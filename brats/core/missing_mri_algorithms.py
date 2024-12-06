@@ -1,0 +1,145 @@
+from __future__ import annotations
+
+from pathlib import Path
+import shutil
+import sys
+from typing import Optional, Union
+
+from loguru import logger
+
+from brats.core.brats_algorithm import BraTSAlgorithm
+from brats.constants import MISSING_MRI_ALGORITHMS, MissingMRIAlgorithms, Task
+from brats.utils.data_handling import input_sanity_check
+
+
+class MissingMRI(BraTSAlgorithm):
+
+    def __init__(
+        self,
+        algorithm: MissingMRIAlgorithms = MissingMRIAlgorithms.BraTS24_1,
+        cuda_devices: str | None = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=MISSING_MRI_ALGORITHMS,
+            task=Task.MISSING_MRI,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+    def _standardize_single_inputs(
+        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+    ) -> None:
+        """
+        Standardize the input data to match the requirements of the selected algorithm.
+
+        Args:
+            data_folder (Path): Path to the data folder
+            subject_id (str): Subject ID
+            inputs (dict[str, Path | str]): Dictionary with the input data
+        """
+
+        subject_folder = data_folder / subject_id
+        subject_folder.mkdir(parents=True, exist_ok=True)
+
+        try:
+            for modality, path in inputs.items():
+                shutil.copy(path, subject_folder / f"{subject_id}-{modality}.nii.gz")
+        except FileNotFoundError as e:
+            logger.error(f"Error while standardizing files: {e}")
+            sys.exit(1)
+
+        # sanity check inputs
+        input_sanity_check(
+            t1c=inputs.get("t1c"),
+            t1n=inputs.get("t1n"),
+            t2f=inputs.get("t2f"),
+            t2w=inputs.get("t2w"),
+        )
+
+    def _standardize_batch_inputs(self, data_folder, subjects, input_name_schema):
+        raise NotImplementedError()
+
+    # def _standardize_batch_inputs(
+    #     self, data_folder: Path, subjects: list[Path], input_name_schema: str
+    # ) -> None:
+    #     """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+
+    #     Args:
+    #         subjects (List[Path]): List of subject folders, each with a voided t1n and a mask image
+    #         data_folder (Path): Parent folder where the subject folders will be created
+    #         input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+
+    #     Returns:
+    #         Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+    #     """
+    #     internal_external_name_map = {}
+    #     for i, subject in enumerate(subjects):
+    #         internal_name = input_name_schema.format(id=i)
+    #         internal_external_name_map[internal_name] = subject.name
+    #         inputs = (
+    #             {
+    #                 "t1c": subject / f"{subject.name}-t1c.nii.gz",
+    #                 "t1n": subject / f"{subject.name}-t1n.nii.gz",
+    #                 "t2f": subject / f"{subject.name}-t2f.nii.gz",
+    #                 "t2w": subject / f"{subject.name}-t2w.nii.gz",
+    #             },
+    #         )
+    #         self._standardize_single_inputs(
+    #             data_folder=data_folder,
+    #             subject_id=internal_name,
+    #         )
+    #     return internal_external_name_map
+
+    def infer_single(
+        self,
+        output_file: Path | str,
+        t1c: Optional[Union[Path, str]] = None,
+        t1n: Optional[Union[Path, str]] = None,
+        t2f: Optional[Union[Path, str]] = None,
+        t2w: Optional[Union[Path, str]] = None,
+        log_file: Optional[Path | str] = None,
+    ) -> None:
+        """ """
+
+        inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
+        # filter out None values
+        inputs = {k: v for k, v in inputs.items() if v is not None}
+
+        # assert exactly 3 inputs are given (to compute the missing one)
+        assert (
+            len(inputs) == 3
+        ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
+
+        self._infer_single(
+            inputs=inputs,
+            output_file=output_file,
+            log_file=log_file,
+        )
+
+    # def infer_batch(
+    #     self,
+    #     data_folder: Path | str,
+    #     output_folder: Path | str,
+    #     log_file: Path | str | None = None,
+    # ) -> None:
+    #     """Perform inpainting on a batch of subjects with the provided images and save the results to the output folder. \n
+    #     Requires the following structure:\n
+    #     data_folder\n
+    #     ┣ A\n
+    #     ┃ ┣ A-t1n-voided.nii.gz\n
+    #     ┃ ┣ A-mask.nii.gz\n
+    #     ┣ B\n
+    #     ┃ ┣ B-t1n-voided.nii.gz\n
+    #     ┃ ┣ B-mask.nii.gz\n
+    #     ┣ C ...\n
+
+    #     Args:
+    #         data_folder (Path | str): Folder containing the subjects with required structure
+    #         output_folder (Path | str): Output folder to save the segmentations
+    #         log_file (Path | str, optional): Save logs to this file
+    #     """
+    #     return self._infer_batch(
+    #         data_folder=data_folder, output_folder=output_folder, log_file=log_file
+    #     )
