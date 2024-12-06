@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from brats.utils.exceptions import AlgorithmConfigException
 
 import yaml
@@ -47,10 +47,10 @@ class WeightsData:
 
     record_id: str
     """The Zenodo record ID of the weights"""
-    param_name: Optional[str] = "weights"
-    """The parameter that specifies the weights folder in the algorithm execution, typically 'weights' but differs for some"""
-    checkpoint_path: Optional[str] = None
-    """The path to a specific checkpoint file in the weights folder. Not required since some algorithms accept the entire weights folder"""
+    param_name: Optional[List[str]] = field(default_factory=lambda: ["weights"])
+    """The parameter(s) that specify the weights folder(s) in the algorithm execution, typically 'weights' but differs for some and can even be multiple"""
+    checkpoint_path: Optional[List[str]] = None
+    """The path(s) to specific checkpoint file(s) in the weights folder. Not required since some algorithms accept the entire weights folder"""
 
 
 @dataclass

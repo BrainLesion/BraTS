@@ -72,9 +72,13 @@ class BraTSAlgorithm(ABC):
             output_file (Path): Path to the desired output file
         """
         # rename output
-        algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-            self.task
-        ].format(subject_id=subject_id)
+        if self.task == Task.MISSING_MRI:
+            # Missing MRI has no fixed names since the missing modality differs and is included in the name
+            algorithm_output = Path(tmp_output_folder).iterdir().__next__()
+        else:
+            algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
+                self.task
+            ].format(subject_id=subject_id)
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
