@@ -127,10 +127,6 @@ class MissingMRI(BraTSAlgorithm):
     ) -> None:
         """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
-        **Important:**\n
-        Batch processing will not work if you try to synthesize multiple modalities for the same subject.
-        If this is a relevant use case for you, please use the single inference method instead that has no such limitation.
-
         Requires the following structure (if e.g. t2f should be synthesized):\n
         data_folder\n
         ┣ A\n
