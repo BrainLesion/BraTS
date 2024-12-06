@@ -28,7 +28,7 @@ algorithms:
       parameters_file: true
     weights:
       record_id: "13373752"
-      param_name: "ckpts_path"
+      param_name: ["ckpts_path"]
   BraTS23_3:
     meta:
       authors: Ziyan Huang, et al.

@@ -48,7 +48,9 @@ class TestDockerHelpers(unittest.TestCase):
                 shm_size="1g",
                 cpu_compatible=False,
             ),
-            weights=MagicMock(param_name="weights", checkpoint_path="checkpoint.pth"),
+            weights=MagicMock(
+                param_name=["weights"], checkpoint_path=["checkpoint.pth"]
+            ),
             meta=MagicMock(
                 challenge="Challenge",
                 rank="1st",
@@ -64,7 +66,9 @@ class TestDockerHelpers(unittest.TestCase):
                 shm_size="1g",
                 cpu_compatible=True,
             ),
-            weights=MagicMock(param_name="weights", checkpoint_path="checkpoint.pth"),
+            weights=MagicMock(
+                param_name=["weights"], checkpoint_path=["checkpoint.pth"]
+            ),
             meta=MagicMock(
                 challenge="Challenge",
                 rank="1st",

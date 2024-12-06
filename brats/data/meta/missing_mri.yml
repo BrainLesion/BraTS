@@ -19,6 +19,21 @@ algorithms:
       param_name: ["first_weights", "second_weights"]
       checkpoint_path: ["first_weight.bin", "second_weight.pth"]
 
+  BraTS24_2:
+    meta:
+      authors: Haowen Pang
+      paper: N/A
+      challenge: BraTS24 Missing MRI
+      rank: 2nd
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_missing_mri_bit_isip:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+    weights:
+      record_id: "TODO"
+
   BraTS24_3:
     meta:
       authors: Minjoo Lim, Bogyeong Kang
