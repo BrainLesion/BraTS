@@ -244,8 +244,8 @@ missing_mri.infer_single(
 | Year | Rank | Author                                    | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ----------------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Jihoon Cho, Seunghyuck Park, Jinah Park_ | N/A   | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_1) |
-| 2024 | 2nd  | _Haowen Pang_                             | N/A   | &#x2705;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Minjoo Lim, Bogyeong Kang_               | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_3) |
+| 2024 | 2nd  | _Haowen Pang_                             | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_2) |
+| 2024 | 3rd  | _Minjoo Lim, Bogyeong Kang_               | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_3) |
 
 </details>
 
