@@ -59,38 +59,39 @@ class MissingMRI(BraTSAlgorithm):
         )
 
     def _standardize_batch_inputs(self, data_folder, subjects, input_name_schema):
-        raise NotImplementedError()
+        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
 
-    # def _standardize_batch_inputs(
-    #     self, data_folder: Path, subjects: list[Path], input_name_schema: str
-    # ) -> None:
-    #     """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+        Args:
+            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
+            data_folder (Path): Parent folder where the subject folders will be created
+            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
 
-    #     Args:
-    #         subjects (List[Path]): List of subject folders, each with a voided t1n and a mask image
-    #         data_folder (Path): Parent folder where the subject folders will be created
-    #         input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+        Returns:
+            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+        """
+        internal_external_name_map = {}
+        for i, subject in enumerate(subjects):
+            internal_name = input_name_schema.format(id=i)
+            internal_external_name_map[internal_name] = subject.name
 
-    #     Returns:
-    #         Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
-    #     """
-    #     internal_external_name_map = {}
-    #     for i, subject in enumerate(subjects):
-    #         internal_name = input_name_schema.format(id=i)
-    #         internal_external_name_map[internal_name] = subject.name
-    #         inputs = (
-    #             {
-    #                 "t1c": subject / f"{subject.name}-t1c.nii.gz",
-    #                 "t1n": subject / f"{subject.name}-t1n.nii.gz",
-    #                 "t2f": subject / f"{subject.name}-t2f.nii.gz",
-    #                 "t2w": subject / f"{subject.name}-t2w.nii.gz",
-    #             },
-    #         )
-    #         self._standardize_single_inputs(
-    #             data_folder=data_folder,
-    #             subject_id=internal_name,
-    #         )
-    #     return internal_external_name_map
+            # find relevant files in the subject folder
+            possible_inputs = {
+                "t1c": subject / f"{subject.name}-t1c.nii.gz",
+                "t1n": subject / f"{subject.name}-t1n.nii.gz",
+                "t2f": subject / f"{subject.name}-t2f.nii.gz",
+                "t2w": subject / f"{subject.name}-t2w.nii.gz",
+            }
+            valid_inputs = {k: v for k, v in possible_inputs.items() if v.exists()}
+            assert (
+                len(valid_inputs) == 3
+            ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
+
+            self._standardize_single_inputs(
+                data_folder=data_folder,
+                subject_id=internal_name,
+                inputs=valid_inputs,
+            )
+        return internal_external_name_map
 
     def infer_single(
         self,
@@ -118,28 +119,34 @@ class MissingMRI(BraTSAlgorithm):
             log_file=log_file,
         )
 
-    # def infer_batch(
-    #     self,
-    #     data_folder: Path | str,
-    #     output_folder: Path | str,
-    #     log_file: Path | str | None = None,
-    # ) -> None:
-    #     """Perform inpainting on a batch of subjects with the provided images and save the results to the output folder. \n
-    #     Requires the following structure:\n
-    #     data_folder\n
-    #     ┣ A\n
-    #     ┃ ┣ A-t1n-voided.nii.gz\n
-    #     ┃ ┣ A-mask.nii.gz\n
-    #     ┣ B\n
-    #     ┃ ┣ B-t1n-voided.nii.gz\n
-    #     ┃ ┣ B-mask.nii.gz\n
-    #     ┣ C ...\n
+    def infer_batch(
+        self,
+        data_folder: Path | str,
+        output_folder: Path | str,
+        log_file: Path | str | None = None,
+    ) -> None:
+        """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
-    #     Args:
-    #         data_folder (Path | str): Folder containing the subjects with required structure
-    #         output_folder (Path | str): Output folder to save the segmentations
-    #         log_file (Path | str, optional): Save logs to this file
-    #     """
-    #     return self._infer_batch(
-    #         data_folder=data_folder, output_folder=output_folder, log_file=log_file
-    #     )
+        **Important:**\n
+        Batch processing will not work if you try to synthesize multiple modalities for the same subject.
+        If this is a relevant use case for you, please use the single inference method instead that has no such limitation.
+
+        Requires the following structure (if e.g. t2f should be synthesized):\n
+        data_folder\n
+        ┣ A\n
+        ┃ ┣ A-t1c.nii.gz\n
+        ┃ ┣ A-t1n.nii.gz\n
+        ┃ ┗ A-t2w.nii.gz\n
+        ┣ B\n
+        ┃ ┣ B-t1c.nii.gz\n
+        ┃ ┣ ...\n
+
+
+        Args:
+            data_folder (Path | str): Folder containing the subjects with required structure
+            output_folder (Path | str): Output folder to save the segmentation
+            log_file (Path | str, optional): Save logs to this file
+        """
+        return self._infer_batch(
+            data_folder=data_folder, output_folder=output_folder, log_file=log_file
+        )
