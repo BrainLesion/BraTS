@@ -102,7 +102,20 @@ class MissingMRI(BraTSAlgorithm):
         t2w: Optional[Union[Path, str]] = None,
         log_file: Optional[Path | str] = None,
     ) -> None:
-        """ """
+        """
+        Perform synthesis of the missing modality for a single subject with the provided images and save the result to the output file.
+
+        Note:
+            Exactly 3 inputs are required to perform synthesis of the missing modality.
+
+        Args:
+            output_file (Path | str): Output file to save the synthesized image
+            t1c (Optional[Union[Path, str]], optional): Path to the T1c image. Defaults to None.
+            t1n (Optional[Union[Path, str]], optional): Path to the T1n image. Defaults to None.
+            t2f (Optional[Union[Path, str]], optional): Path to the T2f image. Defaults to None.
+            t2w (Optional[Union[Path, str]], optional): Path to the T2w image. Defaults to None.
+            log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None
+        """
 
         inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
         # filter out None values
