@@ -196,10 +196,11 @@ def _build_args(
     # Build command that will be run in the docker container
     command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     if algorithm.weights is not None:
-        weights_arg = f"--{algorithm.weights.param_name}=/mlcube_io1"
-        if algorithm.weights.checkpoint_path:
-            weights_arg += f"/{algorithm.weights.checkpoint_path}"
-        command_args += f" {weights_arg}"
+        for i, param in enumerate(algorithm.weights.param_name):
+            weights_arg = f"--{param}=/mlcube_io1"
+            if algorithm.weights.checkpoint_path:
+                weights_arg += f"/{algorithm.weights.checkpoint_path[i]}"
+            command_args += f" {weights_arg}"
 
     # Add parameters file arg if required
     params_arg = _get_parameters_arg(algorithm=algorithm)

@@ -27,7 +27,6 @@ algorithms:
       parameters_file: false
     weights:
       record_id: "13380822"
-      param_name: "weights"
       
   BraTS23_3:
     meta:

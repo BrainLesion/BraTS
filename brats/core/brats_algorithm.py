@@ -22,7 +22,9 @@ logger.add(
 
 
 class BraTSAlgorithm(ABC):
-    """This class serves as the basis for all BraTS algorithms. It provides a common interface and implements the logic for single and batch inference."""
+    """
+    This class serves as the basis for all BraTS algorithms. It provides a common interface and implements the logic for single and batch inference.
+    """
 
     def __init__(
         self,
@@ -51,20 +53,25 @@ class BraTSAlgorithm(ABC):
     def _standardize_single_inputs(
         self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
     ) -> None:
-        """Standardize the input data to match the requirements of the selected algorithm."""
+        """
+        Standardize the input data to match the requirements of the selected algorithm.
+        """
         pass
 
     @abstractmethod
     def _standardize_batch_inputs(
         self, data_folder: Path, subjects: list[Path], input_name_schema: str
     ) -> None:
-        """Standardize the input data to match the requirements of the selected algorithm."""
+        """
+        Standardize the input data to match the requirements of the selected algorithm.
+        """
         pass
 
     def _process_single_output(
         self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
     ) -> None:
-        """Process the output of a single inference run and save it in the specified file.
+        """
+        Process the output of a single inference run and save it in the specified file.
 
         Args:
             tmp_output_folder (Path | str): Folder with the algorithm output
@@ -72,9 +79,13 @@ class BraTSAlgorithm(ABC):
             output_file (Path): Path to the desired output file
         """
         # rename output
-        algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-            self.task
-        ].format(subject_id=subject_id)
+        if self.task == Task.MISSING_MRI:
+            # Missing MRI has no fixed names since the missing modality differs and is included in the name
+            algorithm_output = Path(tmp_output_folder).iterdir().__next__()
+        else:
+            algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
+                self.task
+            ].format(subject_id=subject_id)
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
@@ -87,7 +98,8 @@ class BraTSAlgorithm(ABC):
         output_folder: Path,
         mapping: dict[str, str],
     ) -> None:
-        """Process the outputs of a batch inference run and save them in the specified folder.
+        """
+        Process the outputs of a batch inference run and save them in the specified folder.
 
         Args:
             tmp_output_folder (Path | str): Folder with the algorithm outputs
@@ -98,10 +110,27 @@ class BraTSAlgorithm(ABC):
         output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
         for internal_name, external_name in mapping.items():
-            algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-                self.task
-            ].format(subject_id=internal_name)
-            output_file = output_folder / f"{external_name}.nii.gz"
+            if self.task == Task.MISSING_MRI:
+                # Missing MRI has no fixed names since the missing modality differs and is included in the name
+                algorithm_output = (
+                    Path(tmp_output_folder).glob(f"*{internal_name}*").__next__()
+                )
+                try:
+                    modality = algorithm_output.name.split("-")[-1].split(".")[0]
+                except IndexError:
+                    logger.warning(
+                        f"Could not extract modality from {algorithm_output.name}"
+                    )
+                    modality = None
+                output_file = (
+                    output_folder
+                    / f"{external_name}{'-' + modality if modality else ''}.nii.gz"
+                )
+            else:
+                algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
+                    self.task
+                ].format(subject_id=internal_name)
+                output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
     def _infer_single(
@@ -110,7 +139,8 @@ class BraTSAlgorithm(ABC):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
     ) -> None:
-        """Perform a single inference run with the provided inputs and save the output in the specified file.
+        """
+        Perform a single inference run with the provided inputs and save the output in the specified file.
 
         Args:
             inputs (dict[str, Path  |  str]): Input Images for the task

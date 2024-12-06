@@ -10,4 +10,5 @@ All algorithms can be used for a single subject inference (one set of MRI scans)
 
    segmentation_algorithms
    inpainting_algorithms
+   missing_mri_algorithms
    brats_algorithm
