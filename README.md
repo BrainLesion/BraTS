@@ -26,7 +26,7 @@ pip install brats
 > [!IMPORTANT]  
 > To run `brats` you require a Docker installation. <br>
 > Many algorithms also require GPU support (NVIDIA Docker). <br>
-> In case you do not have access to a Cuda-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-Usage) section indicate which algorithms are CPU compatible.
+> In case you do not have access to a Cuda-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-usage) section indicate which algorithms are CPU compatible.
 
 
 
@@ -243,7 +243,7 @@ missing_mri.infer_single(
 
 | Year | Rank | Author                                    | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ----------------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| 2024 | 1st  | _Jihoon Cho, Seunghyuck Park, Jinah Park_ | N/A   | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_1) |
+| 2024 | 1st  | _Jihoon Cho, Seunghyuck Park, Jinah Park_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Haowen Pang_                             | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Minjoo Lim, Bogyeong Kang_               | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_3) |
 

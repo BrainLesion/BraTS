@@ -14,7 +14,6 @@ algorithms:
       input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: false
       parameters_file: true
-      cpu_compatible: true
     weights:
       record_id: "14287969"
       param_name: ["first_weights", "second_weights"]
