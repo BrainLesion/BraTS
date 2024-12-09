@@ -34,10 +34,10 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Create mock paths for input images
         self.subject_folder = self.data_folder / "subject"
         self.subject_folder.mkdir(parents=True, exist_ok=True)
-        self.t1c = self.data_folder / "subject-t1c.nii.gz"
-        self.t1n = self.data_folder / "subject-t1n.nii.gz"
-        self.t2f = self.data_folder / "subject-t2f.nii.gz"
-        self.t2w = self.data_folder / "subject-t2w.nii.gz"
+        self.t1c = self.subject_folder / "subject-t1c.nii.gz"
+        self.t1n = self.subject_folder / "subject-t1n.nii.gz"
+        self.t2f = self.subject_folder / "subject-t2f.nii.gz"
+        self.t2w = self.subject_folder / "subject-t2w.nii.gz"
         # Create dummy files
         for img in [self.t1c, self.t1n, self.t2f, self.t2w]:
             img.touch(exist_ok=True)

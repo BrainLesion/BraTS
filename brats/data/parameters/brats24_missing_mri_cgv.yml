@@ -1,0 +1,72 @@
+previous_exp_name: does_not_exist
+exp_name: refiner_fets_minmax_l1No_ssimYes_DiceYes
+
+# seg_model:
+#   seg_exp_name: seg_testing_merge
+#   path_suffix: epoch_100.pth
+
+dataset:
+  root: "/data_folder/"
+  folders: ["ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData"]
+  val_folder: ["ASNR-MICCAI-BraTS2023-GLI-Challenge-ValidationData"]
+  suffix_modalities: ["t1", "t1ce", "t2", "flair"]
+  suffix_common: ".nii.gz"
+  resize: False
+  resize_input: 256
+  resize_output: 256
+  crop: True
+  random_crop: True
+  crop_size: 128
+  pad: True
+  normalize: True
+  norm_method: zscore # OPTIONS -  minmax01: [0,1], minmax11: [-1,1], zscore: z-score normalization
+  mask_input: False
+  mask_modality: True
+
+dataloader:
+  batch_size: 1
+  shuffle: True
+  num_workers: 1
+
+model:
+  spatial_dims: 3
+  in_channels: 4
+  out_channels: 4
+  latent_channels: 3
+  num_channels: [64, 128, 128, 128]
+  num_res_blocks: 1
+  norm_num_groups: 32
+  norm_eps: 1.0e-6
+  attention_levels: [
+    False,
+    False,
+    False,
+    False
+  ]
+  with_encoder_nonlocal_attn: False
+  with_decoder_nonlocal_attn: False
+  use_skip_connection: True
+  use_skip_squeeze: True
+  skip_squeeze_channels: 1
+  use_skip_connection_first_layer: False
+  skip_drop_rate: 0.0
+  training: True
+
+refiner:
+  hidden_size: 64
+  output_residual: True
+  use_final_conv: True
+
+discriminator:
+  hidden_size: 64
+
+training:
+  epoch: 1000
+  lr: 1.0e-5
+  cp_epoch: 2
+  pic_log_epoch: 1
+  cp_directory: "./checkpoints/"
+  use_scheduler: True
+  load_checkpoint: False
+  mask_loss_amp: 8.0
+  loss_coef: [1.0, 1.0]  # [L1, MSE]

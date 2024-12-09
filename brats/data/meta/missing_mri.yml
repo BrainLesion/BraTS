@@ -1,0 +1,48 @@
+algorithms:
+
+  ######## 2024 Algorithms ########
+
+  BraTS24_1:
+    meta:
+      authors: Jihoon Cho, Seunghyuck Park, Jinah Park
+      paper: N/A
+      challenge: BraTS24 Missing MRI
+      rank: 1st
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_missing_mri_cgv:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+    weights:
+      record_id: "14287969"
+      param_name: ["first_weights", "second_weights"]
+      checkpoint_path: ["first_weight.bin", "second_weight.pth"]
+
+  BraTS24_2:
+    meta:
+      authors: Haowen Pang
+      paper: N/A
+      challenge: BraTS24 Missing MRI
+      rank: 2nd
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_missing_mri_bit_isip:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true
+    weights:
+      record_id: "14288120"
+
+  BraTS24_3:
+    meta:
+      authors: Minjoo Lim, Bogyeong Kang
+      paper: N/A
+      challenge: BraTS24 Missing MRI
+      rank: 3rd
+      year: 2024
+    run_args:
+      docker_image: brainles/brats24_missing_mri_plave:latest
+      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      requires_root: false
+      parameters_file: true

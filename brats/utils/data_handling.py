@@ -72,7 +72,7 @@ def InferenceSetup(
 
 
 def input_sanity_check(
-    t1n: Path | str,
+    t1n: Optional[Path | str] = None,
     t1c: Optional[Path | str] = None,
     t2f: Optional[Path | str] = None,
     t2w: Optional[Path | str] = None,
@@ -103,6 +103,8 @@ def input_sanity_check(
     shapes = {
         label: nib.load(img).shape for label, img in images.items() if img is not None
     }
+
+    assert shapes, "No input images provided. At least one image is required."
 
     if any(shape != (240, 240, 155) for shape in shapes.values()):
         logger.warning(

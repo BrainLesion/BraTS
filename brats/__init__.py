@@ -6,3 +6,4 @@ from brats.core.segmentation_algorithms import (
     MetastasesSegmenter,
     PediatricSegmenter,
 )
+from brats.core.missing_mri_algorithms import MissingMRI

@@ -13,6 +13,9 @@ class Task(str, Enum):
     INPAINTING = "INPAINTING"
     """Inpainting task."""
 
+    MISSING_MRI = "MISSING_MRI"
+    """Missing MRI task."""
+
 
 # ALGORITHM ENUMS
 
@@ -95,6 +98,17 @@ class InpaintingAlgorithms(Algorithms):
     """ BraTS23  Inpainting 3rd place """
 
 
+class MissingMRIAlgorithms(Algorithms):
+    """Constants for the available missing mri  algorithms."""
+
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24  MissingMRI 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24  MissingMRI 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24  MissingMRI 3rd place """
+
+
 # DIRECTORIES
 DATA_DIR = Path(__file__).parent / "data"
 META_DIR = DATA_DIR / "meta"
@@ -108,6 +122,7 @@ PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"
 METASTASES_SEGMENTATION_ALGORITHMS = META_DIR / "metastases.yml"
 INPAINTING_ALGORITHMS = META_DIR / "inpainting.yml"
+MISSING_MRI_ALGORITHMS = META_DIR / "missing_mri.yml"
 
 DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 
