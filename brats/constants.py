@@ -99,7 +99,7 @@ class InpaintingAlgorithms(Algorithms):
 
 
 class MissingMRIAlgorithms(Algorithms):
-    """Constants for the available BraTS Inpainting algorithms."""
+    """Constants for the available missing mri  algorithms."""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  MissingMRI 1st place """
