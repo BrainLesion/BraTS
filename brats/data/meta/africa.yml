@@ -4,7 +4,7 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
+      challenge: BraTS-Africa Segmentation
       rank: 1st
       year: 2023
     run_args:
@@ -18,7 +18,7 @@ algorithms:
     meta:
       authors: Alyssa R Amod, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
+      challenge: BraTS-Africa Segmentation
       rank: 2nd
       year: 2023
     run_args:
@@ -33,7 +33,7 @@ algorithms:
     meta:
       authors: Ziyan Huang, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
+      challenge: BraTS-Africa Segmentation
       rank: 3rd
       year: 2023
     run_args:

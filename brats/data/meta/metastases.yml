@@ -3,7 +3,7 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 Brain Metastases Segmentation
+      challenge: Brain Metastases Segmentation
       rank: 1st
       year: 2023
     run_args:
@@ -17,7 +17,7 @@ algorithms:
     meta:
       authors: Siwei Yang, et al.
       paper: N/A
-      challenge: BraTS23 Brain Metastases Segmentation
+      challenge: Brain Metastases Segmentation
       rank: 2nd
       year: 2023
     run_args:
@@ -32,7 +32,7 @@ algorithms:
     meta:
       authors: Ziyan Huang, et al.
       paper: N/A
-      challenge: BraTS23 Brain Metastases Segmentation
+      challenge: Brain Metastases Segmentation
       rank: 3rd
       year: 2023
     run_args:

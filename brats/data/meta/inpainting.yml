@@ -6,7 +6,7 @@ algorithms:
     meta:
       authors: Ke Chen, Juexin Zhang, Ying Weng
       paper: N/A
-      challenge: BraTS24 Inpainting
+      challenge: Inpainting
       rank: 1st
       year: 2024
     run_args:
@@ -23,7 +23,7 @@ algorithms:
     meta:
       authors: André Ferreira, et al.
       paper: N/A
-      challenge: BraTS24 Inpainting
+      challenge: Inpainting
       rank: 2nd
       year: 2024
     run_args:
@@ -37,7 +37,7 @@ algorithms:
     meta:
       authors: Team SMINT
       paper: N/A
-      challenge: BraTS24 Inpainting
+      challenge: Inpainting
       rank: 3rd
       year: 2024
     run_args:
@@ -55,7 +55,7 @@ algorithms:
     meta:
       authors: Juexin Zhang, et al.
       paper: N/A
-      challenge: BraTS23 Inpainting
+      challenge: Inpainting
       rank: 1st
       year: 2023
     run_args:
@@ -72,7 +72,7 @@ algorithms:
     meta:
       authors: Alicia Durrer, et al.
       paper: N/A
-      challenge: BraTS23 Inpainting
+      challenge: Inpainting
       rank: 2nd
       year: 2023
     run_args:
@@ -88,7 +88,7 @@ algorithms:
     meta:
       authors: Jiayu Huo, et al.
       paper: N/A
-      challenge: BraTS23 Inpainting
+      challenge: Inpainting
       rank: 3rd
       year: 2023
     run_args:
