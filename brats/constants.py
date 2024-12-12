@@ -29,6 +29,13 @@ class Algorithms(str, Enum):
 class AdultGliomaAlgorithms(Algorithms):
     """Constants for the available adult glioma segmentation algorithms."""
 
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24 Adult Glioma Segmentation 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24 Adult Glioma Segmentation 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24 Adult Glioma Segmentation 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Adult Glioma Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
@@ -39,6 +46,13 @@ class AdultGliomaAlgorithms(Algorithms):
 
 class MeningiomaAlgorithms(Algorithms):
     """Constants for the available meningioma segmentation algorithms."""
+
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24 Meningioma Segmentation 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24 Meningioma Segmentation 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24 Meningioma Segmentation 3rd place """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Meningioma Segmentation 1st place (GPU only)"""
@@ -51,6 +65,13 @@ class MeningiomaAlgorithms(Algorithms):
 class PediatricAlgorithms(Algorithms):
     """Constants for the available pediatric segmentation algorithms."""
 
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24 Pediatric Segmentation 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24 Pediatric Segmentation 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24 Pediatric Segmentation 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Pediatric Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
@@ -62,6 +83,13 @@ class PediatricAlgorithms(Algorithms):
 class AfricaAlgorithms(Algorithms):
     """Constants for the available africa segmentation algorithms."""
 
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24 BraTS-Africa Segmentation 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24 BraTS-Africa Segmentation 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24 BraTS-Africa Segmentation 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """BraTS23 BraTS-Africa Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
@@ -72,6 +100,13 @@ class AfricaAlgorithms(Algorithms):
 
 class MetastasesAlgorithms(Algorithms):
     """Constants for the available Inpainting algorithms."""
+
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24  Brain Metastases Segmentation 1st place """
+    BraTS24_2 = "BraTS24_2"
+    """ BraTS24  Brain Metastases Segmentation 2nd place """
+    BraTS24_3 = "BraTS24_3"
+    """ BraTS24  Brain Metastases Segmentation 3rd place """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
