@@ -14,10 +14,10 @@ algorithms:
       input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: false
       parameters_file: true
-    weights:
+    additional_files:
       record_id: "14287969"
       param_name: ["first_weights", "second_weights"]
-      checkpoint_path: ["first_weight.bin", "second_weight.pth"]
+      param_path: ["first_weight.bin", "second_weight.pth"]
 
   BraTS24_2:
     meta:
@@ -31,7 +31,7 @@ algorithms:
       input_name_schema: "BraTS-GLI-{id:05d}-000"
       requires_root: false
       parameters_file: true
-    weights:
+    additional_files:
       record_id: "14288120"
 
   BraTS24_3:

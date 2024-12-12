@@ -1,29 +1,80 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
+  challenge: &challenge "Adult Glioma Segmentation"
+  years:
+    2024: &year_2024 2024
+    2023: &year_2023 2023
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+
 algorithms:
 
+##### 2024 #####
   BraTS24_1:
     meta:
       authors: André Ferreira, et al.
       paper: N/A
-      challenge: Adult Glioma Segmentation
-      rank: 1st
-      year: 2024
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2024
     run_args:
-      docker_image: brainles/brats23_faking_it:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
-      requires_root: true
+      docker_image:  brainles/brats24_adult_glioma_faking_it:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: false
+      shm_size: "4gb"
+
+  BraTS24_2:
+    meta:
+      authors: Team kimbab
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_adult_glioma_kimbab:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
       parameters_file: false
       shm_size: "2gb"
+    additional_files:
+      record_id: "14413387"
+      param_name: ["nnunet_env_path"]
+
+  BraTS24_3:
+    meta:
+      authors: Adrian Celaya
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_3
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_adult_glioma_mist:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+      cpu_compatible: true
+    additional_files:
+      record_id: "14411467"
+      param_name: ["mist_models", "mist_config", "mist_dataset"]
+      param_path: ["models", "config.json", "dataset.json"]
+
+##### 2023 #####
 
   BraTS23_1:
     meta:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
-      challenge: Adult Glioma Segmentation
-      rank: 1st
-      year: 2023
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_faking_it:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: false
       shm_size: "2gb"
@@ -32,12 +83,12 @@ algorithms:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: Adult Glioma Segmentation
-      rank: 2nd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_nvauto:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -46,15 +97,15 @@ algorithms:
     meta:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
-      challenge: Adult Glioma Segmentation
-      rank: 3rd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_3
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_biomedmbz:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
-    weights:
+    additional_files:
       record_id: "11573315"
       param_name: ["checkpoint_dir"]

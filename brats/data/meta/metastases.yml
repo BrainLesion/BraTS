@@ -25,7 +25,7 @@ algorithms:
       input_name_schema: "BraTS-MET-{id:05d}-000"
       requires_root: true 
       parameters_file: false
-    weights:
+    additional_files:
       record_id: "13380822"
       
   BraTS23_3:

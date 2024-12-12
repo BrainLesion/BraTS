@@ -1,0 +1,6 @@
+fast_inference: False
+overlap: 0.5
+blend_mode: "gaussian"
+tta: True
+no_preprocess: False
+output_std: False

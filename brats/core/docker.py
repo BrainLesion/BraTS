@@ -124,11 +124,13 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
     Returns:
         Path to the additional files
     """
-    # ensure weights are present and get path
-    if algorithm.weights is not None:
-        return check_additional_files_path(record_id=algorithm.weights.record_id)
+    # ensure additional_files are present and get path
+    if algorithm.additional_files is not None:
+        return check_additional_files_path(
+            record_id=algorithm.additional_files.record_id
+        )
     else:
-        # if no weights are directly specified a dummy weights folder will be mounted
+        # if no additional_files are directly specified a dummy additional_files folder will be mounted
         return get_dummy_path()
 
 
@@ -195,12 +197,12 @@ def _build_args(
     """
     # Build command that will be run in the docker container
     command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
-    if algorithm.weights is not None:
-        for i, param in enumerate(algorithm.weights.param_name):
-            weights_arg = f"--{param}=/mlcube_io1"
-            if algorithm.weights.checkpoint_path:
-                weights_arg += f"/{algorithm.weights.checkpoint_path[i]}"
-            command_args += f" {weights_arg}"
+    if algorithm.additional_files is not None:
+        for i, param in enumerate(algorithm.additional_files.param_name):
+            additional_files_arg = f"--{param}=/mlcube_io1"
+            if algorithm.additional_files.param_path:
+                additional_files_arg += f"/{algorithm.additional_files.param_path[i]}"
+            command_args += f" {additional_files_arg}"
 
     # Add parameters file arg if required
     params_arg = _get_parameters_arg(algorithm=algorithm)
@@ -286,7 +288,7 @@ def _log_algorithm_info(algorithm: AlgorithmData):
         algorithm (AlgorithmData): algorithm data
     """
     logger.opt(colors=True).info(
-        f"Running algorithm: <light-green>{algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
+        f"Running algorithm: <light-green> BraTS {algorithm.meta.year} {algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
     )
     logger.opt(colors=True).info(
         f"<blue>(Paper)</> Consider citing the corresponding paper: {algorithm.meta.paper} by {algorithm.meta.authors}"

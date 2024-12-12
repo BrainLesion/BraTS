@@ -42,15 +42,15 @@ class RunArgs:
 
 
 @dataclass
-class WeightsData:
-    """Dataclass for the weights data"""
+class AdditionalFilesData:
+    """Dataclass for the additional files data"""
 
     record_id: str
-    """The Zenodo record ID of the weights"""
+    """The Zenodo record ID of the additional files"""
     param_name: Optional[List[str]] = field(default_factory=lambda: ["weights"])
-    """The parameter(s) that specify the weights folder(s) in the algorithm execution, typically 'weights' but differs for some and can even be multiple"""
-    checkpoint_path: Optional[List[str]] = None
-    """The path(s) to specific checkpoint file(s) in the weights folder. Not required since some algorithms accept the entire weights folder"""
+    """The parameter(s) that specify additional file(s) in the algorithm execution, typically 'weights' but differs for some and can be multiple"""
+    param_path: Optional[List[str]] = None
+    """The path(s) to specific file(s) / folder(s) in the additional files folder. Not required since some algorithms accept the entire additional files folder"""
 
 
 @dataclass
@@ -61,8 +61,8 @@ class AlgorithmData:
     """The meta data of the algorithm"""
     run_args: RunArgs
     """The run arguments of the algorithm"""
-    weights: Optional[WeightsData]
-    """The weights data of the algorithm. Optional since some algorithms include weights in the docker image"""
+    additional_files: Optional[AdditionalFilesData]
+    """The additional files of the algorithm. Optional since some algorithms include them in the docker image"""
 
 
 @dataclass
