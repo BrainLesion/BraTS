@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 import sys
-from typing import Optional
+from typing import Dict, Optional
 
 from loguru import logger
 
@@ -68,7 +68,7 @@ class Inpainter(BraTSAlgorithm):
 
     def _standardize_batch_inputs(
         self, data_folder: Path, subjects: list[Path], input_name_schema: str
-    ) -> None:
+    ) -> Dict[str, str]:
         """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:

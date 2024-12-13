@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 import sys
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
 from loguru import logger
 
@@ -67,7 +67,12 @@ class MissingMRI(BraTSAlgorithm):
             t2w=inputs.get("t2w"),
         )
 
-    def _standardize_batch_inputs(self, data_folder, subjects, input_name_schema):
+    def _standardize_batch_inputs(
+        self,
+        data_folder: Path,
+        subjects: List[Path],
+        input_name_schema: str,
+    ) -> Dict[str, str]:
         """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
