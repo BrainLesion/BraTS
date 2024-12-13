@@ -51,7 +51,11 @@ class BraTSAlgorithm(ABC):
 
     @abstractmethod
     def _standardize_single_inputs(
-        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+        self,
+        data_folder: Path,
+        subject_id: str,
+        inputs: dict[str, Path | str],
+        subject_modality_separator: str,
     ) -> None:
         """
         Standardize the input data to match the requirements of the selected algorithm.
@@ -157,6 +161,7 @@ class BraTSAlgorithm(ABC):
                 data_folder=tmp_data_folder,
                 subject_id=subject_id,
                 inputs=inputs,
+                subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
 
             run_container(

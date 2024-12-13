@@ -29,7 +29,11 @@ class Inpainter(BraTSAlgorithm):
         )
 
     def _standardize_single_inputs(
-        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+        self,
+        data_folder: Path,
+        subject_id: str,
+        inputs: dict[str, Path | str],
+        subject_modality_separator: str,
     ) -> None:
         """
         Standardize the input data to match the requirements of the selected algorithm.
@@ -38,6 +42,7 @@ class Inpainter(BraTSAlgorithm):
             data_folder (Path): Path to the data folder
             subject_id (str): Subject ID
             inputs (dict[str, Path | str]): Dictionary with the input data
+            subject_modality_separator (str): Separator between the subject ID and the modality
         """
 
         subject_folder = data_folder / subject_id
@@ -45,8 +50,15 @@ class Inpainter(BraTSAlgorithm):
         # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
         t1n, mask = inputs["t1n"], inputs["mask"]
         try:
-            shutil.copy(t1n, subject_folder / f"{subject_id}-t1n-voided.nii.gz")
-            shutil.copy(mask, subject_folder / f"{subject_id}-mask.nii.gz")
+            shutil.copy(
+                t1n,
+                subject_folder
+                / f"{subject_id}{subject_modality_separator}t1n-voided.nii.gz",
+            )
+            shutil.copy(
+                mask,
+                subject_folder / f"{subject_id}{subject_modality_separator}mask.nii.gz",
+            )
         except FileNotFoundError as e:
             logger.error(f"Error while standardizing files: {e}")
             sys.exit(1)
@@ -80,6 +92,7 @@ class Inpainter(BraTSAlgorithm):
                     "t1n": subject / f"{subject.name}-t1n-voided.nii.gz",
                     "mask": subject / f"{subject.name}-mask.nii.gz",
                 },
+                subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
         return internal_external_name_map
 

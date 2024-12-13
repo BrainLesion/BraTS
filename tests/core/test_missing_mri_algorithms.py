@@ -48,6 +48,7 @@ class TestMissingMRIAlgorithms(unittest.TestCase):
                 "t1c": self.t1c,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
@@ -72,6 +73,7 @@ class TestMissingMRIAlgorithms(unittest.TestCase):
                 "t1c": self.t1c,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)

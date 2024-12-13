@@ -39,6 +39,8 @@ class RunArgs:
     """The required shared memory size for the Docker container"""
     cpu_compatible: Optional[bool] = False
     """Whether the algorithm is compatible with CPU"""
+    subject_modality_separator: Optional[str] = "-"
+    """The separator between the subject ID and the modality, differs e.g. for BraTS24 Meningioma Challenge"""
 
 
 @dataclass

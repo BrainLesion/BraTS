@@ -62,6 +62,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t2f": self.t2f,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
@@ -88,6 +89,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t2f": self.t2f,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)

@@ -29,7 +29,11 @@ class MissingMRI(BraTSAlgorithm):
         )
 
     def _standardize_single_inputs(
-        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+        self,
+        data_folder: Path,
+        subject_id: str,
+        inputs: dict[str, Path | str],
+        subject_modality_separator: str,
     ) -> None:
         """
         Standardize the input data to match the requirements of the selected algorithm.
@@ -38,6 +42,7 @@ class MissingMRI(BraTSAlgorithm):
             data_folder (Path): Path to the data folder
             subject_id (str): Subject ID
             inputs (dict[str, Path | str]): Dictionary with the input data
+            subject_modality_separator (str): Separator between the subject ID and the modality
         """
 
         subject_folder = data_folder / subject_id
@@ -45,7 +50,11 @@ class MissingMRI(BraTSAlgorithm):
 
         try:
             for modality, path in inputs.items():
-                shutil.copy(path, subject_folder / f"{subject_id}-{modality}.nii.gz")
+                shutil.copy(
+                    path,
+                    subject_folder
+                    / f"{subject_id}{subject_modality_separator}{modality}.nii.gz",
+                )
         except FileNotFoundError as e:
             logger.error(f"Error while standardizing files: {e}")
             sys.exit(1)
@@ -90,6 +99,7 @@ class MissingMRI(BraTSAlgorithm):
                 data_folder=data_folder,
                 subject_id=internal_name,
                 inputs=valid_inputs,
+                subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
         return internal_external_name_map
 
@@ -106,7 +116,7 @@ class MissingMRI(BraTSAlgorithm):
         Perform synthesis of the missing modality for a single subject with the provided images and save the result to the output file.
 
         Note:
-            Exactly 3 inputs are required to perform synthesis of the missing modality.
+            Exactly 3 input modalities are required to perform synthesis of the missing modality.
 
         Args:
             output_file (Path | str): Output file to save the synthesized image
