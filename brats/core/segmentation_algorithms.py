@@ -229,6 +229,31 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
             force_cpu=force_cpu,
         )
 
+    def _standardize_batch_inputs(
+        self,
+        data_folder: Path,
+        subjects: List[Path],
+        input_name_schema: str,
+        only_t1c: bool = False,
+    ) -> Dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+
+        Args:
+            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
+            data_folder (Path): Parent folder where the subject folders will be created
+            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+
+        Returns:
+            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+        """
+        only_t1c = self.algorithm.meta.year == 2024
+        return super()._standardize_batch_inputs(
+            data_folder=data_folder,
+            subjects=subjects,
+            input_name_schema=input_name_schema,
+            only_t1c=only_t1c,
+        )
+
     def infer_single(
         self,
         output_file: Path | str,
@@ -322,7 +347,9 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
         """
         return self._infer_batch(
-            data_folder=data_folder, output_folder=output_folder, log_file=log_file
+            data_folder=data_folder,
+            output_folder=output_folder,
+            log_file=log_file,
         )
 
 
