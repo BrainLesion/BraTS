@@ -118,9 +118,9 @@ class SegmentationAlgorithm(BraTSAlgorithm):
                 "t1c": subject / f"{subject.name}-t1c.nii.gz",
             }
             if not only_t1c:
-                inputs["t1n"] = (subject / f"{subject.name}-t1n.nii.gz",)
-                inputs["t2f"] = (subject / f"{subject.name}-t2f.nii.gz",)
-                inputs["t2w"] = (subject / f"{subject.name}-t2w.nii.gz",)
+                inputs["t1n"] = subject / f"{subject.name}-t1n.nii.gz"
+                inputs["t2f"] = subject / f"{subject.name}-t2f.nii.gz"
+                inputs["t2w"] = subject / f"{subject.name}-t2w.nii.gz"
 
             self._standardize_single_inputs(
                 data_folder=data_folder,
