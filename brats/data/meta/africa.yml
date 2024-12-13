@@ -1,5 +1,5 @@
 constants:
-  input_name_schema: &input_name_schema BraTS-SSA-{id:05d}-000"
+  input_name_schema: &input_name_schema "BraTS-SSA-{id:05d}-000"
   challenge: &challenge "BraTS-Africa Segmentation"
   years:
     2024: &year_2024 2024
@@ -19,13 +19,47 @@ algorithms:
       paper: N/A
       challenge: *challenge
       rank: *rank_1
-      year: *year_2023
+      year: *year_2024
     run_args:
       docker_image: brainles/brats24_africa_cnmc_pmi:latest
       input_name_schema: *input_name_schema 
       requires_root: false
       parameters_file: false
       shm_size: "2gb"
+      cpu_compatible: true
+  
+  BraTS24_2:
+    meta:
+      authors: Long Bai, et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_africa_cuhk_rpai
+      input_name_schema: *input_name_schema 
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+      cpu_compatible: true
+  
+  BraTS24_3:
+    meta:
+      authors: Sarim Hashmi, et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_africa_biomedia-mbzu
+      input_name_schema: *input_name_schema 
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+      cpu_compatible: true
+    additional_files:
+      record_id: "14414932"
+      param_name: ["checkpoint_dir"]
 
 ##### 2023 #####
   BraTS23_1:
