@@ -1,14 +1,77 @@
+constants:
+  input_name_schema_by_year:
+    input_name_schema_2024: &input_name_schema_2024 "BraTS-MEN-RT-{id:04d}-1"
+    input_name_schema_2023: &input_name_schema_2023 "BraTS-MEN-{id:05d}-000"
+  challenge: &challenge "Meningioma Segmentation"
+  years:
+    2024: &year_2024 2024
+    2023: &year_2023 2023
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+
 algorithms:
+
+##### 2024 #####
+  BraTS24_1:
+    meta:
+      authors: Valeria Abramova
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_nic_vicorob
+      input_name_schema: *input_name_schema_2024
+      requires_root: false
+      parameters_file: true
+      shm_size: "16gb"
+      subject_modality_separator: "_"
+  
+  BraTS24_2:
+    meta:
+      authors: Mehdi Astaraki
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_astaraki
+      input_name_schema: *input_name_schema_2024
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+  
+  BraTS24_3:
+    meta:
+      authors: Andre Ferreira, et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_3
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_faking_it
+      input_name_schema: *input_name_schema_2024
+      requires_root: false
+      parameters_file: false
+      shm_size: "4gb"
+      cpu_compatible: true # ~8 hours
+      subject_modality_separator: "_"
+
+
+##### 2023 #####
   BraTS23_1:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation
-      rank: 1st
-      year: 2023
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_meningioma_nvauto:latest 
-      input_name_schema: "BraTS-MEN-{id:05d}-000"
+      input_name_schema: *input_name_schema_2023
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -17,12 +80,12 @@ algorithms:
     meta:
       authors: Ziyan Huang, et al.
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation
-      rank: 2nd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
-      input_name_schema: "BraTS-MEN-{id:05d}-000"
+      input_name_schema: *input_name_schema_2023
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"
@@ -32,12 +95,12 @@ algorithms:
     meta:
       authors: Zhifan Jiang et al.
       paper: N/A
-      challenge: BraTS23 Meningioma Segmentation
-      rank: 3rd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_3
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
-      input_name_schema: "BraTS-MEN-{id:05d}-000"
+      input_name_schema: *input_name_schema_2023
       requires_root: true
       parameters_file: false 
       shm_size: "2gb"

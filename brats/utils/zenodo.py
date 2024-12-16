@@ -34,18 +34,22 @@ def check_additional_files_path(record_id: str) -> Path:
         record_id=record_id
     )
 
-    record_weights_pattern = f"{record_id}_v*.*.*"
-    matching_folders = list(ADDITIONAL_FILES_FOLDER.glob(record_weights_pattern))
-    # Get the latest downloaded weights
-    latest_downloaded_weights = _get_latest_version_folder_name(matching_folders)
+    record_additional_files_pattern = f"{record_id}_v*.*.*"
+    matching_folders = list(
+        ADDITIONAL_FILES_FOLDER.glob(record_additional_files_pattern)
+    )
+    # Get the latest downloaded additional_files
+    latest_downloaded_additional_files = _get_latest_version_folder_name(
+        matching_folders
+    )
 
-    if not latest_downloaded_weights:
+    if not latest_downloaded_additional_files:
         if not zenodo_metadata:
             logger.error(
-                "Model weights not found locally and Zenodo could not be reached. Exiting..."
+                "Additional files not found locally and Zenodo could not be reached. Exiting..."
             )
             sys.exit()
-        logger.info(f"Model weights not found locally")
+        logger.info(f"Additional files not found locally")
 
         return _download_additional_files(
             zenodo_metadata=zenodo_metadata,
@@ -53,27 +57,29 @@ def check_additional_files_path(record_id: str) -> Path:
             archive_url=archive_url,
         )
 
-    logger.info(f"Found downloaded local weights: {latest_downloaded_weights}")
+    logger.info(
+        f"Found downloaded local additional_files: {latest_downloaded_additional_files}"
+    )
 
     if not zenodo_metadata:
         logger.warning(
-            "Zenodo server could not be reached. Using the latest downloaded weights."
+            "Zenodo server could not be reached. Using the latest downloaded additional files."
         )
-        return ADDITIONAL_FILES_FOLDER / latest_downloaded_weights
+        return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
-    # Compare the latest downloaded weights with the latest Zenodo version
-    if zenodo_metadata["version"] == latest_downloaded_weights.split("_v")[1]:
+    # Compare the latest downloaded additional files with the latest Zenodo version
+    if zenodo_metadata["version"] == latest_downloaded_additional_files.split("_v")[1]:
         logger.info(
-            f"Latest model weights ({latest_downloaded_weights}) are already present."
+            f"Latest additional files ({latest_downloaded_additional_files}) are already present."
         )
-        return ADDITIONAL_FILES_FOLDER / latest_downloaded_weights
+        return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
     logger.info(
-        f"New model weights available on Zenodo ({zenodo_metadata['version']}). Deleting old and fetching new weights..."
+        f"New additional files available on Zenodo ({zenodo_metadata['version']}). Deleting old and fetching new additional files..."
     )
-    # delete old weights
+    # delete old additional files
     shutil.rmtree(
-        ADDITIONAL_FILES_FOLDER / latest_downloaded_weights,
+        ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files,
         onerror=lambda func, path, excinfo: logger.warning(
             f"Failed to delete {path}: {excinfo}"
         ),
@@ -115,7 +121,7 @@ def _get_zenodo_metadata_and_archive_url(record_id: str) -> Dict | None:
         response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}")
         if response.status_code != 200:
             logger.error(
-                f"Cant find model weights for record_id '{record_id}' on Zenodo. Exiting..."
+                f"Cant find additional files for record_id '{record_id}' on Zenodo. Exiting..."
             )
             # TODO add proper exit exception
         data = response.json()
@@ -145,13 +151,13 @@ def _download_additional_files(
     # ensure folder exists
     record_folder.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"Downloading model weights from Zenodo. This might take a while...")
+    logger.info(f"Downloading additional files from Zenodo. This might take a while...")
     # Make a GET request to the URL
     response = requests.get(archive_url, stream=True)
     # Ensure the request was successful
     if response.status_code != 200:
         logger.error(
-            f"Failed to download model weights. Status code: {response.status_code}"
+            f"Failed to download additional files. Status code: {response.status_code}"
         )
         return
 
@@ -168,7 +174,7 @@ def _extract_archive(response: requests.Response, record_folder: Path):
 
     with Progress(
         SpinnerColumn(),
-        TextColumn("[cyan]Downloading weights..."),
+        TextColumn("[cyan]Downloading additional files..."),
         TextColumn("[cyan]{task.completed:.2f} MB"),
         transient=True,
     ) as progress:

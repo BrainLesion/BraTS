@@ -48,8 +48,8 @@ class TestDockerHelpers(unittest.TestCase):
                 shm_size="1g",
                 cpu_compatible=False,
             ),
-            weights=MagicMock(
-                param_name=["weights"], checkpoint_path=["checkpoint.pth"]
+            additional_files=MagicMock(
+                param_name=["weights"], param_path=["checkpoint.pth"]
             ),
             meta=MagicMock(
                 challenge="Challenge",
@@ -66,8 +66,8 @@ class TestDockerHelpers(unittest.TestCase):
                 shm_size="1g",
                 cpu_compatible=True,
             ),
-            weights=MagicMock(
-                param_name=["weights"], checkpoint_path=["checkpoint.pth"]
+            additional_files=MagicMock(
+                param_name=["weights"], param_path=["checkpoint.pth"]
             ),
             meta=MagicMock(
                 challenge="Challenge",
@@ -301,7 +301,9 @@ class TestDockerHelpers(unittest.TestCase):
 
     @patch("brats.core.docker.logger")
     @patch("brats.core.docker.nib.load")
-    def test_sanity_check_output_empty_warning(self, mock_nib_load, mock_logger):
+    def test_sanity_check_output_empty_warning_single_inference(
+        self, mock_nib_load, mock_logger
+    ):
         # Create mock paths
         mock_data_path = MagicMock(spec=Path)
         mock_output_path = MagicMock(spec=Path)
@@ -331,6 +333,46 @@ class TestDockerHelpers(unittest.TestCase):
             data_path=mock_data_path,
             output_path=mock_output_path,
             container_output=container_output,
+        )
+
+        # assertions
+        mock_logger.warning.assert_called_once()
+
+    @patch("brats.core.docker.logger")
+    @patch("brats.core.docker.nib.load")
+    def test_sanity_check_output_empty_warning_batch_inference(
+        self, mock_nib_load, mock_logger
+    ):
+        # Create mock paths
+        mock_data_path = MagicMock(spec=Path)
+        mock_output_path = MagicMock(spec=Path)
+
+        # Simulate input files starting with "BraTS" and output files
+        mock_data_path.iterdir.return_value = [
+            MagicMock(name="external_file_1", spec=Path),
+        ]
+        mock_output_path.iterdir.return_value = [
+            MagicMock(name="internal_file_1", spec=Path),
+        ]
+
+        # Create a mock object for the fdata
+        mock_nifti_img = MagicMock()
+        # zeros!
+        mock_nifti_img.get_fdata.return_value = np.zeros((2, 2, 2))
+
+        # Mock the nib.load to return the mock nifti image
+        mock_nib_load.return_value = mock_nifti_img
+
+        # Define container_output
+        container_output = "Sample container output"
+
+        # Check that no exception is raised
+
+        _sanity_check_output(
+            data_path=mock_data_path,
+            output_path=mock_output_path,
+            container_output=container_output,
+            internal_external_name_map={"internal_file_1": "external_file_1"},
         )
 
         # assertions

@@ -46,6 +46,7 @@ class TestInpaintingAlgorithms(unittest.TestCase):
                 "t1n": self.t1n,
                 "mask": self.mask,
             },
+            subject_modality_separator="-",
         )
         subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
@@ -68,6 +69,7 @@ class TestInpaintingAlgorithms(unittest.TestCase):
                 "t1n": t1n,
                 "mask": self.mask,
             },
+            subject_modality_separator="-",
         )
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)

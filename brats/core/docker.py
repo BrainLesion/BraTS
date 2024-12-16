@@ -124,11 +124,13 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
     Returns:
         Path to the additional files
     """
-    # ensure weights are present and get path
-    if algorithm.weights is not None:
-        return check_additional_files_path(record_id=algorithm.weights.record_id)
+    # ensure additional_files are present and get path
+    if algorithm.additional_files is not None:
+        return check_additional_files_path(
+            record_id=algorithm.additional_files.record_id
+        )
     else:
-        # if no weights are directly specified a dummy weights folder will be mounted
+        # if no additional_files are directly specified a dummy additional_files folder will be mounted
         return get_dummy_path()
 
 
@@ -195,12 +197,12 @@ def _build_args(
     """
     # Build command that will be run in the docker container
     command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
-    if algorithm.weights is not None:
-        for i, param in enumerate(algorithm.weights.param_name):
-            weights_arg = f"--{param}=/mlcube_io1"
-            if algorithm.weights.checkpoint_path:
-                weights_arg += f"/{algorithm.weights.checkpoint_path[i]}"
-            command_args += f" {weights_arg}"
+    if algorithm.additional_files is not None:
+        for i, param in enumerate(algorithm.additional_files.param_name):
+            additional_files_arg = f"--{param}=/mlcube_io1"
+            if algorithm.additional_files.param_path:
+                additional_files_arg += f"/{algorithm.additional_files.param_path[i]}"
+            command_args += f" {additional_files_arg}"
 
     # Add parameters file arg if required
     params_arg = _get_parameters_arg(algorithm=algorithm)
@@ -245,7 +247,10 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
 
 
 def _sanity_check_output(
-    data_path: Path, output_path: Path, container_output: str
+    data_path: Path,
+    output_path: Path,
+    container_output: str,
+    internal_external_name_map: Optional[Dict[str, str]] = None,
 ) -> None:
     """Sanity check that the number of output files matches the number of input files and the output is not empty.
 
@@ -253,6 +258,7 @@ def _sanity_check_output(
         data_path (Path): The path to the input data
         output_path (Path): The path to the output data
         container_output (str): The output of the docker container
+        internal_external_name_map (Optional[Dict[str, str]]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
 
     Raises:
         BraTSContainerException: If not enough output files exist
@@ -262,7 +268,6 @@ def _sanity_check_output(
     # (should result in only counting actual inputs)
     inputs = [e for e in data_path.iterdir() if e.name.startswith("BraTS")]
     outputs = list(output_path.iterdir())
-
     if len(outputs) < len(inputs):
         logger.error(f"Docker container output: \n\r{container_output}")
         raise BraTSContainerException(
@@ -272,8 +277,18 @@ def _sanity_check_output(
     for i, output in enumerate(outputs, start=1):
         content = nib.load(output).get_fdata()
         if np.count_nonzero(content) == 0:
+            name = ""
+            if internal_external_name_map is not None:
+                name_key = [
+                    k
+                    for k in internal_external_name_map.keys()
+                    if output.name.startswith(k)
+                ]
+                if name_key:
+                    name = internal_external_name_map[name_key[0]]
+
             logger.warning(
-                f"""Output file {i} contains only zeros.
+                f"""Output file for subject {name + " "}contains only zeros.
                 Potentially the selected algorithm might not work properly with your data unless this behavior is correct for your use case.
                 If this seems wrong please try to use one of the other provided algorithms and file an issue on GitHub if the problem persists."""
             )
@@ -286,7 +301,7 @@ def _log_algorithm_info(algorithm: AlgorithmData):
         algorithm (AlgorithmData): algorithm data
     """
     logger.opt(colors=True).info(
-        f"Running algorithm: <light-green>{algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
+        f"Running algorithm: <light-green> BraTS {algorithm.meta.year} {algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
     )
     logger.opt(colors=True).info(
         f"<blue>(Paper)</> Consider citing the corresponding paper: {algorithm.meta.paper} by {algorithm.meta.authors}"
@@ -300,6 +315,7 @@ def run_container(
     output_path: Path,
     cuda_devices: str,
     force_cpu: bool,
+    internal_external_name_map: Optional[Dict[str, str]] = None,
 ):
     """Run a docker container for the provided algorithm.
 
@@ -309,6 +325,7 @@ def run_container(
         output_path (Path | str): The path to save the output
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
+        internal_external_name_map (Dict[str, str]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
     """
     _log_algorithm_info(algorithm=algorithm)
 
@@ -353,7 +370,10 @@ def run_container(
     )
     container_output = _observe_docker_output(container=container)
     _sanity_check_output(
-        data_path=data_path, output_path=output_path, container_output=container_output
+        data_path=data_path,
+        output_path=output_path,
+        container_output=container_output,
+        internal_external_name_map=internal_external_name_map,
     )
 
     logger.debug(f"Docker container output: \n\r{container_output}")

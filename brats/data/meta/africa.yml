@@ -1,15 +1,75 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-SSA-{id:05d}-000"
+  challenge: &challenge "BraTS-Africa Segmentation"
+  years:
+    2024: &year_2024 2024
+    2023: &year_2023 2023
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+
 algorithms:
 
+##### 2024 #####
+  BraTS24_1:
+    meta:
+      authors: Zhifan Jiang et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_africa_cnmc_pmi:latest
+      input_name_schema: *input_name_schema 
+      requires_root: false
+      parameters_file: false
+      shm_size: "2gb"
+  
+  BraTS24_2:
+    meta:
+      authors: Long Bai, et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_africa_cuhk_rpai
+      input_name_schema: *input_name_schema 
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+      cpu_compatible: true
+  
+  BraTS24_3:
+    meta:
+      authors: Sarim Hashmi, et al.
+      paper: N/A
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_africa_biomedia-mbzu
+      input_name_schema: *input_name_schema 
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+    additional_files:
+      record_id: "14414932"
+      param_name: ["checkpoint_dir"]
+
+##### 2023 #####
   BraTS23_1:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
-      rank: 1st
-      year: 2023
+      challenge: *challenge
+      rank: *rank_1
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_nvauto:latest
-      input_name_schema: "BraTS-SSA-{id:05d}-000"
+      input_name_schema: *input_name_schema 
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -18,27 +78,28 @@ algorithms:
     meta:
       authors: Alyssa R Amod, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
-      rank: 2nd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_2
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_sparkunn:latest
-      input_name_schema: "BraTS-SSA-{id:05d}-000"
+      input_name_schema: *input_name_schema 
       requires_root: false
       parameters_file: true
-    weights:
+    additional_files:
       record_id: "13373752"
       param_name: ["ckpts_path"]
+
   BraTS23_3:
     meta:
       authors: Ziyan Huang, et al.
       paper: N/A
-      challenge: BraTS23 BraTS-Africa Segmentation
-      rank: 3rd
-      year: 2023
+      challenge: *challenge
+      rank: *rank_3
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_blackbean:latest
-      input_name_schema: "BraTS-SSA-{id:05d}-000"
+      input_name_schema: *input_name_schema 
       requires_root: true
       parameters_file: true
       cpu_compatible: true

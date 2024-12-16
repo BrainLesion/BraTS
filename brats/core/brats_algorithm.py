@@ -4,7 +4,7 @@ import shutil
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 from loguru import logger
 
@@ -51,7 +51,11 @@ class BraTSAlgorithm(ABC):
 
     @abstractmethod
     def _standardize_single_inputs(
-        self, data_folder: Path, subject_id: str, inputs: dict[str, Path | str]
+        self,
+        data_folder: Path,
+        subject_id: str,
+        inputs: dict[str, Path | str],
+        subject_modality_separator: str,
     ) -> None:
         """
         Standardize the input data to match the requirements of the selected algorithm.
@@ -61,7 +65,7 @@ class BraTSAlgorithm(ABC):
     @abstractmethod
     def _standardize_batch_inputs(
         self, data_folder: Path, subjects: list[Path], input_name_schema: str
-    ) -> None:
+    ) -> Dict[str, str]:
         """
         Standardize the input data to match the requirements of the selected algorithm.
         """
@@ -157,6 +161,7 @@ class BraTSAlgorithm(ABC):
                 data_folder=tmp_data_folder,
                 subject_id=subject_id,
                 inputs=inputs,
+                subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
 
             run_container(
@@ -208,6 +213,7 @@ class BraTSAlgorithm(ABC):
                 output_path=tmp_output_folder,
                 cuda_devices=self.cuda_devices,
                 force_cpu=self.force_cpu,
+                internal_external_name_map=internal_external_name_map,
             )
 
             self._process_batch_output(
