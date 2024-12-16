@@ -118,6 +118,7 @@ class InpaintingAlgorithms(Algorithms):
     """ BraTS24  Inpainting 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24  Inpainting 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """ BraTS23  Inpainting 1st place """
     BraTS23_2 = "BraTS23_2"

@@ -28,7 +28,6 @@ algorithms:
       requires_root: false
       parameters_file: true
       shm_size: "16gb"
-      cpu_compatible: true
       subject_modality_separator: "_"
   
   BraTS24_2:
@@ -44,7 +43,6 @@ algorithms:
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
-      cpu_compatible: true
   
   BraTS24_3:
     meta:
@@ -59,7 +57,7 @@ algorithms:
       requires_root: false
       parameters_file: false
       shm_size: "4gb"
-      cpu_compatible: true
+      cpu_compatible: true # ~8 hours
       subject_modality_separator: "_"
 
 
