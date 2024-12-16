@@ -110,12 +110,12 @@ segmenter.infer_single(
 <summary> <strong> Meningioma Segmentation </strong> </summary>
 <br>
 
-> [!NOTE]
-> Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
-> - 2023: All 4 modalities are used (t1c, t1n, t2f, t2w)
-> - 2024: Only t1c is used  
-> 
-> Therefore the usage differs slightly depending on which algorithms is used. To understand why please refer to the [2024 challenge manuscript](https://arxiv.org/abs/2405.18383).
+**Note**  
+Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
+- _2023_: All 4 modalities are used (t1c, t1n, t2f, t2w)
+- _2024_: Only t1c is used  
+
+Therefore the usage differs slightly, depending on which algorithm is used. To understand why, please refer to the [2024 challenge manuscript](https://arxiv.org/abs/2405.18383).
 
 ```python
 from brats import MeningiomaSegmenter
