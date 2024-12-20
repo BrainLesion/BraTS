@@ -44,13 +44,13 @@ class TestZenodoUtils(unittest.TestCase):
             "http://test.url",
         )
 
-        # Test when local weights are up-to-date
+        # Test when local additional_files are up-to-date
         result = check_additional_files_path(mock_record_id)
         self.assertEqual(result, ADDITIONAL_FILES_FOLDER / f"{mock_record_id}_v1.0.0")
         mock_rmtree.assert_not_called()
         mock_download_additional_files.assert_not_called()
 
-        # Test when new weights are available
+        # Test when new additional_files are available
         mock_get_zenodo_metadata.return_value = (
             {"version": "2.0.0"},
             "http://test.url",

@@ -62,6 +62,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t2f": self.t2f,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         subject_folder = self.tmp_data_folder / subject_id
         self.assertTrue(subject_folder.exists())
@@ -88,6 +89,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
                 "t2f": self.t2f,
                 "t2w": self.t2w,
             },
+            subject_modality_separator="-",
         )
         mock_logger.assert_called()
         mock_exit.assert_called_with(1)
@@ -166,3 +168,137 @@ class TestSegmentationAlgorithms(unittest.TestCase):
             algorithm=MetastasesAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
         )
         self.assertIsInstance(custom_segmenter, MetastasesSegmenter)
+
+    ## Test MeningiomaSegmenter specialty
+
+    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
+    def test_meningioma_segmenter_infer_single_2023_valid(self, mock_infer_single):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
+
+        segmenter.infer_single(
+            t1c=self.t1c,
+            t1n=self.t1n,
+            t2f=self.t2f,
+            t2w=self.t2w,
+            output_file=self.tmp_data_folder / "output.nii.gz",
+        )
+
+        mock_infer_single.assert_called_once()
+
+    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
+    def test_meningioma_segmenter_infer_single_2023_invalid_missing_modalities(
+        self, mock_infer_single
+    ):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
+
+        with self.assertRaises(ValueError):
+            segmenter.infer_single(
+                t1c=self.t1c,
+                # t1n=self.t1n,  # Missing modality
+                t2f=self.t2f,
+                t2w=self.t2w,
+                output_file=self.tmp_data_folder / "output.nii.gz",
+            )
+
+        mock_infer_single.assert_not_called()
+
+    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
+    def test_meningioma_segmenter_infer_single_2024_valid(self, mock_infer_single):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
+
+        segmenter.infer_single(
+            t1c=self.t1c,
+            output_file=self.tmp_data_folder / "output.nii.gz",
+        )
+
+        mock_infer_single.assert_called_once()
+
+    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
+    def test_meningioma_segmenter_infer_single_2024_invalid_missing_t1c(
+        self, mock_infer_single
+    ):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
+
+        with self.assertRaises(ValueError):
+            segmenter.infer_single(
+                # t1c=self.t1c,
+                # t1n=self.t1n,
+                # t2f=self.t2f,
+                t2w=self.t2w,
+                output_file=self.tmp_data_folder / "output.nii.gz",
+            )
+
+        mock_infer_single.assert_not_called()
+
+    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
+    def test_meningioma_segmenter_infer_single_2024_invalid_too_many_files(
+        self, mock_infer_single
+    ):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
+
+        with self.assertRaises(ValueError):
+            segmenter.infer_single(
+                t1c=self.t1c,
+                # t1n=self.t1n,
+                # t2f=self.t2f,
+                t2w=self.t2w,
+                output_file=self.tmp_data_folder / "output.nii.gz",
+            )
+
+        mock_infer_single.assert_not_called()
+
+    @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_batch_output")
+    @patch("brats.core.brats_algorithm.run_container")
+    @patch(
+        "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
+    )
+    def test_meningioma_segmenter_infer_batch_2024(
+        self,
+        mock_standardize_single_inputs,
+        mock_run_container,
+        mock_process_batch_output,
+    ):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
+
+        segmenter.infer_batch(
+            data_folder=self.data_folder,
+            output_folder=self.tmp_data_folder,
+            log_file=self.tmp_data_folder / "log.txt",
+        )
+
+        self.assertEqual(mock_standardize_single_inputs.call_count, 1)
+        # assert algorithms was called with just t1c
+        args, kwargs = mock_standardize_single_inputs.call_args
+        input_keys = list(kwargs["inputs"].keys())
+        self.assertEqual(input_keys, ["t1c"])
+
+        self.assertEqual(mock_run_container.call_count, 1)
+        self.assertEqual(mock_process_batch_output.call_count, 1)
+
+    @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_batch_output")
+    @patch("brats.core.brats_algorithm.run_container")
+    @patch(
+        "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
+    )
+    def test_meningioma_segmenter_infer_batch_2023(
+        self,
+        mock_standardize_single_inputs,
+        mock_run_container,
+        mock_process_batch_output,
+    ):
+        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
+
+        segmenter.infer_batch(
+            data_folder=self.data_folder,
+            output_folder=self.tmp_data_folder,
+            log_file=self.tmp_data_folder / "log.txt",
+        )
+
+        self.assertEqual(mock_standardize_single_inputs.call_count, 1)
+        # assert algorithms was called with all modalities
+        args, kwargs = mock_standardize_single_inputs.call_args
+        input_keys = list(kwargs["inputs"].keys())
+        self.assertEqual(input_keys, ["t1c", "t1n", "t2f", "t2w"])
+
+        self.assertEqual(mock_run_container.call_count, 1)
+        self.assertEqual(mock_process_batch_output.call_count, 1)
