@@ -7,14 +7,16 @@ from unittest.mock import patch
 from loguru import logger
 
 from brats import (
-    AdultGliomaSegmenter,
+    AdultGliomaPostOpSegmenter,
+    AdultGliomaPreOpSegmenter,
     AfricaSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
     PediatricSegmenter,
 )
 from brats.constants import (
-    AdultGliomaAlgorithms,
+    AdultGliomaPostOpAlgorithms,
+    AdultGliomaPreOpAlgorithms,
     AfricaAlgorithms,
     MeningiomaAlgorithms,
     MetastasesAlgorithms,
@@ -42,7 +44,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         for img in [self.t1c, self.t1n, self.t2f, self.t2w]:
             img.touch(exist_ok=True)
 
-        self.segmenter = AdultGliomaSegmenter()
+        self.segmenter = AdultGliomaPostOpSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
@@ -114,16 +116,31 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
     ### Initialization tests
 
-    def test_adult_glioma_segmenter_initialization(self):
+    def test_adult_glioma_pre_op_segmenter_initialization(self):
         # Test default initialization
-        segmenter = AdultGliomaSegmenter()
-        self.assertIsInstance(segmenter, AdultGliomaSegmenter)
+        segmenter = AdultGliomaPreOpSegmenter()
+        self.assertIsInstance(segmenter, AdultGliomaPreOpSegmenter)
 
         # Test with custom arguments
-        custom_segmenter = AdultGliomaSegmenter(
-            algorithm=AdultGliomaAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
+        custom_segmenter = AdultGliomaPreOpSegmenter(
+            algorithm=AdultGliomaPreOpAlgorithms.BraTS23_2,
+            cuda_devices="1",
+            force_cpu=True,
         )
-        self.assertIsInstance(custom_segmenter, AdultGliomaSegmenter)
+        self.assertIsInstance(custom_segmenter, AdultGliomaPreOpSegmenter)
+
+    def test_adult_glioma_post_op_segmenter_initialization(self):
+        # Test default initialization
+        segmenter = AdultGliomaPostOpSegmenter()
+        self.assertIsInstance(segmenter, AdultGliomaPostOpSegmenter)
+
+        # Test with custom arguments
+        custom_segmenter = AdultGliomaPostOpSegmenter(
+            algorithm=AdultGliomaPostOpAlgorithms.BraTS24_2,
+            cuda_devices="1",
+            force_cpu=True,
+        )
+        self.assertIsInstance(custom_segmenter, AdultGliomaPostOpSegmenter)
 
     def test_meningioma_segmenter_initialization(self):
         # Test default initialization
