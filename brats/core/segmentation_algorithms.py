@@ -9,14 +9,14 @@ from loguru import logger
 
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.constants import (
-    ADULT_GLIOMA_POST_OP_SEGMENTATION_ALGORITHMS,
-    ADULT_GLIOMA_PRE_OP_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
-    AdultGliomaPostOpAlgorithms,
-    AdultGliomaPreOpAlgorithms,
+    AdultGliomaPostTreatmentAlgorithms,
+    AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
     MeningiomaAlgorithms,
@@ -186,47 +186,47 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         )
 
 
-class AdultGliomaPreOpSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on adult glioma pre treatment/ operation MRI data.
+class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithm):
+    """Provides algorithms to perform tumor segmentation on adult glioma pre treatment MRI data.
 
     Args:
-        algorithm (AdultGliomaPreOpAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreOpAlgorithms.BraTS23_1.
+        algorithm (AdultGliomaPreTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreTreatmentAlgorithms.BraTS23_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
 
     def __init__(
         self,
-        algorithm: AdultGliomaPreOpAlgorithms = AdultGliomaPreOpAlgorithms.BraTS23_1,
+        algorithm: AdultGliomaPreTreatmentAlgorithms = AdultGliomaPreTreatmentAlgorithms.BraTS23_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_PRE_OP_SEGMENTATION_ALGORITHMS,
+            algorithms_file_path=ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
 
 
-class AdultGliomaPostOpSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on adult glioma post treatment/ operation MRI data.
+class AdultGliomaPostTreatmentSegmenter(SegmentationAlgorithm):
+    """Provides algorithms to perform tumor segmentation on adult glioma post treatment MRI data.
 
     Args:
-        algorithm (AdultGliomaPostOpAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPostOpAlgorithms.BraTS24_1.
+        algorithm (AdultGliomaPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPostTreatmentAlgorithms.BraTS24_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
 
     def __init__(
         self,
-        algorithm: AdultGliomaPostOpAlgorithms = AdultGliomaPostOpAlgorithms.BraTS24_1,
+        algorithm: AdultGliomaPostTreatmentAlgorithms = AdultGliomaPostTreatmentAlgorithms.BraTS24_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_POST_OP_SEGMENTATION_ALGORITHMS,
+            algorithms_file_path=ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )

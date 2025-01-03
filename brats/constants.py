@@ -26,8 +26,8 @@ class Algorithms(str, Enum):
     pass
 
 
-class AdultGliomaPostOpAlgorithms(Algorithms):
-    """Constants for the available adult glioma post treatment (operation) segmentation algorithms."""
+class AdultGliomaPostTreatmentAlgorithms(Algorithms):
+    """Constants for the available adult glioma post treatment segmentation algorithms."""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Adult Glioma Segmentation 1st place """
@@ -37,8 +37,8 @@ class AdultGliomaPostOpAlgorithms(Algorithms):
     """ BraTS24 Adult Glioma Segmentation 3rd place """
 
 
-class AdultGliomaPreOpAlgorithms(Algorithms):
-    """Constants for the available adult glioma pre treatment (operation) segmentation algorithms."""
+class AdultGliomaPreTreatmentAlgorithms(Algorithms):
+    """Constants for the available adult glioma pre treatment segmentation algorithms."""
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Adult Glioma Segmentation 1st place (GPU only)"""
@@ -149,8 +149,12 @@ PARAMETERS_DIR = DATA_DIR / "parameters"
 ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"
 
 # META DATA FILE PATHS
-ADULT_GLIOMA_PRE_OP_SEGMENTATION_ALGORITHMS = META_DIR / "adult_glioma_pre_op.yml"
-ADULT_GLIOMA_POST_OP_SEGMENTATION_ALGORITHMS = META_DIR / "adult_glioma_post_op.yml"
+ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS = (
+    META_DIR / "adult_glioma_pre_treatment.yml"
+)
+ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
+    META_DIR / "adult_glioma_post_treatment.yml"
+)
 MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"

@@ -1,6 +1,6 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
-  challenge: &challenge "Adult Glioma Post Treatment Segmentation"
+  challenge: &challenge "Adult Glioma Segmentation (Post Treatment)"
   years:
     2024: &year_2024 2024
   ranks:

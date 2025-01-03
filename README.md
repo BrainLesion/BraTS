@@ -42,15 +42,15 @@ pip install brats
 ### Segmentation
 <details>
 
-<summary> <strong> Adult Glioma Segmentation (Pre Operation) </strong> </summary>
+<summary> <strong> Adult Glioma Segmentation (Pre Treatment) </strong> </summary>
 <br>
 
 
 ```python
-from brats import AdultGliomaPreOpSegmenter
-from brats.constants import AdultGliomaPreOpAlgorithms
+from brats import AdultGliomaPreTreatmentSegmenter
+from brats.constants import AdultGliomaPreTreatmentAlgorithms
 
-segmenter = AdultGliomaPreOpSegmenter(algorithm=AdultGliomaPreOpAlgorithms.BraTS23_1, cuda_devices="0")
+segmenter = AdultGliomaPreTreatmentSegmenter(algorithm=AdultGliomaPreTreatmentAlgorithms.BraTS23_1, cuda_devices="0")
 # these parameters are optional, by default the winning algorithm of 2023 will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -61,26 +61,26 @@ segmenter.infer_single(
 )
 ```
 
-**Class:** `brats.AdultGliomaPreOpSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreOpSegmenter))
+**Class:** `brats.AdultGliomaPreTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreTreatmentSegmenter))
 
-| Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum                                                                                                                      |
-| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreOpAlgorithms**.BraTS23_1) |
-| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreOpAlgorithms**.BraTS23_2) |
-| 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | N/A                                        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreOpAlgorithms**.BraTS23_3) |
+| Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum                                                                                                                             |
+| ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_1) |
+| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_2) |
+| 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | N/A                                        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_3) |
 
 </details>
 
 <details>
-<summary> <strong> Adult Glioma Segmentation Post Treatment / Operation </strong> </summary>
+<summary> <strong> Adult Glioma Segmentation Post Treatment </strong> </summary>
 <br>
 
 
 ```python
-from brats import AdultGliomaPostOpSegmenter
-from brats.constants import AdultGliomaPostOpAlgorithms
+from brats import AdultGliomaPostTreatmentSegmenter
+from brats.constants import AdultGliomaPostTreatmentAlgorithms
 
-segmenter = AdultGliomaPostOpSegmenter(algorithm=AdultGliomaPostOpAlgorithms.BraTS23_1, cuda_devices="0")
+segmenter = AdultGliomaPostTreatmentSegmenter(algorithm=AdultGliomaPostTreatmentAlgorithms.BraTS23_1, cuda_devices="0")
 # these parameters are optional, by default the winning algorithm of 2024 will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -91,13 +91,13 @@ segmenter.infer_single(
 )
 ```
 
-**Class:** `brats.AdultGliomaPostOpSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostOpSegmenter))
+**Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
 
-| Year | Rank | Author                   | Paper | CPU Support | Key Enum                                                                                                                   |
-| ---- | ---- | ------------------------ | ----- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 2024 | 1st  | _André Ferreira, et al._ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostOpAlgorithms.BraTS24_1) |
-| 2024 | 2nd  | _Team kimbab_            | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostOpAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Adrian Celaya_          | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostOpAlgorithms.BraTS24_3) |
+| Year | Rank | Author                   | Paper | CPU Support | Key Enum                                                                                                                          |
+| ---- | ---- | ------------------------ | ----- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 2024 | 1st  | _André Ferreira, et al._ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1) |
+| 2024 | 2nd  | _Team kimbab_            | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2) |
+| 2024 | 3rd  | _Adrian Celaya_          | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3) |
 
 </details>
 

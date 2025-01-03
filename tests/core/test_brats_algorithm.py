@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import shutil
 
-from brats import AdultGliomaPostOpSegmenter
+from brats import AdultGliomaPostTreatmentSegmenter
 from brats.constants import OUTPUT_NAME_SCHEMA
 
 
@@ -31,7 +31,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
             file.touch()
 
         # the core inference method is the same for all segmentation and inpainting algorithms, we use AdultGliomaSegmenter as an example during testing
-        self.segmenter = AdultGliomaPostOpSegmenter()
+        self.segmenter = AdultGliomaPostTreatmentSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
