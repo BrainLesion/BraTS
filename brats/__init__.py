@@ -1,6 +1,7 @@
 from brats.core.inpainting_algorithms import Inpainter
 from brats.core.segmentation_algorithms import (
-    AdultGliomaSegmenter,
+    AdultGliomaPostTreatmentSegmenter,
+    AdultGliomaPreTreatmentSegmenter,
     AfricaSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,

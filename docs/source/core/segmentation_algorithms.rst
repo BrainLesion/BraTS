@@ -1,6 +1,6 @@
 Segmentation Algorithms
 ========================
 
-The following classes provide segmentation algorithms from several BraTS challenges.
+The following classes provide algorithms from several BraTS segmentation challenges.
 
 .. automodule:: brats.core.segmentation_algorithms
