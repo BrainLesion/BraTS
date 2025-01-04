@@ -13,9 +13,11 @@ from docker.errors import DockerException
 from loguru import logger
 from rich.console import Console
 from rich.progress import Progress
+from rich.table import Table
+from rich import box
 
+from brats.constants import DUMMY_PARAMETERS, PARAMETERS_DIR, PACKAGE_CITATION
 from brats.utils.algorithm_config import AlgorithmData
-from brats.constants import DUMMY_PARAMETERS, PARAMETERS_DIR
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
@@ -295,16 +297,37 @@ def _sanity_check_output(
 
 
 def _log_algorithm_info(algorithm: AlgorithmData):
-    """Log information about the algorithm.
+    """Log information about the algorithm and citation reminder.
 
     Args:
         algorithm (AlgorithmData): algorithm data
     """
+
+    # intentional prints! (to always display them even when logging is disabled)
+    console = Console()
+    console.rule("[bold red]Citation Reminder[/bold red]")
+    console.print(
+        "Please support our development by citing the relevant manuscripts for the used algorithm:\n"
+    )
+    table = Table(
+        show_header=False,
+        show_lines=True,
+        show_edge=False,
+        box=box.ASCII,
+    )
+    table.add_column("type", justify="right", style="cyan")
+    table.add_column("url", justify="left", style="white")
+    table.add_row("BraTS Package", PACKAGE_CITATION)
+    table.add_row(
+        f"Challenge ({algorithm.meta.challenge} {algorithm.meta.year})",
+        algorithm.meta.challenge_manuscript,
+    )
+    table.add_row(f"Algorithm ({algorithm.meta.authors})", algorithm.meta.paper)
+    console.print(table)
+    console.rule()
+
     logger.opt(colors=True).info(
         f"Running algorithm: <light-green> BraTS {algorithm.meta.year} {algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
-    )
-    logger.opt(colors=True).info(
-        f"<blue>(Paper)</> Consider citing the corresponding paper: {algorithm.meta.paper} by {algorithm.meta.authors}"
     )
     logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
 

@@ -53,6 +53,7 @@ class TestDockerHelpers(unittest.TestCase):
             ),
             meta=MagicMock(
                 challenge="Challenge",
+                challenge_manuscript="challenge_manuscript_url",
                 rank="1st",
                 paper="paper_url",
                 authors="author_names",
