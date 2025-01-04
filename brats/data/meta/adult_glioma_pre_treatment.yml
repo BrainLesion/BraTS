@@ -1,6 +1,8 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "Adult Glioma Segmentation (Pre Treatment)"
+  challenge_manuscript:
+    2023: &challenge_manuscript_2023 "N/A"
   years:
     2023: &year_2023 2023
   ranks:
@@ -18,6 +20,7 @@ algorithms:
       authors: André Ferreira, et al.
       paper: https://arxiv.org/abs/2402.17317v1
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
       year: *year_2023
     run_args:
@@ -32,6 +35,7 @@ algorithms:
       authors: Andriy Myronenko, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
       year: *year_2023
     run_args:
@@ -46,6 +50,7 @@ algorithms:
       authors: Fadillah Adamsyah Maani, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
       year: *year_2023
     run_args:

@@ -1,6 +1,8 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "Adult Glioma Segmentation (Post Treatment)"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18368"
   years:
     2024: &year_2024 2024
   ranks:
@@ -17,6 +19,7 @@ algorithms:
       authors: André Ferreira, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
       year: *year_2024
     run_args:
@@ -31,6 +34,7 @@ algorithms:
       authors: Team kimbab
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
       year: *year_2024
     run_args:
@@ -48,6 +52,7 @@ algorithms:
       authors: Adrian Celaya
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
       year: *year_2024
     run_args:

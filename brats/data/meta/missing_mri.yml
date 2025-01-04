@@ -1,3 +1,15 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
+  challenge: &challenge "BraTS MRI Synthesis Challenge (BraSyn)"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.09011"
+  years:
+    2024: &year_2024 2024
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
 algorithms:
 
   ######## 2024 Algorithms ########
@@ -6,12 +18,13 @@ algorithms:
     meta:
       authors: Jihoon Cho, Seunghyuck Park, Jinah Park
       paper: N/A
-      challenge: Missing MRI
-      rank: 1st
-      year: 2024
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_1
+      year: *year_2024
     run_args:
       docker_image: brainles/brats24_missing_mri_cgv:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
     additional_files:
@@ -23,12 +36,13 @@ algorithms:
     meta:
       authors: Haowen Pang
       paper: N/A
-      challenge: Missing MRI
-      rank: 2nd
-      year: 2024
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_2
+      year: *year_2024
     run_args:
       docker_image: brainles/brats24_missing_mri_bit_isip:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
     additional_files:
@@ -38,11 +52,12 @@ algorithms:
     meta:
       authors: Minjoo Lim, Bogyeong Kang
       paper: N/A
-      challenge: Missing MRI
-      rank: 3rd
-      year: 2024
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_3
+      year: *year_2024
     run_args:
       docker_image: brainles/brats24_missing_mri_plave:latest
-      input_name_schema: "BraTS-GLI-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
