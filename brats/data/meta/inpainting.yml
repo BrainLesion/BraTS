@@ -2,8 +2,8 @@ constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "Inpainting"
   challenge_manuscript:
-    2024: &challenge_manuscript_2024 "https://arxiv.org/pdf/2305.08992" # same as 2023
-    2023: &challenge_manuscript_2023 "https://arxiv.org/pdf/2305.08992"
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
     2024: &year_2024 2024
     2023: &year_2023 2023
