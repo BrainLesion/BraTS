@@ -3,6 +3,9 @@ constants:
     input_name_schema_2024: &input_name_schema_2024 "BraTS-MEN-RT-{id:04d}-1"
     input_name_schema_2023: &input_name_schema_2023 "BraTS-MEN-{id:05d}-000"
   challenge: &challenge "Meningioma Segmentation"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18383"
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.07642"
   years:
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -20,6 +23,7 @@ algorithms:
       authors: Valeria Abramova
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
       year: *year_2024
     run_args:
@@ -35,6 +39,7 @@ algorithms:
       authors: Mehdi Astaraki
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
       year: *year_2024
     run_args:
@@ -49,6 +54,7 @@ algorithms:
       authors: Andre Ferreira, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
       year: *year_2024
     run_args:
@@ -67,6 +73,7 @@ algorithms:
       authors: Andriy Myronenko, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
       year: *year_2023
     run_args:
@@ -81,6 +88,7 @@ algorithms:
       authors: Ziyan Huang, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
       year: *year_2023
     run_args:
@@ -96,6 +104,7 @@ algorithms:
       authors: Zhifan Jiang et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
       year: *year_2023
     run_args:

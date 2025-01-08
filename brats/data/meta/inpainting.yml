@@ -1,6 +1,9 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "Inpainting"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -18,6 +21,7 @@ algorithms:
       authors: Ke Chen, Juexin Zhang, Ying Weng
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
       year: *year_2024
     run_args:
@@ -35,6 +39,7 @@ algorithms:
       authors: André Ferreira, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
       year: *year_2024  
     run_args:
@@ -49,6 +54,7 @@ algorithms:
       authors: Team SMINT
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
       year: *year_2024
     run_args:
@@ -67,6 +73,7 @@ algorithms:
       authors: Juexin Zhang, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
       year: *year_2023
     run_args:
@@ -84,6 +91,7 @@ algorithms:
       authors: Alicia Durrer, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
       year: *year_2023
     run_args:
@@ -100,6 +108,7 @@ algorithms:
       authors: Jiayu Huo, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
       year: *year_2023
     run_args:

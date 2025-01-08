@@ -16,7 +16,9 @@ class MetaData:
     paper: str
     """If available, a url to the paper of the algorithm"""
     challenge: str
-    """The challenge the algorithm was submitted to"""
+    """The challenge name the algorithm was submitted to"""
+    challenge_manuscript: str
+    """Arxiv url to the manuscript of the challenge"""
     rank: str
     """The rank of the algorithm in the challenge"""
     year: int

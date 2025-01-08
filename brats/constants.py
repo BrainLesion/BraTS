@@ -171,3 +171,7 @@ OUTPUT_NAME_SCHEMA = {
     Task.SEGMENTATION: "{subject_id}.nii.gz",
     Task.INPAINTING: "{subject_id}-t1n-inference.nii.gz",
 }
+
+
+# PACKAGE citation
+PACKAGE_CITATION = "N/A"

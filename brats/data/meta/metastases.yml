@@ -1,14 +1,27 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-MET-{id:05d}-000"
+  challenge: &challenge "Brain Metastases Segmentation"
+  challenge_manuscript:
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2306.00838"
+  years:
+    2023: &year_2023 2023
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
 algorithms:
   BraTS23_1:
     meta:
       authors: Andriy Myronenko, et al.
       paper: N/A
-      challenge: Brain Metastases Segmentation
-      rank: 1st
-      year: 2023
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
+      rank: *rank_1
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_met_nvauto:latest 
-      input_name_schema: "BraTS-MET-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -17,12 +30,13 @@ algorithms:
     meta:
       authors: Siwei Yang, et al.
       paper: N/A
-      challenge: Brain Metastases Segmentation
-      rank: 2nd
-      year: 2023
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
+      rank: *rank_2
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_met_sy:latest
-      input_name_schema: "BraTS-MET-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: true 
       parameters_file: false
     additional_files:
@@ -32,12 +46,13 @@ algorithms:
     meta:
       authors: Ziyan Huang, et al.
       paper: N/A
-      challenge: Brain Metastases Segmentation
-      rank: 3rd
-      year: 2023
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
+      rank: *rank_3
+      year: *year_2023
     run_args:
       docker_image: brainles/brats23_met_blackbean:latest
-      input_name_schema: "BraTS-MET-{id:05d}-000"
+      input_name_schema: *input_name_schema
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"

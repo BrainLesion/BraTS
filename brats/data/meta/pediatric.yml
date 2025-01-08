@@ -1,6 +1,9 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-PED-{id:05d}-000"
   challenge: &challenge "Pediatric Segmentation"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2404.15009"
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.17033"
   years:
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -17,6 +20,7 @@ algorithms:
       authors: Tim Mulvany, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
       year: *year_2024
     run_args:
@@ -33,6 +37,7 @@ algorithms:
       authors: Mehdi Astaraki
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
       year: *year_2024
     run_args:
@@ -47,6 +52,7 @@ algorithms:
       authors: Sarim Hashmi, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
       year: *year_2024
     run_args:
@@ -65,6 +71,7 @@ algorithms:
       authors: Zhifan Jiang et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
       year: *year_2023
     run_args:
@@ -79,6 +86,7 @@ algorithms:
       authors: Andriy Myronenko, et al.
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
       year: *year_2023
     run_args:
@@ -93,6 +101,7 @@ algorithms:
       authors: Yubo Zhou
       paper: N/A
       challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
       year: *year_2023
     run_args:
