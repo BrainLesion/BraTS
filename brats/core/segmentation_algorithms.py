@@ -19,7 +19,7 @@ from brats.constants import (
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
-    GoATSAlgorithms,
+    GoATAlgorithms,
     MeningiomaAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
@@ -453,14 +453,14 @@ class GoATSegmenter(SegmentationAlgorithm):
     """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
 
     Args:
-        algorithm (GoATSAlgorithms, optional): Select an algorithm. Defaults to GoATSAlgorithms.BraTS23_1.
+        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
 
     def __init__(
         self,
-        algorithm: GoATSAlgorithms = GoATSAlgorithms.BraTS24_1,
+        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS24_1,
         cuda_devices: Optional[str] = "0",
         force_cpu: bool = False,
     ):

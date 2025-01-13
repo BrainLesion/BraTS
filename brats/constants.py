@@ -142,7 +142,7 @@ class MissingMRIAlgorithms(Algorithms):
     """ BraTS24  MissingMRI 3rd place """
 
 
-class GoATSAlgorithms(Algorithms):
+class GoATAlgorithms(Algorithms):
     """Constants for the available missing mri  algorithms."""
 
     BraTS24_1 = "BraTS24_1"
