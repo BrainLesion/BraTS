@@ -1,0 +1,29 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
+  challenge: &challenge "BraTS Generalizability Across Tumors (BraTS-GoAT)"
+  challenge_manuscript:
+    2024: &challenge_manuscript_2024 "N/A"
+  years:
+    2024: &year_2024 2024
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+algorithms:
+
+  ######## 2024 Algorithms ########
+
+  BraTS24_1:
+    meta:
+      authors: Frank Miao, Shengjie Niu
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_goat_polyu-ama-brain:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: false

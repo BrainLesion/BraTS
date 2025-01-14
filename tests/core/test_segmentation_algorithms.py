@@ -10,6 +10,7 @@ from brats import (
     AdultGliomaPostTreatmentSegmenter,
     AdultGliomaPreTreatmentSegmenter,
     AfricaSegmenter,
+    GoATSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
     PediatricSegmenter,
@@ -18,6 +19,7 @@ from brats.constants import (
     AdultGliomaPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
+    GoATAlgorithms,
     MeningiomaAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
@@ -182,9 +184,24 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
         # Test with custom arguments
         custom_segmenter = MetastasesSegmenter(
-            algorithm=MetastasesAlgorithms.BraTS23_2, cuda_devices="1", force_cpu=True
+            algorithm=MetastasesAlgorithms.BraTS23_2,
+            cuda_devices="1",
+            force_cpu=True,
         )
         self.assertIsInstance(custom_segmenter, MetastasesSegmenter)
+
+    def test_goat_segmenter_initialization(self):
+        # Test default initialization
+        segmenter = GoATSegmenter()
+        self.assertIsInstance(segmenter, GoATSegmenter)
+
+        # Test with custom arguments
+        custom_segmenter = GoATSegmenter(
+            algorithm=GoATAlgorithms.BraTS24_1,
+            cuda_devices="1",
+            force_cpu=True,
+        )
+        self.assertIsInstance(custom_segmenter, GoATSegmenter)
 
     ## Test MeningiomaSegmenter specialty
 

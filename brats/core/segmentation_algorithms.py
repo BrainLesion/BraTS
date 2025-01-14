@@ -7,11 +7,11 @@ from typing import Dict, List, Optional, Union
 
 from loguru import logger
 
-from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.constants import (
     ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
+    GOAT_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
@@ -19,11 +19,13 @@ from brats.constants import (
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
+    GoATAlgorithms,
     MeningiomaAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
     Task,
 )
+from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
 
 
@@ -402,7 +404,7 @@ class PediatricSegmenter(SegmentationAlgorithm):
 
 
 class AfricaSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on data from the BraTSAfrica challenge
+    """Provides algorithms from the BraTSAfrica challenge
 
     Args:
         algorithm (AfricaAlgorithms, optional): Select an algorithm. Defaults to AfricaAlgorithms.BraTS23_1.
@@ -425,7 +427,7 @@ class AfricaSegmenter(SegmentationAlgorithm):
 
 
 class MetastasesSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on data from the Brain Metastases Segmentation challenge
+    """Provides algorithms from the Brain Metastases Segmentation challenge
 
     Args:
         algorithm (MetastasesAlgorithms, optional): Select an algorithm. Defaults to MetastasesAlgorithms.BraTS23_1.
@@ -442,6 +444,29 @@ class MetastasesSegmenter(SegmentationAlgorithm):
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class GoATSegmenter(SegmentationAlgorithm):
+    """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
+
+    Args:
+        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS24_1,
+        cuda_devices: Optional[str] = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=GOAT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )

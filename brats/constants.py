@@ -142,6 +142,13 @@ class MissingMRIAlgorithms(Algorithms):
     """ BraTS24  MissingMRI 3rd place """
 
 
+class GoATAlgorithms(Algorithms):
+    """Constants for the available missing mri  algorithms."""
+
+    BraTS24_1 = "BraTS24_1"
+    """ BraTS24 Generalizability Across Tumors (BraTS-GoAT) 1st place (The only submission)"""
+
+
 # DIRECTORIES
 DATA_DIR = Path(__file__).parent / "data"
 META_DIR = DATA_DIR / "meta"
@@ -159,6 +166,7 @@ MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"
 METASTASES_SEGMENTATION_ALGORITHMS = META_DIR / "metastases.yml"
+GOAT_SEGMENTATION_ALGORITHMS = META_DIR / "goat.yml"
 INPAINTING_ALGORITHMS = META_DIR / "inpainting.yml"
 MISSING_MRI_ALGORITHMS = META_DIR / "missing_mri.yml"
 

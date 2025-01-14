@@ -241,6 +241,33 @@ segmenter.infer_single(
 
 </details>
 
+<details>
+<summary> <strong> Generalizability Across Tumors (BraTS-GoAT) Segmentation </strong> </summary>
+<br>
+
+```python
+from brats import GoATSegmenter
+from brats.constants import GoATAlgorithms
+
+segmenter = GoATSegmenter(algorithm=GoATAlgorithms.BraTS24_1, cuda_devices="0")
+# these parameters are optional, by default the winning algorithm will be used on cuda:0
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    t1n="path/to/t1n.nii.gz",
+    t2f="path/to/t2f.nii.gz",
+    t2w="path/to/t2w.nii.gz",
+    output_file="segmentation.nii.gz",
+)
+```
+
+**Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+
+| Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                      |
+| ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------- |
+| 2024 | 1st  | _Frank Miao, Shengjie Niu_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS24_1) |
+
+</details>
+
 ### Inpainting
 
 <details>
