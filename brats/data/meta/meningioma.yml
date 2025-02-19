@@ -86,7 +86,7 @@ algorithms:
   BraTS23_2:
     meta:
       authors: Ziyan Huang, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_13
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
@@ -101,8 +101,8 @@ algorithms:
       
   BraTS23_3:
     meta:
-      authors: Zhifan Jiang et al.
-      paper: N/A
+      authors: Daniel Capell´an-Mart´in et al.
+      paper: https://api.semanticscholar.org/CorpusID:272599903
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
