@@ -18,7 +18,7 @@ algorithms:
   BraTS23_1:
     meta:
       authors: André Ferreira, et al.
-      paper: https://arxiv.org/abs/2402.17317v1
+      paper: https://doi.org/10.1007/978-3-031-76163-8_8
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
@@ -48,7 +48,7 @@ algorithms:
   BraTS23_3:
     meta:
       authors: Fadillah Adamsyah Maani, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_24
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
