@@ -29,7 +29,7 @@ algorithms:
   BraTS23_2:
     meta:
       authors: Siwei Yang, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_17
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
@@ -45,7 +45,7 @@ algorithms:
   BraTS23_3:
     meta:
       authors: Ziyan Huang, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_13
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
