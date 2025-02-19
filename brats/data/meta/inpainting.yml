@@ -71,7 +71,7 @@ algorithms:
   BraTS23_1:
     meta:
       authors: Juexin Zhang, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_21
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
@@ -89,7 +89,7 @@ algorithms:
   BraTS23_2:
     meta:
       authors: Alicia Durrer, et al.
-      paper: N/A
+      paper: https://doi.org/10.48550/arXiv.2402.17307
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
@@ -106,7 +106,7 @@ algorithms:
   BraTS23_3:
     meta:
       authors: Jiayu Huo, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-031-76163-8_1
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
