@@ -47,9 +47,13 @@ loguru = ">=0.7.0"
 nibabel = ">=5.0.0"
 numpy = ">=1.21.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
 pytest-cov = ">=5.0.0"
+flake8 = ">=5.0.0"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
 
 [tool.poetry.group.docs]
 optional = true
