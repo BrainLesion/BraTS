@@ -53,7 +53,7 @@ algorithms:
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
-      rank: *rank_1
+      rank: *rank_3
       year: *year_2024
     run_args:
       docker_image: brainles/brats24_africa_biomedia-mbzu
