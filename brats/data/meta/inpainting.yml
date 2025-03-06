@@ -32,7 +32,7 @@ algorithms:
       cpu_compatible: true
     additional_files:
       record_id: "14230865"
-      param_name: ["param_path"]
+      param_name: ["checkpoint_path"]
 
   BraTS24_2:
     meta:
@@ -84,7 +84,7 @@ algorithms:
       cpu_compatible: true
     additional_files:
       record_id: "13382922"
-      param_name: ["param_path"]
+      param_name: ["checkpoint_path"]
 
   BraTS23_2:
     meta:
