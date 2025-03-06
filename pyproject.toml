@@ -7,7 +7,7 @@ enable = true
 
 [tool.poetry]
 name = "brats"
-version = "0.0.0"
+version = "0.0.0.dev"
 description = "BraTS algorithms"
 authors = [
   "Marcel Rosier <marcel.rosier@tum.de>",
@@ -45,7 +45,10 @@ PyYAML = ">=6.0.1"
 dacite = ">=1.8.0"
 loguru = ">=0.7.0"
 nibabel = ">=5.0.0"
-numpy = ">=1.21.0"
+numpy = [
+  { version = "^1.21.0", markers = "python_version <= '3.9'" },
+  { version = ">=1.26.0", markers = "python_version >= '3.10'" },
+]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
