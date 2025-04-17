@@ -39,12 +39,13 @@ pip install brats
 
 ## Available Algorithms and Usage
 
-### Segmentation
+### Segmentation Challenge
+
+#### Adult Glioma Segmentation (Pre-Treatment) 
+Adult Glioma Segmentation on pre-treatment brain MRI exams.  
 <details>
-
-<summary> <strong> Adult Glioma Segmentation (Pre Treatment) </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
 <br>
-
 
 ```python
 from brats import AdultGliomaPreTreatmentSegmenter
@@ -60,6 +61,8 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+> Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
+<br>
 
 **Class:** `brats.AdultGliomaPreTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreTreatmentSegmenter))
 
@@ -70,9 +73,13 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | [Link](https://doi.org/10.1007/978-3-031-76163-8_24) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_3) |
 
 </details>
+<br>
 
+#### Adult Glioma Segmentation (Post Treatment)
+Adult Glioma Segmentation on post-Treatment brain MRI exams.
 <details>
-<summary> <strong> Adult Glioma Segmentation Post Treatment </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
+
 <br>
 
 
@@ -90,6 +97,8 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+> Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
+<br>
 
 **Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
 
@@ -100,9 +109,12 @@ segmenter.infer_single(
 | 2024 | 3rd  | _Adrian Celaya_          | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3) |
 
 </details>
+<br>
 
+#### BraTS-Africa Segmentation
+Adult Glioma Segementation on brain MRI exams in Sub-Sahara-Africa patient population.  
 <details>
-<summary> <strong> BraTS-Africa Segmentation </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -132,12 +144,15 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3) |
 
 </details>
-
-<details>
-<summary> <strong> Meningioma Segmentation </strong> </summary>
 <br>
 
-**Note**  
+#### Meningioma Segmentation
+Segementation of Meningioma on brain MRI exams.
+<details>
+<summary> usage example (code) and top 3 participants </summary>
+<br>
+
+****  
 Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
 - _2023_: All 4 modalities are used (t1c, t1n, t2f, t2w)
 - _2024_: Only t1c is used  
@@ -179,9 +194,12 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Daniel Capell'an-Mart'in et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
 
 </details>
+<br>
 
+#### Brain Metastases Segmentation
+Segementation on brain metastases on MRI exams for pre- and post-treatment cases. 
 <details>
-<summary> <strong> Brain Metastases Segmentation </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -197,7 +215,10 @@ segmenter.infer_single(
     t2w="path/to/t2w.nii.gz",
     output_file="segmentation.nii.gz",
 )
+
 ```
+> Note: If you're interested in Brain Metastases Segmentation, the [BrainLes AURORA package](https://github.com/BrainLesion/AURORA#aurora) may also be of interest.
+<br>
 
 **Class:** `brats.MetastasesSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.MetastasesSegmenter))
 
@@ -208,9 +229,12 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_3) |
 
 </details>
+<br>
 
+#### Pediatric Segmentation
+Segementation of pediatric brain tumors on MRI exams. 
 <details>
-<summary> <strong> Pediatric Segmentation </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -227,7 +251,8 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
-
+> Note: If you're interested in Pediatric Segmentation, the [BrainLes PeTu package](https://github.com/BrainLesion/PeTu?tab=readme-ov-file#petu) may also be of interest.
+<br>
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                           |
@@ -240,9 +265,12 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Yubo Zhou_                | [Link](https://doi.org/10.1007/978-3-031-76163-8_5) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
 
 </details>
+<br>
 
+#### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
+Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
 <details>
-<summary> <strong> Generalizability Across Tumors (BraTS-GoAT) Segmentation </strong> </summary>
+<summary> usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -267,12 +295,14 @@ segmenter.infer_single(
 | 2024 | 1st  | _Frank Miao, Shengjie Niu_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS24_1) |
 
 </details>
-
-### Inpainting
-
-<details>
-<summary> <strong> Inpainting </strong> </summary>
 <br>
+
+### Inpainting Challenge 
+Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
+<details>
+<summary> <strong> Inpainting: usage example (code) and top 3 participants  </strong> </summary>
+<br>
+
 
 ```python
 from brats import Inpainter
@@ -298,11 +328,12 @@ inpainter.infer_single(
 | 2023 | 3rd  | _Jiayu Huo, et al._                | [Link](https://doi.org/10.1007/978-3-031-76163-8_1) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_3) |
 
 </details>
+<br>
 
-### Missing MRI
-
+### Missing MRI Challenge
+Allgorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
-<summary> <strong> Missing MRI </strong> </summary>
+<summary> <strong> Missing MRI: usage example (code) and top 3 participants </strong> </summary>+
 <br>
 
 ```python
