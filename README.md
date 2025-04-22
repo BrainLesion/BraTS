@@ -196,7 +196,7 @@ segmenter.infer_single(
 <br>
 
 #### Brain Metastases Segmentation
-Segementation on brain metastases on MRI exams for pre- and post-treatment cases. 
+Segmentation on brain metastases on MRI exams for pre- and post-treatment cases. 
 <details>
 <summary> usage example (code) and top 3 participants </summary>
 <br>
@@ -299,7 +299,7 @@ segmenter.infer_single(
 ### Inpainting Challenge 
 Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
 <details>
-<summary> <strong> Inpainting: usage example (code) and top 3 participants  </strong> </summary>
+<summary>usage example (code) and top 3 participants </summary>
 <br>
 
 
@@ -332,7 +332,7 @@ inpainter.infer_single(
 ### Missing MRI Challenge
 Allgorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
-<summary> <strong> Missing MRI: usage example (code) and top 3 participants </strong> </summary>
+<summary>usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
