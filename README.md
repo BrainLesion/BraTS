@@ -39,7 +39,7 @@ pip install brats
 
 ## Available Algorithms and Usage
 
-### Segmentation Challenge
+### Segmentation Challenges
 
 #### Adult Glioma Segmentation (Pre-Treatment) 
 Adult Glioma Segmentation on pre-treatment brain MRI exams.  
@@ -112,7 +112,7 @@ segmenter.infer_single(
 <br>
 
 #### BraTS-Africa Segmentation
-Adult Glioma Segementation on brain MRI exams in Sub-Sahara-Africa patient population.  
+Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.  
 <details>
 <summary> usage example (code) and top 3 participants </summary>
 <br>
@@ -147,12 +147,11 @@ segmenter.infer_single(
 <br>
 
 #### Meningioma Segmentation
-Segementation of Meningioma on brain MRI exams.
+Segmentation of Meningioma on brain MRI exams.
 <details>
 <summary> usage example (code) and top 3 participants </summary>
 <br>
 
-****  
 Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
 - _2023_: All 4 modalities are used (t1c, t1n, t2f, t2w)
 - _2024_: Only t1c is used  
@@ -232,7 +231,7 @@ segmenter.infer_single(
 <br>
 
 #### Pediatric Segmentation
-Segementation of pediatric brain tumors on MRI exams. 
+Segmentation of pediatric brain tumors on MRI exams. 
 <details>
 <summary> usage example (code) and top 3 participants </summary>
 <br>
@@ -333,7 +332,7 @@ inpainter.infer_single(
 ### Missing MRI Challenge
 Allgorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
-<summary> <strong> Missing MRI: usage example (code) and top 3 participants </strong> </summary>+
+<summary> <strong> Missing MRI: usage example (code) and top 3 participants </strong> </summary>
 <br>
 
 ```python
