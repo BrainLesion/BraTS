@@ -330,7 +330,7 @@ inpainter.infer_single(
 <br>
 
 ### Missing MRI Challenge
-Allgorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
+Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
 <summary>usage example (code) and top 3 participants </summary>
 <br>
