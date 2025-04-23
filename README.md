@@ -41,10 +41,10 @@ pip install brats
 
 ### Segmentation Challenges
 
-#### Adult Glioma Segmentation (Pre-Treatment) 
-Adult Glioma Segmentation on pre-treatment brain MRI exams.  
+#### Adult Glioma Segmentation (Pre Treatment) 
+> Adult Glioma Segmentation on pre-treatment brain MRI exams.  
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -76,9 +76,9 @@ segmenter.infer_single(
 <br>
 
 #### Adult Glioma Segmentation (Post Treatment)
-Adult Glioma Segmentation on post-Treatment brain MRI exams.
+> Adult Glioma Segmentation on post-Treatment brain MRI exams.
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 
 <br>
 
@@ -112,9 +112,9 @@ segmenter.infer_single(
 <br>
 
 #### BraTS-Africa Segmentation
-Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.  
+> Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.  
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -147,9 +147,9 @@ segmenter.infer_single(
 <br>
 
 #### Meningioma Segmentation
-Segmentation of Meningioma on brain MRI exams.
+> Segmentation of Meningioma on brain MRI exams.
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
@@ -196,9 +196,9 @@ segmenter.infer_single(
 <br>
 
 #### Brain Metastases Segmentation
-Segmentation on brain metastases on MRI exams for pre- and post-treatment cases. 
+> Segmentation on brain metastases on MRI exams for pre- and post-treatment cases. 
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -231,9 +231,9 @@ segmenter.infer_single(
 <br>
 
 #### Pediatric Segmentation
-Segmentation of pediatric brain tumors on MRI exams. 
+> Segmentation of pediatric brain tumors on MRI exams. 
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -267,9 +267,9 @@ segmenter.infer_single(
 <br>
 
 #### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
-Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
+> Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
 <details>
-<summary> usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
@@ -297,9 +297,9 @@ segmenter.infer_single(
 <br>
 
 ### Inpainting Challenge 
-Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
+> Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
 <details>
-<summary>usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 
@@ -330,9 +330,9 @@ inpainter.infer_single(
 <br>
 
 ### Missing MRI Challenge
-Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
+> Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
-<summary>usage example (code) and top 3 participants </summary>
+<summary> Usage example (code) and top 3 participants </summary>
 <br>
 
 ```python
