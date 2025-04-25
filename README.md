@@ -62,7 +62,9 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.AdultGliomaPreTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreTreatmentSegmenter))
-
+<br>
+**Challenge Paper 2023:** [Link](https://arxiv.org/abs/2107.02314)
+<br>
 | Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum                                                                                                                             |
 | ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_1) |
@@ -92,11 +94,13 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
-
+<br>
+**Challenge Paper 2024:** [Link](https://doi.org/10.48550/arXiv.2405.18368)
+<br>
 | Year | Rank | Author                   | Paper | CPU Support | Key Enum                                                                                                                          |
 | ---- | ---- | ------------------------ | ----- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _André Ferreira, et al._ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1) |
-| 2024 | 2nd  | _Team kimbab_            | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2) |
+| 2024 | 2nd  | _Heejong Kim, et al._   | [Link](https://arxiv.org/abs/2409.08143)   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Adrian Celaya_          | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3) |
 
 </details>
@@ -121,12 +125,17 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.AfricaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AfricaSegmenter))
+<br>
+**Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2305.19369)
+<br>
+**Challenge Paper 2024**: N/A 
+<br>
 
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                        |
 | ---- | ---- | -------------------------- | ----- | ----------- | --------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Zhifan Jiang et al._      | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Long Bai, et al._         | N/A   | &#x2705;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Sarim Hashmi, et al._     | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_3) |
+| 2024 | 3rd  | _Sarim Hashmi, et al._     | [Link](https://doi.org/10.48550/arXiv.2411.15872) | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | TODO  | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Alyssa R Amod, et al._    | [Link](https://doi.org/10.1007/978-3-031-76163-8_22) | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3) |
@@ -168,12 +177,16 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.MeningiomaSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.MeningiomaSegmenter))
-
+<br>
+**Challenge Paper 2024** [Link](https://arxiv.org/abs/2405.18383)
+<br>
+**Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2305.07642)
+<br>
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Valeria Abramova_         | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Mehdi Astaraki_           | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Andre Ferreira, et al._   | N/A   | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_3) |
+| 2024 | 3rd  | _Andre Ferreira, et al._   | [Link](https://arxiv.org/html/2411.04632v1) | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Daniel Capell'an-Mart'in et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
@@ -200,7 +213,9 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.MetastasesSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.MetastasesSegmenter))
-
+<br>
+**Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2306.00838)
+<br>
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_1) |
@@ -229,12 +244,17 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+<br>
+**Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2404.15009)
+<br>
+**Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2305.17033)
+<br>
 
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                           |
 | ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
-| 2024 | 1st  | _Tim Mulvany, et al._      | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
+| 2024 | 1st  | _Tim Mulvany, et al._      | [Link](https://doi.org/10.48550/arXiv.2410.14020)| &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Mehdi Astaraki_           | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Sarim Hashmi, et al._     | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
+| 2024 | 3rd  | _Sarim Hashmi, et al._     | [Link](https://doi.org/10.48550/arXiv.2411.15872)| &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Zhifan Jiang et al._      | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Andriy Myronenko, et al._ | N/A   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Yubo Zhou_                | [Link](https://doi.org/10.1007/978-3-031-76163-8_5) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
@@ -261,6 +281,9 @@ segmenter.infer_single(
 ```
 
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+<br>
+**Challenge Paper 2024:** N/A
+<br> 
 
 | Year | Rank | Author                     | Paper | CPU Support | Key Enum                                                                                                      |
 | ---- | ---- | -------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------- |
@@ -287,12 +310,14 @@ inpainter.infer_single(
 ```
 
 **Class:** `brats.Inpainter` ([Docs](https://brats.readthedocs.io/en/latest/core/inpainting_algorithms.html#brats.core.inpainting_algorithms.Inpainter))
-
+<br>
+**Challenge Paper 2023 and 2024** [Link](https://arxiv.org/pdf/2305.08992)
+<br>
 | Year | Rank | Author                             | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ---------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Ke Chen, Juexin Zhang, Ying Weng_ | N/A   | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _André Ferreira, et al._           | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Team SMINT_                       | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_3) |
+| 2024 | 3rd  | _Alicia Durrer, et al._            | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Juexin Zhang, et al._             | [Link](https://doi.org/10.1007/978-3-031-76163-8_21)   | &#x2705;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Alicia Durrer, et al._            | [Link](https://doi.org/10.48550/arXiv.2402.17307)   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Jiayu Huo, et al._                | [Link](https://doi.org/10.1007/978-3-031-76163-8_1) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_3) |
@@ -321,7 +346,10 @@ missing_mri.infer_single(
 ```
 
 **Class:** `brats.MissingMRI` ([Docs](https://brats.readthedocs.io/en/latest/core/missing_mri_algorithms.html#brats.core.missing_mri_algorithms.MissingMRI))
-
+<br>
+**Challenge Paper 2024:** N/A
+<br>
+<br>
 | Year | Rank | Author                                    | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ----------------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Jihoon Cho, Seunghyuck Park, Jinah Park_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_1) |
