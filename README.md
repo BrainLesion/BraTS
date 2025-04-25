@@ -63,7 +63,7 @@ segmenter.infer_single(
 
 **Class:** `brats.AdultGliomaPreTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreTreatmentSegmenter))
 <br>
-**Challenge Paper 2023:** N/A
+**Challenge Paper 2023:** [Link](https://arxiv.org/abs/2107.02314)
 <br>
 | Year | Rank | Author                            | Paper                                      | CPU Support | Key Enum                                                                                                                             |
 | ---- | ---- | --------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -95,7 +95,7 @@ segmenter.infer_single(
 
 **Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
 <br>
-**Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2405.18368)
+**Challenge Paper 2024:** [Link](https://doi.org/10.48550/arXiv.2405.18368)
 <br>
 | Year | Rank | Author                   | Paper | CPU Support | Key Enum                                                                                                                          |
 | ---- | ---- | ------------------------ | ----- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -349,14 +349,12 @@ missing_mri.infer_single(
 <br>
 **Challenge Paper 2024:** N/A
 <br>
-**Challenge Paper 2023:** [Link ](https://doi.org/10.48550/arXiv.2305.09011)
 <br>
 | Year | Rank | Author                                    | Paper | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ----------------------------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2024 | 1st  | _Jihoon Cho, Seunghyuck Park, Jinah Park_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Haowen Pang_                             | N/A   | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Minjoo Lim, Bogyeong Kang_               | N/A   | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS24_3) |
-| 2023 | 1st  | _Ivo M. Baltruschat et al._ | [Link](https://arxiv.org/abs/2403.07800)   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS23_1) |
 
 </details>
 
