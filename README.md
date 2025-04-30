@@ -99,7 +99,6 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
-> Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
 <br>
 
 **Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
