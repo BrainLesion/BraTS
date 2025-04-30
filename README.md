@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/BrainLesion/BraTS/graph/badge.svg?token=A7FWUKO9Y4)](https://codecov.io/gh/BrainLesion/BraTS)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Providing the top performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy to use Python API powered by docker.
+Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API powered by Docker.
 
 ## Features
 
@@ -24,9 +24,9 @@ pip install brats
 ```
 
 > [!IMPORTANT]  
-> To run `brats` you require a Docker installation. <br>
+> To run `brats`, you require a Docker installation. <br>
 > Many algorithms also require GPU support (NVIDIA Docker). <br>
-> In case you do not have access to a Cuda-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-usage) section indicate which algorithms are CPU compatible.
+> In case you do not have access to a CUDA-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-usage) section indicate which algorithms are CPU compatible.
 
 
 
@@ -41,7 +41,7 @@ pip install brats
 
 ### Segmentation Challenges
 
-#### Adult Glioma Segmentation (Pre Treatment) 
+#### Adult Glioma Segmentation (Pre-Treatment) 
 > Adult Glioma Segmentation on pre-treatment brain MRI exams.  
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
@@ -77,7 +77,7 @@ segmenter.infer_single(
 </details>
 <br>
 
-#### Adult Glioma Segmentation (Post Treatment)
+#### Adult Glioma Segmentation (Post-Treatment)
 > Adult Glioma Segmentation on post-Treatment brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
@@ -161,11 +161,11 @@ segmenter.infer_single(
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
 
-Unlike other segmentation challenges the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
+Unlike other segmentation challenges, the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
 - _2023_: All 4 modalities are used (t1c, t1n, t2f, t2w)
 - _2024_: Only t1c is used  
 
-Therefore the usage differs slightly, depending on which algorithm is used. To understand why, please refer to the [2024 challenge manuscript](https://arxiv.org/abs/2405.18383).
+Therefore, the usage differs slightly, depending on which algorithm is used. To understand why, please refer to the [2024 challenge manuscript](https://arxiv.org/abs/2405.18383).
 
 ```python
 from brats import MeningiomaSegmenter
@@ -391,7 +391,7 @@ missing_mri.infer_single(
 --- 
 
 > [!TIP]
-> For a full notebook example with more details please check here:  
+> For a full notebook example with more details, please check here:  
 > [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)
 
 ## Citation
@@ -406,7 +406,7 @@ TODO: citation will be added asap
 
 We welcome all kinds of contributions from the community!
 
-### Reporting Bugs, Feature Requests and Questions
+### Reporting Bugs, Feature Requests, and Questions
 
 Please open a new issue [here](https://github.com/BrainLesion/BraTS/issues).
 
