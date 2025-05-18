@@ -89,7 +89,7 @@ segmenter.infer_single(
 from brats import AdultGliomaPostTreatmentSegmenter
 from brats.constants import AdultGliomaPostTreatmentAlgorithms
 
-segmenter = AdultGliomaPostTreatmentSegmenter(algorithm=AdultGliomaPostTreatmentAlgorithms.BraTS23_1, cuda_devices="0")
+segmenter = AdultGliomaPostTreatmentSegmenter(algorithm=AdultGliomaPostTreatmentAlgorithms.BraTS24_1, cuda_devices="0")
 # these parameters are optional, by default the winning algorithm of 2024 will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
