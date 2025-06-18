@@ -1,0 +1,83 @@
+cff-version: 1.2.0
+message: "If you use this software or dataset, please cite the following paper:"
+title: "BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis"
+authors:
+  - family-names: Kofler
+    given-names: Florian
+  - family-names: Rosier
+    given-names: Marcel
+  - family-names: Astaraki
+    given-names: Mehdi
+  - family-names: Baid
+    given-names: Ujjwal
+  - family-names: Möller
+    given-names: Hendrik
+  - family-names: Buchner
+    given-names: Josef A.
+  - family-names: Steinbauer
+    given-names: Felix
+  - family-names: Oswald
+    given-names: Eva
+  - family-names: de la Rosa
+    given-names: Ezequiel
+  - family-names: Ezhov
+    given-names: Ivan
+  - family-names: von See
+    given-names: Constantin
+  - family-names: Kirschke
+    given-names: Jan
+  - family-names: Schmick
+    given-names: Anton
+  - family-names: Pati
+    given-names: Sarthak
+  - family-names: Linardos
+    given-names: Akis
+  - family-names: Pitarch
+    given-names: Carla
+  - family-names: Adap
+    given-names: Sanyukta
+  - family-names: Rudie
+    given-names: Jeffrey
+  - family-names: Correia de Verdier
+    given-names: Maria
+  - family-names: Saluja
+    given-names: Rachit
+  - family-names: Calabrese
+    given-names: Evan
+  - family-names: LaBella
+    given-names: Dominic
+  - family-names: Aboian
+    given-names: Mariam
+  - family-names: Moawad
+    given-names: Ahmed W.
+  - family-names: Maleki
+    given-names: Nazanin
+  - family-names: Anazodo
+    given-names: Udunna
+  - family-names: Adewole
+    given-names: Maruf
+  - family-names: Linguraru
+    given-names: Marius George
+  - family-names: Fathi Kazerooni
+    given-names: Anahita
+  - family-names: Jiang
+    given-names: Zhifan
+  - family-names: Conte
+    given-names: Gian Marco
+  - family-names: Li
+    given-names: Hongwei
+  - family-names: Iglesias
+    given-names: Juan Eugenio
+  - family-names: Bakas
+    given-names: Spyridon
+  - family-names: Wiestler
+    given-names: Benedikt
+  - family-names: Piraud
+    given-names: Marie
+  - family-names: Menze
+    given-names: Bjoern
+date-released: 2025-06-13
+identifiers:
+  - type: arXiv
+    value: 2506.13807
+url: https://arxiv.org/abs/2506.13807
