@@ -182,4 +182,4 @@ OUTPUT_NAME_SCHEMA = {
 
 
 # PACKAGE citation
-PACKAGE_CITATION = "N/A"
+PACKAGE_CITATION = "https://arxiv.org/abs/2506.13807"
