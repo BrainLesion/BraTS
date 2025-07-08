@@ -323,6 +323,9 @@ def _log_algorithm_info(algorithm: AlgorithmData):
         algorithm.meta.challenge_manuscript,
     )
     table.add_row(f"Algorithm ({algorithm.meta.authors})", algorithm.meta.paper)
+    if algorithm.meta.dataset_manuscript:
+        table.add_row(f"Dataset", algorithm.meta.dataset_manuscript)
+
     console.print(table)
     console.rule()
 

@@ -57,6 +57,7 @@ class TestDockerHelpers(unittest.TestCase):
                 rank="1st",
                 paper="paper_url",
                 authors="author_names",
+                dataset_manuscript="dataset_manuscript_url",
             ),
         )
 

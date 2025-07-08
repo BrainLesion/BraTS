@@ -6,6 +6,7 @@ constants:
   challenge_manuscript:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18383"
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.07642"
+  dataset_manuscript: &dataset_manuscript "https://www.nature.com/articles/s41597-024-03350-9"
   years:
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -26,6 +27,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
       year: *year_2024
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_meningioma_nic_vicorob
       input_name_schema: *input_name_schema_2024
@@ -42,6 +44,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
       year: *year_2024
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_meningioma_astaraki
       input_name_schema: *input_name_schema_2024
@@ -57,6 +60,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
       year: *year_2024
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_meningioma_faking_it
       input_name_schema: *input_name_schema_2024
@@ -76,6 +80,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
       year: *year_2023
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_nvauto:latest 
       input_name_schema: *input_name_schema_2023
@@ -91,6 +96,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_2
       year: *year_2023
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
       input_name_schema: *input_name_schema_2023
@@ -107,6 +113,7 @@ algorithms:
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_3
       year: *year_2023
+      dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
       input_name_schema: *input_name_schema_2023

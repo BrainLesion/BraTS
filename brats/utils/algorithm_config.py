@@ -23,6 +23,8 @@ class MetaData:
     """The rank of the algorithm in the challenge"""
     year: int
     """The year the algorithm was submitted"""
+    dataset_manuscript: Optional[str] = None
+    """If available, a url to the dataset manuscript of the algorithm. Optional since some algorithms do not have a dataset manuscript"""
 
 
 @dataclass
