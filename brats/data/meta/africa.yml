@@ -1,6 +1,8 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-SSA-{id:05d}-000"
   challenge: &challenge "BraTS-Africa Segmentation"
+  dataset_manuscript:
+    2023: &dataset_manuscript_2023 "https://pubs.rsna.org/doi/full/10.1148/ryai.240528"
   challenge_manuscript:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.19369" # remained the same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.19369"
@@ -72,6 +74,7 @@ algorithms:
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
+      dataset_manuscript: *dataset_manuscript_2023
       rank: *rank_1
       year: *year_2023
     run_args:
@@ -87,6 +90,7 @@ algorithms:
       paper: https://doi.org/10.1007/978-3-031-76163-8_22
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
+      dataset_manuscript: *dataset_manuscript_2023
       rank: *rank_2
       year: *year_2023
     run_args:
@@ -104,6 +108,7 @@ algorithms:
       paper: https://doi.org/10.1007/978-3-031-76163-8_13
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
+      dataset_manuscript: *dataset_manuscript_2023
       rank: *rank_3
       year: *year_2023
     run_args:
