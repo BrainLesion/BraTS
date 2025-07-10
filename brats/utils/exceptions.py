@@ -19,7 +19,7 @@ class AlgorithmConfigException(DaciteError):
     pass
 
 
-class ZenodoUnreachableException(Exception):
+class ZenodoException(Exception):
     """Exception raised when Zenodo is unreachable or returns an error."""
 
     pass
