@@ -57,7 +57,7 @@ class MissingMRI(BraTSAlgorithm):
                 )
         except FileNotFoundError as e:
             logger.error(f"Error while standardizing files: {e}")
-            raise e
+            raise
 
         # sanity check inputs
         input_sanity_check(

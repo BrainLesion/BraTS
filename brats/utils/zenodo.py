@@ -126,10 +126,10 @@ def _get_zenodo_metadata_and_archive_url(record_id: str) -> Tuple[Dict, str] | N
     try:
         response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}")
         if response.status_code != 200:
-            logger.error(
-                f"Cant find additional files for record_id '{record_id}' on Zenodo. Exiting..."
-            )
-            # TODO add proper exit exception
+            error_msg = f"Cant find additional files for record_id '{record_id}' on Zenodo ({response.status_code=}). Exiting..."
+            logger.error(error_msg)
+            raise ZenodoException(error_msg)
+
         data = response.json()
         return data["metadata"], data["links"]["archive"]
 

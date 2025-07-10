@@ -85,7 +85,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
             logger.error(
                 "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
             )
-            raise e
+            raise
 
         # sanity check inputs
         input_sanity_check(
