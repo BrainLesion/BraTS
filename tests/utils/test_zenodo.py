@@ -1,19 +1,20 @@
 import tempfile
 import unittest
-from unittest.mock import patch, MagicMock, mock_open, call
-from pathlib import Path
 from io import BytesIO
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 import requests
 
 # Import the module that contains the functions
 from brats.constants import ADDITIONAL_FILES_FOLDER
 from brats.utils.exceptions import ZenodoException
 from brats.utils.zenodo import (
+    _download_additional_files,
     _extract_archive,
-    check_additional_files_path,
     _get_latest_version_folder_name,
     _get_zenodo_metadata_and_archive_url,
-    _download_additional_files,
+    check_additional_files_path,
 )
 
 
@@ -85,10 +86,10 @@ class TestZenodoUtils(unittest.TestCase):
 
         # Test when local additional_files are not present and Zenodo is unreachable
         with self.assertRaises(ZenodoException):
-
             check_additional_files_path(mock_record_id)
-            mock_rmtree.assert_not_called()
-            mock_download_additional_files.assert_not_called()
+
+        mock_rmtree.assert_not_called()
+        mock_download_additional_files.assert_not_called()
 
     @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url(self, mock_get):
@@ -112,6 +113,15 @@ class TestZenodoUtils(unittest.TestCase):
         mock_get.side_effect = requests.exceptions.RequestException("Failed")
         ret = _get_zenodo_metadata_and_archive_url("12345")
         self.assertIsNone(ret)
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_zenodo_error(self, mock_get):
+        # Setup
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 400
+
+        with self.assertRaises(ZenodoException):
+            _get_zenodo_metadata_and_archive_url("12345")
 
     @patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", Path(tempfile.mkdtemp()))
     @patch("brats.utils.zenodo._extract_archive")
