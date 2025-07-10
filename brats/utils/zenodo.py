@@ -12,6 +12,7 @@ from loguru import logger
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from brats.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
+from brats.utils.exceptions import ZenodoUnreachableException
 
 
 def get_dummy_path() -> Path:
@@ -45,10 +46,9 @@ def check_additional_files_path(record_id: str) -> Path:
 
     if not latest_downloaded_additional_files:
         if not zenodo_metadata:
-            logger.error(
-                "Additional files not found locally and Zenodo could not be reached. Exiting..."
-            )
-            sys.exit()
+            msg = "Additional files not found locally and Zenodo could not be reached. Exiting..."
+            logger.error(msg)
+            raise ZenodoUnreachableException(msg)
         logger.info(f"Additional files not found locally")
 
         return _download_additional_files(
