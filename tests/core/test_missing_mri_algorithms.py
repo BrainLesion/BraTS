@@ -57,26 +57,26 @@ class TestMissingMRIAlgorithms(unittest.TestCase):
         self.assertTrue((subject_folder / f"{subject_id}-t2w.nii.gz").exists())
 
     @patch("brats.core.missing_mri_algorithms.input_sanity_check")
-    @patch("sys.exit")
     @patch.object(logger, "error")
     def test_single_standardize_handle_file_not_found_error(
-        self, mock_logger, mock_exit, mock_input_sanity_check
+        self, mock_logger, mock_input_sanity_check
     ):
         subject_id = "test_subject"
         # Provide a non-existent file path for t1c
         t1n = "non_existent_file.nii.gz"
-        self.missing_mri._standardize_single_inputs(
-            data_folder=self.data_folder,
-            subject_id=subject_id,
-            inputs={
-                "t1n": t1n,
-                "t1c": self.t1c,
-                "t2w": self.t2w,
-            },
-            subject_modality_separator="-",
-        )
-        mock_logger.assert_called()
-        mock_exit.assert_called_with(1)
+
+        with self.assertRaises(FileNotFoundError):
+            self.missing_mri._standardize_single_inputs(
+                data_folder=self.data_folder,
+                subject_id=subject_id,
+                inputs={
+                    "t1n": t1n,
+                    "t1c": self.t1c,
+                    "t2w": self.t2w,
+                },
+                subject_modality_separator="-",
+            )
+            mock_logger.assert_called()
 
     @patch("brats.core.missing_mri_algorithms.MissingMRI._standardize_single_inputs")
     def test_standardize_segmentation_inputs_list(self, mock_standardize_single_inputs):

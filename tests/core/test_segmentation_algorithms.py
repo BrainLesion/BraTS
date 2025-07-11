@@ -76,27 +76,27 @@ class TestSegmentationAlgorithms(unittest.TestCase):
             )
 
     @patch("brats.core.segmentation_algorithms.input_sanity_check")
-    @patch("sys.exit")
     @patch.object(logger, "error")
     def test_single_standardize_handle_file_not_found_error(
-        self, mock_logger, mock_exit, mock_input_sanity_check
+        self, mock_logger, mock_input_sanity_check
     ):
         subject_id = "test_subject"
         # Provide a non-existent file path for t1c
         t1c = "non_existent_file.nii.gz"
-        self.segmenter._standardize_single_inputs(
-            data_folder=self.data_folder,
-            subject_id=subject_id,
-            inputs={
-                "t1c": t1c,
-                "t1n": self.t1n,
-                "t2f": self.t2f,
-                "t2w": self.t2w,
-            },
-            subject_modality_separator="-",
-        )
-        mock_logger.assert_called()
-        mock_exit.assert_called_with(1)
+
+        with self.assertRaises(FileNotFoundError):
+            self.segmenter._standardize_single_inputs(
+                data_folder=self.data_folder,
+                subject_id=subject_id,
+                inputs={
+                    "t1c": t1c,
+                    "t1n": self.t1n,
+                    "t2f": self.t2f,
+                    "t2w": self.t2w,
+                },
+                subject_modality_separator="-",
+            )
+            mock_logger.assert_called()
 
     @patch(
         "brats.core.segmentation_algorithms.SegmentationAlgorithm._standardize_single_inputs"
