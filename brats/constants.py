@@ -140,6 +140,8 @@ class MissingMRIAlgorithms(Algorithms):
     """ BraTS24  MissingMRI 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24  MissingMRI 3rd place """
+    BraTS23_1 = "BraTS23_1"
+    """ BraTS23  MissingMRI 1st place """
 
 
 class GoATAlgorithms(Algorithms):

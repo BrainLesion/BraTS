@@ -1,0 +1,5 @@
+t1n_model: t1n_model # logs/train/2023-08-01/08-19-59_w2aorpx3
+t1c_model: t1c_model # logs/train/2023-08-01/08-12-49_t75jck2e
+t2w_model: t2w_model # logs/train/2023-08-01/08-41-30_b24whwna
+t2f_model: t2f_model # logs/train/2023-08-01/08-54-29_hnx3ttp6
+phase: test
