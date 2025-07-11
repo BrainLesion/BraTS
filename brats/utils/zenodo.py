@@ -5,13 +5,14 @@ import sys
 import zipfile
 from io import BytesIO
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import requests
 from loguru import logger
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from brats.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
+from brats.utils.exceptions import ZenodoException
 
 
 def get_dummy_path() -> Path:
@@ -26,13 +27,14 @@ def check_additional_files_path(record_id: str) -> Path:
     Args:
         record_id (str): Zenodo record ID.
 
+    Raises:
+        ZenodoException: If the additional files are not found locally and Zenodo is unreachable.
+
     Returns:
         Path: Path to the additional files folder.
     """
 
-    zenodo_metadata, archive_url = _get_zenodo_metadata_and_archive_url(
-        record_id=record_id
-    )
+    zenodo_response = _get_zenodo_metadata_and_archive_url(record_id=record_id)
 
     record_additional_files_pattern = f"{record_id}_v*.*.*"
     matching_folders = list(
@@ -44,13 +46,13 @@ def check_additional_files_path(record_id: str) -> Path:
     )
 
     if not latest_downloaded_additional_files:
-        if not zenodo_metadata:
-            logger.error(
-                "Additional files not found locally and Zenodo could not be reached. Exiting..."
-            )
-            sys.exit()
+        if not zenodo_response:
+            msg = "Additional files not found locally and Zenodo could not be reached. Exiting..."
+            logger.error(msg)
+            raise ZenodoException(msg)
         logger.info(f"Additional files not found locally")
 
+        zenodo_metadata, archive_url = zenodo_response
         return _download_additional_files(
             zenodo_metadata=zenodo_metadata,
             record_id=record_id,
@@ -61,12 +63,13 @@ def check_additional_files_path(record_id: str) -> Path:
         f"Found downloaded local additional_files: {latest_downloaded_additional_files}"
     )
 
-    if not zenodo_metadata:
+    if not zenodo_response:
         logger.warning(
             "Zenodo server could not be reached. Using the latest downloaded additional files."
         )
         return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
+    zenodo_metadata, archive_url = zenodo_response
     # Compare the latest downloaded additional files with the latest Zenodo version
     if zenodo_metadata["version"] == latest_downloaded_additional_files.split("_v")[1]:
         logger.info(
@@ -111,19 +114,22 @@ def _get_latest_version_folder_name(folders: List[Path]) -> str | None:
     return latest_downloaded_folder.name
 
 
-def _get_zenodo_metadata_and_archive_url(record_id: str) -> Dict | None:
+def _get_zenodo_metadata_and_archive_url(record_id: str) -> Tuple[Dict, str] | None:
     """Get the metadata for the Zenodo record and the files archive url.
 
+    Args:
+        record_id (str): Zenodo record ID.
+
     Returns:
-        Tuple: (dict: Metadata for the Zenodo record, str: URL to the archive file)
+        Union[Tuple[Dict,str], None]: Tuple with Metadata dict and archive URL if the record exists, else None.
     """
     try:
         response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}")
         if response.status_code != 200:
-            logger.error(
-                f"Cant find additional files for record_id '{record_id}' on Zenodo. Exiting..."
-            )
-            # TODO add proper exit exception
+            error_msg = f"Can not find additional files for record_id '{record_id}' on Zenodo ({response.status_code=}). Exiting..."
+            logger.error(error_msg)
+            raise ZenodoException(error_msg)
+
         data = response.json()
         return data["metadata"], data["links"]["archive"]
 
@@ -142,8 +148,11 @@ def _download_additional_files(
         record_id (str): Zenodo record ID.
         archive_url (str): URL to the archive file.
 
+    Raises:
+        ZenodoException: If the download fails or the response is not successful.
+
     Returns:
-        Path: Path to the additional files folder for the requested record.
+       Path: Path to the folder where the additional files were extracted.
     """
     record_folder = (
         ADDITIONAL_FILES_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
@@ -156,10 +165,11 @@ def _download_additional_files(
     response = requests.get(archive_url, stream=True)
     # Ensure the request was successful
     if response.status_code != 200:
-        logger.error(
+        error_msg = (
             f"Failed to download additional files. Status code: {response.status_code}"
         )
-        return
+        logger.error(error_msg)
+        raise ZenodoException(error_msg)
 
     _extract_archive(response=response, record_folder=record_folder)
 

@@ -17,3 +17,9 @@ class AlgorithmConfigException(DaciteError):
     """Exception raised when the algorithm config file has issues."""
 
     pass
+
+
+class ZenodoException(Exception):
+    """Exception raised when Zenodo is unreachable or returns an error."""
+
+    pass

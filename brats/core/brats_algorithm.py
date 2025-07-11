@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import shutil
-import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Optional
@@ -13,12 +12,8 @@ from brats.utils.algorithm_config import load_algorithms
 from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
 
-# Remove the default logger and add one with level INFO
+# Remove the default logger
 logger.remove()
-logger.add(
-    sys.stderr,
-    level="INFO",
-)
 
 
 class BraTSAlgorithm(ABC):
