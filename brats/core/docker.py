@@ -41,19 +41,29 @@ def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
         progress (Progress): The progress bar to update
         line (Dict): the next line from docker.client.api.pull stream
     """
-    if line["status"] == "Downloading":
-        task_key = f'[Download {line["id"]}]'
-    elif line["status"] == "Extracting":
-        task_key = f'[Extract {line["id"]}]'
-    else:
-        return
+    status = line.get("status")
+    layer_id = line.get("id", "unknown")
 
-    if task_key not in tasks.keys():
-        tasks[task_key] = progress.add_task(
-            f"{task_key}", total=line["progressDetail"]["total"]
-        )
-    else:
-        progress.update(tasks[task_key], completed=line["progressDetail"]["current"])
+    if status in {"Downloading", "Extracting"}:
+        task_key = f"[{status} {layer_id}]"
+
+        progress_detail = line.get("progressDetail") or {}
+        total = progress_detail.get("total")
+        current = progress_detail.get("current")
+
+        # Case 1: we know total size -> normal progress bar
+        if total:
+            if task_key not in tasks:
+                tasks[task_key] = progress.add_task(f"{task_key}", total=total)
+            progress.update(tasks[task_key], completed=current or 0)
+
+        # Case 2: no total/current -> animated bar showing indefinite progress
+        else:
+            if task_key not in tasks:
+                tasks[task_key] = progress.add_task(
+                    f"{task_key}", total=None  # total=None means indeterminate
+                )
+            progress.update(tasks[task_key], advance=0.1)
 
 
 def _ensure_image(image: str):
