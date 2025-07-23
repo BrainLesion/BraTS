@@ -40,6 +40,9 @@ pip install brats
 ## Available Algorithms and Usage
 
 ### Segmentation Challenges
+<img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
+
+
 
 #### Adult Glioma Segmentation (Pre-Treatment) 
 > Adult Glioma Segmentation on pre-treatment brain MRI exams.  
@@ -319,6 +322,9 @@ segmenter.infer_single(
 <br>
 
 ### Inpainting Challenge 
+<img src="https://github.com/BrainLesion/brats/blob/main/figures/inpainting_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
+
+
 > Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
@@ -354,6 +360,9 @@ inpainter.infer_single(
 <br>
 
 ### Missing MRI Challenge
+<img src="https://github.com/BrainLesion/brats/blob/main/figures/missingmri_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
+
+
 > Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
