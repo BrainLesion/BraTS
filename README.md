@@ -1,4 +1,4 @@
-# BraTS orchestrator
+# BraTS Orchestrator
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
