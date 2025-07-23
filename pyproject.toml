@@ -34,6 +34,7 @@ keywords = [
 exclude = [
   "tests",   # Test files
   "docs",    # Documentation files
+  "figures", # Figures and images
   ".github", # GitHub workflows, actions, etc.
 ]
 
