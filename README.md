@@ -1,4 +1,4 @@
-# BraTS
+# BraTS Orchestrator
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
@@ -17,14 +17,14 @@ Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS
 
 ## Installation
 
-With a Python 3.8+ environment, you can install `brats` directly from [PyPI](https://pypi.org/project/brats/):
+With a Python 3.8+ environment, you can install BraTS orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
 pip install brats
 ```
 
 > [!IMPORTANT]  
-> To run `brats`, you require a Docker installation. <br>
+> To run BraTS orchestrator, you require a Docker installation. <br>
 > Many algorithms also require GPU support (NVIDIA Docker). <br>
 > In case you do not have access to a CUDA-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-usage) section indicate which algorithms are CPU compatible.
 
@@ -397,7 +397,7 @@ missing_mri.infer_single(
 ## Citation
 
 > [!IMPORTANT]
-> If you use BraTS in your research, please cite it to support the development!
+> If you use BraTS orchestrator in your research, please cite it to support the development!
 
 Kofler, F., Rosier, M., Astaraki, M., Baid, U., Möller, H., Buchner, J. A., Steinbauer, F., Oswald, E., Rosa, E. de la, Ezhov, I., See, C. von, Kirschke, J., Schmick, A., Pati, S., Linardos, A., Pitarch, C., Adap, S., Rudie, J., Verdier, M. C. de, … Menze, B. (2025). BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis [arXiv preprint arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
 
