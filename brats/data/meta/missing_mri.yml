@@ -67,7 +67,7 @@ algorithms:
   BraTS23_1:
     meta:
       authors: Ivo Baltruschat
-      paper: N/A
+      paper: https://arxiv.org/abs/2403.07800
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
       rank: *rank_1
