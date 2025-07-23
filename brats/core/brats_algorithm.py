@@ -12,9 +12,6 @@ from brats.utils.algorithm_config import load_algorithms
 from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
 
-# Remove the default logger
-logger.remove()
-
 
 class BraTSAlgorithm(ABC):
     """

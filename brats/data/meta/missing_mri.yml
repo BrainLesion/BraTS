@@ -2,9 +2,11 @@ constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "BraTS MRI Synthesis Challenge (BraSyn)"
   challenge_manuscript:
-    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.09011"
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.09011" # same as 2023
+    2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.09011"
   years:
     2024: &year_2024 2024
+    2023: &year_2023 2023
   ranks:
     1st: &rank_1 1st
     2nd: &rank_2 2nd
@@ -61,3 +63,19 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
+
+  BraTS23_1:
+    meta:
+      authors: Ivo Baltruschat
+      paper: https://arxiv.org/abs/2403.07800
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2023
+      rank: *rank_1
+      year: *year_2023
+    run_args:
+      docker_image: brainles/brats23_missing_mri_onembyte:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+    additional_files:
+      record_id: "15846210"
