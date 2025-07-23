@@ -93,7 +93,7 @@ class TestDockerHelpers(unittest.TestCase):
                 "progressDetail": {"total": 100, "current": 50},
             }
             _show_docker_pull_progress(tasks, progress, line)
-            self.assertIn("[Download id1]", tasks)
+            self.assertIn("[Downloading id1]", tasks)
 
             line = {
                 "status": "Extracting",
@@ -101,7 +101,7 @@ class TestDockerHelpers(unittest.TestCase):
                 "progressDetail": {"total": 100, "current": 50},
             }
             _show_docker_pull_progress(tasks, progress, line)
-            self.assertIn("[Extract id2]", tasks)
+            self.assertIn("[Extracting id2]", tasks)
 
     @patch("brats.core.docker.client.images.list", return_value=[])
     @patch("brats.core.docker.client.api.pull")
