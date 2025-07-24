@@ -1,7 +1,7 @@
 import pytest
 from loguru import logger
 
-from brats.logging import add_console_handler, disable, enable
+from brats.utils.logging import add_console_handler, disable, enable
 
 
 @pytest.fixture(autouse=True)
