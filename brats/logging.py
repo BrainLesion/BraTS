@@ -1,4 +1,5 @@
 import sys
+from typing import Union
 from loguru import logger
 
 
@@ -18,7 +19,7 @@ def enable():
     logger.enable("brats")
 
 
-def add_console_handler(level: str | int = "WARNING"):
+def add_console_handler(level: Union[str, int] = "WARNING"):
     """
     Add a console handler to the logger for the brats package.
 
