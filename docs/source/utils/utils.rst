@@ -13,3 +13,9 @@ Exceptions
 
 .. automodule:: brats.utils.exceptions 
     :members:
+
+Logging
+------------------------------
+
+.. automodule:: brats.utils.logging
+    :members:
