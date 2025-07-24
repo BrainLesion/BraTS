@@ -18,9 +18,12 @@ def enable():
     logger.enable("brats")
 
 
-def add_console_handler(level: str = "WARNING"):
+def add_console_handler(level: str | int = "WARNING"):
     """
     Add a console handler to the logger for the brats package.
+
+    Args:
+        level (str | int): The logging level for the console handler. Defaults to "WARNING
     """
     logger.add(
         sys.stderr,
