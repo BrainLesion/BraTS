@@ -1,10 +1,12 @@
 import sys
+import threading
 from typing import Optional, Union
 
 from loguru import logger
 
 # Singleton handler reference
 _console_handler_id: Optional[int] = None
+_console_handler_lock = threading.Lock()
 
 
 def _reset_logging_state_for_tests():
@@ -43,11 +45,12 @@ def add_console_handler(level: Union[str, int] = "WARNING"):
     """
     global _console_handler_id
 
-    if _console_handler_id is None:
-        _console_handler_id = logger.add(sys.stderr, level=level)
-    else:
-        logger.remove(_console_handler_id)
-        _console_handler_id = logger.add(sys.stderr, level=level)
+    with _console_handler_lock:
+        if _console_handler_id is None:
+            _console_handler_id = logger.add(sys.stderr, level=level)
+        else:
+            logger.remove(_console_handler_id)
+            _console_handler_id = logger.add(sys.stderr, level=level)
 
 
 def remove_console_handler():
@@ -56,6 +59,7 @@ def remove_console_handler():
     """
     global _console_handler_id
 
-    if _console_handler_id is not None:
-        logger.remove(_console_handler_id)
-        _console_handler_id = None
+    with _console_handler_lock:
+        if _console_handler_id is not None:
+            logger.remove(_console_handler_id)
+            _console_handler_id = None
