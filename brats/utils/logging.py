@@ -49,7 +49,11 @@ def add_console_handler(level: Union[str, int] = "WARNING"):
         if _console_handler_id is None:
             _console_handler_id = logger.add(sys.stderr, level=level)
         else:
-            logger.remove(_console_handler_id)
+            try:
+                logger.remove(_console_handler_id)
+            except ValueError:
+                # If the handler was already removed or doesn't exist, we can safely ignore this.
+                pass
             _console_handler_id = logger.add(sys.stderr, level=level)
 
 
@@ -61,5 +65,9 @@ def remove_console_handler():
 
     with _console_handler_lock:
         if _console_handler_id is not None:
-            logger.remove(_console_handler_id)
+            try:
+                logger.remove(_console_handler_id)
+            except ValueError:
+                # If the handler was already removed or doesn't exist, we can safely ignore this.
+                pass
             _console_handler_id = None
