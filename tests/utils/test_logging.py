@@ -1,15 +1,23 @@
 import pytest
 from loguru import logger
 
-from brats.utils.logging import add_console_handler, disable, enable
+from brats.utils.logging import (
+    add_console_handler,
+    disable,
+    enable,
+    remove_console_handler,
+)
+import brats.utils.logging
 
 
 @pytest.fixture(autouse=True)
 def reset_logger_handlers():
-    # Remove all existing handlers before and after each test
+    # Reset loguru and internal handler tracking
     logger.remove()
+    brats.utils.logging._console_handler_id = None
     yield
     logger.remove()
+    brats.utils.logging._console_handler_id = None
 
 
 def test_disable_and_enable(monkeypatch):
@@ -53,3 +61,36 @@ def test_add_console_handler_respects_level(capfd):
     assert "This is a warning" not in err
     assert "This is an error" in err
     assert out == ""
+
+
+def test_add_console_handler_is_singleton(capfd):
+    # Add handler the first time
+    add_console_handler(level="INFO")
+    logger.info("First")
+
+    # Try adding again — shouldn't create a duplicate
+    add_console_handler(level="INFO")
+    logger.info("Second")
+
+    out, err = capfd.readouterr()
+    assert err.count("First") == 1
+    assert err.count("Second") == 1
+
+
+def test_remove_console_handler_stops_logging(capfd):
+    add_console_handler(level="INFO")
+    logger.info("Will appear")
+
+    remove_console_handler()
+    logger.info("Will NOT appear")
+
+    out, err = capfd.readouterr()
+    assert "Will appear" in err
+    assert "Will NOT appear" not in err
+
+
+def test_remove_console_handler_idempotent():
+    # Should not raise if called without adding first
+    remove_console_handler()
+    # Can call twice in a row
+    remove_console_handler()
