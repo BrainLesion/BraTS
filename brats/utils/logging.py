@@ -26,7 +26,7 @@ def add_console_handler(level: Union[str, int] = "WARNING"):
     """
     Add a console handler to the logger for the brats package.
 
-    Only adds the handler once.
+    Follows the singleton pattern, ensuring only one console handler is present at any time.
 
     Args:
         level (str | int): The logging level for the console handler. Defaults to "WARNING".
