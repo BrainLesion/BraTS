@@ -1,9 +1,10 @@
 import sys
-from typing import Union
+from typing import Optional, Union
+
 from loguru import logger
 
 # Singleton handler reference
-_console_handler_id: int | None = None
+_console_handler_id: Optional[int] = None
 
 
 def _reset_logging_state_for_tests():
