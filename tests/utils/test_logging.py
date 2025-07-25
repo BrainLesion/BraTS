@@ -1,15 +1,20 @@
 import pytest
 from loguru import logger
 
-from brats.utils.logging import add_console_handler, disable, enable
+from brats.utils.logging import (
+    add_console_handler,
+    disable,
+    enable,
+    remove_console_handler,
+    _reset_logging_state_for_tests,
+)
 
 
 @pytest.fixture(autouse=True)
 def reset_logger_handlers():
-    # Remove all existing handlers before and after each test
-    logger.remove()
+    _reset_logging_state_for_tests()
     yield
-    logger.remove()
+    _reset_logging_state_for_tests()
 
 
 def test_disable_and_enable(monkeypatch):
@@ -53,3 +58,52 @@ def test_add_console_handler_respects_level(capfd):
     assert "This is a warning" not in err
     assert "This is an error" in err
     assert out == ""
+
+
+def test_add_console_handler_is_singleton(capfd):
+    # Add handler the first time
+    add_console_handler(level="INFO")
+    logger.info("First")
+
+    # Try adding again — shouldn't create a duplicate
+    add_console_handler(level="INFO")
+    logger.info("Second")
+
+    out, err = capfd.readouterr()
+    assert err.count("First") == 1
+    assert err.count("Second") == 1
+
+
+def test_remove_console_handler_stops_logging(capfd):
+    add_console_handler(level="INFO")
+    logger.info("Will appear")
+
+    remove_console_handler()
+    logger.info("Will NOT appear")
+
+    out, err = capfd.readouterr()
+    assert "Will appear" in err
+    assert "Will NOT appear" not in err
+
+
+def test_remove_console_handler_idempotent():
+    # Should not raise if called without adding first
+    remove_console_handler()
+    # Can call twice in a row
+    remove_console_handler()
+
+
+def test_remove_console_handler_removes_handler(capfd):
+    # Step 1: Add handler and verify logging works
+    add_console_handler(level="INFO")
+    logger.info("This should appear")
+    out1, err1 = capfd.readouterr()
+    assert "This should appear" in err1
+
+    # Step 2: Remove handler
+    remove_console_handler()
+
+    # Step 3: Log again and verify nothing appears
+    logger.info("This should NOT appear")
+    out2, err2 = capfd.readouterr()
+    assert "This should NOT appear" not in err2
