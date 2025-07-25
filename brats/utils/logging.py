@@ -6,6 +6,15 @@ from loguru import logger
 _console_handler_id: int | None = None
 
 
+def _reset_logging_state_for_tests():
+    """
+    Reset internal logging state. Only intended for use in tests.
+    """
+    global _console_handler_id
+    logger.remove()
+    _console_handler_id = None
+
+
 def disable():
     """
     Disable the logging for the brats package.

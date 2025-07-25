@@ -6,18 +6,15 @@ from brats.utils.logging import (
     disable,
     enable,
     remove_console_handler,
+    _reset_logging_state_for_tests,
 )
-import brats.utils.logging
 
 
 @pytest.fixture(autouse=True)
 def reset_logger_handlers():
-    # Reset loguru and internal handler tracking
-    logger.remove()
-    brats.utils.logging._console_handler_id = None
+    _reset_logging_state_for_tests()
     yield
-    logger.remove()
-    brats.utils.logging._console_handler_id = None
+    _reset_logging_state_for_tests()
 
 
 def test_disable_and_enable(monkeypatch):
