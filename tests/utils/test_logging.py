@@ -91,3 +91,19 @@ def test_remove_console_handler_idempotent():
     remove_console_handler()
     # Can call twice in a row
     remove_console_handler()
+
+
+def test_remove_console_handler_removes_handler(capfd):
+    # Step 1: Add handler and verify logging works
+    add_console_handler(level="INFO")
+    logger.info("This should appear")
+    out1, err1 = capfd.readouterr()
+    assert "This should appear" in err1
+
+    # Step 2: Remove handler
+    remove_console_handler()
+
+    # Step 3: Log again and verify nothing appears
+    logger.info("This should NOT appear")
+    out2, err2 = capfd.readouterr()
+    assert "This should NOT appear" not in err2
