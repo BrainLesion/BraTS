@@ -269,7 +269,7 @@ segmenter.infer_single(
 ```
 > Note: If you're interested in Pediatric Segmentation, the [BrainLes PeTu package](https://github.com/BrainLesion/PeTu?tab=readme-ov-file#petu) may also be of interest.
 
-**Class** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+**Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 <br>
 **Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2404.15009)
 <br>
