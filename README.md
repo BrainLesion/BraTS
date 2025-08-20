@@ -78,6 +78,8 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | [Link](https://doi.org/10.1007/978-3-031-76163-8_24) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_3) |
 
 </details>
+
+> Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2023 and prior BraTS Glioma Pre-Treatment Segmentation challenges.
 <br>
 
 #### Adult Glioma Segmentation (Post-Treatment)
@@ -115,6 +117,8 @@ segmenter.infer_single(
 | 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3) |
 
 </details>
+
+> Note: The MNI152 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2024 and subsequent BraTS Glioma Post-treatment Segmentation challenges.
 <br>
 
 #### BraTS-Africa Segmentation
@@ -155,8 +159,9 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3) |
 
 </details>
-<br>
 
+> > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Africa Segmentation challenges.
+<br>
 #### Meningioma Segmentation
 > Segmentation of Meningioma on brain MRI exams.
 <details>
@@ -164,8 +169,8 @@ segmenter.infer_single(
 <br>
 
 Unlike other segmentation challenges, the expected inputs for the Meningioma Segmentation Algorithms differ between years. 
-- _2023_: All 4 modalities are used (t1c, t1n, t2f, t2w)
-- _2024_: Only t1c is used  
+- _2023 (pre-operative MRIs)_: All 4 modalities are used (t1c, t1n, t2f, t2w)
+- _2024 (radiotherapy planning MRI)_: Only t1c is used  
 
 Therefore, the usage differs slightly, depending on which algorithm is used. To understand why, please refer to the [2024 challenge manuscript](https://arxiv.org/abs/2405.18383).
 
@@ -208,6 +213,9 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Daniel Capell'an-Mart'in et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
 
 </details>
+
+> Note: The MRI dataset in Meningioma-Radiotherpay challenge was provided in native space. However,
+the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Meningioma Pre-operative challenges.
 <br>
 
 #### Brain Metastases Segmentation
@@ -245,6 +253,8 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_3) |
 
 </details>
+
+> Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Metastasis segmentation challenges.
 <br>
 
 #### Pediatric Segmentation
@@ -277,17 +287,19 @@ segmenter.infer_single(
 <br>
 
 | Year | Rank | Author                     | Paper                                                      | CPU Support | Key Enum                                                                                                           |
-| ---- | ---- | -------------------------- | ---------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
-| 2024 | 1st  | _Tim Mulvany, et al._      | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
-| 2024 | 2nd  | _Mehdi Astaraki_           | N/A                                                        | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
+| ---- | ---- |----------------------------|------------------------------------------------------------| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| 2024 | 1st  | _Mehdi Astaraki, et al._   | N/A                                                        | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
+| 2024 | 2nd  | _Tim Mulvany, et al._      | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Sarim Hashmi, et al._     | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Zhifan Jiang et al._      | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Andriy Myronenko, et al._ | N/A                                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Yubo Zhou_                | [Link](https://doi.org/10.1007/978-3-031-76163-8_5)        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
 
-</details>
-<br>
 
+</details>
+
+> Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
+<br>
 #### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
 > Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
 <details>
@@ -319,6 +331,8 @@ segmenter.infer_single(
 | 2024 | 1st  | _Frank Miao, Shengjie Niu_ | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS24_1) |
 
 </details>
+
+> Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
 
 ### Inpainting Challenge 
@@ -357,7 +371,10 @@ inpainter.infer_single(
 | 2023 | 3rd  | _Jiayu Huo, et al._                | [Link](https://doi.org/10.1007/978-3-031-76163-8_1)  | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_3) |
 
 </details>
+
+> Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
+
 
 ### Missing MRI Challenge
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/missingmri_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
@@ -397,6 +414,8 @@ missing_mri.infer_single(
 
 </details>
 
+> Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
+<br>
 --- 
 
 > [!TIP]
