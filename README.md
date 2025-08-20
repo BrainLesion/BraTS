@@ -160,7 +160,7 @@ segmenter.infer_single(
 
 </details>
 
-> > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Africa Segmentation challenges.
+> Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Africa Segmentation challenges.
 <br>
 #### Meningioma Segmentation
 > Segmentation of Meningioma on brain MRI exams.
