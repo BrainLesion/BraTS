@@ -301,6 +301,7 @@ segmenter.infer_single(
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
 <br>
+
 #### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
 > Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
 <details>
