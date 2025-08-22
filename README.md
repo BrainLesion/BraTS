@@ -215,7 +215,7 @@ segmenter.infer_single(
 
 </details>
 
-> Note: The MRI dataset in Meningioma-Radiotherpay challenge was provided in native space. However,
+> Note: The MRI dataset in Meningioma-Radiotherapy challenge was provided in native space. However,
 the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Meningioma Pre-operative challenges.
 <br>
 
