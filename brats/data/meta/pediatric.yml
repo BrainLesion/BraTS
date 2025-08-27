@@ -17,11 +17,26 @@ algorithms:
 ##### 2024 #####
   BraTS24_1:
     meta:
-      authors: Tim Mulvany, et al.
+      authors: Mehdi Astaraki, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_pediatric_astaraki:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+      shm_size: "8gb"
+
+  BraTS24_2:
+    meta:
+      authors: Tim Mulvany, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_2
       year: *year_2024
     run_args:
       docker_image: brainles/brats24_pediatric_aipni:latest
@@ -32,21 +47,6 @@ algorithms:
     additional_files:
       record_id: "14446259"
 
-  BraTS24_2:
-    meta:
-      authors: Mehdi Astaraki
-      paper: N/A
-      challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2024
-      rank: *rank_2
-      year: *year_2024
-    run_args:
-      docker_image: brainles/brats24_pediatric_astaraki:latest 
-      input_name_schema: *input_name_schema
-      requires_root: false
-      parameters_file: true
-      shm_size: "8gb"
-      
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
