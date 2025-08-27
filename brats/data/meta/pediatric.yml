@@ -17,7 +17,7 @@ algorithms:
 ##### 2024 #####
   BraTS24_1:
     meta:
-      authors: Mehdi Astaraki
+      authors: Mehdi Astaraki, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
