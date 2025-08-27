@@ -417,6 +417,7 @@ missing_mri.infer_single(
 </details>
 
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
+<br>
 
 --- 
 
