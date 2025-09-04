@@ -5,6 +5,7 @@ constants:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
+    2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
   ranks:
@@ -13,6 +14,45 @@ constants:
     3rd: &rank_3 3rd
 
 algorithms:
+
+  ######## 2025 Algorithms ########
+
+  BraTS25_1A:
+    meta:
+      authors: N/A
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_ying_weng:latest
+      input_name_schema: *input_name_schema
+
+  BraTS25_1B:
+    meta:
+      authors: N/A
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_faking_it:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_3:
+    meta:
+      authors: N/A
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_iu_brats:latest
+      input_name_schema: *input_name_schema
 
   ######## 2024 Algorithms ########
 
