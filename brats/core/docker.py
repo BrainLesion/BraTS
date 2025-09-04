@@ -146,7 +146,7 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
         return get_dummy_path()
 
 
-def _get_volume_mappings(
+def _get_volume_mappings_mlcube(
     data_path: Path,
     additional_files_path: Path,
     output_path: Path,
@@ -176,6 +176,25 @@ def _get_volume_mappings(
     }
 
 
+def _get_volume_mappings_docker_only(
+    data_path: Path,
+    output_path: Path,
+) -> Dict[str, Dict[str, str]]:
+    """Get the volume mappings for the docker container.
+
+    Args:
+        data_path (Path): The path to the input data
+        output_path (Path): The path to save the output
+
+    Returns:
+        Dict: The volume mappings
+    """
+    return {
+        str(data_path.absolute()): {"bind": "/input", "mode": "rw"},
+        str(output_path.absolute()): {"bind": "/output", "mode": "rw"},
+    }
+
+
 def _get_parameters_arg(algorithm: AlgorithmData) -> Optional[str]:
     """Get the parameters argument for the docker container.
 
@@ -196,16 +215,16 @@ def _get_parameters_arg(algorithm: AlgorithmData) -> Optional[str]:
     return None
 
 
-def _build_args(
+def _build_command_args(
     algorithm: AlgorithmData,
-) -> Tuple[str, str]:
-    """Build the command and extra arguments for the docker container.
+) -> str:
+    """Build the command arguments for the docker container.
 
     Args:
         algorithm (AlgorithmData): The algorithm data
 
     Returns:
-        command_args, extra_args (Tuple): The command arguments and extra arguments
+        command_args: The command arguments
     """
     # Build command that will be run in the docker container
     command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
@@ -221,13 +240,27 @@ def _build_args(
     if params_arg:
         command_args += params_arg
 
-    extra_args = {}
+    return command_args
+
+
+def _get_container_user(
+    algorithm: AlgorithmData,
+) -> Optional[str]:
+    """Build extra arguments for the docker container.
+
+    Args:
+        algorithm (AlgorithmData): The algorithm data
+
+    Returns:
+        Optional[str]: The user to run the container as or None if root is required
+
+    """
+
     if not algorithm.run_args.requires_root:
         # run the container as the current user to ensure written files are always owned by the user
         # also overall better security-wise
-        extra_args["user"] = f"{os.getuid()}:{os.getgid()}"
-
-    return command_args, extra_args
+        return f"{os.getuid()}:{os.getgid()}"
+    return None
 
 
 def _observe_docker_output(container: docker.models.containers.Container) -> str:
@@ -373,37 +406,59 @@ def run_container(
     # ensure output folder exists
     output_path.mkdir(parents=True, exist_ok=True)
 
-    volume_mappings = _get_volume_mappings(
-        data_path=data_path,
-        additional_files_path=additional_files_path,
-        output_path=output_path,
-        parameters_path=PARAMETERS_DIR,
-    )
-    logger.debug(f"Volume mappings: {volume_mappings}")
-
-    command_args, extra_args = _build_args(algorithm=algorithm)
-    logger.debug(f"Command args: {command_args}, Extra args: {extra_args}")
-
     # device setup
     device_requests = _handle_device_requests(
-        algorithm=algorithm, cuda_devices=cuda_devices, force_cpu=force_cpu
+        algorithm=algorithm,
+        cuda_devices=cuda_devices,
+        force_cpu=force_cpu,
     )
     logger.debug(f"GPU Device requests: {device_requests}")
 
-    # Run the container
+    user = _get_container_user(algorithm=algorithm)
+
     logger.info(f"{'Starting inference'}")
     start_time = time.time()
-    container = client.containers.run(
-        image=algorithm.run_args.docker_image,
-        volumes=volume_mappings,
-        device_requests=device_requests,
-        command=f"infer {command_args}",
-        network_mode="none",
-        detach=True,
-        remove=True,
-        shm_size=algorithm.run_args.shm_size,
-        **extra_args,
-    )
+
+    if algorithm.meta.year <= 2024:
+        volume_mappings = _get_volume_mappings_mlcube(
+            data_path=data_path,
+            additional_files_path=additional_files_path,
+            output_path=output_path,
+            parameters_path=PARAMETERS_DIR,
+        )
+        logger.debug(f"Volume mappings: {volume_mappings}")
+
+        command_args = _build_command_args(algorithm=algorithm)
+        logger.debug(f"Command args: {command_args}, User: {user} (None means root)")
+
+        # Run the container
+        container = client.containers.run(
+            image=algorithm.run_args.docker_image,
+            volumes=volume_mappings,
+            device_requests=device_requests,
+            command=f"infer {command_args}",
+            network_mode="none",
+            detach=True,
+            remove=True,
+            shm_size=algorithm.run_args.shm_size,
+            user=user,
+        )
+    else:
+        volume_mappings = _get_volume_mappings_docker_only(
+            data_path=data_path,
+            output_path=output_path,
+        )
+        container = client.containers.run(
+            image=algorithm.run_args.docker_image,
+            volumes=volume_mappings,
+            device_requests=device_requests,
+            network_mode="none",
+            detach=True,
+            remove=True,
+            shm_size=algorithm.run_args.shm_size,
+            user=user,
+        )
+
     container_output = _observe_docker_output(container=container)
     _sanity_check_output(
         data_path=data_path,
