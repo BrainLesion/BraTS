@@ -23,7 +23,7 @@ class BraTSAlgorithm(ABC):
         algorithm: Algorithms,
         algorithms_file_path: Path,
         task: Task,
-        cuda_devices: Optional[str] = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         # inference device setup
@@ -166,7 +166,7 @@ class BraTSAlgorithm(ABC):
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
                 subject_id=subject_id,
-                output_file=output_file,
+                output_file=Path(output_file),
             )
             logger.info(f"Saved output to: {Path(output_file).absolute()}")
 

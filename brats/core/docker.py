@@ -286,6 +286,7 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
             logger.error(f">> {container_output}")
             raise BraTSContainerException(
                 "Container finished with an error. See logs above for details."
+                "If no logs are printed please specify a log file to capture the output or enable console logging (brats.utils.logging.enable())"
             )
 
     return container_output
@@ -415,6 +416,7 @@ def run_container(
     logger.debug(f"GPU Device requests: {device_requests}")
 
     user = _get_container_user(algorithm=algorithm)
+    logger.debug(f"Container user: {user if user else 'root (required by algorithm)'}")
 
     logger.info(f"{'Starting inference'}")
     start_time = time.time()
@@ -429,7 +431,7 @@ def run_container(
         logger.debug(f"Volume mappings: {volume_mappings}")
 
         command_args = _build_command_args(algorithm=algorithm)
-        logger.debug(f"Command args: {command_args}, User: {user} (None means root)")
+        logger.debug(f"Command args: {command_args}")
 
         # Run the container
         container = client.containers.run(
@@ -448,6 +450,7 @@ def run_container(
             data_path=data_path,
             output_path=output_path,
         )
+        logger.debug(f"Volume mappings: {volume_mappings}")
         container = client.containers.run(
             image=algorithm.run_args.docker_image,
             volumes=volume_mappings,
