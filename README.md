@@ -56,6 +56,9 @@ pip install brats
 
 ## Available Algorithms and Usage
 
+> [!IMPORTANT]
+> BraTS challenge algorithms require preprocessed brain images. See section [Data preprocessing requirements](#data-preprocessing-requirements)
+
 ### Segmentation Challenges
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
@@ -441,6 +444,11 @@ missing_mri.infer_single(
 > [!TIP]
 > For a full notebook example with more details, please check here:  
 > [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)
+
+
+## Data preprocessing requirements
+BraTS challenge algorithms require preprocessed brain scans. Typically this involves co-registration, brain extraction and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.
+We recommend to use the [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose. In the future we plan to offer challenge-specific convenience functions wrapping around this very preprocessing package.
 
 ## Citation
 
