@@ -40,7 +40,7 @@ pip install brats
 ## Available Algorithms and Usage
 
 > [!IMPORTANT]
-> BraTS challenge algorithms require preprocessed brain images. See section [Data preprocessing requirements](##Data-preprocessing-requirements)
+> BraTS challenge algorithms require preprocessed brain images. See section [Data preprocessing requirements](#data-preprocessing-requirements)
 
 ### Segmentation Challenges
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
