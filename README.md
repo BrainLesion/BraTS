@@ -1,4 +1,20 @@
 # BraTS Orchestrator
+```
+______         _____ _____                                  
+| ___ \       |_   _/  ___|                                 
+| |_/ /_ __ __ _| | \ `--.                                  
+| ___ \ '__/ _` | |  `--. \                                 
+| |_/ / | | (_| | | /\__/ /                                 
+\____/|_|  \__,_\_/ \____/                                  
+                                                            
+                                                            
+ _____          _               _             _             
+|  _  |        | |             | |           | |            
+| | | |_ __ ___| |__   ___  ___| |_ _ __ __ _| |_ ___  _ __ 
+| | | | '__/ __| '_ \ / _ \/ __| __| '__/ _` | __/ _ \| '__|
+\ \_/ / | | (__| | | |  __/\__ \ |_| | | (_| | || (_) | |   
+ \___/|_|  \___|_| |_|\___||___/\__|_|  \__,_|\__\___/|_|                                     
+```
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
