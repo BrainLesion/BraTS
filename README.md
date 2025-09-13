@@ -430,7 +430,7 @@ missing_mri.infer_single(
 
 
 ## Data preprocessing requirements
-BratS challenge algorithms require preprocessed brain scans. Typically this involves co-registration, brain extraction and registration to a challenge-specific brain atlas(template) - see the respective section for each challenge regarding which template to use.
+BraTS challenge algorithms require preprocessed brain scans. Typically this involves co-registration, brain extraction and registration to a challenge-specific brain atlas(template) - see the respective section for each challenge regarding which template to use.
 We recommend to use the [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose. In the future we plan to offer challenge-specific convenience functions wrapping around this very preprocessing package.
 
 ## Citation
