@@ -185,6 +185,15 @@ class MissingMRIAlgorithms(Algorithms):
 class GoATAlgorithms(Algorithms):
     """Constants for the available missing mri  algorithms."""
 
+    BraTS25_1A = "BraTS25_1A"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1B = "BraTS25_1B"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1C = "BraTS25_1C"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1D = "BraTS25_1D"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Generalizability Across Tumors (BraTS-GoAT) 1st place (The only submission)"""
 
