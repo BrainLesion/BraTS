@@ -26,6 +26,17 @@ class Algorithms(str, Enum):
     pass
 
 
+class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 Adult Glioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25 Adult Glioma Segmentation 2nd place """
+    BraTS25_3A = "BraTS25_3A"
+    """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
+    BraTS25_3B = "BraTS25_3B"
+    """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
+
+
 class AdultGliomaPostTreatmentAlgorithms(Algorithms):
     """Constants for the available adult glioma post treatment segmentation algorithms."""
 
@@ -48,8 +59,15 @@ class AdultGliomaPreTreatmentAlgorithms(Algorithms):
     """BraTS23 Adult Glioma Segmentation 3rd place (GPU only)"""
 
 
-class MeningiomaAlgorithms(Algorithms):
-    """Constants for the available meningioma segmentation algorithms."""
+class MeningiomaRTAlgorithms(Algorithms):
+    """Constants for the available meningioma segmentation - Radio Therapy algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 Meningioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25 Meningioma Segmentation 2nd place """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25 Meningioma Segmentation 3rd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Meningioma Segmentation 1st place """
@@ -57,6 +75,15 @@ class MeningiomaAlgorithms(Algorithms):
     """ BraTS24 Meningioma Segmentation 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24 Meningioma Segmentation 3rd place """
+
+
+class MeningiomaAlgorithms(Algorithms):
+    """Constants for the available meningioma segmentation algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """BraTS25 Meningioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """BraTS25 Meningioma Segmentation 2nd place """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Meningioma Segmentation 1st place (GPU only)"""
@@ -212,6 +239,7 @@ ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
     META_DIR / "adult_glioma_post_treatment.yml"
 )
 MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
+MENINGIOMA_RT_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma_rt.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"
 METASTASES_SEGMENTATION_ALGORITHMS = META_DIR / "metastases.yml"

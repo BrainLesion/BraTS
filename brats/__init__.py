@@ -9,6 +9,7 @@ from brats.core.segmentation_algorithms import (
     GoATSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
+    MeningiomaRTSegmenter,
     PediatricSegmenter,
 )
 
