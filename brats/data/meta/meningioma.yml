@@ -1,12 +1,13 @@
 constants:
   input_name_schema_by_year:
-    input_name_schema_2024: &input_name_schema_2024 "BraTS-MEN-RT-{id:04d}-1"
-    input_name_schema_2023: &input_name_schema_2023 "BraTS-MEN-{id:05d}-000"
+    input_name_schema: &input_name_schema "BraTS-MEN-{id:05d}-000"
   challenge: &challenge "Meningioma Segmentation"
   challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2305.07642" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.07642"
   dataset_manuscript: &dataset_manuscript "https://www.nature.com/articles/s41597-024-03350-9"
   years:
+    2025: &year_2025 2025
     2023: &year_2023 2023
   ranks:
     1st: &rank_1 1st
@@ -15,6 +16,33 @@ constants:
 
 
 algorithms:
+
+##### 2025 #####
+  BraTS25_1:
+    meta:
+      authors: Yu Haitao, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_men_qing:latest
+      input_name_schema: *input_name_schema
+  
+  BraTS25_2:
+    meta:
+      authors: Mohammad Mahdi Danesh Pajouh, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_men_mmdp:latest
+      input_name_schema: *input_name_schema
 
 ##### 2023 #####
   BraTS23_1:
@@ -28,7 +56,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_nvauto:latest 
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -44,7 +72,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"
@@ -61,7 +89,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: false 
       shm_size: "2gb"
