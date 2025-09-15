@@ -327,15 +327,13 @@ def _sanity_check_output(
             name = ""
             if internal_external_name_map is not None:
                 name_key = [
-                    k
-                    for k in internal_external_name_map.keys()
-                    if output.name.startswith(k)
+                    k for k in internal_external_name_map.keys() if k in output.name
                 ]
                 if name_key:
                     name = internal_external_name_map[name_key[0]]
 
             logger.warning(
-                f"""Output file for subject {name + " "}contains only zeros.
+                f"""Output file for subject {name} contains only zeros.
                 Potentially the selected algorithm might not work properly with your data unless this behavior is correct for your use case.
                 If this seems wrong please try to use one of the other provided algorithms and file an issue on GitHub if the problem persists."""
             )
