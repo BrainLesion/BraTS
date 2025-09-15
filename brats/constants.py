@@ -87,6 +87,15 @@ class PediatricAlgorithms(Algorithms):
 class AfricaAlgorithms(Algorithms):
     """Constants for the available africa segmentation algorithms."""
 
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 BraTS-SSA Segmentation 1st place """
+    BraTS25_2A = "BraTS25_2A"
+    """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie)"""
+    BraTS25_2B = "BraTS25_2B"
+    """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie) """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25 BraTS-SSA Segmentation 3rd place """
+
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 BraTS-Africa Segmentation 1st place """
     BraTS24_2 = "BraTS24_2"
