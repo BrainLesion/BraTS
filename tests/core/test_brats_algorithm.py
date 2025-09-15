@@ -113,6 +113,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
             "BraTS-GLI-00001-000": "00001-000",
             "BraTS-MEN-00000-000": "00000-000",
             "BraTS-PED-00030-000": "00030-000",
+            "BraTS-MEN-RT-0000-1": "0000-1",
         }
 
         for subject_id, expected in examples.items():
