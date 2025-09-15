@@ -139,7 +139,14 @@ class InpaintingAlgorithms(Algorithms):
 
 
 class MissingMRIAlgorithms(Algorithms):
-    """Constants for the available missing mri  algorithms."""
+    """Constants for the available missing mri algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25  MissingMRI 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25  MissingMRI 2nd place """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25  MissingMRI 3rd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  MissingMRI 1st place """
@@ -147,6 +154,7 @@ class MissingMRIAlgorithms(Algorithms):
     """ BraTS24  MissingMRI 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24  MissingMRI 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """ BraTS23  MissingMRI 1st place """
 

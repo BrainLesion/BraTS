@@ -2,9 +2,11 @@ constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "BraTS MRI Synthesis Challenge (BraSyn)"
   challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2305.09011" # same as 2023 & 2024
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.09011" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.09011"
   years:
+    2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
   ranks:
@@ -13,6 +15,46 @@ constants:
     3rd: &rank_3 3rd
 
 algorithms:
+
+  ######## 2025 Algorithms ########
+
+  BraTS25_1:
+    meta:
+      authors: André Ferreira, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_missing_mri_faking_it:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+      
+  BraTS25_2:
+    meta:
+      authors: Agustin Ujarky Cartaya Lathulerie, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_missing_mri_vicbratssy:latest
+      input_name_schema: *input_name_schema
+
+  BraTS25_3:
+    meta:
+      authors: Lina Chator, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_missing_mri_usd-2025-chato-sereda:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true
 
   ######## 2024 Algorithms ########
 
