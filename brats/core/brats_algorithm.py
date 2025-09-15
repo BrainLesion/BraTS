@@ -79,9 +79,16 @@ class BraTSAlgorithm(ABC):
             # Missing MRI has no fixed names since the missing modality differs and is included in the name
             algorithm_output = Path(tmp_output_folder).iterdir().__next__()
         else:
-            algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-                self.task
-            ].format(subject_id=subject_id)
+            possible_output = list(
+                Path(tmp_output_folder).glob(
+                    f"*{OUTPUT_NAME_SCHEMA[self.task].format(subject_id=subject_id)}*"
+                )
+            )
+            if len(possible_output) == 0:
+                raise FileNotFoundError(
+                    f"No output found for subject {subject_id} in {tmp_output_folder}"
+                )
+            algorithm_output = possible_output[0]
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
@@ -123,9 +130,18 @@ class BraTSAlgorithm(ABC):
                     / f"{external_name}{'-' + modality if modality else ''}.nii.gz"
                 )
             else:
-                algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-                    self.task
-                ].format(subject_id=internal_name)
+                possible_outputs = list(
+                    Path(tmp_output_folder).glob(
+                        f"*{OUTPUT_NAME_SCHEMA[self.task].format(subject_id=internal_name)}*"
+                    )
+                )
+                if len(possible_outputs) == 0:
+                    logger.error(
+                        f"No output found for subject {internal_name} in {tmp_output_folder}"
+                    )
+                    continue
+                algorithm_output = possible_outputs[0]
+
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
