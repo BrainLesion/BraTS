@@ -39,7 +39,7 @@ class RunArgs:
     """Whether the algorithm requires a parameters file"""
     requires_root: bool = False
     """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
-    shm_size: Optional[str] = "2gb"
+    shm_size: Optional[str] = "4gb"
     """The required shared memory size for the Docker container"""
     cpu_compatible: Optional[bool] = False
     """Whether the algorithm is compatible with CPU"""
