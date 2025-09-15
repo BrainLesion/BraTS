@@ -33,7 +33,7 @@ algorithms:
       docker_image: brainles/brats25_ssa_spark_neuro:latest
       input_name_schema: *input_name_schema
       requires_root: true
-      cpu_compatible: true
+      cpu_compatible: true # ~2 hours on CPU
 
   BraTS25_2A:
     meta:
