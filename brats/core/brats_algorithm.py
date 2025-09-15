@@ -63,8 +63,21 @@ class BraTSAlgorithm(ABC):
         """
         pass
 
+    def extract_identifier_from_subject_id(self, subject_id: str) -> str:
+        """
+        Extract the index from the subject ID
+        Args:
+            subject_id (str): Subject ID of the input
+        Returns:
+            str: Extracted identifier
+        """
+        return "-".join(subject_id.split("-")[-2:])
+
     def _process_single_output(
-        self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
+        self,
+        tmp_output_folder: Path | str,
+        subject_id: str,
+        output_file: Path,
     ) -> None:
         """
         Process the output of a single inference run and save it in the specified file.
@@ -79,11 +92,9 @@ class BraTSAlgorithm(ABC):
             # Missing MRI has no fixed names since the missing modality differs and is included in the name
             algorithm_output = Path(tmp_output_folder).iterdir().__next__()
         else:
-            possible_output = list(
-                Path(tmp_output_folder).glob(
-                    f"*{OUTPUT_NAME_SCHEMA[self.task].format(subject_id=subject_id)}*"
-                )
-            )
+            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
+            identifier = self.extract_identifier_from_subject_id(subject_id)
+            possible_output = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
             if len(possible_output) == 0:
                 raise FileNotFoundError(
                     f"No output found for subject {subject_id} in {tmp_output_folder}"
@@ -130,11 +141,8 @@ class BraTSAlgorithm(ABC):
                     / f"{external_name}{'-' + modality if modality else ''}.nii.gz"
                 )
             else:
-                possible_outputs = list(
-                    Path(tmp_output_folder).glob(
-                        f"*{OUTPUT_NAME_SCHEMA[self.task].format(subject_id=internal_name)}*"
-                    )
-                )
+                identifier = self.extract_identifier_from_subject_id(internal_name)
+                possible_outputs = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
                 if len(possible_outputs) == 0:
                     logger.error(
                         f"No output found for subject {internal_name} in {tmp_output_folder}"

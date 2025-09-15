@@ -107,3 +107,14 @@ class TestBraTSAlgorithm(unittest.TestCase):
         mock_run_container.assert_called_once()
         output_file = self.output_folder / "A.nii.gz"
         self.assertTrue(output_file.exists())
+
+    def test_extract_identifier_from_subject_id(self):
+        examples = {
+            "BraTS-GLI-00001-000": "00001-000",
+            "BraTS-MEN-00000-000": "00000-000",
+            "BraTS-PED-00030-000": "00030-000",
+        }
+
+        for subject_id, expected in examples.items():
+            identifier = self.segmenter.extract_identifier_from_subject_id(subject_id)
+            self.assertEqual(identifier, expected)
