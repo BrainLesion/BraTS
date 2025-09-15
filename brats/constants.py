@@ -105,6 +105,11 @@ class AfricaAlgorithms(Algorithms):
 class MetastasesAlgorithms(Algorithms):
     """Constants for the available Inpainting algorithms."""
 
+    BraTS25_1 = "BraTS25_1"
+    """BraTS25  Brain Metastases Segmentation 1st place"""
+    BraTS25_2 = "BraTS25_2"
+    """BraTS25  Brain Metastases Segmentation 2nd place"""
+
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
