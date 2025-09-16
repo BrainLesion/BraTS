@@ -106,6 +106,8 @@ algorithms:
       requires_root: false
       parameters_file: true
 
+  ######## 2023 Algorithms ########
+
   BraTS23_1:
     meta:
       authors: Ivo Baltruschat
