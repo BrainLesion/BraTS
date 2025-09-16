@@ -293,7 +293,7 @@ class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS23_1,
+        algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS25_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -316,7 +316,7 @@ class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS23_1,
+        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS25_1A,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -339,7 +339,7 @@ class AfricaSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: AfricaAlgorithms = AfricaAlgorithms.BraTS23_1,
+        algorithm: AfricaAlgorithms = AfricaAlgorithms.BraTS25_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -362,7 +362,7 @@ class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS23_1,
+        algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS25_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -385,7 +385,7 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS24_1,
+        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS25_1A,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -411,7 +411,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
 
     def __init__(
         self,
-        algorithm: MeningiomaRTAlgorithms = MeningiomaRTAlgorithms.BraTS24_1,
+        algorithm: MeningiomaRTAlgorithms = MeningiomaRTAlgorithms.BraTS25_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
