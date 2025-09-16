@@ -5,6 +5,7 @@ from brats.core.missing_mri_algorithms import MissingMRI
 from brats.core.segmentation_algorithms import (
     AdultGliomaPostTreatmentSegmenter,
     AdultGliomaPreTreatmentSegmenter,
+    AdultGliomaPreAndPostTreatmentSegmenter,
     AfricaSegmenter,
     GoATSegmenter,
     MeningiomaSegmenter,

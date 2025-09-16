@@ -1,0 +1,67 @@
+constants:
+  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
+  challenge: &challenge "Adult Glioma Segmentation (Pre & Post Treatment)"
+  challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2405.18368" # TODO: Verify
+  years:
+    2025: &year_2025 2025
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+
+algorithms:
+
+##### 2025 #####
+  BraTS25_1:
+    meta:
+      authors: Ishika Jain, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_aia-bots:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_2:
+    meta:
+      authors: Qu Lin, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_ecnu:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true # ~ 7 min/ subject
+      requires_root: true
+
+  BraTS25_3A:
+    meta:
+      authors: Liwei Jin, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_jinlw:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true #?
+
+  BraTS25_3B:
+    meta:
+      authors: Adrian Celaya, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_mist:latest
+      input_name_schema: *input_name_schema

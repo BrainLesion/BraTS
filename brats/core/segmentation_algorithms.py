@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import abstractmethod
 import shutil
-import sys
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Union
 
@@ -11,6 +10,7 @@ from loguru import logger
 from brats.constants import (
     ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     GOAT_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
@@ -18,6 +18,7 @@ from brats.constants import (
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaPostTreatmentAlgorithms,
+    AdultGliomaPreAndPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
@@ -156,6 +157,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
 
 
 class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
+    """Segmentation algorithm that works with 4 modalities (T1c, T1n, T2f, T2w)."""
 
     def infer_single(
         self,
@@ -252,6 +254,29 @@ class AdultGliomaPostTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms to perform tumor segmentation on adult glioma pre and post treatment MRI data.
+
+    Args:
+        algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: AdultGliomaPreAndPostTreatmentAlgorithms = AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -372,7 +397,7 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
         )
 
 
-### Radio Therapy specific segmenters (only T1C) ###
+### Radio Therapy specific segmenter (only T1C) ###
 
 
 class MeningiomaRTSegmenter(SegmentationAlgorithm):
