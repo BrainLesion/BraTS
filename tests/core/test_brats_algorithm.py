@@ -6,6 +6,7 @@ import shutil
 
 from brats import AdultGliomaPostTreatmentSegmenter
 from brats.constants import OUTPUT_NAME_SCHEMA
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class TestBraTSAlgorithm(unittest.TestCase):
@@ -119,3 +120,9 @@ class TestBraTSAlgorithm(unittest.TestCase):
         for subject_id, expected in examples.items():
             identifier = self.segmenter.extract_identifier_from_subject_id(subject_id)
             self.assertEqual(identifier, expected)
+
+    def test_invalid_algorithm(self):
+        invalid_alg = MagicMock()
+        invalid_alg.value = "invalid_algorithm"
+        with self.assertRaises(AlgorithmConfigException):
+            AdultGliomaPostTreatmentSegmenter(algorithm=invalid_alg)

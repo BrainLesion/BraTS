@@ -11,6 +11,7 @@ from brats.core.docker import run_container
 from brats.utils.algorithm_config import load_algorithms
 from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class BraTSAlgorithm(ABC):
@@ -34,6 +35,10 @@ class BraTSAlgorithm(ABC):
         self.algorithm_list = load_algorithms(file_path=algorithms_file_path)
         # save algorithm identifier for logging etc.
         self.algorithm_key = algorithm.value
+        if not self.algorithm_key in self.algorithm_list:
+            raise AlgorithmConfigException(
+                f"Algorithm {self.algorithm_key} not found in {algorithms_file_path}"
+            )
         # data for selected algorithm
         self.algorithm = self.algorithm_list[algorithm.value]
 
