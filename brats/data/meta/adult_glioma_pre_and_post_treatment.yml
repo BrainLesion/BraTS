@@ -52,7 +52,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats25_gli_jinlw:latest
       input_name_schema: *input_name_schema
-      cpu_compatible: true #?
+      cpu_compatible: true # ~150min / subject
 
   BraTS25_3B:
     meta:
