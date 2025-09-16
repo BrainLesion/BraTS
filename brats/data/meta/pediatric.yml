@@ -89,7 +89,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: Tim Mulvany, et al.
-      paper: N/A
+      paper: https://doi.org/10.48550/arXiv.2410.14020
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -106,7 +106,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
-      paper: N/A
+      paper: https://arxiv.org/abs/2411.15872
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3

@@ -81,8 +81,8 @@ algorithms:
 
   BraTS24_1:
     meta:
-      authors: Zhifan Jiang et al.
-      paper: N/A
+      authors: Abhijeet Parida, et al.
+      paper: https://arxiv.org/abs/2412.04111
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -97,8 +97,8 @@ algorithms:
   
   BraTS24_2:
     meta:
-      authors: Long Bai, et al.
-      paper: N/A
+      authors: Yanguang Zhao, et al.
+      paper: https://arxiv.org/abs/2410.18698
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -115,7 +115,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
-      paper: N/A
+      paper: https://arxiv.org/abs/2411.15872
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3

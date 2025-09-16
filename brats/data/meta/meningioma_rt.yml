@@ -95,7 +95,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Andre Ferreira, et al.
-      paper: N/A
+      paper: https://arxiv.org/html/2411.04632v1
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3

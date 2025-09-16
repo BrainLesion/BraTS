@@ -58,8 +58,8 @@ algorithms:
 
   BraTS24_1:
     meta:
-      authors: Ke Chen, Juexin Zhang, Ying Weng
-      paper: N/A
+      authors: Juexin Zhang et al.
+      paper: https://arxiv.org/abs/2507.18126
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -77,7 +77,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: André Ferreira, et al.
-      paper: N/A
+      paper: https://arxiv.org/html/2411.04630v2
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -91,7 +91,7 @@ algorithms:
 
   BraTS24_3:
     meta:
-      authors: Team SMINT
+      authors: Alicia Durrer, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024

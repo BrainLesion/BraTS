@@ -31,8 +31,8 @@ algorithms:
 
   BraTS24_2:
     meta:
-      authors: Team kimbab
-      paper: N/A
+      authors: Heejong Kim, et al.
+      paper: https://arxiv.org/abs/2409.08143
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2

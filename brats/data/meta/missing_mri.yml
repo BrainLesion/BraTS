@@ -60,8 +60,8 @@ algorithms:
 
   BraTS24_1:
     meta:
-      authors: Jihoon Cho, Seunghyuck Park, Jinah Park
-      paper: N/A
+      authors: Jihoon Cho et al.
+      paper: https://arxiv.org/abs/2410.10269
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -94,8 +94,8 @@ algorithms:
 
   BraTS24_3:
     meta:
-      authors: Minjoo Lim, Bogyeong Kang
-      paper: N/A
+      authors: Minjoo Lim et al.
+      paper: https://arxiv.org/abs/2502.19390
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
