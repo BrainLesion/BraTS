@@ -167,11 +167,11 @@ class InpaintingAlgorithms(Algorithms):
     """Constants for the available BraTS Inpainting algorithms."""
 
     BraTS25_1A = "BraTS25_1A"
-    """ BraTS25  Inpainting shared 1st place """
+    """ BraTS25  Inpainting shared 1st place (tie) """
     BraTS25_1B = "BraTS25_1B"
-    """ BraTS25  Inpainting shared 1st place """
-    BraTS25_3 = "BraTS25_3"
-    """ BraTS25  Inpainting 3rd place """
+    """ BraTS25  Inpainting shared 1st place (tie)"""
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25  Inpainting 2nd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  Inpainting 1st place """
@@ -237,6 +237,9 @@ ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS = (
 )
 ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
     META_DIR / "adult_glioma_post_treatment.yml"
+)
+ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
+    META_DIR / "adult_glioma_pre_and_post_treatment.yml"
 )
 MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
 MENINGIOMA_RT_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma_rt.yml"
