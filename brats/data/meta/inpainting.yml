@@ -42,7 +42,7 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: true
 
-  BraTS25_3:
+  BraTS25_2:
     meta:
       authors: N/A
       paper: N/A
