@@ -48,7 +48,7 @@ algorithms:
       paper: N/A
       challenge: *challenge
       challenge_manuscript: N/A
-      rank: *rank_3
+      rank: *rank_2
       year: *year_2025
     run_args:
       docker_image: brainles/brats25_inpainting_iu_brats:latest

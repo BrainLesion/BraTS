@@ -31,7 +31,9 @@ def test_integrity_rank(configs):
         algorithms = load_algorithms(file_path=config)
         for alg_key, alg_data in algorithms.items():
             name_rank = alg_key.split("_")[-1][0]
-            assert alg_data.meta.rank == ordinal_map[name_rank]
+            assert (
+                alg_data.meta.rank == ordinal_map[name_rank]
+            ), f"Rank mismatch for {alg_key} in {config}"
 
 
 def test_integrity_year(configs):
