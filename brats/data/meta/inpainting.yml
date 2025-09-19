@@ -19,7 +19,7 @@ algorithms:
 
   BraTS25_1A:
     meta:
-      authors: N/A
+      authors: Juexin Zhang, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: N/A
@@ -31,7 +31,7 @@ algorithms:
 
   BraTS25_1B:
     meta:
-      authors: N/A
+      authors: André Ferreira, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: N/A
@@ -44,7 +44,7 @@ algorithms:
 
   BraTS25_2:
     meta:
-      authors: N/A
+      authors: Juhyung Ha, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: N/A
