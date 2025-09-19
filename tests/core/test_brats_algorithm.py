@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import shutil
 
-from brats import AdultGliomaPostTreatmentSegmenter
+from brats import AdultGliomaPreAndPostTreatmentSegmenter
 from brats.constants import OUTPUT_NAME_SCHEMA
 from brats.utils.exceptions import AlgorithmConfigException
 
@@ -32,7 +32,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
             file.touch()
 
         # the core inference method is the same for all segmentation and inpainting algorithms, we use AdultGliomaSegmenter as an example during testing
-        self.segmenter = AdultGliomaPostTreatmentSegmenter()
+        self.segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
@@ -125,4 +125,4 @@ class TestBraTSAlgorithm(unittest.TestCase):
         invalid_alg = MagicMock()
         invalid_alg.value = "invalid_algorithm"
         with self.assertRaises(AlgorithmConfigException):
-            AdultGliomaPostTreatmentSegmenter(algorithm=invalid_alg)
+            AdultGliomaPreAndPostTreatmentSegmenter(algorithm=invalid_alg)

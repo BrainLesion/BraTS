@@ -8,7 +8,6 @@ from typing import Dict, List, Mapping, Optional, Union
 from loguru import logger
 
 from brats.constants import (
-    ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
@@ -17,7 +16,6 @@ from brats.constants import (
     MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
-    AdultGliomaPostTreatmentAlgorithms,
     AdultGliomaPreAndPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
@@ -231,29 +229,6 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
-            cuda_devices=cuda_devices,
-            force_cpu=force_cpu,
-        )
-
-
-class AdultGliomaPostTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
-    """Provides algorithms to perform tumor segmentation on adult glioma post treatment MRI data.
-
-    Args:
-        algorithm (AdultGliomaPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPostTreatmentAlgorithms.BraTS24_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-    """
-
-    def __init__(
-        self,
-        algorithm: AdultGliomaPostTreatmentAlgorithms = AdultGliomaPostTreatmentAlgorithms.BraTS24_1,
-        cuda_devices: str = "0",
-        force_cpu: bool = False,
-    ):
-        super().__init__(
-            algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
