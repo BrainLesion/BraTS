@@ -35,7 +35,7 @@ class BraTSAlgorithm(ABC):
         self.algorithm_list = load_algorithms(file_path=algorithms_file_path)
         # save algorithm identifier for logging etc.
         self.algorithm_key = algorithm.value
-        if not self.algorithm_key in self.algorithm_list:
+        if self.algorithm_key not in self.algorithm_list:
             raise AlgorithmConfigException(
                 f"Algorithm {self.algorithm_key} not found in {algorithms_file_path}"
             )

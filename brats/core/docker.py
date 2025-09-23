@@ -324,7 +324,7 @@ def _sanity_check_output(
     for i, output in enumerate(outputs, start=1):
         content = nib.load(output).get_fdata()
         if np.count_nonzero(content) == 0:
-            name = ""
+            name = "<unknown>"
             if internal_external_name_map is not None:
                 name_key = [
                     k for k in internal_external_name_map.keys() if k in output.name
