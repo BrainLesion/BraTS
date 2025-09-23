@@ -58,7 +58,7 @@ algorithms:
 
   BraTS24_1:
     meta:
-      authors: Juexin Zhang et al.
+      authors: Juexin Zhang, et al.
       paper: https://arxiv.org/abs/2507.18126
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
