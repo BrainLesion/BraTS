@@ -87,17 +87,23 @@ segmenter.infer_single(
 > Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
 <br>
 
-**Class:** `brats.AdultGliomaPreTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreTreatmentSegmenter))
+**Class:** `brats.AdultGliomaPreAndPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPreAndPostTreatmentSegmenter))
 <br>
 **Challenge Paper 2023:** [Link](https://arxiv.org/abs/2107.02314)
 <br>
 
-| Year | Rank | Author                  | Paper | CPU Support | Key Enum                                                                                                                                  |
-| ---- | ---- | ----------------------- | ----- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| 2025 | 1st  | _Ishika Jain, et al._   | N/A   | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1)   |
-| 2025 | 2nd  | _Qu Lin, et al._        | N/A   | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_2)   |
-| 2025 | 3rd  | _Liwei Jin, et al._     | N/A   | &#x2705;    | [BraTS25_3A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3A) |
-| 2025 | 3rd  | _Adrian Celaya, et al._ | N/A   | &#x274C;    | [BraTS25_3B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3B) |
+| Year | Rank | Author                   | Paper                                    | CPU Support | Key Enum                                                                                                                                  |
+| ---- | ---- | ------------------------ | ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 2025 | 1st  | _Ishika Jain, et al._    | N/A                                      | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1)   |
+| 2025 | 2nd  | _Qu Lin, et al._         | N/A                                      | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_2)   |
+| 2025 | 3rd  | _Liwei Jin, et al._      | N/A                                      | &#x2705;    | [BraTS25_3A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3A) |
+| 2025 | 3rd  | _Adrian Celaya, et al._  | N/A                                      | &#x274C;    | [BraTS25_3B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3B) |
+| 2024 | 1st  | _André Ferreira, et al._ | N/A                                      | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1)         |
+| 2024 | 2nd  | _Heejong Kim, et al._    | [Link](https://arxiv.org/abs/2409.08143) | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2)         |
+| 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3)         |
+
+
+> Note: The MNI152 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2024 and subsequent BraTS Glioma Post-treatment Segmentation challenges.
 
 </details>
 <br>
@@ -141,45 +147,6 @@ segmenter.infer_single(
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2023 and prior BraTS Glioma Pre-Treatment Segmentation challenges.
 <br>
 
-#### Adult Glioma Segmentation (Post-Treatment)
-> Adult Glioma Segmentation on post-Treatment brain MRI exams.
-<details>
-<summary> Usage example (code) and top 3 participants </summary>
-
-<br>
-
-
-```python
-from brats import AdultGliomaPostTreatmentSegmenter
-from brats.constants import AdultGliomaPostTreatmentAlgorithms
-
-segmenter = AdultGliomaPostTreatmentSegmenter(algorithm=AdultGliomaPostTreatmentAlgorithms.BraTS24_1, cuda_devices="0")
-# these parameters are optional, by default the latest winning algorithm will be used on cuda:0
-segmenter.infer_single(
-    t1c="path/to/t1c.nii.gz",
-    t1n="path/to/t1n.nii.gz",
-    t2f="path/to/t2f.nii.gz",
-    t2w="path/to/t2w.nii.gz",
-    output_file="segmentation.nii.gz",
-)
-```
-<br>
-
-**Class:** `brats.AdultGliomaPostTreatmentSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.AdultGliomaPostTreatmentSegmenter))
-<br>
-**Challenge Paper 2024:** [Link](https://doi.org/10.48550/arXiv.2405.18368)
-<br>
-
-| Year | Rank | Author                   | Paper                                    | CPU Support | Key Enum                                                                                                                          |
-| ---- | ---- | ------------------------ | ---------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 2024 | 1st  | _André Ferreira, et al._ | N/A                                      | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1) |
-| 2024 | 2nd  | _Heejong Kim, et al._    | [Link](https://arxiv.org/abs/2409.08143) | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2) |
-| 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3) |
-
-</details>
-
-> Note: The MNI152 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2024 and subsequent BraTS Glioma Post-treatment Segmentation challenges.
-<br>
 
 #### BraTS-Africa Segmentation
 > Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.  
