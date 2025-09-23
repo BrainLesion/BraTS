@@ -64,7 +64,7 @@ pip install brats
 
 
 
-#### Adult Glioma Segmentation (Prr & Post-Treatment) 
+#### Adult Glioma Segmentation (Pre & Post-Treatment) 
 > Adult Glioma Segmentation on pre and post-treatment brain MRI exams.  
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
