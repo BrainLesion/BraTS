@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-from abc import abstractmethod
 import shutil
+from abc import abstractmethod
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Union
 
 from loguru import logger
 
 from brats.constants import (
-    ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     GOAT_SEGMENTATION_ALGORITHMS,
-    MENINGIOMA_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
+    MENINGIOMA_SEGMENTATION_ALGORITHMS,
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaPreAndPostTreatmentAlgorithms,
