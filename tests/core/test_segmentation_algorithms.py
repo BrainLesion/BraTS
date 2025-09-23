@@ -208,7 +208,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
     ## Test MeningiomaSegmenter specialty
 
     @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2023_valid(self, mock_infer_single):
+    def test_meningioma_segmenter_infer_single_valid(self, mock_infer_single):
         segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
 
         segmenter.infer_single(
@@ -226,7 +226,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
     @patch(
         "brats.core.segmentation_algorithms.MeningiomaRTSegmenter._standardize_single_inputs"
     )
-    def test_meningioma_segmenter_infer_batch_2024(
+    def test_meningioma_rt_segmenter_infer_batch(
         self,
         mock_standardize_single_inputs,
         mock_run_container,
@@ -254,7 +254,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
     @patch(
         "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
     )
-    def test_meningioma_segmenter_infer_batch_2023(
+    def test_meningioma_segmenter_infer_batch(
         self,
         mock_standardize_single_inputs,
         mock_run_container,
