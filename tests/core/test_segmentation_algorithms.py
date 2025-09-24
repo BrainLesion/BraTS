@@ -7,20 +7,22 @@ from unittest.mock import patch
 from loguru import logger
 
 from brats import (
-    AdultGliomaPostTreatmentSegmenter,
+    AdultGliomaPreAndPostTreatmentSegmenter,
     AdultGliomaPreTreatmentSegmenter,
     AfricaSegmenter,
     GoATSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
+    MeningiomaRTSegmenter,
     PediatricSegmenter,
 )
 from brats.constants import (
-    AdultGliomaPostTreatmentAlgorithms,
+    AdultGliomaPreAndPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     GoATAlgorithms,
     MeningiomaAlgorithms,
+    MeningiomaRTAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
 )
@@ -46,7 +48,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         for img in [self.t1c, self.t1n, self.t2f, self.t2w]:
             img.touch(exist_ok=True)
 
-        self.segmenter = AdultGliomaPostTreatmentSegmenter()
+        self.segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
@@ -133,16 +135,16 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
     def test_adult_glioma_post_op_segmenter_initialization(self):
         # Test default initialization
-        segmenter = AdultGliomaPostTreatmentSegmenter()
-        self.assertIsInstance(segmenter, AdultGliomaPostTreatmentSegmenter)
+        segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
+        self.assertIsInstance(segmenter, AdultGliomaPreAndPostTreatmentSegmenter)
 
         # Test with custom arguments
-        custom_segmenter = AdultGliomaPostTreatmentSegmenter(
-            algorithm=AdultGliomaPostTreatmentAlgorithms.BraTS24_2,
+        custom_segmenter = AdultGliomaPreAndPostTreatmentSegmenter(
+            algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS24_2,
             cuda_devices="1",
             force_cpu=True,
         )
-        self.assertIsInstance(custom_segmenter, AdultGliomaPostTreatmentSegmenter)
+        self.assertIsInstance(custom_segmenter, AdultGliomaPreAndPostTreatmentSegmenter)
 
     def test_meningioma_segmenter_initialization(self):
         # Test default initialization
@@ -206,7 +208,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
     ## Test MeningiomaSegmenter specialty
 
     @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2023_valid(self, mock_infer_single):
+    def test_meningioma_segmenter_infer_single_valid(self, mock_infer_single):
         segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
 
         segmenter.infer_single(
@@ -219,80 +221,18 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
         mock_infer_single.assert_called_once()
 
-    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2023_invalid_missing_modalities(
-        self, mock_infer_single
-    ):
-        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS23_1)
-
-        with self.assertRaises(ValueError):
-            segmenter.infer_single(
-                t1c=self.t1c,
-                # t1n=self.t1n,  # Missing modality
-                t2f=self.t2f,
-                t2w=self.t2w,
-                output_file=self.tmp_data_folder / "output.nii.gz",
-            )
-
-        mock_infer_single.assert_not_called()
-
-    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2024_valid(self, mock_infer_single):
-        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
-
-        segmenter.infer_single(
-            t1c=self.t1c,
-            output_file=self.tmp_data_folder / "output.nii.gz",
-        )
-
-        mock_infer_single.assert_called_once()
-
-    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2024_invalid_missing_t1c(
-        self, mock_infer_single
-    ):
-        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
-
-        with self.assertRaises(ValueError):
-            segmenter.infer_single(
-                # t1c=self.t1c,
-                # t1n=self.t1n,
-                # t2f=self.t2f,
-                t2w=self.t2w,
-                output_file=self.tmp_data_folder / "output.nii.gz",
-            )
-
-        mock_infer_single.assert_not_called()
-
-    @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
-    def test_meningioma_segmenter_infer_single_2024_invalid_too_many_files(
-        self, mock_infer_single
-    ):
-        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
-
-        with self.assertRaises(ValueError):
-            segmenter.infer_single(
-                t1c=self.t1c,
-                # t1n=self.t1n,
-                # t2f=self.t2f,
-                t2w=self.t2w,
-                output_file=self.tmp_data_folder / "output.nii.gz",
-            )
-
-        mock_infer_single.assert_not_called()
-
     @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_batch_output")
     @patch("brats.core.brats_algorithm.run_container")
     @patch(
-        "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
+        "brats.core.segmentation_algorithms.MeningiomaRTSegmenter._standardize_single_inputs"
     )
-    def test_meningioma_segmenter_infer_batch_2024(
+    def test_meningioma_rt_segmenter_infer_batch(
         self,
         mock_standardize_single_inputs,
         mock_run_container,
         mock_process_batch_output,
     ):
-        segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS24_1)
+        segmenter = MeningiomaRTSegmenter(algorithm=MeningiomaRTAlgorithms.BraTS24_1)
 
         segmenter.infer_batch(
             data_folder=self.data_folder,
@@ -314,7 +254,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
     @patch(
         "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
     )
-    def test_meningioma_segmenter_infer_batch_2023(
+    def test_meningioma_segmenter_infer_batch(
         self,
         mock_standardize_single_inputs,
         mock_run_container,

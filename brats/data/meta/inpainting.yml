@@ -5,6 +5,7 @@ constants:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
+    2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
   ranks:
@@ -14,12 +15,51 @@ constants:
 
 algorithms:
 
+  ######## 2025 Algorithms ########
+
+  BraTS25_1A:
+    meta:
+      authors: Juexin Zhang, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_ying_weng:latest
+      input_name_schema: *input_name_schema
+
+  BraTS25_1B:
+    meta:
+      authors: André Ferreira, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_faking_it:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_2:
+    meta:
+      authors: Juhyung Ha, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_2
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_inpainting_iu_brats:latest
+      input_name_schema: *input_name_schema
+
   ######## 2024 Algorithms ########
 
   BraTS24_1:
     meta:
-      authors: Ke Chen, Juexin Zhang, Ying Weng
-      paper: N/A
+      authors: Juexin Zhang, et al.
+      paper: https://arxiv.org/abs/2507.18126
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -37,7 +77,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: André Ferreira, et al.
-      paper: N/A
+      paper: https://arxiv.org/html/2411.04630v2
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -51,7 +91,7 @@ algorithms:
 
   BraTS24_3:
     meta:
-      authors: Team SMINT
+      authors: Alicia Durrer, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024

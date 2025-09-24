@@ -3,9 +3,11 @@ constants:
   challenge: &challenge "BraTS-Africa Segmentation"
   dataset_manuscript: &dataset_manuscript "https://pubs.rsna.org/doi/full/10.1148/ryai.240528"
   challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2305.19369" # remained the same as 2023 & 2024
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.19369" # remained the same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.19369"
   years:
+    2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
   ranks:
@@ -16,11 +18,71 @@ constants:
 
 algorithms:
 
+##### 2025 #####
+
+  BraTS25_1:
+    meta:
+      authors: Claudia Takyi Ankomah, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_ssa_spark_neuro:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+      cpu_compatible: true # ~2 hours on CPU
+
+  BraTS25_2A:
+    meta:
+      authors: William Boonzaier, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_ssa_spark2025_team_sparkans:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+  
+  BraTS25_2B:
+    meta:
+      authors: Mohtady Barakat, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_ssa_spark2025_team_wakanda:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_3:
+    meta:
+      authors: Ahmed Jaheen, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: brainles/brats25_ssa_biomedia_mbzuai:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
 ##### 2024 #####
+
   BraTS24_1:
     meta:
-      authors: Zhifan Jiang et al.
-      paper: N/A
+      authors: Abhijeet Parida, et al.
+      paper: https://arxiv.org/abs/2412.04111
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -35,8 +97,8 @@ algorithms:
   
   BraTS24_2:
     meta:
-      authors: Long Bai, et al.
-      paper: N/A
+      authors: Yanguang Zhao, et al.
+      paper: https://arxiv.org/abs/2410.18698
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -53,7 +115,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
-      paper: N/A
+      paper: https://arxiv.org/abs/2411.15872
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
@@ -70,6 +132,7 @@ algorithms:
       param_name: ["checkpoint_dir"]
 
 ##### 2023 #####
+
   BraTS23_1:
     meta:
       authors: Andriy Myronenko, et al.

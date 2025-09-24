@@ -1,14 +1,13 @@
 constants:
   input_name_schema_by_year:
-    input_name_schema_2024: &input_name_schema_2024 "BraTS-MEN-RT-{id:04d}-1"
-    input_name_schema_2023: &input_name_schema_2023 "BraTS-MEN-{id:05d}-000"
+    input_name_schema: &input_name_schema "BraTS-MEN-{id:05d}-000"
   challenge: &challenge "Meningioma Segmentation"
   challenge_manuscript:
-    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18383"
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2305.07642" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.07642"
   dataset_manuscript: &dataset_manuscript "https://www.nature.com/articles/s41597-024-03350-9"
   years:
-    2024: &year_2024 2024
+    2025: &year_2025 2025
     2023: &year_2023 2023
   ranks:
     1st: &rank_1 1st
@@ -18,58 +17,32 @@ constants:
 
 algorithms:
 
-##### 2024 #####
-  BraTS24_1:
+##### 2025 #####
+  BraTS25_1:
     meta:
-      authors: Valeria Abramova
+      authors: Yu Haitao, et al.
       paper: N/A
       challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2024
+      challenge_manuscript: *challenge_manuscript_2025
       rank: *rank_1
-      year: *year_2024
+      year: *year_2025
       dataset_manuscript: *dataset_manuscript
     run_args:
-      docker_image: brainles/brats24_meningioma_nic_vicorob
-      input_name_schema: *input_name_schema_2024
-      requires_root: false
-      parameters_file: true
-      shm_size: "16gb"
-      subject_modality_separator: "_"
+      docker_image: brainles/brats25_men_qing:latest
+      input_name_schema: *input_name_schema
   
-  BraTS24_2:
+  BraTS25_2:
     meta:
-      authors: Mehdi Astaraki
+      authors: Mohammad Mahdi Danesh Pajouh, et al.
       paper: N/A
       challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2024
+      challenge_manuscript: *challenge_manuscript_2025
       rank: *rank_2
-      year: *year_2024
+      year: *year_2025
       dataset_manuscript: *dataset_manuscript
     run_args:
-      docker_image: brainles/brats24_meningioma_astaraki
-      input_name_schema: *input_name_schema_2024
-      requires_root: false
-      parameters_file: true
-      shm_size: "2gb"
-  
-  BraTS24_3:
-    meta:
-      authors: Andre Ferreira, et al.
-      paper: N/A
-      challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2024
-      rank: *rank_3
-      year: *year_2024
-      dataset_manuscript: *dataset_manuscript
-    run_args:
-      docker_image: brainles/brats24_meningioma_faking_it
-      input_name_schema: *input_name_schema_2024
-      requires_root: false
-      parameters_file: false
-      shm_size: "4gb"
-      cpu_compatible: true # ~8 hours
-      subject_modality_separator: "_"
-
+      docker_image: brainles/brats25_men_mmdp:latest
+      input_name_schema: *input_name_schema
 
 ##### 2023 #####
   BraTS23_1:
@@ -83,7 +56,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_nvauto:latest 
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -99,7 +72,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true 
       parameters_file: true
       shm_size: "4gb"
@@ -116,7 +89,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
-      input_name_schema: *input_name_schema_2023
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: false 
       shm_size: "2gb"

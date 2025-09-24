@@ -1,26 +1,28 @@
 from __future__ import annotations
 
 import shutil
-import sys
+from abc import abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Mapping, Optional, Union
 
 from loguru import logger
 
 from brats.constants import (
-    ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+    ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
     ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
     AFRICA_SEGMENTATION_ALGORITHMS,
     GOAT_SEGMENTATION_ALGORITHMS,
+    MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
     MENINGIOMA_SEGMENTATION_ALGORITHMS,
     METASTASES_SEGMENTATION_ALGORITHMS,
     PEDIATRIC_SEGMENTATION_ALGORITHMS,
-    AdultGliomaPostTreatmentAlgorithms,
+    AdultGliomaPreAndPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
     GoATAlgorithms,
     MeningiomaAlgorithms,
+    MeningiomaRTAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
     Task,
@@ -36,7 +38,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         self,
         algorithm: Algorithms,
         algorithms_file_path: Path,
-        cuda_devices: Optional[str] = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
@@ -51,7 +53,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         self,
         data_folder: Path,
         subject_id: str,
-        inputs: Dict[str, Path | str],
+        inputs: Mapping[str, Path | str],
         subject_modality_separator: str,
     ) -> None:
         """Standardize the input images for a single subject to match requirements of all algorithms and save them in @data_folder/@subject_id.
@@ -134,6 +136,27 @@ class SegmentationAlgorithm(BraTSAlgorithm):
             )
         return internal_external_name_map
 
+    @abstractmethod
+    def infer_single(
+        self,
+        *args,
+        **kwargs,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    def infer_batch(
+        self,
+        data_folder: Path | str,
+        output_folder: Path | str,
+        log_file: Path | str | None = None,
+    ) -> None:
+        pass
+
+
+class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
+    """Segmentation algorithm that works with 4 modalities (T1c, T1n, T2f, T2w)."""
+
     def infer_single(
         self,
         t1c: Path | str,
@@ -188,7 +211,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         )
 
 
-class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithm):
+class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms to perform tumor segmentation on adult glioma pre treatment MRI data.
 
     Args:
@@ -200,7 +223,7 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithm):
     def __init__(
         self,
         algorithm: AdultGliomaPreTreatmentAlgorithms = AdultGliomaPreTreatmentAlgorithms.BraTS23_1,
-        cuda_devices: Optional[str] = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
@@ -211,30 +234,30 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithm):
         )
 
 
-class AdultGliomaPostTreatmentSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on adult glioma post treatment MRI data.
+class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms to perform tumor segmentation on adult glioma pre and post treatment MRI data.
 
     Args:
-        algorithm (AdultGliomaPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPostTreatmentAlgorithms.BraTS24_1.
+        algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
 
     def __init__(
         self,
-        algorithm: AdultGliomaPostTreatmentAlgorithms = AdultGliomaPostTreatmentAlgorithms.BraTS24_1,
-        cuda_devices: Optional[str] = "0",
+        algorithm: AdultGliomaPreAndPostTreatmentAlgorithms = AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+            algorithms_file_path=ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
 
 
-class MeningiomaSegmenter(SegmentationAlgorithm):
+class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
 
     Args:
@@ -245,13 +268,131 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
 
     def __init__(
         self,
-        algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS23_1,
-        cuda_devices: Optional[str] = "0",
+        algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
             algorithm=algorithm,
             algorithms_file_path=MENINGIOMA_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms to perform tumor segmentation on pediatric MRI data
+
+    Args:
+        algorithm (PediatricAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS25_1A,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class AfricaSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms from the BraTSAfrica challenge
+
+    Args:
+        algorithm (AfricaAlgorithms, optional): Select an algorithm. Defaults to AfricaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: AfricaAlgorithms = AfricaAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=AFRICA_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms from the Brain Metastases Segmentation challenge
+
+    Args:
+        algorithm (MetastasesAlgorithms, optional): Select an algorithm. Defaults to MetastasesAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
+
+    Args:
+        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS25_1A,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=GOAT_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+### Radio Therapy specific segmenter (only T1C) ###
+
+
+class MeningiomaRTSegmenter(SegmentationAlgorithm):
+    """Provides algorithms to perform tumor segmentation on adult meningioma Radio Therapy MRI data.
+
+    Args:
+        algorithm (MeningiomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: MeningiomaRTAlgorithms = MeningiomaRTAlgorithms.BraTS25_1,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -266,76 +407,36 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
         """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
-            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
+            subjects (List[Path]): List of subject folders, each with a t1c image in standard format
             data_folder (Path): Parent folder where the subject folders will be created
             input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
 
         Returns:
             Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
         """
-        only_t1c = self.algorithm.meta.year == 2024
         return super()._standardize_batch_inputs(
             data_folder=data_folder,
             subjects=subjects,
             input_name_schema=input_name_schema,
-            only_t1c=only_t1c,
+            only_t1c=True,
         )
 
     def infer_single(
         self,
+        t1c: Union[Path, str],
         output_file: Path | str,
-        t1c: Union[Path, str] = None,
-        t1n: Optional[Union[Path, str]] = None,
-        t2f: Optional[Union[Path, str]] = None,
-        t2w: Optional[Union[Path, str]] = None,
         log_file: Optional[Path | str] = None,
     ) -> None:
         """
-        Perform segmentation on a single subject with the provided images and save the result to the output file.
-
-        Note:
-            Unlike other segmentation challenges, not all modalities are required for all meningioma segmentation algorithms.
-            Differences by year:
-
-            - **2024**: Only `t1c` is required and used by the algorithms.
-            - **2023**: All (`t1c`, `t1n`, `t2f`, `t2w`) are required.
-
+        Perform segmentation on a single subject with the provided T1C image and save the result to the output file.
 
         Args:
+            t1c (Path | str): Path to the T1c image
             output_file (Path | str): Output file to save the segmentation.
-            t1c (Union[Path, str]): Path to the T1c image. Defaults to None.
-            t1n (Optional[Union[Path, str]], optional): Path to the T1n image. Defaults to None.
-            t2f (Optional[Union[Path, str]], optional): Path to the T2f image. Defaults to None.
-            t2w (Optional[Union[Path, str]], optional): Path to the T2w image. Defaults to None.
             log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None
         """
-        inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
-        # filter out None values
-        inputs = {k: v for k, v in inputs.items() if v is not None}
-
-        year = self.algorithm.meta.year
-        if year == 2024:
-            if "t1c" not in inputs or len(inputs) > 1:
-                raise ValueError(
-                    (
-                        "Only the T1C modality is required and used by the 2024 meningioma segmentation challenge and its algorithms. "
-                        "Please provide only the T1C modality - Aborting to avoid confusion."
-                    )
-                )
-        elif year == 2023:
-            if len(inputs) != 4:
-                raise ValueError(
-                    (
-                        "All modalities (t1c, t1n, t2f, t2w) are required for the 2023 meningioma segmentation challenge and its algorithms. "
-                        "Please provide all modalities"
-                    )
-                )
-        else:
-            raise NotImplementedError(
-                f"Invalid algorithm {year=} .Only 2023 and 2024 are supported as of now"
-            )
         self._infer_single(
-            inputs=inputs,
+            inputs={"t1c": t1c},
             output_file=output_file,
             log_file=log_file,
         )
@@ -347,25 +448,16 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
         log_file: Path | str | None = None,
     ) -> None:
         """
-        Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
+        Perform segmentation on a batch of subjects with the provided T1C images and save the results to the output folder. \n
 
-        Note:
-            Unlike other segmentation challenges, not all modalities are required for all meningioma segmentation algorithms.
-            Differences by year:
 
-            - **2024**: Only `t1c` is required and used by the algorithms.
-            - **2023**: All (`t1c`, `t1n`, `t2f`, `t2w`) are required.
-
-        Requires the following structure (example for 2023, only t1c for 2024!):\n
+        Requires the following structure:\n
         data_folder\n
         ┣ A\n
-        ┃ ┣ A-t1c.nii.gz\n
-        ┃ ┣ A-t1n.nii.gz\n
-        ┃ ┣ A-t2f.nii.gz\n
-        ┃ ┗ A-t2w.nii.gz\n
+        ┃ ┗ A-t1c.nii.gz\n
         ┣ B\n
-        ┃ ┣ B-t1c.nii.gz\n
-        ┃ ┣ ...\n
+        ┃ ┗ B-t1c.nii.gz\n
+        ┃ ...\n
 
 
         Args:
@@ -377,96 +469,4 @@ class MeningiomaSegmenter(SegmentationAlgorithm):
             data_folder=data_folder,
             output_folder=output_folder,
             log_file=log_file,
-        )
-
-
-class PediatricSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on pediatric MRI data
-
-    Args:
-        algorithm (PediatricAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-    """
-
-    def __init__(
-        self,
-        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS23_1,
-        cuda_devices: Optional[str] = "0",
-        force_cpu: bool = False,
-    ):
-        super().__init__(
-            algorithm=algorithm,
-            algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
-            cuda_devices=cuda_devices,
-            force_cpu=force_cpu,
-        )
-
-
-class AfricaSegmenter(SegmentationAlgorithm):
-    """Provides algorithms from the BraTSAfrica challenge
-
-    Args:
-        algorithm (AfricaAlgorithms, optional): Select an algorithm. Defaults to AfricaAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-    """
-
-    def __init__(
-        self,
-        algorithm: AfricaAlgorithms = AfricaAlgorithms.BraTS23_1,
-        cuda_devices: Optional[str] = "0",
-        force_cpu: bool = False,
-    ):
-        super().__init__(
-            algorithm=algorithm,
-            algorithms_file_path=AFRICA_SEGMENTATION_ALGORITHMS,
-            cuda_devices=cuda_devices,
-            force_cpu=force_cpu,
-        )
-
-
-class MetastasesSegmenter(SegmentationAlgorithm):
-    """Provides algorithms from the Brain Metastases Segmentation challenge
-
-    Args:
-        algorithm (MetastasesAlgorithms, optional): Select an algorithm. Defaults to MetastasesAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-    """
-
-    def __init__(
-        self,
-        algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS23_1,
-        cuda_devices: Optional[str] = "0",
-        force_cpu: bool = False,
-    ):
-        super().__init__(
-            algorithm=algorithm,
-            algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
-            cuda_devices=cuda_devices,
-            force_cpu=force_cpu,
-        )
-
-
-class GoATSegmenter(SegmentationAlgorithm):
-    """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
-
-    Args:
-        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
-    """
-
-    def __init__(
-        self,
-        algorithm: GoATAlgorithms = GoATAlgorithms.BraTS24_1,
-        cuda_devices: Optional[str] = "0",
-        force_cpu: bool = False,
-    ):
-        super().__init__(
-            algorithm=algorithm,
-            algorithms_file_path=GOAT_SEGMENTATION_ALGORITHMS,
-            cuda_devices=cuda_devices,
-            force_cpu=force_cpu,
         )

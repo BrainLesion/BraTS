@@ -1,0 +1,113 @@
+constants:
+  input_name_schema_by_year:
+    input_name_schema: &input_name_schema "BraTS-MEN-RT-{id:04d}-1"
+  challenge: &challenge "Meningioma Segmentation"
+  challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2405.18383" # same as 2024
+    2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18383"
+  dataset_manuscript: &dataset_manuscript "https://www.nature.com/articles/s41597-024-03350-9"
+  years:
+    2025: &year_2025 2025
+    2024: &year_2024 2024
+  ranks:
+    1st: &rank_1 1st
+    2nd: &rank_2 2nd
+    3rd: &rank_3 3rd
+
+
+algorithms:
+
+##### 2024 #####
+  BraTS25_1:
+    meta:
+      authors: Valeria Abramova, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_menrt_nic-vicorob:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+      subject_modality_separator: "_"
+
+  BraTS25_2:
+    meta:
+      authors: Sanskriti Srivastava, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_menrt_medimg_sk:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true # ~ 1 min/subject
+      subject_modality_separator: "_"
+  
+  BraTS25_3:
+    meta:
+      authors: Nima Sadeghzadeh, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_menrt_neurotech:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true # ~ 7 min/subject
+      requires_root: true
+
+##### 2024 #####
+  BraTS24_1:
+    meta:
+      authors: Valeria Abramova
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_nic_vicorob
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+      shm_size: "16gb"
+      subject_modality_separator: "_"
+  
+  BraTS24_2:
+    meta:
+      authors: Mehdi Astaraki
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_astaraki
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+      shm_size: "2gb"
+  
+  BraTS24_3:
+    meta:
+      authors: Andre Ferreira, et al.
+      paper: https://arxiv.org/html/2411.04632v1
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_3
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_meningioma_faking_it
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: false
+      shm_size: "4gb"
+      cpu_compatible: true # ~8 hours
+      subject_modality_separator: "_"
+
+
+

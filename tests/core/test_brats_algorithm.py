@@ -4,8 +4,9 @@ from pathlib import Path
 import tempfile
 import shutil
 
-from brats import AdultGliomaPostTreatmentSegmenter
+from brats import AdultGliomaPreAndPostTreatmentSegmenter
 from brats.constants import OUTPUT_NAME_SCHEMA
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class TestBraTSAlgorithm(unittest.TestCase):
@@ -31,7 +32,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
             file.touch()
 
         # the core inference method is the same for all segmentation and inpainting algorithms, we use AdultGliomaSegmenter as an example during testing
-        self.segmenter = AdultGliomaPostTreatmentSegmenter()
+        self.segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 
     def tearDown(self):
         # Remove the temporary directory after the test
@@ -107,3 +108,21 @@ class TestBraTSAlgorithm(unittest.TestCase):
         mock_run_container.assert_called_once()
         output_file = self.output_folder / "A.nii.gz"
         self.assertTrue(output_file.exists())
+
+    def test_extract_identifier_from_subject_id(self):
+        examples = {
+            "BraTS-GLI-00001-000": "00001-000",
+            "BraTS-MEN-00000-000": "00000-000",
+            "BraTS-PED-00030-000": "00030-000",
+            "BraTS-MEN-RT-0000-1": "0000-1",
+        }
+
+        for subject_id, expected in examples.items():
+            identifier = self.segmenter.extract_identifier_from_subject_id(subject_id)
+            self.assertEqual(identifier, expected)
+
+    def test_invalid_algorithm(self):
+        invalid_alg = MagicMock()
+        invalid_alg.value = "invalid_algorithm"
+        with self.assertRaises(AlgorithmConfigException):
+            AdultGliomaPreAndPostTreatmentSegmenter(algorithm=invalid_alg)

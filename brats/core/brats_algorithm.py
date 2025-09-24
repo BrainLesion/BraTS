@@ -11,6 +11,7 @@ from brats.core.docker import run_container
 from brats.utils.algorithm_config import load_algorithms
 from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
 from brats.utils.data_handling import InferenceSetup
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class BraTSAlgorithm(ABC):
@@ -23,7 +24,7 @@ class BraTSAlgorithm(ABC):
         algorithm: Algorithms,
         algorithms_file_path: Path,
         task: Task,
-        cuda_devices: Optional[str] = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         # inference device setup
@@ -34,6 +35,10 @@ class BraTSAlgorithm(ABC):
         self.algorithm_list = load_algorithms(file_path=algorithms_file_path)
         # save algorithm identifier for logging etc.
         self.algorithm_key = algorithm.value
+        if self.algorithm_key not in self.algorithm_list:
+            raise AlgorithmConfigException(
+                f"Algorithm {self.algorithm_key} not found in {algorithms_file_path}"
+            )
         # data for selected algorithm
         self.algorithm = self.algorithm_list[algorithm.value]
 
@@ -63,8 +68,21 @@ class BraTSAlgorithm(ABC):
         """
         pass
 
+    def extract_identifier_from_subject_id(self, subject_id: str) -> str:
+        """
+        Extract the index from the subject ID
+        Args:
+            subject_id (str): Subject ID of the input
+        Returns:
+            str: Extracted identifier
+        """
+        return "-".join(subject_id.split("-")[-2:])
+
     def _process_single_output(
-        self, tmp_output_folder: Path | str, subject_id: str, output_file: Path
+        self,
+        tmp_output_folder: Path | str,
+        subject_id: str,
+        output_file: Path,
     ) -> None:
         """
         Process the output of a single inference run and save it in the specified file.
@@ -79,9 +97,14 @@ class BraTSAlgorithm(ABC):
             # Missing MRI has no fixed names since the missing modality differs and is included in the name
             algorithm_output = Path(tmp_output_folder).iterdir().__next__()
         else:
-            algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-                self.task
-            ].format(subject_id=subject_id)
+            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
+            identifier = self.extract_identifier_from_subject_id(subject_id)
+            possible_output = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
+            if len(possible_output) == 0:
+                raise FileNotFoundError(
+                    f"No output found for subject {subject_id} in {tmp_output_folder}"
+                )
+            algorithm_output = possible_output[0]
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
@@ -123,9 +146,15 @@ class BraTSAlgorithm(ABC):
                     / f"{external_name}{'-' + modality if modality else ''}.nii.gz"
                 )
             else:
-                algorithm_output = Path(tmp_output_folder) / OUTPUT_NAME_SCHEMA[
-                    self.task
-                ].format(subject_id=internal_name)
+                identifier = self.extract_identifier_from_subject_id(internal_name)
+                possible_outputs = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
+                if len(possible_outputs) == 0:
+                    logger.error(
+                        f"No output found for subject {internal_name} in {tmp_output_folder}"
+                    )
+                    continue
+                algorithm_output = possible_outputs[0]
+
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
@@ -166,7 +195,7 @@ class BraTSAlgorithm(ABC):
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
                 subject_id=subject_id,
-                output_file=output_file,
+                output_file=Path(output_file),
             )
             logger.info(f"Saved output to: {Path(output_file).absolute()}")
 
