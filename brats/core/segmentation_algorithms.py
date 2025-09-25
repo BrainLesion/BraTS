@@ -182,7 +182,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
             output_file=output_file,
             log_file=log_file,
-            backend=backend     
+            backend=backend,
         )
 
     def infer_batch(
@@ -212,7 +212,10 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
         return self._infer_batch(
-            data_folder=data_folder, output_folder=output_folder, log_file=log_file, backend=backend
+            data_folder=data_folder,
+            output_folder=output_folder,
+            log_file=log_file,
+            backend=backend,
         )
 
 

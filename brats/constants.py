@@ -3,6 +3,7 @@ from pathlib import Path
 
 # TASK ENUM
 
+
 class Backends(str, Enum):
     """Available backends for running the algorithms."""
 
@@ -11,6 +12,7 @@ class Backends(str, Enum):
 
     SINGULARITY = "singularity"
     """Run the algorithms using Singularity containers."""
+
 
 class Task(str, Enum):
     """Available tasks."""

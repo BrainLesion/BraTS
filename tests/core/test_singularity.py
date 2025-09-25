@@ -70,11 +70,12 @@ class TestSingularityHelpers(unittest.TestCase):
         MockExists.return_value = False
 
         fake_image_path = "/tmp/fake_image.sif"
-        fake_puller = iter([
-            "singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest"
-        ])
+        fake_puller = iter(
+            [
+                "singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest"
+            ]
+        )
         MockPull.return_value = (fake_image_path, fake_puller)
-
 
         result = _ensure_image("test-image:latest")
 
@@ -84,8 +85,9 @@ class TestSingularityHelpers(unittest.TestCase):
         )
         assert result == fake_image_path
         MockLogger.info.assert_any_call(f"Pulling Singularity image {fake_image_path}")
-        MockLogger.info.assert_any_call("singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest")
-
+        MockLogger.info.assert_any_call(
+            "singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest"
+        )
 
     @patch("brats.core.singularity.Client.pull")
     @patch("brats.core.singularity.Path.exists")
@@ -98,6 +100,7 @@ class TestSingularityHelpers(unittest.TestCase):
         MockPull.return_value = (fake_image_path, fake_puller)
 
         from brats.core.singularity import _ensure_image
+
         result = _ensure_image("already-there:1.0")
 
         # Assert
@@ -105,7 +108,6 @@ class TestSingularityHelpers(unittest.TestCase):
         MockPull.assert_called_once()
         # puller should not be consumed since image exists
 
-        
     @patch("brats.core.singularity._log_algorithm_info")
     @patch("brats.core.singularity._ensure_image")
     @patch("brats.core.singularity._get_additional_files_path")

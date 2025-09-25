@@ -1,7 +1,14 @@
 from brats.utils.algorithm_config import AlgorithmData
 from pathlib import Path
 from typing import Dict, List, Optional
-from brats.core.docker import _log_algorithm_info, _sanity_check_output, _get_additional_files_path, _get_volume_mappings, _build_args, _handle_device_requests
+from brats.core.docker import (
+    _log_algorithm_info,
+    _sanity_check_output,
+    _get_additional_files_path,
+    _get_volume_mappings,
+    _build_args,
+    _handle_device_requests,
+)
 from brats.constants import PARAMETERS_DIR
 from loguru import logger
 import time
@@ -17,7 +24,7 @@ def _ensure_image(image: str) -> str:
     Returns:
         str: The path to the Singularity image
     """
-    image, puller = Client.pull('docker://' + image, stream=True, pull_folder='/tmp')
+    image, puller = Client.pull("docker://" + image, stream=True, pull_folder="/tmp")
     if not Path(image).exists():
         logger.info(f"Pulling Singularity image {image}")
         for line in puller:
@@ -26,18 +33,20 @@ def _ensure_image(image: str) -> str:
     return image
 
 
-def _convert_volume_mappings_to_singularity_format(volume_mappings: Dict[Path, Path]) -> List[str]:
+def _convert_volume_mappings_to_singularity_format(
+    volume_mappings: Dict[Path, Path]
+) -> List[str]:
     """Convert volume mappings from Docker format to Singularity format.
 
     Args:
         volume_mappings (Dict[Path, Path]): The volume mappings in Docker format
-        
+
     Returns:
         List[str]: The volume mappings in Singularity format
     """
     singularity_bindings = []
     for host_path, val in volume_mappings.items():
-        container_path = val['bind']
+        container_path = val["bind"]
         singularity_bindings.append(f"{str(host_path)}:{container_path}")
     return singularity_bindings
 
@@ -92,7 +101,9 @@ def run_container(
     logger.info(f"{'Starting inference'}")
     start_time = time.time()
 
-    singularity_bindings = _convert_volume_mappings_to_singularity_format(volume_mappings)
+    singularity_bindings = _convert_volume_mappings_to_singularity_format(
+        volume_mappings
+    )
 
     options = ["--nv"] if not force_cpu else []
 
@@ -103,9 +114,9 @@ def run_container(
     executor = Client.run(
         image,
         options=options,
-        args=['infer', *command_args.split(" "), *extra_args],
+        args=["infer", *command_args.split(" "), *extra_args],
         stream=True,
-        bind=singularity_bindings
+        bind=singularity_bindings,
     )
     for line in executor:
         logger.info(line)

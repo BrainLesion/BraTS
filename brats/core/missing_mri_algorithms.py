@@ -155,7 +155,7 @@ class MissingMRI(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: str = "docker"
+        backend: str = "docker",
     ) -> None:
         """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
@@ -177,5 +177,8 @@ class MissingMRI(BraTSAlgorithm):
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
         return self._infer_batch(
-            data_folder=data_folder, output_folder=output_folder, log_file=log_file, backend=backend
+            data_folder=data_folder,
+            output_folder=output_folder,
+            log_file=log_file,
+            backend=backend,
         )

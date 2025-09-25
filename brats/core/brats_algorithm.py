@@ -189,7 +189,7 @@ class BraTSAlgorithm(ABC):
             )
             backend_dispatch = {
                 Backends.DOCKER: run_docker_container,
-                Backends.SINGULARITY: run_singularity_container
+                Backends.SINGULARITY: run_singularity_container,
             }
 
             # Get the function for the selected backend
@@ -199,12 +199,12 @@ class BraTSAlgorithm(ABC):
                 raise ValueError(f"Unsupported backend: {backend}")
 
             runner(
-                    algorithm=self.algorithm,
-                    data_path=tmp_data_folder,
-                    output_path=tmp_output_folder,
-                    cuda_devices=self.cuda_devices,
-                    force_cpu=self.force_cpu,
-                )
+                algorithm=self.algorithm,
+                data_path=tmp_data_folder,
+                output_path=tmp_output_folder,
+                cuda_devices=self.cuda_devices,
+                force_cpu=self.force_cpu,
+            )
 
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
