@@ -145,6 +145,6 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_ensure_image.assert_called_once()
         mock_get_additional_files_path.assert_called_once()
         mock_get_volume_mappings_mlcube.assert_called_once()
-        mock_build_args.assert_called_once()
+        mock_build_command_args.assert_called_once()
         mock_handle_device_requests.assert_called_once()
         mock_convert_volume_mappings_to_singularity_format.assert_called_once()
