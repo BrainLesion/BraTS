@@ -78,9 +78,6 @@ def run_container(
     # ensure output folder exists
     output_path.mkdir(parents=True, exist_ok=True)
 
-    # ensure output folder exists
-    output_path.mkdir(parents=True, exist_ok=True)
-
     volume_mappings = _get_volume_mappings(
         data_path=data_path,
         additional_files_path=additional_files_path,
