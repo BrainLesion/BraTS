@@ -222,7 +222,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         mock_infer_single.assert_called_once()
 
     @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_batch_output")
-    @patch("brats.core.brats_algorithm.run_container")
+    @patch("brats.core.brats_algorithm.run_docker_container")
     @patch(
         "brats.core.segmentation_algorithms.MeningiomaRTSegmenter._standardize_single_inputs"
     )
@@ -250,7 +250,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         self.assertEqual(mock_process_batch_output.call_count, 1)
 
     @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_batch_output")
-    @patch("brats.core.brats_algorithm.run_container")
+    @patch("brats.core.brats_algorithm.run_docker_container")
     @patch(
         "brats.core.segmentation_algorithms.MeningiomaSegmenter._standardize_single_inputs"
     )
