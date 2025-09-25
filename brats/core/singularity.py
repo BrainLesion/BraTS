@@ -102,7 +102,7 @@ def run_container(
         volume_mappings
     )
 
-    options = ["--nv"] if not force_cpu else []
+    options = []
 
     if len(device_requests) > 0 and not force_cpu:
         logger.info(f"Using CUDA devices: {cuda_devices}")
