@@ -6,7 +6,7 @@ from brats.core.docker import (
     _sanity_check_output,
     _get_additional_files_path,
     _get_volume_mappings_mlcube,
-    _build_args,
+    _build_command_args,
     _handle_device_requests,
 )
 from brats.constants import PARAMETERS_DIR
@@ -86,7 +86,7 @@ def run_container(
     )
     logger.debug(f"Volume mappings: {volume_mappings}")
 
-    command_args, extra_args = _build_args(algorithm=algorithm)
+    command_args, extra_args = _build_command_args(algorithm=algorithm)
     logger.debug(f"Command args: {command_args}, Extra args: {extra_args}")
     # device setup
     device_requests = _handle_device_requests(

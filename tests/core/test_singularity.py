@@ -110,7 +110,7 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity._ensure_image")
     @patch("brats.core.singularity._get_additional_files_path")
     @patch("brats.core.singularity._get_volume_mappings_mlcube")
-    @patch("brats.core.singularity._build_args")
+    @patch("brats.core.singularity._build_command_args")
     @patch("brats.core.singularity._handle_device_requests")
     @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
     @patch("brats.core.singularity.Client")
@@ -119,7 +119,7 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_client,
         mock_convert_volume_mappings_to_singularity_format,
         mock_handle_device_requests,
-        mock_build_args,
+        mock_build_command_args,
         mock_get_volume_mappings_mlcube,
         mock_get_additional_files_path,
         mock_ensure_image,
@@ -127,7 +127,7 @@ class TestSingularityHelpers(unittest.TestCase):
     ):
 
         # setup mocks
-        mock_build_args.return_value = ("args", {})
+        mock_build_command_args.return_value = ("args", {})
 
         # run
         cuda_devices = "0"
