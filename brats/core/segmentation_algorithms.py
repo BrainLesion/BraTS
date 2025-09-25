@@ -142,6 +142,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         t2w: Path | str,
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
+        backend: str = "docker",
     ) -> None:
         """Perform segmentation on a single subject with the provided images and save the result to the output file.
 
@@ -152,11 +153,13 @@ class SegmentationAlgorithm(BraTSAlgorithm):
             t2w (Path | str): Path to the T2w image
             output_file (Path | str): Path to save the segmentation
             log_file (Path | str, optional): Save logs to this file
+            backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
         self._infer_single(
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
             output_file=output_file,
             log_file=log_file,
+            backend=backend     
         )
 
     def infer_batch(
@@ -164,6 +167,7 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
+        backend: str = "docker",
     ) -> None:
         """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
@@ -182,9 +186,10 @@ class SegmentationAlgorithm(BraTSAlgorithm):
             data_folder (Path | str): Folder containing the subjects with required structure
             output_folder (Path | str): Output folder to save the segmentations
             log_file (Path | str, optional): Save logs to this file
+            backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
         return self._infer_batch(
-            data_folder=data_folder, output_folder=output_folder, log_file=log_file
+            data_folder=data_folder, output_folder=output_folder, log_file=log_file, backend=backend
         )
 
 
