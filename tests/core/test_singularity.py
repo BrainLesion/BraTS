@@ -109,7 +109,7 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity._log_algorithm_info")
     @patch("brats.core.singularity._ensure_image")
     @patch("brats.core.singularity._get_additional_files_path")
-    @patch("brats.core.singularity._get_volume_mappings")
+    @patch("brats.core.singularity._get_volume_mappings_mlcube")
     @patch("brats.core.singularity._build_args")
     @patch("brats.core.singularity._handle_device_requests")
     @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
@@ -120,7 +120,7 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_convert_volume_mappings_to_singularity_format,
         mock_handle_device_requests,
         mock_build_args,
-        mock_get_volume_mappings,
+        mock_get_volume_mappings_mlcube,
         mock_get_additional_files_path,
         mock_ensure_image,
         mock_log_algorithm_info,
@@ -144,7 +144,7 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_log_algorithm_info.assert_called_once_with(algorithm=self.algorithm_gpu)
         mock_ensure_image.assert_called_once()
         mock_get_additional_files_path.assert_called_once()
-        mock_get_volume_mappings.assert_called_once()
+        mock_get_volume_mappings_mlcube.assert_called_once()
         mock_build_args.assert_called_once()
         mock_handle_device_requests.assert_called_once()
         mock_convert_volume_mappings_to_singularity_format.assert_called_once()

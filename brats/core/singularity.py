@@ -5,7 +5,7 @@ from brats.core.docker import (
     _log_algorithm_info,
     _sanity_check_output,
     _get_additional_files_path,
-    _get_volume_mappings,
+    _get_volume_mappings_mlcube,
     _build_args,
     _handle_device_requests,
 )
@@ -78,7 +78,7 @@ def run_container(
     # ensure output folder exists
     output_path.mkdir(parents=True, exist_ok=True)
 
-    volume_mappings = _get_volume_mappings(
+    volume_mappings = _get_volume_mappings_mlcube(
         data_path=data_path,
         additional_files_path=additional_files_path,
         output_path=output_path,
