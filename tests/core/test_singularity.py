@@ -99,8 +99,6 @@ class TestSingularityHelpers(unittest.TestCase):
         fake_puller = iter([])
         MockPull.return_value = (fake_image_path, fake_puller)
 
-        from brats.core.singularity import _ensure_image
-
         result = _ensure_image("already-there:1.0")
 
         # Assert
