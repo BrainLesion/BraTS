@@ -9,11 +9,13 @@ import numpy as np
 from rich.progress import Progress
 
 from brats.core.docker import (
-    _build_args,
+    _build_command_args,
+    _get_container_user,
     _ensure_image,
     _get_additional_files_path,
     _get_parameters_arg,
-    _get_volume_mappings,
+    _get_volume_mappings_docker_only,
+    _get_volume_mappings_mlcube,
     _handle_device_requests,
     _is_cuda_available,
     _log_algorithm_info,
@@ -58,6 +60,26 @@ class TestDockerHelpers(unittest.TestCase):
                 paper="paper_url",
                 authors="author_names",
                 dataset_manuscript="dataset_manuscript_url",
+                year=2024,
+            ),
+        )
+
+        self.algorithm_gpu_2025 = AlgorithmData(
+            run_args=MagicMock(
+                docker_image="brainles/test-image-1:latest",
+                parameters_file=True,
+                shm_size="1g",
+                cpu_compatible=False,
+            ),
+            additional_files=None,
+            meta=MagicMock(
+                challenge="Challenge",
+                challenge_manuscript="challenge_manuscript_url",
+                rank="1st",
+                paper="paper_url",
+                authors="author_names",
+                dataset_manuscript="dataset_manuscript_url",
+                year=2025,
             ),
         )
 
@@ -176,8 +198,8 @@ class TestDockerHelpers(unittest.TestCase):
         result = _get_additional_files_path(self.algorithm_gpu)
         self.assertEqual(result, self.test_dir)
 
-    def test_get_volume_mappings(self):
-        result = _get_volume_mappings(
+    def test_get_volume_mappings_mlcube(self):
+        result = _get_volume_mappings_mlcube(
             data_path=self.data_folder,
             additional_files_path=self.test_dir,
             output_path=self.output_folder,
@@ -188,6 +210,17 @@ class TestDockerHelpers(unittest.TestCase):
             self.test_dir.absolute(): {"bind": "/mlcube_io1", "mode": "rw"},
             self.output_folder.absolute(): {"bind": "/mlcube_io2", "mode": "rw"},
             PARAMETERS_DIR.absolute(): {"bind": "/mlcube_io3", "mode": "rw"},
+        }
+        self.assertEqual(result, expected)
+
+    def test_get_volume_mappings_docker_only(self):
+        result = _get_volume_mappings_docker_only(
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+        )
+        expected = {
+            str(self.data_folder.absolute()): {"bind": "/input", "mode": "rw"},
+            str(self.output_folder.absolute()): {"bind": "/output", "mode": "rw"},
         }
         self.assertEqual(result, expected)
 
@@ -207,8 +240,8 @@ class TestDockerHelpers(unittest.TestCase):
             expected = f" --parameters_file=/mlcube_io3/{file.name}"
             self.assertEqual(result, expected)
 
-    def test_build_args(self):
-        result = _build_args(self.algorithm_gpu)
+    def test_build_command_args(self):
+        result = _build_command_args(self.algorithm_gpu)
         expected_command_args = [
             "--data_path=/mlcube_io0",
             "--output_path=/mlcube_io2",
@@ -216,8 +249,23 @@ class TestDockerHelpers(unittest.TestCase):
             "--parameters_file=/mlcube_io3/dummy.yml",
         ]
         for arg in expected_command_args:
-            self.assertIn(arg, result[0])
-        self.assertEqual(result[1], {})
+            self.assertIn(arg, result)
+
+    def test_get_container_user_requires_root(self):
+        # Test when requires_root is True
+        algorithm = MagicMock()
+        algorithm.run_args.requires_root = True
+        user = _get_container_user(algorithm)
+        self.assertIsNone(user)
+
+    @patch("brats.core.docker.os.getuid", return_value=42)
+    @patch("brats.core.docker.os.getgid", return_value=1000)
+    def test_get_container_user_no_root(self, MockGetGid, MockGetUid):
+        # Test when requires_root is False
+        algorithm = MagicMock()
+        algorithm.run_args.requires_root = False
+        user = _get_container_user(algorithm)
+        self.assertEqual(user, "42:1000")
 
     @patch("brats.core.docker.Console")
     @patch("brats.core.docker.docker.models.containers.Container")
@@ -389,25 +437,27 @@ class TestDockerHelpers(unittest.TestCase):
     @patch("brats.core.docker._log_algorithm_info")
     @patch("brats.core.docker._ensure_image")
     @patch("brats.core.docker._get_additional_files_path")
-    @patch("brats.core.docker._get_volume_mappings")
-    @patch("brats.core.docker._build_args")
+    @patch("brats.core.docker._get_container_user")
+    @patch("brats.core.docker._get_volume_mappings_mlcube")
+    @patch("brats.core.docker._build_command_args")
     @patch("brats.core.docker._handle_device_requests")
     @patch("brats.core.docker._observe_docker_output")
     @patch("brats.core.docker.client")
-    def test_run_container(
+    def test_run_container_mlcube(
         self,
         mock_client,
         mock_observe_docker_output,
         mock_handle_device_requests,
-        mock_build_args,
-        mock_get_volume_mappings,
+        mock_build_command_args,
+        mock_get_volume_mappings_mlcube,
+        mock_get_container_user,
         mock_get_additional_files_path,
         mock_ensure_image,
         mock_log_algorithm_info,
     ):
 
         # setup mocks
-        mock_build_args.return_value = ("args", {})
+        mock_build_command_args.return_value = "args"
 
         # run
         cuda_devices = "0"
@@ -424,6 +474,47 @@ class TestDockerHelpers(unittest.TestCase):
         mock_log_algorithm_info.assert_called_once_with(algorithm=self.algorithm_gpu)
         mock_ensure_image.assert_called_once()
         mock_get_additional_files_path.assert_called_once()
-        mock_get_volume_mappings.assert_called_once()
-        mock_build_args.assert_called_once()
+        mock_get_container_user.assert_called_once()
+        mock_get_volume_mappings_mlcube.assert_called_once()
+        mock_build_command_args.assert_called_once()
+        mock_handle_device_requests.assert_called_once()
+
+    @patch("brats.core.docker._log_algorithm_info")
+    @patch("brats.core.docker._ensure_image")
+    @patch("brats.core.docker._get_additional_files_path")
+    @patch("brats.core.docker._get_container_user")
+    @patch("brats.core.docker._get_volume_mappings_docker_only")
+    @patch("brats.core.docker._handle_device_requests")
+    @patch("brats.core.docker._observe_docker_output")
+    @patch("brats.core.docker.client")
+    def test_run_container_docker_only(
+        self,
+        mock_client,
+        mock_observe_docker_output,
+        mock_handle_device_requests,
+        mock_get_volume_mappings_docker_only,
+        mock_get_container_user,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+    ):
+        # run
+        cuda_devices = "0"
+        force_cpu = False
+        run_container(
+            algorithm=self.algorithm_gpu_2025,
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+        # Verify mocks were called as expected
+        mock_log_algorithm_info.assert_called_once_with(
+            algorithm=self.algorithm_gpu_2025
+        )
+        mock_ensure_image.assert_called_once()
+        mock_get_additional_files_path.assert_called_once()
+        mock_get_container_user.assert_called_once()
+        mock_get_volume_mappings_docker_only.assert_called_once()
         mock_handle_device_requests.assert_called_once()

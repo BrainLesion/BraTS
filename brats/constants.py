@@ -34,8 +34,17 @@ class Algorithms(str, Enum):
     pass
 
 
-class AdultGliomaPostTreatmentAlgorithms(Algorithms):
-    """Constants for the available adult glioma post treatment segmentation algorithms."""
+class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
+    """Constants for the available adult glioma pre and post treatment segmentation algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 Adult Glioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25 Adult Glioma Segmentation 2nd place """
+    BraTS25_3A = "BraTS25_3A"
+    """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
+    BraTS25_3B = "BraTS25_3B"
+    """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Adult Glioma Segmentation 1st place """
@@ -56,8 +65,15 @@ class AdultGliomaPreTreatmentAlgorithms(Algorithms):
     """BraTS23 Adult Glioma Segmentation 3rd place (GPU only)"""
 
 
-class MeningiomaAlgorithms(Algorithms):
-    """Constants for the available meningioma segmentation algorithms."""
+class MeningiomaRTAlgorithms(Algorithms):
+    """Constants for the available meningioma segmentation - Radio Therapy algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 Meningioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25 Meningioma Segmentation 2nd place """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25 Meningioma Segmentation 3rd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Meningioma Segmentation 1st place """
@@ -65,6 +81,15 @@ class MeningiomaAlgorithms(Algorithms):
     """ BraTS24 Meningioma Segmentation 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24 Meningioma Segmentation 3rd place """
+
+
+class MeningiomaAlgorithms(Algorithms):
+    """Constants for the available meningioma segmentation algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """BraTS25 Meningioma Segmentation 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """BraTS25 Meningioma Segmentation 2nd place """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Meningioma Segmentation 1st place (GPU only)"""
@@ -76,6 +101,15 @@ class MeningiomaAlgorithms(Algorithms):
 
 class PediatricAlgorithms(Algorithms):
     """Constants for the available pediatric segmentation algorithms."""
+
+    BraTS25_1A = "BraTS25_1A"
+    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
+    BraTS25_1B = "BraTS25_1B"
+    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
+    BraTS25_1C = "BraTS25_1C"
+    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
+    BraTS25_1D = "BraTS25_1D"
+    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Pediatric Segmentation 1st place """
@@ -95,6 +129,15 @@ class PediatricAlgorithms(Algorithms):
 class AfricaAlgorithms(Algorithms):
     """Constants for the available africa segmentation algorithms."""
 
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 BraTS-SSA Segmentation 1st place """
+    BraTS25_2A = "BraTS25_2A"
+    """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie)"""
+    BraTS25_2B = "BraTS25_2B"
+    """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie) """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25 BraTS-SSA Segmentation 3rd place """
+
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 BraTS-Africa Segmentation 1st place """
     BraTS24_2 = "BraTS24_2"
@@ -113,6 +156,11 @@ class AfricaAlgorithms(Algorithms):
 class MetastasesAlgorithms(Algorithms):
     """Constants for the available Inpainting algorithms."""
 
+    BraTS25_1 = "BraTS25_1"
+    """BraTS25  Brain Metastases Segmentation 1st place"""
+    BraTS25_2 = "BraTS25_2"
+    """BraTS25  Brain Metastases Segmentation 2nd place"""
+
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
     BraTS23_2 = "BraTS23_2"
@@ -123,6 +171,13 @@ class MetastasesAlgorithms(Algorithms):
 
 class InpaintingAlgorithms(Algorithms):
     """Constants for the available BraTS Inpainting algorithms."""
+
+    BraTS25_1A = "BraTS25_1A"
+    """ BraTS25  Inpainting shared 1st place (tie) """
+    BraTS25_1B = "BraTS25_1B"
+    """ BraTS25  Inpainting shared 1st place (tie)"""
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25  Inpainting 2nd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  Inpainting 1st place """
@@ -140,7 +195,14 @@ class InpaintingAlgorithms(Algorithms):
 
 
 class MissingMRIAlgorithms(Algorithms):
-    """Constants for the available missing mri  algorithms."""
+    """Constants for the available missing mri algorithms."""
+
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25  MissingMRI 1st place """
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25  MissingMRI 2nd place """
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25  MissingMRI 3rd place """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  MissingMRI 1st place """
@@ -148,12 +210,22 @@ class MissingMRIAlgorithms(Algorithms):
     """ BraTS24  MissingMRI 2nd place """
     BraTS24_3 = "BraTS24_3"
     """ BraTS24  MissingMRI 3rd place """
+
     BraTS23_1 = "BraTS23_1"
     """ BraTS23  MissingMRI 1st place """
 
 
 class GoATAlgorithms(Algorithms):
     """Constants for the available missing mri  algorithms."""
+
+    BraTS25_1A = "BraTS25_1A"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1B = "BraTS25_1B"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1C = "BraTS25_1C"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
+    BraTS25_1D = "BraTS25_1D"
+    """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Generalizability Across Tumors (BraTS-GoAT) 1st place (The only submission)"""
@@ -169,10 +241,11 @@ ADDITIONAL_FILES_FOLDER = DATA_DIR / "additional_files"
 ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS = (
     META_DIR / "adult_glioma_pre_treatment.yml"
 )
-ADULT_GLIOMA_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
-    META_DIR / "adult_glioma_post_treatment.yml"
+ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS = (
+    META_DIR / "adult_glioma_pre_and_post_treatment.yml"
 )
 MENINGIOMA_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma.yml"
+MENINGIOMA_RT_SEGMENTATION_ALGORITHMS = META_DIR / "meningioma_rt.yml"
 PEDIATRIC_SEGMENTATION_ALGORITHMS = META_DIR / "pediatric.yml"
 AFRICA_SEGMENTATION_ALGORITHMS = META_DIR / "africa.yml"
 METASTASES_SEGMENTATION_ALGORITHMS = META_DIR / "metastases.yml"

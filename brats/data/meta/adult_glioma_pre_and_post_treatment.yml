@@ -1,9 +1,11 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
-  challenge: &challenge "Adult Glioma Segmentation (Post Treatment)"
+  challenge: &challenge "Adult Glioma Segmentation (Pre & Post Treatment)"
   challenge_manuscript:
+    2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2405.18368" # same as 2024
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2405.18368"
   years:
+    2025: &year_2025 2025
     2024: &year_2024 2024
   ranks:
     1st: &rank_1 1st
@@ -12,6 +14,59 @@ constants:
 
 
 algorithms:
+
+##### 2025 #####
+  BraTS25_1:
+    meta:
+      authors: Ishika Jain, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_1
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_aia-bots:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_2:
+    meta:
+      authors: Qu Lin, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_2
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_ecnu:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true # ~ 7 min/ subject
+      requires_root: true
+
+  BraTS25_3A:
+    meta:
+      authors: Liwei Jin, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_jinlw:latest
+      input_name_schema: *input_name_schema
+      cpu_compatible: true # ~150min / subject
+
+  BraTS25_3B:
+    meta:
+      authors: Adrian Celaya, et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_3
+      year: *year_2025
+    run_args:
+      docker_image: brainles/brats25_gli_mist:latest
+      input_name_schema: *input_name_schema
 
 ##### 2024 #####
   BraTS24_1:
@@ -31,8 +86,8 @@ algorithms:
 
   BraTS24_2:
     meta:
-      authors: Team kimbab
-      paper: N/A
+      authors: Heejong Kim, et al.
+      paper: https://arxiv.org/abs/2409.08143
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2

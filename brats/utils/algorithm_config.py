@@ -35,15 +35,15 @@ class RunArgs:
     """The Docker image containing the algorithm"""
     input_name_schema: str
     """The input name schema for the algorithm"""
-    parameters_file: bool
+    parameters_file: bool = False
     """Whether the algorithm requires a parameters file"""
-    requires_root: bool
+    requires_root: bool = False
     """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
-    shm_size: Optional[str] = "2gb"
+    shm_size: Optional[str] = "4gb"
     """The required shared memory size for the Docker container"""
     cpu_compatible: Optional[bool] = False
     """Whether the algorithm is compatible with CPU"""
-    subject_modality_separator: Optional[str] = "-"
+    subject_modality_separator: str = "-"
     """The separator between the subject ID and the modality, differs e.g. for BraTS24 Meningioma Challenge"""
 
 
