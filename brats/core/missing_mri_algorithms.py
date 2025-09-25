@@ -116,6 +116,7 @@ class MissingMRI(BraTSAlgorithm):
         t2f: Optional[Union[Path, str]] = None,
         t2w: Optional[Union[Path, str]] = None,
         log_file: Optional[Path | str] = None,
+        backend: str = "docker",
     ) -> None:
         """
         Perform synthesis of the missing modality for a single subject with the provided images and save the result to the output file.
@@ -129,7 +130,8 @@ class MissingMRI(BraTSAlgorithm):
             t1n (Optional[Union[Path, str]], optional): Path to the T1n image. Defaults to None.
             t2f (Optional[Union[Path, str]], optional): Path to the T2f image. Defaults to None.
             t2w (Optional[Union[Path, str]], optional): Path to the T2w image. Defaults to None.
-            log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None
+            log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
+            backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
 
         inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
@@ -145,6 +147,7 @@ class MissingMRI(BraTSAlgorithm):
             inputs=inputs,
             output_file=output_file,
             log_file=log_file,
+            backend=backend,
         )
 
     def infer_batch(
@@ -152,6 +155,7 @@ class MissingMRI(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
+        backend: str = "docker",
     ) -> None:
         """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
@@ -170,7 +174,11 @@ class MissingMRI(BraTSAlgorithm):
             data_folder (Path | str): Folder containing the subjects with required structure
             output_folder (Path | str): Output folder to save the segmentation
             log_file (Path | str, optional): Save logs to this file
+            backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
         return self._infer_batch(
-            data_folder=data_folder, output_folder=output_folder, log_file=log_file
+            data_folder=data_folder,
+            output_folder=output_folder,
+            log_file=log_file,
+            backend=backend,
         )
