@@ -29,6 +29,7 @@ from brats.constants import (
 )
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
+import os
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):
@@ -165,7 +166,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         t2w: Path | str,
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """Perform segmentation on a single subject with the provided images and save the result to the output file.
 
@@ -178,6 +179,13 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         self._infer_single(
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
             output_file=output_file,
@@ -190,7 +198,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
@@ -211,6 +219,13 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,

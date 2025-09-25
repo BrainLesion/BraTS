@@ -10,6 +10,7 @@ from loguru import logger
 from brats.constants import MISSING_MRI_ALGORITHMS, MissingMRIAlgorithms, Task
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
+import os
 
 
 class MissingMRI(BraTSAlgorithm):
@@ -116,7 +117,7 @@ class MissingMRI(BraTSAlgorithm):
         t2f: Optional[Union[Path, str]] = None,
         t2w: Optional[Union[Path, str]] = None,
         log_file: Optional[Path | str] = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """
         Perform synthesis of the missing modality for a single subject with the provided images and save the result to the output file.
@@ -143,6 +144,13 @@ class MissingMRI(BraTSAlgorithm):
             len(inputs) == 3
         ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
 
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         self._infer_single(
             inputs=inputs,
             output_file=output_file,
@@ -155,7 +163,7 @@ class MissingMRI(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
@@ -176,6 +184,13 @@ class MissingMRI(BraTSAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,

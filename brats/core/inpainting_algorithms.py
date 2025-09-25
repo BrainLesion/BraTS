@@ -10,6 +10,7 @@ from loguru import logger
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task
 from brats.utils.data_handling import input_sanity_check
+import os
 
 
 class Inpainter(BraTSAlgorithm):
@@ -102,7 +103,7 @@ class Inpainter(BraTSAlgorithm):
         mask: Path | str,
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """Perform inpainting task on a single subject with the provided images and save the result to the output file.
 
@@ -113,6 +114,13 @@ class Inpainter(BraTSAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         self._infer_single(
             inputs={"t1n": t1n, "mask": mask},
             output_file=output_file,
@@ -125,7 +133,7 @@ class Inpainter(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: str = "docker",
+        backend: Optional[str] = None,
     ) -> None:
         """Perform inpainting on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
@@ -145,6 +153,13 @@ class Inpainter(BraTSAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (str, optional): Backend to use for inference. Defaults to "docker".
         """
+        if backend is None:
+            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
+            if backend_env:
+                backend = backend_env
+            else:
+                backend = "docker"
+
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,
