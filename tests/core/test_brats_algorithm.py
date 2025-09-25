@@ -38,7 +38,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    @patch("brats.core.brats_algorithm.run_container")
+    @patch("brats.core.brats_algorithm.run_docker_container")
     @patch("brats.core.segmentation_algorithms.input_sanity_check")
     @patch("brats.core.brats_algorithm.InferenceSetup")
     def test_infer_single(
@@ -76,7 +76,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
 
         self.assertTrue(output_file.exists())
 
-    @patch("brats.core.brats_algorithm.run_container")
+    @patch("brats.core.brats_algorithm.run_docker_container")
     @patch("brats.core.segmentation_algorithms.input_sanity_check")
     @patch("brats.core.brats_algorithm.InferenceSetup")
     def test_infer_batch(
