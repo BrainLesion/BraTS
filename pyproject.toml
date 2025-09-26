@@ -39,6 +39,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
+spython = ">=0.3.14"
 python = ">=3.8"
 docker = ">=7.0.0"
 rich = ">=13.0.0"
