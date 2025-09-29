@@ -3,7 +3,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Union
 
-from brats.constants import Algorithms
+from brats.constants import (
+    Algorithms,
+    MissingMRIAlgorithms,
+    PediatricAlgorithms,
+    AdultGliomaPreAndPostTreatmentAlgorithms,
+    MeningiomaAlgorithms,
+    MeningiomaRTAlgorithms,
+    MetastasesAlgorithms,
+)
 
 try:
     from brainles_preprocessing.modality import Modality, CenterModality
@@ -413,15 +421,15 @@ def preprocess_for_challenge(
         return all_paths  # Type checker knows these are not None after the check
 
     # Route to appropriate preprocessing function
-    if "AdultGliomaPreAndPostTreatment" in challenge_name:
+    if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_mni152reg_bet(*paths)  # type: ignore
 
-    elif "Pediatric" in challenge_name:
+    elif str(PediatricAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(*paths)  # type: ignore
 
-    elif "MissingMRI" in challenge_name:
+    elif str(MissingMRIAlgorithms.__name__) in challenge_name:
         preprocess_coreg_sri24reg_bet_allow_missing(
             t1_input,
             t1c_input,
@@ -432,6 +440,18 @@ def preprocess_for_challenge(
             t2_output,
             flair_output,
         )
+    elif any(
+        [
+            str(alg_cls.__name__) in challenge_name
+            for alg_cls in [
+                MeningiomaAlgorithms,
+                MeningiomaRTAlgorithms,
+                MetastasesAlgorithms,
+            ]
+        ]
+    ):
+        paths = _require_all_modalities()
+        preprocess_coreg_bet(*paths)  # type: ignore
 
     else:  # Most challenges use SRI24 with BET
         paths = _require_all_modalities()
