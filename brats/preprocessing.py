@@ -196,6 +196,23 @@ def _coreg_bet(
     preprocessor.run()
 
 
+def _deface_only(
+    t1c_input: Union[str, Path],
+    t1c_output: Union[str, Path],
+) -> None:
+    preprocessor = NativeSpacePreprocessor(
+        center_modality=CenterModality(
+            modality_name="t1c",
+            input_path=t1c_input,
+            raw_defaced_output_path=t1c_output,
+            atlas_correction=False,
+        ),
+        moving_modalities=[],
+    )
+
+    preprocessor.run()
+
+
 #######
 # Preprocessing functions for different BraTS challenges
 #######
@@ -445,7 +462,6 @@ def preprocess_for_challenge(
             str(alg_cls.__name__) in challenge_name
             for alg_cls in [
                 MeningiomaAlgorithms,
-                MeningiomaRTAlgorithms,
                 MetastasesAlgorithms,
             ]
         ]
@@ -453,6 +469,15 @@ def preprocess_for_challenge(
         paths = _require_all_modalities()
         preprocess_coreg_bet(*paths)  # type: ignore
 
+    elif str(MeningiomaRTAlgorithms.__name__) in challenge_name:
+        if t1c_input is None or t1c_output is None:
+            raise ValueError(
+                f"T1c modality required for {challenge_name} preprocessing"
+            )
+        _deface_only(
+            t1c_input=t1c_input,
+            t1c_output=t1c_output,
+        )
     else:  # Most challenges use SRI24 with BET
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_bet(*paths)  # type: ignore
