@@ -164,7 +164,7 @@ class BraTSAlgorithm(ABC):
         inputs: dict[str, Path | str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: str = "docker",
+        backend: Backends = Backends.DOCKER,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
@@ -173,7 +173,7 @@ class BraTSAlgorithm(ABC):
             inputs (dict[str, Path  |  str]): Input Images for the task
             output_file (Path | str): File to save the output
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
-            backend (str, optional): Backend to use for inference. Defaults to "docker".
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
             logger.info(f"Performing single inference")
@@ -205,7 +205,6 @@ class BraTSAlgorithm(ABC):
                 cuda_devices=self.cuda_devices,
                 force_cpu=self.force_cpu,
             )
-
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
                 subject_id=subject_id,
@@ -218,7 +217,7 @@ class BraTSAlgorithm(ABC):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: str = "docker",
+        backend: Backends = Backends.DOCKER,
     ):
         """Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
 
@@ -226,7 +225,7 @@ class BraTSAlgorithm(ABC):
             data_folder (Path | str): Folder with the input data
             output_folder (Path | str): Folder to save the outputs
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
-            backend (str, optional): Backend to use for inference. Defaults to "docker".
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
 
