@@ -86,9 +86,6 @@ def _ensure_image(image: str) -> str:
             ],
             check=True,
         )
-        # puller = Client.build("docker://" + image, str(image_path), sandbox=True, options=["--fakeroot"])
-        # for line in puller:
-        #   logger.debug(line)
 
     return str(image_path)
 
@@ -199,7 +196,7 @@ def run_container(
         logger.info(f"Using CUDA devices: {cuda_devices}")
         options.append("--nv")  # Singularity uses --nv to enable GPU support
 
-    # options.append(f"--fakeroot")
+    # TODO: The --fakeroot option may be required for certain algorithms that need root privileges inside the Singularity container.
     options.append("--cwd")
     options.append(str(_get_docker_working_dir(algorithm.run_args.docker_image)))
     options.append("--overlay")
