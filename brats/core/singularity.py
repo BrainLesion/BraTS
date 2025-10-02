@@ -160,7 +160,8 @@ def run_container(
     output_path.mkdir(parents=True, exist_ok=True)
 
     command_args = _build_command_args(algorithm=algorithm)
-    logger.debug(f"Command args: {" ".join(command_args)}")
+    command_args_str = " ".join(command_args)
+    logger.debug(f"Command args: {command_args_str}")
     if algorithm.meta.year <= 2024:
         volume_mappings = _get_volume_mappings_mlcube(
             data_path=data_path,
