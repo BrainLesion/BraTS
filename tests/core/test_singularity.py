@@ -5,7 +5,13 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from brats.core.singularity import run_container, _ensure_image
+from brats.core.singularity import (
+    run_container,
+    _ensure_image,
+    _get_docker_working_dir,
+    _build_command_args,
+    _convert_volume_mappings_to_singularity_format,
+)
 from brats.utils.algorithm_config import AlgorithmData
 
 
@@ -37,6 +43,7 @@ class TestSingularityHelpers(unittest.TestCase):
                 paper="paper_url",
                 authors="author_names",
                 dataset_manuscript="dataset_manuscript_url",
+                year=2023,
             ),
         )
 
@@ -55,6 +62,7 @@ class TestSingularityHelpers(unittest.TestCase):
                 rank="1st",
                 paper="paper_url",
                 authors="author_names",
+                year=2025,
             ),
         )
 
@@ -62,49 +70,87 @@ class TestSingularityHelpers(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    @patch("brats.core.singularity.Client.pull")
+    @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.logger")
     @patch("brats.core.singularity.Path.exists")
     def test_ensure_image_pulls_if_missing(self, MockExists, MockLogger, MockPull):
         # Arrange: simulate missing image file
         MockExists.return_value = False
 
-        fake_image_path = "/tmp/fake_image.sif"
-        fake_puller = iter(
-            [
-                "singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest"
-            ]
-        )
-        MockPull.return_value = (fake_image_path, fake_puller)
+        fake_image_path = "/tmp/test-image"
+        fake_image = "test-image:latest"
 
-        result = _ensure_image("test-image:latest")
+        result = _ensure_image(fake_image)
 
         # Assert
         MockPull.assert_called_once_with(
-            "docker://test-image:latest", stream=True, pull_folder="/tmp"
+            [
+                "singularity",
+                "build",
+                "--sandbox",
+                "--fakeroot",
+                fake_image_path,
+                "docker://" + fake_image,
+            ],
+            check=True,
         )
         assert result == fake_image_path
-        MockLogger.info.assert_any_call(f"Pulling Singularity image {fake_image_path}")
-        MockLogger.info.assert_any_call(
-            "singularity pull --name /tmp/test-image:latest.sif docker://test-image:latest"
+        MockLogger.debug.assert_any_call(
+            f"Pulling Singularity image {fake_image} and creating a Sandbox at {fake_image_path}"
         )
 
-    @patch("brats.core.singularity.Client.pull")
+    @patch("brats.core.singularity._ensure_docker_image")
+    @patch("brats.core.singularity.client")
+    def test_get_working_dir_from_docker_image(self, MockClient, MockEnsureImage):
+        image = "brainles/test-image:latest"
+        MockEnsureImage.return_value = image
+        MockClient.images.get.return_value = MagicMock(
+            attrs={"Config": {"WorkingDir": "/workspace"}}
+        )
+
+        working_dir = _get_docker_working_dir(image)
+        self.assertEqual(working_dir, Path("/workspace"))
+
+    @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.Path.exists")
     def test_ensure_image_returns_if_exists(self, MockExists, MockPull):
         # Arrange: simulate existing image file
         MockExists.return_value = True
 
-        fake_image_path = "/tmp/fake_image.sif"
+        fake_image_path = "/tmp/fake_image"
         fake_puller = iter([])
         MockPull.return_value = (fake_image_path, fake_puller)
 
-        result = _ensure_image("already-there:1.0")
+        result = _ensure_image("fake_image:latest")
 
         # Assert
         assert result == fake_image_path
-        MockPull.assert_called_once()
+        MockPull.assert_not_called()
         # puller should not be consumed since image exists
+
+    def test_build_command_args(self):
+        result = _build_command_args(self.algorithm_gpu)
+        expected_command_args = [
+            "--data_path=/mlcube_io0",
+            "--output_path=/mlcube_io2",
+            "--weights=/mlcube_io1/checkpoint.pth",
+            "--parameters_file=/mlcube_io3/dummy.yml",
+        ]
+        for arg in expected_command_args:
+            self.assertIn(arg, result)
+
+    def test_convert_volume_mappings_to_singularity_format(self):
+        result = _convert_volume_mappings_to_singularity_format(
+            volume_mappings={
+                str(self.data_folder.absolute()): {"bind": "/input", "mode": "rw"},
+                str(self.output_folder.absolute()): {"bind": "/output", "mode": "rw"},
+            }
+        )
+        expected = [
+            f"{str(self.data_folder.absolute())}:/input",
+            f"{str(self.output_folder.absolute())}:/output",
+        ]
+        self.assertEqual(result, expected)
 
     @patch("brats.core.singularity._log_algorithm_info")
     @patch("brats.core.singularity._ensure_image")
@@ -114,8 +160,12 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity._handle_device_requests")
     @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
     @patch("brats.core.singularity.Client")
+    @patch("brats.core.singularity.subprocess.run")
+    @patch("brats.core.singularity._get_docker_working_dir")
     def test_run_singularity_container(
         self,
+        mock_get_docker_working_dir,
+        mock_subprocess_run,
         mock_client,
         mock_convert_volume_mappings_to_singularity_format,
         mock_handle_device_requests,
@@ -127,7 +177,12 @@ class TestSingularityHelpers(unittest.TestCase):
     ):
 
         # setup mocks
-        mock_build_command_args.return_value = ("args", {})
+        mock_build_command_args.return_value = [
+            "--data_path=/mlcube_io0",
+            "--output_path=/mlcube_io2",
+            "--weights=/mlcube_io1/checkpoint.pth",
+            "--parameters_file=/mlcube_io3/dummy.yml",
+        ]
 
         # run
         cuda_devices = "0"
@@ -144,7 +199,10 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_log_algorithm_info.assert_called_once_with(algorithm=self.algorithm_gpu)
         mock_ensure_image.assert_called_once()
         mock_get_additional_files_path.assert_called_once()
-        mock_get_volume_mappings_mlcube.assert_called_once()
         mock_build_command_args.assert_called_once()
+        mock_get_volume_mappings_mlcube.assert_called_once()
         mock_handle_device_requests.assert_called_once()
         mock_convert_volume_mappings_to_singularity_format.assert_called_once()
+        mock_get_docker_working_dir.assert_called_once()
+        mock_subprocess_run.assert_called_once()
+        mock_client.run.assert_called_once()
