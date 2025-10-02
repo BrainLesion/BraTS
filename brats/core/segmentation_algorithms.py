@@ -180,7 +180,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
         backend = Backends(backend_env)
 
         self._infer_single(
@@ -216,7 +216,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
         backend = Backends(backend_env)
 
         return self._infer_batch(
@@ -453,7 +453,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
         backend = Backends(backend_env)
         self._infer_single(
             inputs={"t1c": t1c},
@@ -488,7 +488,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
         backend = Backends(backend_env)
         return self._infer_batch(
             data_folder=data_folder,
