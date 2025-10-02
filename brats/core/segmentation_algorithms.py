@@ -26,6 +26,7 @@ from brats.constants import (
     MetastasesAlgorithms,
     PediatricAlgorithms,
     Task,
+    Backends,
 )
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
@@ -166,7 +167,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         t2w: Path | str,
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: Optional[str] = None,
+        backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """Perform segmentation on a single subject with the provided images and save the result to the output file.
 
@@ -177,14 +178,10 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             t2w (Path | str): Path to the T2w image
             output_file (Path | str): Path to save the segmentation
             log_file (Path | str, optional): Save logs to this file
-            backend (str, optional): Backend to use for inference. Defaults to "docker".
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        if backend is None:
-            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
-            if backend_env:
-                backend = backend_env
-            else:
-                backend = "docker"
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend = Backends(backend_env)
 
         self._infer_single(
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
@@ -198,7 +195,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: Optional[str] = None,
+        backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
@@ -217,14 +214,10 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             data_folder (Path | str): Folder containing the subjects with required structure
             output_folder (Path | str): Output folder to save the segmentations
             log_file (Path | str, optional): Save logs to this file
-            backend (str, optional): Backend to use for inference. Defaults to "docker".
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        if backend is None:
-            backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND")
-            if backend_env:
-                backend = backend_env
-            else:
-                backend = "docker"
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend = Backends(backend_env)
 
         return self._infer_batch(
             data_folder=data_folder,
@@ -449,6 +442,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         t1c: Union[Path, str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
+        backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """
         Perform segmentation on a single subject with the provided T1C image and save the result to the output file.
@@ -456,12 +450,16 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         Args:
             t1c (Path | str): Path to the T1c image
             output_file (Path | str): Output file to save the segmentation.
-            log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None
+            log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend = Backends(backend_env)
         self._infer_single(
             inputs={"t1c": t1c},
             output_file=output_file,
             log_file=log_file,
+            backend=backend,
         )
 
     def infer_batch(
@@ -469,6 +467,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
+        backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """
         Perform segmentation on a batch of subjects with the provided T1C images and save the results to the output folder. \n
@@ -487,9 +486,13 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             data_folder (Path | str): Folder containing the subjects with required structure
             output_folder (Path | str): Output folder to save the segmentations
             log_file (Path | str, optional): Save logs to this file
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
+        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND",backend)
+        backend = Backends(backend_env)
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,
             log_file=log_file,
+            backend=backend,
         )
