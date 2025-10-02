@@ -20,7 +20,7 @@ from spython.main import Client
 import docker
 
 try:
-    client = docker.from_env()
+    docker_client = docker.from_env()
 except docker.errors.DockerException as e:
     logger.error(
         f"Failed to connect to docker daemon. Please make sure docker is installed and running. Error: {e}"
@@ -126,7 +126,7 @@ def _get_docker_working_dir(image: str) -> Path:
     """
     _ensure_docker_image(image)
     logger.debug(f"Inspecting image {image}")
-    image = client.images.get(image)
+    image = docker_client.images.get(image)
     workdir = image.attrs["Config"].get("WorkingDir", "")
     logger.debug(f"Working directory: {workdir}")
     return Path(workdir)

@@ -100,11 +100,11 @@ class TestSingularityHelpers(unittest.TestCase):
         )
 
     @patch("brats.core.singularity._ensure_docker_image")
-    @patch("brats.core.singularity.client")
-    def test_get_working_dir_from_docker_image(self, MockClient, MockEnsureImage):
+    @patch("brats.core.singularity.docker_client")
+    def test_get_working_dir_from_docker_image(self, MockDockerClient, MockEnsureImage):
         image = "brainles/test-image:latest"
         MockEnsureImage.return_value = image
-        MockClient.images.get.return_value = MagicMock(
+        MockDockerClient.images.get.return_value = MagicMock(
             attrs={"Config": {"WorkingDir": "/workspace"}}
         )
 

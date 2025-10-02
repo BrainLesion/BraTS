@@ -159,7 +159,7 @@ class MissingMRI(BraTSAlgorithm):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Path | str | None = None,
-        backend: Optional[Backends] = None,
+        backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
 
