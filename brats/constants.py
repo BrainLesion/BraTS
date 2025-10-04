@@ -104,14 +104,12 @@ class MeningiomaAlgorithms(Algorithms):
 class PediatricAlgorithms(Algorithms):
     """Constants for the available pediatric segmentation algorithms."""
 
-    BraTS25_1A = "BraTS25_1A"
-    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
-    BraTS25_1B = "BraTS25_1B"
-    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
-    BraTS25_1C = "BraTS25_1C"
-    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
-    BraTS25_1D = "BraTS25_1D"
-    """ BraTS25 Pediatric Segmentation 1st place (tie)"""
+    BraTS25_1 = "BraTS25_1"
+    """ BraTS25 Pediatric Segmentation 1st place"""
+    BraTS25_2 = "BraTS25_2"
+    """ BraTS25 Pediatric Segmentation 2nd place"""
+    BraTS25_3 = "BraTS25_3"
+    """ BraTS25 Pediatric Segmentation 3rd place"""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Pediatric Segmentation 1st place """

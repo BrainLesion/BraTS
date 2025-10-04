@@ -17,7 +17,7 @@ constants:
 algorithms:
 
 ##### 2025 #####
-  BraTS25_1A:
+  BraTS25_1:
     meta:
       authors: Yuxiao Yi, et al.
       paper: N/A
@@ -30,44 +30,44 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: true
   
-  BraTS25_1B:
+  BraTS25_2:
     meta:
       authors: Meng-Yuan Chen, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2025
-      rank: *rank_1
+      rank: *rank_2
       year: *year_2025
     run_args:
       docker_image: brainles/brats25_ped_cmengynn:latest
       input_name_schema: *input_name_schema
       requires_root: true
 
-  BraTS25_1C:
+  BraTS25_3:
     meta:
       authors: Yu Haitao, et al.
       paper: N/A
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2025
-      rank: *rank_1
+      rank: *rank_3
       year: *year_2025
     run_args:
       docker_image: brainles/brats25_ped_qing:latest
       input_name_schema: *input_name_schema
       requires_root: true
 
-  BraTS25_1D:
-    meta:
-      authors: Xiaolong Li, et al.
-      paper: N/A
-      challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2025
-      rank: *rank_1
-      year: *year_2025
-    run_args:
-      docker_image: brainles/brats25_ped_s1mpleee:latest
-      input_name_schema: *input_name_schema
-      requires_root: true
+  # BraTS25_4?: # Removed after ranking updated
+  #   meta:
+  #     authors: Xiaolong Li, et al.
+  #     paper: N/A
+  #     challenge: *challenge
+  #     challenge_manuscript: *challenge_manuscript_2025
+  #     rank: *rank_1
+  #     year: *year_2025
+  #   run_args:
+  #     docker_image: brainles/brats25_ped_s1mpleee:latest
+  #     input_name_schema: *input_name_schema
+  #     requires_root: true
 
 
 ##### 2024 #####
@@ -124,7 +124,7 @@ algorithms:
 ##### 2023 #####
   BraTS23_1:
     meta:
-      authors: Daniel Capell´an-Mart´in et al.
+      authors: Daniel Capellán-Martín et al.
       paper: https://api.semanticscholar.org/CorpusID:272599903
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
