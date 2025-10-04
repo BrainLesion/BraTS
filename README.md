@@ -63,7 +63,7 @@ pip install brats
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
 > Note: Some legacy segmentation algorithms from BraTS challenges before 2023 are available via [BraTS Toolkit](https://github.com/neuronflow/BraTS-Toolkit).
-
+<br>
 
 
 #### Adult Glioma Segmentation (Pre & Post-Treatment) 
