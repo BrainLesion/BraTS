@@ -291,7 +291,7 @@ class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
 
     def __init__(
         self,
-        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS25_1A,
+        algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS25_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
