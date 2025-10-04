@@ -53,6 +53,9 @@ pip install brats
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
+## Singularity Support
+BraTS orchestrator also supports Singularity as an alternative to Docker.  
+To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and set the environment variable `BRATS_ORCHESTRATOR_BACKEND=singularity`.
 
 ## Available Algorithms and Usage
 
