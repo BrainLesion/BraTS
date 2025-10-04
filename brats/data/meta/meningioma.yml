@@ -80,7 +80,7 @@ algorithms:
       
   BraTS23_3:
     meta:
-      authors: Daniel Capell´an-Mart´in et al.
+      authors: Daniel Capellán-Martín et al.
       paper: https://api.semanticscholar.org/CorpusID:272599903
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2023
