@@ -181,7 +181,10 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
 
         self._infer_single(
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
@@ -217,7 +220,10 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
 
         return self._infer_batch(
             data_folder=data_folder,
@@ -454,7 +460,10 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
         self._infer_single(
             inputs={"t1c": t1c},
             output_file=output_file,
@@ -489,7 +498,10 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,
