@@ -91,12 +91,12 @@ def _ensure_image(image: str) -> str:
 
 
 def _convert_volume_mappings_to_singularity_format(
-    volume_mappings: Dict[Path, Path],
+    volume_mappings: Dict[Path, Dict[str, str]],
 ) -> List[str]:
     """Convert volume mappings from Docker format to Singularity format.
 
     Args:
-        volume_mappings (Dict[Path, Path]): The volume mappings in Docker format
+        volume_mappings (Dict[Path, Dict[str, str]]): The volume mappings in Docker format
 
     Returns:
         List[str]: The volume mappings in Singularity format
@@ -200,7 +200,7 @@ def run_container(
     options.append("--cwd")
     options.append(str(_get_docker_working_dir(algorithm.run_args.docker_image)))
     options.append("--overlay")
-    options.append(str(image) + "_overlay.img")
+    options.append(str(Path(image).with_suffix('_overlay.img')))
 
     subprocess.run(
         [
@@ -209,7 +209,7 @@ def run_container(
             "create",
             "--size",
             "1024",
-            str(image) + "_overlay.img",
+            str(Path(image).with_suffix('_overlay.img')),
         ],
         check=True,
     )
