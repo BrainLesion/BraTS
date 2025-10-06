@@ -200,7 +200,7 @@ def run_container(
     options.append("--cwd")
     options.append(str(_get_docker_working_dir(algorithm.run_args.docker_image)))
     options.append("--overlay")
-    options.append(str(Path(image).with_suffix('_overlay.img')))
+    options.append(str(Path(image).with_suffix("_overlay.img")))
 
     subprocess.run(
         [
@@ -209,7 +209,7 @@ def run_container(
             "create",
             "--size",
             "1024",
-            str(Path(image).with_suffix('_overlay.img')),
+            str(Path(image).with_suffix("_overlay.img")),
         ],
         check=True,
     )
