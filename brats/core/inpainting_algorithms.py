@@ -116,7 +116,10 @@ class Inpainter(BraTSAlgorithm):
         """
 
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
 
         self._infer_single(
             inputs={"t1n": t1n, "mask": mask},
@@ -151,7 +154,10 @@ class Inpainter(BraTSAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        backend = Backends(backend_env)
+        if isinstance(backend_env, Backends):
+            backend = backend_env
+        else:
+            backend = Backends(backend_env)
 
         return self._infer_batch(
             data_folder=data_folder,
