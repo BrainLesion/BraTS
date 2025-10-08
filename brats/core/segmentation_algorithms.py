@@ -180,11 +180,6 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
 
         self._infer_single(
             inputs={"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w},
@@ -219,11 +214,6 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
 
         return self._infer_batch(
             data_folder=data_folder,
@@ -459,11 +449,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
+        
         self._infer_single(
             inputs={"t1c": t1c},
             output_file=output_file,
@@ -497,11 +483,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
+
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,
