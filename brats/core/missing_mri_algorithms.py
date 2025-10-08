@@ -144,7 +144,6 @@ class MissingMRI(BraTSAlgorithm):
             len(inputs) == 3
         ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
 
-
         self._infer_single(
             inputs=inputs,
             output_file=output_file,
