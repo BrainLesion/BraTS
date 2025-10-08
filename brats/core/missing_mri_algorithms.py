@@ -144,11 +144,6 @@ class MissingMRI(BraTSAlgorithm):
             len(inputs) == 3
         ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
 
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
 
         self._infer_single(
             inputs=inputs,
@@ -183,11 +178,6 @@ class MissingMRI(BraTSAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        backend_env = os.environ.get("BRATS_ORCHESTRATOR_BACKEND", backend)
-        if isinstance(backend_env, Backends):
-            backend = backend_env
-        else:
-            backend = Backends(backend_env)
 
         return self._infer_batch(
             data_folder=data_folder,
