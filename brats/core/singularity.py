@@ -18,7 +18,8 @@ from loguru import logger
 import time
 from spython.main import Client
 import docker
-
+import tempfile
+import os
 try:
     docker_client = docker.from_env()
 except docker.errors.DockerException as e:
@@ -58,7 +59,7 @@ def _build_command_args(
 def _ensure_image(image: str) -> str:
     """
     Ensure the Singularity image is present on the system. If not, pull it as a Sandbox and create an overlay image.
-    This function checks if the specified Singularity image exists locally in the /tmp directory.
+    This function checks if the specified Singularity image exists locally in the temporary directory.
     If the image is not found, it pulls the image from Docker Hub, creates a Singularity Sandbox at the target location,
     and also creates an overlay image. The overlay image allows the Singularity run command
     to write inside the image sandbox, enabling writable operations during container execution.
@@ -69,7 +70,11 @@ def _ensure_image(image: str) -> str:
     Returns:
         str: The path to the Singularity image Sandbox.
     """
-    image_path = Path("/tmp").joinpath(image.split(":")[0])
+    persistent_dir = os.path.join(tempfile.gettempdir(), "brats_singularity_images")
+    os.makedirs(persistent_dir, exist_ok=True)
+    logger.debug(f"Persistent folder: {persistent_dir}")
+    temp_folder = Path(persistent_dir)
+    image_path = temp_folder.joinpath(image.split(":")[0])
     if not image_path.exists():
         image_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug(
