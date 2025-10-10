@@ -20,6 +20,7 @@ from spython.main import Client
 import docker
 import tempfile
 import os
+
 try:
     docker_client = docker.from_env()
 except docker.errors.DockerException as e:
