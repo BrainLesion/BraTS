@@ -147,7 +147,7 @@ class Inpainter(BraTSAlgorithm):
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        
+
         return self._infer_batch(
             data_folder=data_folder,
             output_folder=output_folder,

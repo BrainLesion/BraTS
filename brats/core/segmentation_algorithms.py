@@ -449,7 +449,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
-        
+
         self._infer_single(
             inputs={"t1c": t1c},
             output_file=output_file,
