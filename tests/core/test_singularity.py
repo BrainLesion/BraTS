@@ -81,7 +81,6 @@ class TestSingularityHelpers(unittest.TestCase):
         fake_image = "test-image:latest"
 
         result = _ensure_image(fake_image)
-        print(result)
         # Assert
         MockPull.assert_called_once_with(
             [
