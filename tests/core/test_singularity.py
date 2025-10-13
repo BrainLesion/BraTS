@@ -77,11 +77,11 @@ class TestSingularityHelpers(unittest.TestCase):
         # Arrange: simulate missing image file
         MockExists.return_value = False
 
-        fake_image_path = "/tmp/test-image"
+        fake_image_path = "/tmp/brats_singularity_images/test-image"
         fake_image = "test-image:latest"
 
         result = _ensure_image(fake_image)
-
+        print(result)
         # Assert
         MockPull.assert_called_once_with(
             [
@@ -117,7 +117,7 @@ class TestSingularityHelpers(unittest.TestCase):
         # Arrange: simulate existing image file
         MockExists.return_value = True
 
-        fake_image_path = "/tmp/fake_image"
+        fake_image_path = "/tmp/brats_singularity_images/fake_image"
         fake_puller = iter([])
         MockPull.return_value = (fake_image_path, fake_puller)
 
