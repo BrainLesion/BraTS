@@ -27,18 +27,19 @@ except docker.errors.DockerException as e:
     logger.error(
         f"Failed to connect to docker daemon. Please make sure docker is installed and running. Error: {e}"
     )
+    docker_client = None
 
 
 def _build_command_args(
     algorithm: AlgorithmData,
-) -> str:
+) -> List[str]:
     """Build the command arguments for the singularity container.
 
     Args:
         algorithm (AlgorithmData): The algorithm data
 
     Returns:
-        command_args: The command arguments
+        List[str]: The command arguments
     """
 
     command_args = ["--data_path=/mlcube_io0", "--output_path=/mlcube_io2"]
@@ -59,11 +60,9 @@ def _build_command_args(
 
 def _ensure_image(image: str) -> str:
     """
-    Ensure the Singularity image is present on the system. If not, pull it as a Sandbox and create an overlay image.
+    Ensure the Singularity image is present on the system. If not, pull it as a Sandbox.
     This function checks if the specified Singularity image exists locally in the temporary directory.
-    If the image is not found, it pulls the image from Docker Hub, creates a Singularity Sandbox at the target location,
-    and also creates an overlay image. The overlay image allows the Singularity run command
-    to write inside the image sandbox, enabling writable operations during container execution.
+    If the image is not found, it pulls the image from Docker Hub, creates a Singularity Sandbox at the target location.
 
     Args:
         image (str): The Docker image to pull and convert into a Singularity Sandbox.
@@ -75,7 +74,7 @@ def _ensure_image(image: str) -> str:
     os.makedirs(persistent_dir, exist_ok=True)
     logger.debug(f"Persistent folder: {persistent_dir}")
     temp_folder = Path(persistent_dir)
-    image_path = temp_folder.joinpath(image.split(":")[0])
+    image_path = temp_folder.joinpath(image.rsplit(":", 1)[0])
     if not image_path.exists():
         image_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug(
@@ -114,7 +113,7 @@ def _convert_volume_mappings_to_singularity_format(
     return singularity_bindings
 
 
-def _get_docker_working_dir(image: str) -> Path:
+def _get_docker_working_dir(image: str) -> Optional[Path]:
     """
     Retrieve the working directory configured in the Docker image.
 
@@ -125,8 +124,10 @@ def _get_docker_working_dir(image: str) -> Path:
         image (str): The Docker image name or ID.
 
     Returns:
-        Path: The working directory specified in the Docker image configuration.
+        Path | None: The working directory specified in the Docker image configuration. None if docker client is not available.
     """
+    if docker_client is None:
+        return None
     _ensure_docker_image(image)
     logger.debug(f"Inspecting image {image}")
     image = docker_client.images.get(image)
@@ -142,6 +143,7 @@ def run_container(
     cuda_devices: str,
     force_cpu: bool,
     internal_external_name_map: Optional[Dict[str, str]] = None,
+    overlay_size: int = 1024,
 ):
     """Run a Singularity container for the provided algorithm.
 
@@ -152,7 +154,10 @@ def run_container(
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
         internal_external_name_map (Dict[str, str]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
+        overlay_size (int): The size of the overlay image in MB. Defaults to 1024.
     """
+    if overlay_size <= 0:
+        raise ValueError("Overlay size must be greater than 0.")
     _log_algorithm_info(algorithm=algorithm)
     # ensure image is present, if not pull it
     image = _ensure_image(image=algorithm.run_args.docker_image)
@@ -203,8 +208,12 @@ def run_container(
         options.append("--nv")  # Singularity uses --nv to enable GPU support
 
     # TODO: The --fakeroot option may be required for certain algorithms that need root privileges inside the Singularity container.
-    options.append("--cwd")
-    options.append(str(_get_docker_working_dir(algorithm.run_args.docker_image)))
+    docker_working_dir = _get_docker_working_dir(algorithm.run_args.docker_image)
+    if docker_working_dir is not None:
+        options.append("--cwd")
+        options.append(str(docker_working_dir))
+    else:
+        logger.warning("Docker working directory not found. Using default working directory.")
     options.append("--overlay")
     options.append(image + "_overlay.img")
 
@@ -214,7 +223,7 @@ def run_container(
             "overlay",
             "create",
             "--size",
-            "1024",
+            str(overlay_size),
             image + "_overlay.img",
         ],
         check=True,
