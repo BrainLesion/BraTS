@@ -133,7 +133,10 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
     image = docker_client.images.get(image)
     workdir = image.attrs["Config"].get("WorkingDir", None)
     logger.debug(f"Working directory: {workdir}")
-    return Path(workdir)
+    if workdir is None:
+        return None
+    else:
+        return Path(workdir)
 
 
 def run_container(
