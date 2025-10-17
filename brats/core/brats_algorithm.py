@@ -250,7 +250,12 @@ class BraTSAlgorithm(ABC):
                 Backends.DOCKER: run_docker_container,
                 Backends.SINGULARITY: run_singularity_container,
             }
+            if isinstance(backend, str):
 
+                try:
+                    backend = Backends(backend)
+                except ValueError:
+                    raise ValueError(f"Unsupported backend: {backend}")
             # Get the function for the selected backend
             runner = backend_dispatch.get(backend)
 
