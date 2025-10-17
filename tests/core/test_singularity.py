@@ -117,8 +117,6 @@ class TestSingularityHelpers(unittest.TestCase):
         MockExists.return_value = True
 
         fake_image_path = "/tmp/brats_singularity_images/fake_image"
-        fake_puller = iter([])
-        MockPull.return_value = (fake_image_path, fake_puller)
 
         result = _ensure_image("fake_image:latest")
 
