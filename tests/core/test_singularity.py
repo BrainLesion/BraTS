@@ -172,7 +172,7 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_ensure_image,
         mock_log_algorithm_info,
     ):
-
+        mock_handle_device_requests.return_value = []
         # setup mocks
         mock_build_command_args.return_value = [
             "--data_path=/mlcube_io0",
