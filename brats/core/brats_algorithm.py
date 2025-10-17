@@ -164,7 +164,7 @@ class BraTSAlgorithm(ABC):
         inputs: dict[str, Path | str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: Backends = Backends.DOCKER,
+        backend: Backends | str = Backends.DOCKER,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
@@ -173,7 +173,7 @@ class BraTSAlgorithm(ABC):
             inputs (dict[str, Path  |  str]): Input Images for the task
             output_file (Path | str): File to save the output
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
-            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            backend (Backends | str, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
             logger.info(f"Performing single inference")
@@ -191,7 +191,12 @@ class BraTSAlgorithm(ABC):
                 Backends.DOCKER: run_docker_container,
                 Backends.SINGULARITY: run_singularity_container,
             }
-
+            if isinstance(backend, str):
+                # convert string to Backends enum
+                try:
+                    backend = Backends(backend)
+                except ValueError:
+                    raise ValueError(f"Unsupported backend: {backend}")
             # Get the function for the selected backend
             runner = backend_dispatch.get(backend)
 
