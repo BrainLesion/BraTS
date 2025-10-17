@@ -24,8 +24,8 @@ import os
 try:
     docker_client = docker.from_env()
 except docker.errors.DockerException as e:
-    logger.error(
-        f"Failed to connect to docker daemon. Please make sure docker is installed and running. Error: {e}"
+    logger.debug(
+        "Could not connect to the Docker daemon. Docker functionality is disabled, so the Singularity container's working directory may not be set correctly."
     )
     docker_client = None
 
@@ -131,7 +131,7 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
     _ensure_docker_image(image)
     logger.debug(f"Inspecting image {image}")
     image = docker_client.images.get(image)
-    workdir = image.attrs["Config"].get("WorkingDir", "")
+    workdir = image.attrs["Config"].get("WorkingDir", None)
     logger.debug(f"Working directory: {workdir}")
     return Path(workdir)
 
@@ -219,17 +219,18 @@ def run_container(
     options.append("--overlay")
     options.append(image + "_overlay.img")
 
-    subprocess.run(
-        [
-            "singularity",
-            "overlay",
-            "create",
-            "--size",
-            str(overlay_size),
-            image + "_overlay.img",
-        ],
-        check=True,
-    )
+    if not Path(image + "_overlay.img").exists():
+        subprocess.run(
+            [
+                "singularity",
+                "overlay",
+                "create",
+                "--size",
+                str(overlay_size),
+                image + "_overlay.img",
+            ],
+            check=True,
+        )
     executor = Client.run(
         image,
         options=options,
