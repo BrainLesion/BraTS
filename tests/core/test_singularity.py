@@ -186,6 +186,7 @@ class TestSingularityHelpers(unittest.TestCase):
         # run
         cuda_devices = "0"
         force_cpu = False
+        mock_client.run.return_value = iter([])
         run_container(
             algorithm=self.algorithm_gpu,
             data_path=self.data_folder,
