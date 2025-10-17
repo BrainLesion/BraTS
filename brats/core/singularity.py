@@ -213,7 +213,9 @@ def run_container(
         options.append("--cwd")
         options.append(str(docker_working_dir))
     else:
-        logger.warning("Docker working directory not found. Using default working directory.")
+        logger.warning(
+            "Docker working directory not found. Using default working directory."
+        )
     options.append("--overlay")
     options.append(image + "_overlay.img")
 
