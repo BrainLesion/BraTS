@@ -3,7 +3,7 @@ from __future__ import annotations
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable
 
 from loguru import logger
 
@@ -159,6 +159,20 @@ class BraTSAlgorithm(ABC):
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
+    def _get_backend_runner(self, backend: Backends | str) -> Callable:
+        if isinstance(backend, str):
+            # convert string to Backends enum
+            try:
+                backend = Backends(backend)
+            except ValueError:
+                raise ValueError(f"Unsupported backend: {backend}")
+        backend_dispatch = {
+            Backends.DOCKER: run_docker_container,
+            Backends.SINGULARITY: run_singularity_container,
+        }
+        runner = backend_dispatch.get(backend)
+        return runner
+
     def _infer_single(
         self,
         inputs: dict[str, Path | str],
@@ -187,22 +201,8 @@ class BraTSAlgorithm(ABC):
                 inputs=inputs,
                 subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
-            backend_dispatch = {
-                Backends.DOCKER: run_docker_container,
-                Backends.SINGULARITY: run_singularity_container,
-            }
-            if isinstance(backend, str):
-                # convert string to Backends enum
-                try:
-                    backend = Backends(backend)
-                except ValueError:
-                    raise ValueError(f"Unsupported backend: {backend}")
-            # Get the function for the selected backend
-            runner = backend_dispatch.get(backend)
-
-            if runner is None:
-                raise ValueError(f"Unsupported backend: {backend}")
-
+            
+            runner = self._get_backend_runner(backend)
             runner(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
@@ -246,19 +246,7 @@ class BraTSAlgorithm(ABC):
                 input_name_schema=self.algorithm.run_args.input_name_schema,
             )
             logger.info(f"Standardized input names to match algorithm requirements.")
-            backend_dispatch = {
-                Backends.DOCKER: run_docker_container,
-                Backends.SINGULARITY: run_singularity_container,
-            }
-            if isinstance(backend, str):
-
-                try:
-                    backend = Backends(backend)
-                except ValueError:
-                    raise ValueError(f"Unsupported backend: {backend}")
-            # Get the function for the selected backend
-            runner = backend_dispatch.get(backend)
-
+            runner = self._get_backend_runner(backend)
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
             # run inference in container
