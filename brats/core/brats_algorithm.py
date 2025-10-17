@@ -201,7 +201,7 @@ class BraTSAlgorithm(ABC):
                 inputs=inputs,
                 subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
-            
+
             runner = self._get_backend_runner(backend)
             runner(
                 algorithm=self.algorithm,
