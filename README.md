@@ -65,6 +65,39 @@ segmenter.infer_single(
 )
 ```
 
+## Kubernetes Support
+BraTS orchestrator also supports Kubernetes to run the algorithms remotely, as an alternative to local execution with Docker or Singularity.
+To use Kubernetes for execution, ensure that the `KUBECONFIG` environment variable is set to the location of your kubeconfig file, as is standard when interacting with a Kubernetes cluster.
+```bash
+export KUBECONFIG=/path/to/kubeconfig
+```
+Then, specify the backend to use as `kubernetes` (or the corresponding enum value `Backends.KUBERNETES`) when running the inference:
+```python
+from brats.constants import Backends
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.KUBERNETES
+)
+```
+By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) to manage input and output data. If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `mount_path` parameter determines where the PVC will be mounted inside the Pod.
+When using Kubernetes, the algorithm is executed inside a Kubernetes Job. Input data is first uploaded to a PersistentVolume, which is mounted into the Pod running the job. After the algorithm finishes running in the Pod, the output data is transferred back from the cluster to your local machine.
+```python
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.KUBERNETES,
+    kubernetes_kwargs={
+        "namespace": "brats",
+        "pvc_name": "brats-iwydw55ej7qm-pvc",
+        "pvc_storage_size": "2Gi",
+        "pvc_storage_class": "brats-pvc-storage-class",
+        "job_name": "brats-oxh24nu4dhk9-job",
+        "mount_path": "/data",
+    }
+)
+```
+
 ## Available Algorithms and Usage
 
 > [!IMPORTANT]
