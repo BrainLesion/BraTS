@@ -223,7 +223,7 @@ def run_container(
         logger.warning(
             "Docker working directory not found. Using default working directory."
         )
-    overlay_path = Path(image).parent / (Path(image).name + '_overlay.img')
+    overlay_path = Path(image).parent / (Path(image).name + "_overlay.img")
     options.append("--overlay")
     options.append(str(overlay_path))
 
