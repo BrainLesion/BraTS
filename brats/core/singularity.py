@@ -128,10 +128,13 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
     """
     if docker_client is None:
         return None
-    _ensure_docker_image(image)
-    logger.debug(f"Inspecting image {image}")
-    image = docker_client.images.get(image)
-    workdir = image.attrs["Config"].get("WorkingDir", None)
+    try:
+        logger.debug(f"Inspecting image {image}")
+        image_obj = docker_client.images.get(image)
+    except docker.errors.ImageNotFound:
+        logger.debug(f"Image {image} not found locally.")
+        return None
+    workdir = image_obj.attrs["Config"].get("WorkingDir", None)
     logger.debug(f"Working directory: {workdir}")
     if workdir is None:
         return None
