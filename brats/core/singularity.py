@@ -133,7 +133,8 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
         image_obj = docker_client.images.get(image)
     except docker.errors.ImageNotFound:
         logger.debug(f"Image {image} not found locally.")
-        return None
+        _ensure_docker_image(image)
+        image_obj = docker_client.images.get(image)
     workdir = image_obj.attrs["Config"].get("WorkingDir", None)
     logger.debug(f"Working directory: {workdir}")
     if workdir is None:
@@ -222,10 +223,11 @@ def run_container(
         logger.warning(
             "Docker working directory not found. Using default working directory."
         )
+    overlay_path = Path(image).parent / (Path(image).name + '_overlay.img')
     options.append("--overlay")
-    options.append(image + "_overlay.img")
+    options.append(str(overlay_path))
 
-    if not Path(image + "_overlay.img").exists():
+    if not overlay_path.exists():
         subprocess.run(
             [
                 "singularity",
@@ -233,7 +235,7 @@ def run_container(
                 "create",
                 "--size",
                 str(overlay_size),
-                image + "_overlay.img",
+                str(overlay_path),
             ],
             check=True,
         )
@@ -255,7 +257,7 @@ def run_container(
         internal_external_name_map=internal_external_name_map,
     )
     try:
-        Path(str(image) + "_overlay.img").unlink()
+        overlay_path.unlink()
     except FileNotFoundError:
         pass
     logger.info(f"Finished inference in {time.time() - start_time:.2f} seconds")
