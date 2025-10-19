@@ -80,7 +80,7 @@ segmenter.infer_single(
     backend=Backends.KUBERNETES
 )
 ```
-By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) to manage input and output data. If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `mount_path` parameter determines where the PVC will be mounted inside the Pod.
+By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) to manage input and output data. If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `data_mount_path` parameter determines where the PVC will be mounted inside the Pod.
 When using Kubernetes, the algorithm is executed inside a Kubernetes Job. Input data is first uploaded to a PersistentVolume, which is mounted into the Pod running the job. After the algorithm finishes running in the Pod, the output data is transferred back from the cluster to your local machine.
 ```python
 segmenter.infer_single(
@@ -93,7 +93,7 @@ segmenter.infer_single(
         "pvc_storage_size": "2Gi",
         "pvc_storage_class": "brats-pvc-storage-class",
         "job_name": "brats-oxh24nu4dhk9-job",
-        "mount_path": "/data",
+        "data_mount_path": "/data",
     }
 )
 ```
