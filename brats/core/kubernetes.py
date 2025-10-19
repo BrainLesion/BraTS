@@ -297,7 +297,6 @@ def _download_folder_from_pod(
         tar_data = base64.b64decode(full_base64)
 
         base_folder_name = Path(folder_name).name
-        print(f"base_folder_name: {local_base_dir}")
         tarfile_path = local_base_dir / f"{base_folder_name}"
         with open(tarfile_path, "wb") as tarfile_obj:
             tarfile_obj.write(tar_data)
