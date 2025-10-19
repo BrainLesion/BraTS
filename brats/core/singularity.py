@@ -239,25 +239,27 @@ def run_container(
             ],
             check=True,
         )
-    executor = Client.run(
-        image,
-        options=options,
-        args=args,
-        stream=True,
-        bind=singularity_bindings,
-    )
-    container_output = []
-    for line in executor:
-        container_output.append(line)
-
-    _sanity_check_output(
-        data_path=data_path,
-        output_path=output_path,
-        container_output="\n".join(container_output),
-        internal_external_name_map=internal_external_name_map,
-    )
     try:
-        overlay_path.unlink()
-    except FileNotFoundError:
-        pass
+        executor = Client.run(
+            image,
+            options=options,
+            args=args,
+            stream=True,
+            bind=singularity_bindings,
+        )
+        container_output = []
+        for line in executor:
+            container_output.append(line)
+
+        _sanity_check_output(
+            data_path=data_path,
+            output_path=output_path,
+            container_output="\n".join(container_output),
+            internal_external_name_map=internal_external_name_map,
+        )
+    finally:
+        try:
+            overlay_path.unlink()
+        except FileNotFoundError:
+            pass
     logger.info(f"Finished inference in {time.time() - start_time:.2f} seconds")
