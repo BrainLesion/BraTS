@@ -201,7 +201,7 @@ def run_container(
     logger.debug(f"GPU Device requests: {device_requests}")
 
     # Run the container
-    logger.info(f"{'Starting inference'}")
+    logger.info("Starting inference")
     start_time = time.time()
 
     singularity_bindings = _convert_volume_mappings_to_singularity_format(
