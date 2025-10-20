@@ -74,7 +74,7 @@ def _ensure_image(image: str) -> str:
     os.makedirs(persistent_dir, exist_ok=True)
     logger.debug(f"Persistent folder: {persistent_dir}")
     temp_folder = Path(persistent_dir)
-    image_path = temp_folder.joinpath(image.rsplit(":", 1)[0])
+    image_path = temp_folder.joinpath(image.replace(":", "_"))
     if not image_path.exists():
         image_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug(
