@@ -96,12 +96,12 @@ def _ensure_image(image: str) -> str:
 
 
 def _convert_volume_mappings_to_singularity_format(
-    volume_mappings: Dict[Path, Dict[str, str]],
+    volume_mappings: Dict[Path | str, Dict[str, str]],
 ) -> List[str]:
     """Convert volume mappings from Docker format to Singularity format.
 
     Args:
-        volume_mappings (Dict[Path, Dict[str, str]]): The volume mappings in Docker format
+        volume_mappings (Dict[Path | str, Dict[str, str]]): The volume mappings in Docker format
 
     Returns:
         List[str]: The volume mappings in Singularity format
