@@ -159,13 +159,7 @@ class BraTSAlgorithm(ABC):
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
-    def _get_backend_runner(self, backend: Backends | str) -> Callable:
-        if isinstance(backend, str):
-            # convert string to Backends enum
-            try:
-                backend = Backends(backend)
-            except ValueError:
-                raise ValueError(f"Unsupported backend: {backend}")
+    def _get_backend_runner(self, backend: Backends) -> Callable:
         backend_dispatch = {
             Backends.DOCKER: run_docker_container,
             Backends.SINGULARITY: run_singularity_container,
@@ -178,7 +172,7 @@ class BraTSAlgorithm(ABC):
         inputs: dict[str, Path | str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
-        backend: Backends | str = Backends.DOCKER,
+        backend: Backends = Backends.DOCKER,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
