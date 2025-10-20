@@ -77,7 +77,7 @@ class TestSingularityHelpers(unittest.TestCase):
         # Arrange: simulate missing image file
         MockExists.return_value = False
 
-        fake_image_path = "/tmp/brats_singularity_images/test-image"
+        fake_image_path = "/tmp/brats_singularity_images/test-image_latest"
         fake_image = "test-image:latest"
 
         result = _ensure_image(fake_image)
@@ -101,7 +101,7 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity._ensure_docker_image")
     @patch("brats.core.singularity.docker_client")
     def test_get_working_dir_from_docker_image(self, MockDockerClient, MockEnsureImage):
-        image = "brainles/test-image:latest"
+        image = "brainles/test-image_latest"
         MockEnsureImage.return_value = image
         MockDockerClient.images.get.return_value = MagicMock(
             attrs={"Config": {"WorkingDir": "/workspace"}}
@@ -116,7 +116,7 @@ class TestSingularityHelpers(unittest.TestCase):
         # Arrange: simulate existing image file
         MockExists.return_value = True
 
-        fake_image_path = "/tmp/brats_singularity_images/fake_image"
+        fake_image_path = "/tmp/brats_singularity_images/fake_image_latest"
 
         result = _ensure_image("fake_image:latest")
 
