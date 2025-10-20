@@ -193,6 +193,10 @@ class TestSingularityHelpers(unittest.TestCase):
         cuda_devices = "0"
         force_cpu = False
         mock_client.run.return_value = iter([])
+
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
         run_container(
             algorithm=self.algorithm_gpu,
             data_path=self.data_folder,
