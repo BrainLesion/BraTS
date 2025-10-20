@@ -197,6 +197,8 @@ class BraTSAlgorithm(ABC):
             )
 
             runner = self._get_backend_runner(backend)
+            if runner is None:
+                raise ValueError(f"Unsupported backend: {backend}")
             runner(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
