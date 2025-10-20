@@ -159,12 +159,12 @@ class BraTSAlgorithm(ABC):
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
-    def _get_backend_runner(self, backend: Backends) -> Callable:
+    def _get_backend_runner(self, backend: Backends) -> Optional[Callable]:
         backend_dispatch = {
             Backends.DOCKER: run_docker_container,
             Backends.SINGULARITY: run_singularity_container,
         }
-        runner = backend_dispatch.get(backend)
+        runner = backend_dispatch.get(backend, None)
         return runner
 
     def _infer_single(
