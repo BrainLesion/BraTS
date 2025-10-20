@@ -2,7 +2,7 @@ from brats.utils.algorithm_config import AlgorithmData
 from pathlib import Path
 
 import subprocess
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from brats.core.docker import (
     _log_algorithm_info,
     _sanity_check_output,
@@ -96,7 +96,7 @@ def _ensure_image(image: str) -> str:
 
 
 def _convert_volume_mappings_to_singularity_format(
-    volume_mappings: Dict[Path | str, Dict[str, str]],
+    volume_mappings: Dict[Union[Path, str], Dict[str, str]],
 ) -> List[str]:
     """Convert volume mappings from Docker format to Singularity format.
 
