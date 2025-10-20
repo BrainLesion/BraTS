@@ -227,6 +227,7 @@ def run_container(
     options.append("--overlay")
     options.append(str(overlay_path))
 
+    overlay_created = False
     if not overlay_path.exists():
         subprocess.run(
             [
@@ -239,6 +240,7 @@ def run_container(
             ],
             check=True,
         )
+        overlay_created = True
     try:
         executor = Client.run(
             image,
@@ -259,7 +261,8 @@ def run_container(
         )
     finally:
         try:
-            overlay_path.unlink()
+            if overlay_created:
+                overlay_path.unlink()
         except FileNotFoundError:
             pass
     logger.info(f"Finished inference in {time.time() - start_time:.2f} seconds")
