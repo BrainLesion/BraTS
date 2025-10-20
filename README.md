@@ -55,7 +55,7 @@ pip install brats
 
 ## Singularity Support
 BraTS orchestrator also supports Singularity as an alternative to Docker.  
-To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `singularity` (or the corresponding enum value `Backends.SINGULARITY`) when running the inference:
+To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `Backends.SINGULARITY` when running the inference:
 ```python
 from brats.constants import Backends
 segmenter.infer_single(

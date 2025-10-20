@@ -30,7 +30,6 @@ from brats.constants import (
 )
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
-import os
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):

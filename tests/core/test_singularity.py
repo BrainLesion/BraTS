@@ -73,11 +73,16 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.logger")
     @patch("brats.core.singularity.Path.exists")
-    def test_ensure_image_pulls_if_missing(self, MockExists, MockLogger, MockPull):
+    @patch("tempfile.gettempdir")
+    def test_ensure_image_pulls_if_missing(
+        self, MockGetTempDir, MockExists, MockLogger, MockPull
+    ):
         # Arrange: simulate missing image file
         MockExists.return_value = False
-
-        fake_image_path = "/tmp/brats_singularity_images/test-image"
+        MockGetTempDir.return_value = self.test_dir
+        fake_image_path = str(
+            self.test_dir / "brats_singularity_images" / "test-image_latest"
+        )
         fake_image = "test-image:latest"
 
         result = _ensure_image(fake_image)
@@ -101,7 +106,7 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity._ensure_docker_image")
     @patch("brats.core.singularity.docker_client")
     def test_get_working_dir_from_docker_image(self, MockDockerClient, MockEnsureImage):
-        image = "brainles/test-image:latest"
+        image = "brainles/test-image_latest"
         MockEnsureImage.return_value = image
         MockDockerClient.images.get.return_value = MagicMock(
             attrs={"Config": {"WorkingDir": "/workspace"}}
@@ -112,11 +117,14 @@ class TestSingularityHelpers(unittest.TestCase):
 
     @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.Path.exists")
-    def test_ensure_image_returns_if_exists(self, MockExists, MockPull):
+    @patch("tempfile.gettempdir")
+    def test_ensure_image_returns_if_exists(self, MockGetTempDir, MockExists, MockPull):
         # Arrange: simulate existing image file
         MockExists.return_value = True
-
-        fake_image_path = "/tmp/brats_singularity_images/fake_image"
+        MockGetTempDir.return_value = self.test_dir
+        fake_image_path = str(
+            self.test_dir / "brats_singularity_images" / "fake_image_latest"
+        )
 
         result = _ensure_image("fake_image:latest")
 
@@ -185,6 +193,10 @@ class TestSingularityHelpers(unittest.TestCase):
         cuda_devices = "0"
         force_cpu = False
         mock_client.run.return_value = iter([])
+
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
         run_container(
             algorithm=self.algorithm_gpu,
             data_path=self.data_folder,

@@ -2,7 +2,7 @@ from brats.utils.algorithm_config import AlgorithmData
 from pathlib import Path
 
 import subprocess
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from brats.core.docker import (
     _log_algorithm_info,
     _sanity_check_output,
@@ -74,7 +74,7 @@ def _ensure_image(image: str) -> str:
     os.makedirs(persistent_dir, exist_ok=True)
     logger.debug(f"Persistent folder: {persistent_dir}")
     temp_folder = Path(persistent_dir)
-    image_path = temp_folder.joinpath(image.rsplit(":", 1)[0])
+    image_path = temp_folder.joinpath(image.replace(":", "_"))
     if not image_path.exists():
         image_path.parent.mkdir(parents=True, exist_ok=True)
         logger.debug(
@@ -96,12 +96,12 @@ def _ensure_image(image: str) -> str:
 
 
 def _convert_volume_mappings_to_singularity_format(
-    volume_mappings: Dict[Path, Dict[str, str]],
+    volume_mappings: Dict[Union[Path, str], Dict[str, str]],
 ) -> List[str]:
     """Convert volume mappings from Docker format to Singularity format.
 
     Args:
-        volume_mappings (Dict[Path, Dict[str, str]]): The volume mappings in Docker format
+        volume_mappings (Dict[Path | str, Dict[str, str]]): The volume mappings in Docker format
 
     Returns:
         List[str]: The volume mappings in Singularity format
@@ -128,10 +128,14 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
     """
     if docker_client is None:
         return None
-    _ensure_docker_image(image)
-    logger.debug(f"Inspecting image {image}")
-    image = docker_client.images.get(image)
-    workdir = image.attrs["Config"].get("WorkingDir", None)
+    try:
+        logger.debug(f"Inspecting image {image}")
+        image_obj = docker_client.images.get(image)
+    except docker.errors.ImageNotFound:
+        logger.debug(f"Image {image} not found locally.")
+        _ensure_docker_image(image)
+        image_obj = docker_client.images.get(image)
+    workdir = image_obj.attrs["Config"].get("WorkingDir", None)
     logger.debug(f"Working directory: {workdir}")
     if workdir is None:
         return None
@@ -197,7 +201,7 @@ def run_container(
     logger.debug(f"GPU Device requests: {device_requests}")
 
     # Run the container
-    logger.info(f"{'Starting inference'}")
+    logger.info("Starting inference")
     start_time = time.time()
 
     singularity_bindings = _convert_volume_mappings_to_singularity_format(
@@ -219,10 +223,12 @@ def run_container(
         logger.warning(
             "Docker working directory not found. Using default working directory."
         )
+    overlay_path = Path(image).parent / (Path(image).name + "_overlay.img")
     options.append("--overlay")
-    options.append(image + "_overlay.img")
+    options.append(str(overlay_path))
 
-    if not Path(image + "_overlay.img").exists():
+    overlay_created = False
+    if not overlay_path.exists():
         subprocess.run(
             [
                 "singularity",
@@ -230,29 +236,33 @@ def run_container(
                 "create",
                 "--size",
                 str(overlay_size),
-                image + "_overlay.img",
+                str(overlay_path),
             ],
             check=True,
         )
-    executor = Client.run(
-        image,
-        options=options,
-        args=args,
-        stream=True,
-        bind=singularity_bindings,
-    )
-    container_output = []
-    for line in executor:
-        container_output.append(line)
-
-    _sanity_check_output(
-        data_path=data_path,
-        output_path=output_path,
-        container_output="\n".join(container_output),
-        internal_external_name_map=internal_external_name_map,
-    )
+        overlay_created = True
     try:
-        Path(str(image) + "_overlay.img").unlink()
-    except FileNotFoundError:
-        pass
+        executor = Client.run(
+            image,
+            options=options,
+            args=args,
+            stream=True,
+            bind=singularity_bindings,
+        )
+        container_output = []
+        for line in executor:
+            container_output.append(line)
+
+        _sanity_check_output(
+            data_path=data_path,
+            output_path=output_path,
+            container_output="\n".join(container_output),
+            internal_external_name_map=internal_external_name_map,
+        )
+    finally:
+        try:
+            if overlay_created:
+                overlay_path.unlink()
+        except FileNotFoundError:
+            pass
     logger.info(f"Finished inference in {time.time() - start_time:.2f} seconds")

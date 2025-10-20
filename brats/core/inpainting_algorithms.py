@@ -10,7 +10,6 @@ from loguru import logger
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task, Backends
 from brats.utils.data_handling import input_sanity_check
-import os
 
 
 class Inpainter(BraTSAlgorithm):
