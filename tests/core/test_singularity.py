@@ -73,11 +73,12 @@ class TestSingularityHelpers(unittest.TestCase):
     @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.logger")
     @patch("brats.core.singularity.Path.exists")
-    def test_ensure_image_pulls_if_missing(self, MockExists, MockLogger, MockPull):
+    @patch("tempfile.gettempdir")
+    def test_ensure_image_pulls_if_missing(self, MockGetTempDir, MockExists, MockLogger, MockPull):
         # Arrange: simulate missing image file
         MockExists.return_value = False
-
-        fake_image_path = "/tmp/brats_singularity_images/test-image_latest"
+        MockGetTempDir.return_value = self.test_dir
+        fake_image_path = str(self.test_dir / "brats_singularity_images" / "test-image_latest")
         fake_image = "test-image:latest"
 
         result = _ensure_image(fake_image)
@@ -112,11 +113,12 @@ class TestSingularityHelpers(unittest.TestCase):
 
     @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.Path.exists")
-    def test_ensure_image_returns_if_exists(self, MockExists, MockPull):
+    @patch("tempfile.gettempdir")
+    def test_ensure_image_returns_if_exists(self, MockGetTempDir, MockExists, MockPull):
         # Arrange: simulate existing image file
         MockExists.return_value = True
-
-        fake_image_path = "/tmp/brats_singularity_images/fake_image_latest"
+        MockGetTempDir.return_value = self.test_dir 
+        fake_image_path = str(self.test_dir / "brats_singularity_images" / "fake_image_latest")
 
         result = _ensure_image("fake_image:latest")
 
