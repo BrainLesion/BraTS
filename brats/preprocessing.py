@@ -148,7 +148,12 @@ def _coreg_atlasreg_deface(
     preprocessor.run()
 
 
-def _deface_only(
+#######
+# Preprocessing functions for different BraTS challenges
+#######
+
+
+def preprocess_deface_only(
     t1c_input: Union[str, Path],
     t1c_output: Union[str, Path],
     normalizer: Optional[Normalizer] = None,
@@ -165,11 +170,6 @@ def _deface_only(
     )
 
     preprocessor.run()
-
-
-#######
-# Preprocessing functions for different BraTS challenges
-#######
 
 
 def preprocess_coreg_sri24reg_bet(
@@ -422,7 +422,7 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"T1c modality required for {challenge_name} preprocessing"
             )
-        _deface_only(
+        preprocess_deface_only(
             t1c_input=t1c_input,
             t1c_output=t1c_output,
             normalizer=normalizer,
