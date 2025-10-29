@@ -22,9 +22,9 @@ authors = [
   { name = "Florian Kofler", email = "florian.kofler@tum.de" },
 ]
 
-license = "Apache-2.0"
 readme = "README.md"
-
+requires-python = "^3.8"
+license = "Apache-2.0"
 keywords = [
   "brain tumor",
   "glioma",
@@ -35,27 +35,20 @@ keywords = [
   "inpainting",
 ]
 
-
-[tool.poetry.dependencies]
-python = "^3.8"
-spython = ">=0.3.14"
-docker = ">=7.0.0"
-rich = ">=13.0.0"
-PyYAML = ">=6.0.1"
-dacite = ">=1.8.0"
-loguru = ">=0.7.0"
-nibabel = ">=5.0.0"
-numpy = [
-  { version = "^1.21.0", markers = "python_version <= '3.9'" },
-  { version = ">=1.26.0", markers = "python_version >= '3.10'" },
+dependencies = [
+  "spython>=0.3.14",
+  "docker>=7.0.0",
+  "rich>=13.0.0",
+  "PyYAML>=6.0.1",
+  "dacite>=1.8.0",
+  "loguru>=0.7.0",
+  "nibabel>=5.0.0",
+  "numpy>=1.21.0; python_version<='3.9'",
+  "numpy>=1.26.0; python_version>='3.10'",
 ]
-brainles_preprocessing = [
-  { version = ">=0.6.7", markers = "python_version >= '3.10'", optional = true },
-]
-
 
 [project.optional-dependencies]
-preprocessing = ["brainles_preprocessing"]
+preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10'"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
