@@ -1,5 +1,4 @@
 from __future__ import annotations
-from enum import Enum
 from pathlib import Path
 from typing import Optional, Union
 
@@ -38,6 +37,7 @@ def _coreg_atlasreg_bet(
     allow_missing: bool = False,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
+
     # Build modality mapping in a cleaner way
     modality_pairs = [
         ("t1", t1_input, t1_output),
