@@ -53,6 +53,17 @@ pip install brats
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
+## Singularity Support
+BraTS orchestrator also supports Singularity as an alternative to Docker.  
+To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `Backends.SINGULARITY` when running the inference:
+```python
+from brats.constants import Backends
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.SINGULARITY
+)
+```
 
 ## Available Algorithms and Usage
 
@@ -62,10 +73,12 @@ pip install brats
 ### Segmentation Challenges
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
+> Note: Some legacy segmentation algorithms from BraTS challenges before 2023 are available via [BraTS Toolkit](https://github.com/neuronflow/BraTS-Toolkit).
+<br>
 
 
 #### Adult Glioma Segmentation (Pre & Post-Treatment) 
-> Adult Glioma Segmentation on pre and post-treatment brain MRI exams.  
+> Adult Glioma Segmentation on pre- and post-treatment brain MRI exams.  
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -227,7 +240,7 @@ segmenter.infer_single(
 | 2025 | 2nd  | _Mohammad Mahdi Danesh Pajouh, et al._ | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_2) |
 | 2023 | 1st  | _Andriy Myronenko, et al._             | N/A                                                        | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Ziyan Huang, et al._                  | [Link](https://doi.org/10.1007/978-3-031-76163-8_13)       | &#x2705;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_2) |
-| 2023 | 3rd  | _Daniel Capell'an-Mart'in et al._      | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
+| 2023 | 3rd  | _Daniel Capellán-Martín et al._        | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
 
 </details>
 <br>
@@ -322,7 +335,7 @@ segmenter.infer_single(
 from brats import PediatricSegmenter
 from brats.constants import PediatricAlgorithms
 
-segmenter = PediatricSegmenter(algorithm=PediatricAlgorithms.BraTS25_1A, cuda_devices="0")
+segmenter = PediatricSegmenter(algorithm=PediatricAlgorithms.BraTS25_1, cuda_devices="0")
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -338,21 +351,22 @@ segmenter.infer_single(
 <br>
 **Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2404.15009)
 <br>
+**Challenge Results Paper 2023** [Link](https://doi.org/10.48550/arXiv.2407.08855)
+<br>
 **Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2305.17033)
 <br>
 
-| Year | Rank | Author                            | Paper                                                      | CPU Support | Key Enum                                                                                                             |
-| ---- | ---- | --------------------------------- | ---------------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------- |
-| 2025 | 1st  | _Yuxiao Yi, et al._               | N/A                                                        | &#x274C;    | [BraTS25_1A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1A) |
-| 2025 | 1st  | _Meng-Yuan Chen, et al._          | N/A                                                        | &#x274C;    | [BraTS25_1B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1B) |
-| 2025 | 1st  | _Yu Haitao, et al._               | N/A                                                        | &#x274C;    | [BraTS25_1C](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1C) |
-| 2025 | 1st  | _Xiaolong Li, et al._             | N/A                                                        | &#x274C;    | [BraTS25_1D](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1D) |
-| 2024 | 1st  | _Mehdi Astaraki_                  | N/A                                                        | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1)   |
-| 2024 | 2nd  | _Tim Mulvany, et al._             | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2)   |
-| 2024 | 3rd  | _Sarim Hashmi, et al._            | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3)   |
-| 2023 | 1st  | _Daniel Capell´an-Mart´in et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_1)   |
-| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2)   |
-| 2023 | 3rd  | _Yubo Zhou_                       | [Link](https://doi.org/10.1007/978-3-031-76163-8_5)        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3)   |
+| Year | Rank | Author                           | Paper                                                      | CPU Support | Key Enum                                                                                                           |
+| ---- | ---- | -------------------------------- | ---------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| 2025 | 1st  | _Yuxiao Yi, et al._              | N/A                                                        | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1) |
+| 2025 | 2nd  | _Meng-Yuan Chen, et al._         | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_2) |
+| 2025 | 3rd  | _Haitao Yu, et al._              | N/A                                                        | &#x274C;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_3) |
+| 2024 | 1st  | _Mehdi Astaraki_                 | N/A                                                        | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
+| 2024 | 2nd  | _Tim Mulvany, et al._            | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
+| 2024 | 3rd  | _Sarim Hashmi, et al._           | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
+| 2023 | 1st  | _Daniel Capellán-Martín, et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_1) |
+| 2023 | 2nd  | _Andriy Myronenko, et al._       | N/A                                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
+| 2023 | 3rd  | _Yubo Zhou_                      | [Link](https://doi.org/10.1007/978-3-031-76163-8_5)        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
 
 
 </details>

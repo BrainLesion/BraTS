@@ -3,13 +3,14 @@ from __future__ import annotations
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable
 
 from loguru import logger
 
-from brats.core.docker import run_container
+from brats.core.docker import run_container as run_docker_container
+from brats.core.singularity import run_container as run_singularity_container
 from brats.utils.algorithm_config import load_algorithms
-from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task
+from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task, Backends
 from brats.utils.data_handling import InferenceSetup
 from brats.utils.exceptions import AlgorithmConfigException
 
@@ -158,11 +159,20 @@ class BraTSAlgorithm(ABC):
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
+    def _get_backend_runner(self, backend: Backends) -> Optional[Callable]:
+        backend_dispatch = {
+            Backends.DOCKER: run_docker_container,
+            Backends.SINGULARITY: run_singularity_container,
+        }
+        runner = backend_dispatch.get(backend, None)
+        return runner
+
     def _infer_single(
         self,
         inputs: dict[str, Path | str],
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
+        backend: Backends = Backends.DOCKER,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
@@ -171,6 +181,7 @@ class BraTSAlgorithm(ABC):
             inputs (dict[str, Path  |  str]): Input Images for the task
             output_file (Path | str): File to save the output
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
+            backend (Backends | str, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
             logger.info(f"Performing single inference")
@@ -185,7 +196,10 @@ class BraTSAlgorithm(ABC):
                 subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
 
-            run_container(
+            runner = self._get_backend_runner(backend)
+            if runner is None:
+                raise ValueError(f"Unsupported backend: {backend}")
+            runner(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
@@ -204,6 +218,7 @@ class BraTSAlgorithm(ABC):
         data_folder: Path | str,
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
+        backend: Backends = Backends.DOCKER,
     ):
         """Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
 
@@ -211,6 +226,7 @@ class BraTSAlgorithm(ABC):
             data_folder (Path | str): Folder with the input data
             output_folder (Path | str): Folder to save the outputs
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
 
@@ -226,9 +242,11 @@ class BraTSAlgorithm(ABC):
                 input_name_schema=self.algorithm.run_args.input_name_schema,
             )
             logger.info(f"Standardized input names to match algorithm requirements.")
-
+            runner = self._get_backend_runner(backend)
+            if runner is None:
+                raise ValueError(f"Unsupported backend: {backend}")
             # run inference in container
-            run_container(
+            runner(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
