@@ -53,6 +53,17 @@ pip install brats
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
+## Singularity Support
+BraTS orchestrator also supports Singularity as an alternative to Docker.  
+To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `Backends.SINGULARITY` when running the inference:
+```python
+from brats.constants import Backends
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.SINGULARITY
+)
+```
 
 ## Available Algorithms and Usage
 

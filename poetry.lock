@@ -1212,6 +1212,18 @@ lint = ["docutils-stubs", "flake8", "mypy"]
 test = ["pytest"]
 
 [[package]]
+name = "spython"
+version = "0.3.14"
+description = "Command line python tool for working with singularity."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "spython-0.3.14-py3-none-any.whl", hash = "sha256:72968583e498bc2a51f9acd0ed6bc0d7d1f7ccd491feaba5e2f7d944bc51da3a"},
+    {file = "spython-0.3.14.tar.gz", hash = "sha256:8ad53ef034395cfa2d8a710cc1c3638e4475e5bbc6a2842d317db8013c2e4188"},
+]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -1295,4 +1307,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.8"
-content-hash = "2beb86b6c1df681d44476ebda5f6cb5329b58e81f98046a0f303e29a3eb9686f"
+content-hash = "b98b07eeb9acd887dc7abca01837cc48967c14ba4475ac1e43c9e60ee139ad7c"
