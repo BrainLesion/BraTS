@@ -43,7 +43,7 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: true
 
-  # BraTS25_3: # Commented out - Docker image not available yet
+  # BraTS25_3: # Docker image not available
   #   meta:
   #     authors: Yu Haitao, et al.
   #     paper: N/A
