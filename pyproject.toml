@@ -12,10 +12,11 @@ exclude = [
   "figures", # Figures and images
   ".github", # GitHub workflows, actions, etc.
 ]
+version = "0.0.0.dev"
 
 [project]
+dynamic = ["version"]
 name = "brats"
-version = "0.0.0.dev"
 description = "BraTS algorithms"
 authors = [
   { name = "Marcel Rosier", email = "marcel.rosier@tum.de" },
@@ -48,6 +49,9 @@ dependencies = [
 
 [project.optional-dependencies]
 preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10'"]
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
