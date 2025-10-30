@@ -20,7 +20,7 @@ try:
     from brainles_preprocessing.normalization import Normalizer
 except ImportError as e:
     raise ImportError(
-        "The `brainles_preprocessing` extra is required for preprocessing tasks, please ensure you installed it via `pip install brats[preprocessing]`."
+        "The `brainles_preprocessing` extra is required for preprocessing tasks, please ensure you installed it via `pip install brats[preprocessing]`. Note that this is only supported for Python >= 3.10."
     ) from e
 
 

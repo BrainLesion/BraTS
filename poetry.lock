@@ -950,7 +950,7 @@ description = "Read resources from Python packages"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "python_version < \"3.9\""
+markers = "python_version == \"3.8\""
 files = [
     {file = "importlib_resources-6.4.5-py3-none-any.whl", hash = "sha256:ac29d5f956f01d5e4bb63102a5a19957f1b9175e45649977264a1416783bb717"},
     {file = "importlib_resources-6.4.5.tar.gz", hash = "sha256:980862a1d16c9e147a59603677fa2aa5fd82b87f223b6cb870695bcfce830065"},
@@ -1610,7 +1610,7 @@ description = "CUBLAS native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:b86f6dd8935884615a0683b663891d43781b819ac4f2ba2b0c9604676af346d0"},
     {file = "nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:8ac4e771d5a348c551b2a426eda6193c19aa630236b418086020df5ba9667142"},
@@ -1640,7 +1640,7 @@ description = "CUDA profiling tools runtime libs."
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:4412396548808ddfed3f17a467b104ba7751e6b58678a4b840675c56d21cf7ed"},
     {file = "nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:ea0cb07ebda26bb9b29ba82cda34849e73c166c18162d3913575b0c9db9a6182"},
@@ -1668,7 +1668,7 @@ description = "NVRTC native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl", hash = "sha256:a7756528852ef889772a84c6cd89d41dfa74667e24cca16bb31f8f061e3e9994"},
     {file = "nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:fc1fec1e1637854b4c0a65fb9a8346b51dd9ee69e61ebaccc82058441f15bce8"},
@@ -1698,7 +1698,7 @@ description = "CUDA Runtime native Libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:52bf7bbee900262ffefe5e9d5a2a69a30d97e2bc5bb6cc866688caa976966e3d"},
     {file = "nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:adade8dcbd0edf427b7204d480d6066d33902cab2a4707dcfc48a2d0fd44ab90"},
@@ -1729,7 +1729,7 @@ description = "cuDNN runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:c9132cc3f8958447b4910a1720036d9eff5928cc3179b0a51fb6d167c6cc87d8"},
     {file = "nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:949452be657fa16687d0930933f032835951ef0892b37d2d53824d1a84dc97a8"},
@@ -1765,7 +1765,7 @@ description = "CUFFT native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:848ef7224d6305cdb2a4df928759dca7b1201874787083b6e7550dd6765ce69a"},
     {file = "nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:4d2dd21ec0b88cf61b62e6b43564355e5222e4a3fb394cac0db101f2dd0d4f74"},
@@ -1795,7 +1795,7 @@ description = "cuFile GPUDirect libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1d069003be650e131b21c932ec3d8969c1715379251f8d23a1860554b1cb24fc"},
     {file = "nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:4beb6d4cce47c1a0f1013d72e02b0994730359e17801d395bdcbf20cfb3bb00a"},
@@ -1824,7 +1824,7 @@ description = "CURAND native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:dfab99248034673b779bc6decafdc3404a8a6f502462201f2f31f11354204acd"},
     {file = "nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:b32331d4f4df5d6eefa0554c565b626c7216f87a06a4f56fab27c3b68a830ec9"},
@@ -1859,7 +1859,7 @@ description = "CUDA solver native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:db9ed69dbef9715071232caa9b69c52ac7de3a95773c2db65bdba85916e4e5c0"},
     {file = "nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:4376c11ad263152bd50ea295c05370360776f8c3427b30991df774f9fb26c450"},
@@ -1897,7 +1897,7 @@ description = "CUSPARSE native runtime libraries"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:9b6c161cb130be1a07a27ea6923df8141f3c295852f4b260c65f18f3e0a091dc"},
     {file = "nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1ec05d76bbbd8b61b06a80e1eaf8cf4959c3d4ce8e711b65ebd0443bb0ebb13b"},
@@ -1928,7 +1928,7 @@ description = "NVIDIA cuSPARSELt"
 optional = true
 python-versions = "*"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:8878dce784d0fac90131b6817b607e803c36e629ba34dc5b433471382196b6a5"},
     {file = "nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:f1bb701d6b930d5a7cea44c19ceb973311500847f81b634d802b7b539dc55623"},
@@ -1955,7 +1955,7 @@ description = "NVIDIA Collective Communication Library (NCCL) Runtime"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:31432ad4d1fb1004eb0c56203dc9bc2178a1ba69d1d9e02d64a6938ab5e40e7a"},
     {file = "nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:ad730cf15cb5d25fe849c6e6ca9eb5b76db16a80f13f425ac68d8e2e55624457"},
@@ -1982,7 +1982,7 @@ description = "Nvidia JIT LTO Library"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl", hash = "sha256:81ff63371a7ebd6e6451970684f916be2eab07321b73c9d244dc2b4da7f73b88"},
     {file = "nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:adccd7161ace7261e01bb91e44e88da350895c270d23f744f0820c818b7229e7"},
@@ -1996,7 +1996,7 @@ description = "NVSHMEM creates a global address space that provides efficient an
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_nvshmem_cu12-3.3.20-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:0b0b960da3842212758e4fa4696b94f129090b30e5122fea3c5345916545cff0"},
     {file = "nvidia_nvshmem_cu12-3.3.20-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:d00f26d3f9b2e3c3065be895e3059d6479ea5c638a3f38c9fec49b1b9dd7c1e5"},
@@ -2025,7 +2025,7 @@ description = "NVIDIA Tools Extension"
 optional = true
 python-versions = ">=3"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:d7ad891da111ebafbf7e015d34879f7112832fc239ff0d7d776b6cb685274615"},
     {file = "nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:5b17e2001cc0d751a5bc2c6ec6d26ad95913324a4adb86788c944f8ce9ba441f"},
@@ -2435,7 +2435,7 @@ files = [
     {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
     {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
 ]
-markers = {main = "python_version >= \"3.10\" and extra == \"preprocessing\"", docs = "python_version < \"3.9\""}
+markers = {main = "python_version >= \"3.10\" and extra == \"preprocessing\"", docs = "python_version == \"3.8\""}
 
 [[package]]
 name = "pywin32"
@@ -3320,7 +3320,7 @@ description = "Tensors and Dynamic neural networks in Python with strong GPU acc
 optional = true
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and python_version >= \"3.10\""
 files = [
     {file = "torch-2.9.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:030bbfe367379ae6a4ae4042b6c44da25383343b8b3c68abaa9c7231efbaf2dd"},
     {file = "torch-2.9.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:51cb63902182a78e90886e8068befd8ea102af4b00e420263591a3d70c7d3c6c"},
@@ -3436,7 +3436,7 @@ description = "A language and compiler for custom Deep Learning operations"
 optional = true
 python-versions = "<3.15,>=3.10"
 groups = ["main"]
-markers = "(python_version == \"3.10\" or python_version == \"3.11\") and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\""
+markers = "python_version < \"3.12\" and extra == \"preprocessing\" and platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version >= \"3.10\""
 files = [
     {file = "triton-3.5.0-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6f90de6a6566bb619b4c0adc9855729e1b1b5e26533fca1bf6206e96b6d277a3"},
     {file = "triton-3.5.0-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d5d3b3d480debf24eaa739623c9a42446b0b77f95593d30eb1f64cd2278cc1f0"},
@@ -3502,7 +3502,7 @@ files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
-markers = {main = "python_version >= \"3.10\" and extra == \"preprocessing\" or python_version < \"3.9\""}
+markers = {main = "python_version >= \"3.10\" and extra == \"preprocessing\" or python_version == \"3.8\""}
 
 [[package]]
 name = "tzdata"
@@ -3575,7 +3575,7 @@ files = [
     {file = "zipp-3.20.1-py3-none-any.whl", hash = "sha256:9960cd8967c8f85a56f920d5d507274e74f9ff813a0ab8889a5b5be2daf44064"},
     {file = "zipp-3.20.1.tar.gz", hash = "sha256:c22b14cc4763c5a5b04134207736c107db42e9d3ef2d9779d465f5f1bcba572b"},
 ]
-markers = {main = "python_version < \"3.9\"", docs = "python_version <= \"3.9\""}
+markers = {main = "python_version == \"3.8\"", docs = "python_version <= \"3.9\""}
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1) ; sys_platform != \"cygwin\""]
@@ -3590,5 +3590,5 @@ preprocessing = ["brainles_preprocessing"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.8"
-content-hash = "4ce55c1c9654875fee996888a981bdd5d8acd92321ddd1e113f92eadda0aac99"
+python-versions = ">=3.8,<4.0"
+content-hash = "8406391fff7ba2f2a396a9e0aac3e19348f3e8e9bdc6d6a3a576f77a9098a1dc"
