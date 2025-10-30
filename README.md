@@ -37,7 +37,10 @@ Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS
 With a Python 3.8+ environment, you can install BraTS orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
+# lightweight base package
 pip install brats
+# With preprocessing functionalities
+pip install brats[preprocessing]
 ```
 
 > [!IMPORTANT]  
@@ -509,8 +512,9 @@ missing_mri.infer_single(
 
 
 ## Data Preprocessing Requirements
-BraTS challenge algorithms require preprocessed brain scans. Typically, this involves co-registration, brain extraction, and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.
-We recommend using the [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose. In the future, we plan to offer challenge-specific convenience functions wrapping around this very preprocessing package.
+BraTS challenge algorithms require preprocessed brain scans. Typically, this involves co-registration, brain extraction, and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.  
+We offer preprocessing fucntions based on our [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose.  
+To utilize them please install the pakcage with the preprocessing extra `pip install brats[preprocessing]`
 
 ## Citation
 

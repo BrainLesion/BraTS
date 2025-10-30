@@ -6,20 +6,24 @@ build-backend = "poetry_dynamic_versioning.backend"
 enable = true
 
 [tool.poetry]
+exclude = [
+  "tests",   # Test files
+  "docs",    # Documentation files
+  "figures", # Figures and images
+  ".github", # GitHub workflows, actions, etc.
+]
+
+[project]
 name = "brats"
 version = "0.0.0.dev"
 description = "BraTS algorithms"
 authors = [
-  "Marcel Rosier <marcel.rosier@tum.de>",
-  "Florian Kofler <florian.kofler@tum.de>",
+  { name = "Marcel Rosier", email = "marcel.rosier@tum.de" },
+  { name = "Florian Kofler", email = "florian.kofler@tum.de" },
 ]
 
-license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/BrainLesion/BraTS"
-homepage = "https://github.com/BrainLesion/BraTS"
-documentation = "https://brats.readthedocs.io/en/latest/"
-
+license = "Apache-2.0"
 keywords = [
   "brain tumor",
   "glioma",
@@ -30,27 +34,23 @@ keywords = [
   "inpainting",
 ]
 
-# Add the exclude field directly under [tool.poetry]
-exclude = [
-  "tests",   # Test files
-  "docs",    # Documentation files
-  "figures", # Figures and images
-  ".github", # GitHub workflows, actions, etc.
+dependencies = [
+  "spython>=0.3.14",
+  "docker>=7.0.0",
+  "rich>=13.0.0",
+  "PyYAML>=6.0.1",
+  "dacite>=1.8.0",
+  "loguru>=0.7.0",
+  "nibabel>=5.0.0",
+  "numpy>=1.21.0; python_version<='3.9'",
+  "numpy>=1.26.0; python_version>='3.10'",
 ]
 
+[project.optional-dependencies]
+preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10'"]
+
 [tool.poetry.dependencies]
-spython = ">=0.3.14"
-python = ">=3.8"
-docker = ">=7.0.0"
-rich = ">=13.0.0"
-PyYAML = ">=6.0.1"
-dacite = ">=1.8.0"
-loguru = ">=0.7.0"
-nibabel = ">=5.0.0"
-numpy = [
-  { version = "^1.21.0", markers = "python_version <= '3.9'" },
-  { version = ">=1.26.0", markers = "python_version >= '3.10'" },
-]
+python = ">=3.8,<4.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
