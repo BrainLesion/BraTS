@@ -43,18 +43,18 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: true
 
-  BraTS25_3:
-    meta:
-      authors: Yu Haitao, et al.
-      paper: N/A
-      challenge: *challenge
-      challenge_manuscript: *challenge_manuscript_2025
-      rank: *rank_3
-      year: *year_2025
-    run_args:
-      docker_image: brainles/brats25_ped_qing:latest
-      input_name_schema: *input_name_schema
-      requires_root: true
+  # BraTS25_3: # Commented out - Docker image not available yet
+  #   meta:
+  #     authors: Yu Haitao, et al.
+  #     paper: N/A
+  #     challenge: *challenge
+  #     challenge_manuscript: *challenge_manuscript_2025
+  #     rank: *rank_3
+  #     year: *year_2025
+  #   run_args:
+  #     docker_image: brainles/brats25_ped_qing:latest
+  #     input_name_schema: *input_name_schema
+  #     requires_root: true
 
   # BraTS25_4?: # Removed after ranking updated
   #   meta:
