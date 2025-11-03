@@ -3801,4 +3801,4 @@ preprocessing = ["brainles_preprocessing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "7e5c48c393f1cc64d83005d4b891dbdf59dd6214a7577aafd9fe66d94f5b2e85"
+content-hash = "4cd1580101551d78abe4a19fc29c310f10e74a1723025a49f85c4a15e3d9a4c1"
