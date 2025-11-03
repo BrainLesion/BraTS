@@ -39,9 +39,9 @@ def _build_command_args(
 
     Args:
         algorithm (AlgorithmData): The algorithm data
-        additional_files_path (Path): The path to the additional files
-        data_path (Path): The path to the input data
-        output_path (Path): The path to save the output
+        additional_files_path (str): The path to the additional files
+        data_path (str): The path to the input data
+        output_path (str): The path to save the output
         mount_path (str): The path to mount the PVC to. Defaults to "/data".
     Returns:
         command_args: The command arguments
@@ -260,7 +260,6 @@ def _check_files_in_pod(
 def _download_folder_from_pod(
     pod_name, namespace, container, remote_paths, local_base_dir=Path(".").absolute()
 ):
-    v1 = client.CoreV1Api()
 
     for path in remote_paths:
         folder_name = str(path)
@@ -289,7 +288,7 @@ def _download_folder_from_pod(
             if resp.peek_stderr():
                 err = resp.read_stderr()
                 if err:
-                    print("STDERR:", err)
+                    logger.error(f"STDERR: {err}")
         resp.close()
 
         full_base64 = b"".join(base64_chunks)
@@ -539,8 +538,8 @@ def _create_namespaced_job(
                 f"Failed to delete pod '{pod_name_to_delete}' in namespace '{namespace}': {e}"
             )
 
-    # user_id = int(user.split(":")[0]) if user else 0
-    # group_id = int(user.split(":")[1]) if user else 0
+    # user_id = int(user.split(":")[0]) if user else 0  # TODO: Implement security_context for container if/when user/group IDs are required.
+    # group_id = int(user.split(":")[1]) if user else 0  # TODO: Implement security_context for container if/when user/group IDs are required.
     volume_mounts = []
     for pvc_name, mount_path in pv_mounts.items():
         volume_mounts.append(client.V1VolumeMount(name=pvc_name, mount_path=mount_path))
@@ -549,6 +548,7 @@ def _create_namespaced_job(
         image=image,
         volume_mounts=volume_mounts,
         # security_context=client.V1SecurityContext(run_as_user=user_id, run_as_group=group_id)
+        # TODO: Implement security_context for container if/when user/group IDs are required.
     )
     if len(device_requests) > 0:
         container_spec.resources = client.V1ResourceRequirements(
@@ -798,7 +798,7 @@ def run_job(
     )
 
     if algorithm.meta.year <= 2024:
-        additional_files_path = _download_additional_files(
+        _download_additional_files(
             algorithm=algorithm,
             pod_name=pod_name,
             namespace=namespace,
@@ -869,7 +869,7 @@ def run_job(
     )
 
     commands = ["touch", "/etc/content_verified"]
-    output = _execute_command_in_pod(
+    _execute_command_in_pod(
         pod_name=pod_name_finalizer,
         namespace=namespace,
         command=commands,

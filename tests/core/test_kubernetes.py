@@ -447,9 +447,6 @@ def test_run_job_year_2024_flow(monkeypatch, tmp_tree, tmp_path, dummy_algorithm
     # Observe logs
     monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "LOGS")
 
-    # Pod completes
-    def read_pod_done(name, namespace):
-        return _mk_pod(name=name, phase="Succeeded", init_running=True)
 
     mock_core.read_namespaced_pod.side_effect = [
         _mk_pod(name="job-pod", phase="Running", init_running=True),  # wait loop
