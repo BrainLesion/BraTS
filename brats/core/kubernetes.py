@@ -259,7 +259,7 @@ def _check_files_in_pod(
 
 
 def _download_folder_from_pod(
-    pod_name, namespace, container, remote_paths, local_base_dir="."
+    pod_name, namespace, container, remote_paths, local_base_dir=Path(".").absolute()
 ):
     v1 = client.CoreV1Api()
 
