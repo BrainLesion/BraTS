@@ -2,10 +2,9 @@ import io
 import tarfile
 import base64
 import types
-import time
 from pathlib import Path
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock
 
 import pytest
 

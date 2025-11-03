@@ -8,7 +8,6 @@ import string
 import base64
 from loguru import logger
 from kubernetes import client, config
-from kubernetes.config import load_kube_config
 from kubernetes.stream import stream
 from brats.constants import PARAMETERS_DIR
 from brats.utils.algorithm_config import AlgorithmData
@@ -399,7 +398,6 @@ def _create_namespaced_pvc(
             storage_class_name=storage_class,
         )
 
-    core_v1_api = client.CoreV1Api()
     core_v1_api.create_namespaced_persistent_volume_claim(
         namespace=namespace,
         body=client.V1PersistentVolumeClaim(
@@ -692,10 +690,11 @@ def run_job(
     user = _get_container_user(algorithm=algorithm)
     logger.debug(f"Container user: {user if user else 'root (required by algorithm)'}")
 
-    output_mount_path = Path(data_mount_path).joinpath("output")
     if algorithm.meta.year > 2024:
         data_mount_path = "/input"
         output_mount_path = "/output"
+    else:
+        output_mount_path = Path(data_mount_path).joinpath("output")
 
     if algorithm.meta.year <= 2024:
         if algorithm.additional_files is not None:
@@ -813,14 +812,14 @@ def run_job(
             parent_dir="parameters",
         )
     commands = ["tree", data_mount_path]
-    output = _execute_command_in_pod(
+    _execute_command_in_pod(
         pod_name=pod_name,
         namespace=namespace,
         command=commands,
         container="init-container",
     )
     commands = ["touch", "/etc/content_verified"]
-    output = _execute_command_in_pod(
+    _execute_command_in_pod(
         pod_name=pod_name,
         namespace=namespace,
         command=commands,
@@ -829,7 +828,7 @@ def run_job(
 
     output_path.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"{'Starting inference'}")
+    logger.info("Starting inference")
     start_time = time.time()
 
     time.sleep(2)
