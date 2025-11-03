@@ -258,7 +258,11 @@ def _check_files_in_pod(
 
 
 def _download_folder_from_pod(
-    pod_name: str, namespace: str, container: str, remote_paths: List[Path], local_base_dir: Path = Path(".").absolute()
+    pod_name: str,
+    namespace: str,
+    container: str,
+    remote_paths: List[Path],
+    local_base_dir: Path = Path(".").absolute(),
 ):
     """Download a folder from a pod to a local directory.
     Args:
