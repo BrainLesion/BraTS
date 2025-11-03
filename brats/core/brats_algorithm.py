@@ -175,6 +175,7 @@ class BraTSAlgorithm(ABC):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
         backend: Backends = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
@@ -183,7 +184,7 @@ class BraTSAlgorithm(ABC):
             inputs (dict[str, Path  |  str]): Input Images for the task
             output_file (Path | str): File to save the output
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
-            backend (Backends | str, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
             kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
@@ -202,7 +203,7 @@ class BraTSAlgorithm(ABC):
             runner = self._get_backend_runner(backend)
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
-            runner(
+            runner_kwargs = dict(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
