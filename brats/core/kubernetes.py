@@ -258,8 +258,16 @@ def _check_files_in_pod(
 
 
 def _download_folder_from_pod(
-    pod_name, namespace, container, remote_paths, local_base_dir=Path(".").absolute()
+    pod_name: str, namespace: str, container: str, remote_paths: List[Path], local_base_dir: Path = Path(".").absolute()
 ):
+    """Download a folder from a pod to a local directory.
+    Args:
+        pod_name (str): The name of the pod to download the folder from
+        namespace (str): The namespace of the pod to download the folder from
+        container (str): The container to download the folder from
+        remote_paths (List[Path]): The paths to the remote folder to download
+        local_base_dir (Path): The base directory to download the folder to. Defaults to the current directory.
+    """
 
     for path in remote_paths:
         folder_name = str(path)
