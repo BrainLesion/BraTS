@@ -37,7 +37,10 @@ Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS
 With a Python 3.8+ environment, you can install BraTS orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
+# lightweight base package
 pip install brats
+# With preprocessing functionalities
+pip install brats[preprocessing]
 ```
 
 > [!IMPORTANT]  
@@ -53,6 +56,17 @@ pip install brats
 - **Docker**: Installation instructions on the official [website](https://docs.docker.com/get-docker/)
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
+## Singularity Support
+BraTS orchestrator also supports Singularity as an alternative to Docker.  
+To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `Backends.SINGULARITY` when running the inference:
+```python
+from brats.constants import Backends
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.SINGULARITY
+)
+```
 
 ## Available Algorithms and Usage
 
@@ -141,7 +155,7 @@ segmenter.infer_single(
 | Year | Rank | Author                            | Paper                                                | CPU Support | Key Enum                                                                                                                             |
 | ---- | ---- | --------------------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 2023 | 1st  | _André Ferreira, et al._          | [Link](https://arxiv.org/abs/2402.17317v1)           | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_1) |
-| 2023 | 2nd  | _Andriy Myronenko, et al._        | N/A                                                  | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_2) |
+| 2023 | 2nd  | _Andriy Myronenko, et al._        | [Link](https://arxiv.org/abs/2510.25058)             | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_2) |
 | 2023 | 3rd  | _Fadillah Adamsyah Maani, et al._ | [Link](https://doi.org/10.1007/978-3-031-76163-8_24) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.**AdultGliomaPreTreatmentAlgorithms**.BraTS23_3) |
 
 </details>
@@ -187,7 +201,7 @@ segmenter.infer_single(
 | 2024 | 1st  | _Abhijeet Parida, et al._       | [Link](https://arxiv.org/abs/2412.04111)             | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _Yanguang Zhao, et al._         | [Link](https://doi.org/10.48550/arXiv.2410.18698)    | &#x2705;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Sarim Hashmi, et al._          | [Link](https://doi.org/10.48550/arXiv.2411.15872)    | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_3)   |
-| 2023 | 1st  | _Andriy Myronenko, et al._      | TODO                                                 | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_1)   |
+| 2023 | 1st  | _Andriy Myronenko, et al._      | [Link](https://arxiv.org/abs/2510.25058)             | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_1)   |
 | 2023 | 2nd  | _Alyssa R Amod, et al._         | [Link](https://doi.org/10.1007/978-3-031-76163-8_22) | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_2)   |
 | 2023 | 3rd  | _Ziyan Huang, et al._           | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3)   |
 
@@ -227,7 +241,7 @@ segmenter.infer_single(
 | ---- | ---- | -------------------------------------- | ---------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Yu Haitao, et al._                    | N/A                                                        | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Mohammad Mahdi Danesh Pajouh, et al._ | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_2) |
-| 2023 | 1st  | _Andriy Myronenko, et al._             | N/A                                                        | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_1) |
+| 2023 | 1st  | _Andriy Myronenko, et al._             | [Link](https://arxiv.org/abs/2510.25058)                   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Ziyan Huang, et al._                  | [Link](https://doi.org/10.1007/978-3-031-76163-8_13)       | &#x2705;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Daniel Capellán-Martín et al._        | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
 
@@ -305,7 +319,7 @@ segmenter.infer_single(
 | ---- | ---- | -------------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Maria Bancerek, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Wes Krikorian, et al._    | N/A                                                  | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_2) |
-| 2023 | 1st  | _Andriy Myronenko, et al._ | N/A                                                  | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_1) |
+| 2023 | 1st  | _Andriy Myronenko, et al._ | [Link](https://arxiv.org/abs/2510.25058)             | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Siwei Yang, et al._       | [Link](https://doi.org/10.1007/978-3-031-76163-8_17) | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_3) |
 
@@ -354,7 +368,7 @@ segmenter.infer_single(
 | 2024 | 2nd  | _Tim Mulvany, et al._            | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Sarim Hashmi, et al._           | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
 | 2023 | 1st  | _Daniel Capellán-Martín, et al._ | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_1) |
-| 2023 | 2nd  | _Andriy Myronenko, et al._       | N/A                                                        | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
+| 2023 | 2nd  | _Andriy Myronenko, et al._       | [Link](https://arxiv.org/abs/2510.25058)                   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Yubo Zhou_                      | [Link](https://doi.org/10.1007/978-3-031-76163-8_5)        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
 
 
@@ -498,8 +512,9 @@ missing_mri.infer_single(
 
 
 ## Data Preprocessing Requirements
-BraTS challenge algorithms require preprocessed brain scans. Typically, this involves co-registration, brain extraction, and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.
-We recommend using the [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose. In the future, we plan to offer challenge-specific convenience functions wrapping around this very preprocessing package.
+BraTS challenge algorithms require preprocessed brain scans. Typically, this involves co-registration, brain extraction, and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.  
+We offer preprocessing fucntions based on our [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose.  
+To utilize them please install the pakcage with the preprocessing extra `pip install brats[preprocessing]`
 
 ## Citation
 
