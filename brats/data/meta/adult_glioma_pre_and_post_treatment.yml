@@ -1,5 +1,5 @@
 constants:
-  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
+  input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-100"
   challenge: &challenge "Adult Glioma Segmentation (Pre & Post Treatment)"
   challenge_manuscript:
     2025: &challenge_manuscript_2025 "https://arxiv.org/abs/2405.18368" # same as 2024
