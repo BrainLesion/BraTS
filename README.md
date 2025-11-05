@@ -283,7 +283,7 @@ segmenter.infer_single(
 
 </details>
 
-> Note: The MRI dataset in Meningioma-Radiotherapy challenge was provided in native space. However,
+> Note: The MRI dataset in the Meningioma-Radiotherapy challenge was provided in native space. However,
 the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Meningioma Pre-operative challenges.
 <br>
 
@@ -513,8 +513,10 @@ missing_mri.infer_single(
 
 ## Data Preprocessing Requirements
 BraTS challenge algorithms require preprocessed brain scans. Typically, this involves co-registration, brain extraction, and registration to a challenge-specific brain atlas (template) - see the respective section for each challenge regarding which template to use.  
-We offer preprocessing fucntions based on our [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose.  
-To utilize them please install the pakcage with the preprocessing extra `pip install brats[preprocessing]`
+We offer preprocessing convenience functions based on our [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion) for this purpose.  
+To utilize them, please install the package with the preprocessing extra `pip install brats[preprocessing]`.
+Alternatively, we recommend using the [preprocessing package](https://github.com/BrainLesion/preprocessing) from [BrainLesion Suite](https://github.com/BrainLesion).
+
 
 ## Citation
 
