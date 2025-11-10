@@ -50,7 +50,7 @@ def _build_command_args(
     if algorithm.additional_files is not None:
         for i, param in enumerate(algorithm.additional_files.param_name):
             additional_files_arg = f"--{param}={str(additional_files_path)}"
-            if algorithm.additional_files.param_path:
+            if algorithm.additional_files.param_path and len(algorithm.additional_files.param_path) > i:
                 additional_files_arg += f"/{algorithm.additional_files.param_path[i]}"
             command_args += f" {additional_files_arg}"
 
@@ -68,6 +68,8 @@ def _observe_job_output(pod_name: str, namespace: str) -> str:
     Args:
         pod_name (str): The name of the pod to observe the output of
         namespace (str): The namespace of the pod to observe the output of
+    Returns:
+        str: The output of the job
     """
     v1 = client.CoreV1Api()
 
@@ -509,7 +511,7 @@ def _create_namespaced_job(
     args: List[str] = None,
     shm_size: str = None,
     user: str = None,
-) -> None:
+) -> str:
     """Create a namespaced Job in the specified namespace.
 
     Args:
@@ -523,7 +525,7 @@ def _create_namespaced_job(
         shm_size (str): The size of the shared memory to use for the Job. Defaults to None.
         user (str): The user to run the Job as. Defaults to None (root is used if not specified).
     Returns:
-        str: The name of the pod created for the Job
+        str: The name of the pod created for the Job. If the pod creation fails, an exception is raised.
     """
     batch_v1_api = client.BatchV1Api()
     job_list = batch_v1_api.list_namespaced_job(namespace=namespace)
