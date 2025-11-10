@@ -563,16 +563,18 @@ def _create_namespaced_job(
         # TODO: Implement security_context for container if/when user/group IDs are required.
     )
     if len(device_requests) > 0:
+        gpu_count = len(device_requests)
         container_spec.resources = client.V1ResourceRequirements(
-            requests={"nvidia.com/gpu": 1}, limits={"nvidia.com/gpu": 1}
+            requests={"nvidia.com/gpu": gpu_count}, limits={"nvidia.com/gpu": gpu_count}
         )
     volumes = [
         client.V1Volume(
             name=pvc_name,
             persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                claim_name=pvc_name
+                claim_name=pvc
             ),
         )
+        for pvc in pv_mounts.keys()
     ]
     if shm_size is not None:
         shm_size_formatted = shm_size.replace("gb", "Gi")
@@ -703,7 +705,7 @@ def run_job(
     logger.debug(f"Container user: {user if user else 'root (required by algorithm)'}")
 
     if algorithm.meta.year > 2024:
-        data_mount_path = "/input"
+        input_mount_path = "/input"
         output_mount_path = "/output"
     else:
         output_mount_path = Path(data_mount_path).joinpath("output")
@@ -746,7 +748,7 @@ def run_job(
         )
 
         pv_mounts = {
-            pvc_name: data_mount_path,
+            pvc_name: input_mount_path,
             pvc_name + "-output": output_mount_path,
         }
 
@@ -803,7 +805,7 @@ def run_job(
         pod_name=pod_name,
         namespace=namespace,
         paths=[Path(data_path)],
-        mount_path=data_mount_path,
+        mount_path=data_mount_path if algorithm.meta.year <= 2024 else input_mount_path,
     )
     logger.debug(
         f"Files checked successfully in pod '{pod_name}' in namespace '{namespace}'."
@@ -823,7 +825,7 @@ def run_job(
             mount_path=data_mount_path,
             parent_dir="parameters",
         )
-    commands = ["tree", data_mount_path]
+    commands = ["tree", data_mount_path if algorithm.meta.year <= 2024 else input_mount_path]
     _execute_command_in_pod(
         pod_name=pod_name,
         namespace=namespace,
@@ -860,7 +862,7 @@ def run_job(
         )
 
     pvc_name_output = pvc_name
-    mount_path = str(data_mount_path)
+    mount_path = str(data_mount_path if algorithm.meta.year <= 2024 else input_mount_path)
     if algorithm.meta.year > 2024:
         pvc_name_output = pvc_name + "-output"
         mount_path = str(output_mount_path)
