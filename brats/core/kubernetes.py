@@ -844,7 +844,7 @@ def run_job(
         container="init-container",
     )
 
-    output_path.mkdir(parents=True, exist_ok=True)
+    Path(output_path).mkdir(parents=True, exist_ok=True)
 
     logger.info("Starting inference")
     start_time = time.time()
@@ -897,7 +897,7 @@ def run_job(
     )
 
     _sanity_check_output(
-        data_path=data_path,
+        data_path=Path(data_path),
         output_path=output_path,
         container_output=job_output,
         internal_external_name_map=internal_external_name_map,

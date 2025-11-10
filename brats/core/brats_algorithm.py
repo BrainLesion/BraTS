@@ -212,7 +212,7 @@ class BraTSAlgorithm(ABC):
             )
             if kubernetes_kwargs is not None:
                 logger.debug(f"Adding Kubernetes kwargs: {kubernetes_kwargs}")
-                if backend is not Backends.KUBERNETES:
+                if backend != Backends.KUBERNETES:
                     raise ValueError(
                         "Kubernetes kwargs can only be used with the Kubernetes backend."
                     )
@@ -271,7 +271,7 @@ class BraTSAlgorithm(ABC):
             )
             if kubernetes_kwargs is not None:
                 logger.debug(f"Adding Kubernetes kwargs: {kubernetes_kwargs}")
-                if backend is not Backends.KUBERNETES:
+                if backend != Backends.KUBERNETES:
                     raise ValueError(
                         "Kubernetes kwargs can only be used with the Kubernetes backend."
                     )
