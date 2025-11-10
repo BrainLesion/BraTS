@@ -34,7 +34,7 @@ def _build_command_args(
     data_path: str,
     output_path: str,
     mount_path: str = "/data",
-) -> List[str]:
+) -> str:
     """Build the command arguments for the Kubernetes job.
 
     Args:
@@ -483,8 +483,7 @@ def _create_finalizer_job(
             namespace=namespace, label_selector=label_selector
         )
         if pod_list.items:
-            # If more than one pod, pick the first (common for most K8s jobs)
-            # Pick the latest created pod (by creation timestamp)
+            # If more than one pod, pick the latest created pod (by creation timestamp)
             latest_pod = max(
                 pod_list.items, key=lambda pod: pod.metadata.creation_timestamp
             )
