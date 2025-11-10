@@ -50,7 +50,10 @@ def _build_command_args(
     if algorithm.additional_files is not None:
         for i, param in enumerate(algorithm.additional_files.param_name):
             additional_files_arg = f"--{param}={str(additional_files_path)}"
-            if algorithm.additional_files.param_path and len(algorithm.additional_files.param_path) > i:
+            if (
+                algorithm.additional_files.param_path
+                and len(algorithm.additional_files.param_path) > i
+            ):
                 additional_files_arg += f"/{algorithm.additional_files.param_path[i]}"
             command_args += f" {additional_files_arg}"
 
@@ -664,6 +667,7 @@ def _check_pod_terminal_or_running(pod_phase: str, pod_name: str) -> bool:
         return True
     else:
         return False
+
 
 def run_job(
     algorithm: AlgorithmData,
