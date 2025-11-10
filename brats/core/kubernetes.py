@@ -553,8 +553,8 @@ def _create_namespaced_job(
     # user_id = int(user.split(":")[0]) if user else 0  # TODO: Implement security_context for container if/when user/group IDs are required.
     # group_id = int(user.split(":")[1]) if user else 0  # TODO: Implement security_context for container if/when user/group IDs are required.
     volume_mounts = []
-    for pvc_name, mount_path in pv_mounts.items():
-        volume_mounts.append(client.V1VolumeMount(name=pvc_name, mount_path=mount_path))
+    for pvc_mount_name, pvc_mount_path in pv_mounts.items():
+        volume_mounts.append(client.V1VolumeMount(name=pvc_mount_name, mount_path=pvc_mount_path))
     container_spec = client.V1Container(
         name="job-container",
         image=image,
