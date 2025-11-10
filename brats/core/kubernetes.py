@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 import random
 import string
 import base64
@@ -645,8 +645,8 @@ def _create_namespaced_job(
 
 def run_job(
     algorithm: AlgorithmData,
-    data_path: Path,
-    output_path: Path,
+    data_path: Union[Path, str],
+    output_path: Union[Path, str],
     cuda_devices: str,
     force_cpu: bool,
     internal_external_name_map: Optional[Dict[str, str]] = None,
@@ -661,17 +661,17 @@ def run_job(
 
     Args:
         algorithm (AlgorithmData): The data of the algorithm to run
-        data_path (Path | str): The path to the input data
-        output_path (Path | str): The path to save the output
+        data_path (Union[Path, str]): The path to the input data
+        output_path (Union[Path, str]): The path to save the output
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
-        internal_external_name_map (Dict[str, str]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
-        namespace (Optional[str], optional): The Kubernetes namespace to run the job in. Defaults to "default".
-        pvc_name (str): Name of the PersistentVolumeClaim (PVC) to use for this job. If the PVC does not already exist, it will be created; otherwise, it must already contain the input data required for running the algorithm.
-        pvc_storage_size (str): The size of the storage to request for the PVC. Defaults to "1Gi".
-        pvc_storage_class (str): The storage class to use for the PVC. If None, the default storage class will be used.
-        job_name (str): Name of the Job to create. If None, a random name will be generated.
-        data_mount_path (str): The path to mount the PVC to. Defaults to "/data".
+        internal_external_name_map (Optional[Dict[str, str]]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
+        namespace (Optional[str]): The Kubernetes namespace to run the job in. Defaults to "default".
+        pvc_name (Optional[str]): Name of the PersistentVolumeClaim (PVC) to use for this job. If the PVC does not already exist, it will be created; otherwise, it must already contain the input data required for running the algorithm.
+        pvc_storage_size (Optional[str]): The size of the storage to request for the PVC. Defaults to "1Gi".
+        pvc_storage_class (Optional[str]): The storage class to use for the PVC. If None, the default storage class will be used.
+        job_name (Optional[str]): Name of the Job to create. If None, a random name will be generated.
+        data_mount_path (Optional[str]): The path to mount the PVC to. Defaults to "/data".
     """
     if pvc_name is None:
         pvc_name = (
@@ -858,12 +858,12 @@ def run_job(
         pod = core_v1_api.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
         if pod_phase in ("Succeeded", "Failed"):
-            logger.info(f"Finalizer pod '{pod_name}' finished with phase: {pod_phase}")
+            logger.info(f"Job pod '{pod_name}' finished with phase: {pod_phase}")
             break
         time.sleep(2)
     else:
         raise RuntimeError(
-            f"Timed out waiting for finalizer pod '{pod_name}' to complete."
+            f"Timed out waiting for job pod '{pod_name}' to complete."
         )
 
     pvc_name_output = pvc_name
