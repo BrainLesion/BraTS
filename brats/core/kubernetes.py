@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 import random
 import string
 import base64
 import docker
+import io
+import tarfile
 from loguru import logger
 from kubernetes import client, config
 from kubernetes.stream import stream
@@ -19,9 +21,6 @@ from brats.core.docker import (
     _get_parameters_arg,
     _sanity_check_output,
 )
-import io
-import tarfile
-from typing import List
 from brats.utils.zenodo import (
     _get_zenodo_metadata_and_archive_url,
     ZenodoException,
@@ -373,7 +372,7 @@ def _upload_files_to_pod(
     resp.write_stdin(tar_stream.read())
     resp.close()
     logger.info(
-        f"File uploaded successfully to pod '{pod_name}' in namespace '{namespace}'."
+        f"Files uploaded successfully to pod '{pod_name}' in namespace '{namespace}'."
     )
 
 
@@ -571,12 +570,12 @@ def _create_namespaced_job(
         )
     volumes = [
         client.V1Volume(
-            name=pvc_name,
+            name=pvc_mount_name,
             persistent_volume_claim=client.V1PersistentVolumeClaimVolumeSource(
-                claim_name=pvc
+                claim_name=pvc_mount_name
             ),
         )
-        for pvc in pv_mounts.keys()
+        for pvc_mount_name in pv_mounts.keys()
     ]
     if shm_size is not None:
         shm_size_formatted = shm_size.replace("gb", "Gi")

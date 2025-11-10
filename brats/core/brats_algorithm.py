@@ -271,9 +271,9 @@ class BraTSAlgorithm(ABC):
             )
             if kubernetes_kwargs is not None:
                 logger.debug(f"Adding Kubernetes kwargs: {kubernetes_kwargs}")
-                if runner is not run_kubernetes_job:
+                if backend is not Backends.KUBERNETES:
                     raise ValueError(
-                        "Kubernetes kwargs can only be used with the Kubernetes backend (run_kubernetes_job)."
+                        "Kubernetes kwargs can only be used with the Kubernetes backend."
                     )
                 for key, value in kubernetes_kwargs.items():
                     runner_kwargs[key] = value
