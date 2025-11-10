@@ -861,9 +861,7 @@ def run_job(
             break
         time.sleep(2)
     else:
-        raise RuntimeError(
-            f"Timed out waiting for job pod '{pod_name}' to complete."
-        )
+        raise RuntimeError(f"Timed out waiting for job pod '{pod_name}' to complete.")
 
     pvc_name_output = pvc_name
     mount_path = str(
