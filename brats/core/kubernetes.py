@@ -419,13 +419,15 @@ def _create_namespaced_pvc(
 
 def _create_finalizer_job(
     job_name: str, namespace: str, pvc_name: str, mount_path: str = "/data"
-) -> None:
+) -> str:
     """Create a finalizer job in the specified namespace.
     Args:
         job_name (str): Name of the Job to create
         namespace (str): The Kubernetes namespace to create the Job in
         pvc_name (str): Name of the PersistentVolumeClaim (PVC) to use for this Job
         mount_path (str): The path to mount the PVC to. Defaults to "/data".
+    Returns:
+        str: The name of the finalizer job
     """
     batch_v1_api = client.BatchV1Api()
     job_list = batch_v1_api.list_namespaced_job(namespace=namespace)
@@ -515,11 +517,13 @@ def _create_namespaced_job(
         namespace (str): The Kubernetes namespace to create the Job in
         pvc_name (str): Name of the PersistentVolumeClaim (PVC) to use for this Job
         image (str): The image to use for the Job
-        device_requests (List[client.V1DeviceRequest]): The device requests to use for the Job
+        device_requests (List[docker.types.DeviceRequest]): The device requests to use for the Job
         pv_mounts (Dict[str, str]): The PersistentVolumeClaims (PVCs) to mount to the Job.
         args (List[str]): The arguments to use for the Job. Defaults to None.
         shm_size (str): The size of the shared memory to use for the Job. Defaults to None.
         user (str): The user to run the Job as. Defaults to None (root is used if not specified).
+    Returns:
+        str: The name of the pod created for the Job
     """
     batch_v1_api = client.BatchV1Api()
     job_list = batch_v1_api.list_namespaced_job(namespace=namespace)
@@ -641,6 +645,23 @@ def _create_namespaced_job(
         )
     return pod_name
 
+
+def _check_pod_terminal_or_running(pod_phase: str, pod_name: str) -> bool:
+    """Check if the pod is in a terminal phase or running.
+    Args:
+        pod_phase (str): The phase of the pod
+        pod_name (str): The name of the pod
+    Returns:
+        bool: True if the pod is in a terminal phase or running, False otherwise
+    """
+    if pod_phase == "Running":
+        logger.info(f"Pod '{pod_name}' is running.")
+        return True
+    elif pod_phase in ["Failed", "Succeeded"]:
+        logger.warning(f"Pod '{pod_name}' entered terminal phase: {pod_phase}")
+        return True
+    else:
+        return False
 
 def run_job(
     algorithm: AlgorithmData,
@@ -784,20 +805,10 @@ def run_job(
             if exit_loop:
                 break
             else:
-                if pod_phase == "Running":
-                    logger.info(f"Pod '{pod_name}' is running.")
-                    break
-                elif pod_phase in ["Failed", "Succeeded"]:
-                    logger.warning(
-                        f"Pod '{pod_name}' entered terminal phase: {pod_phase}"
-                    )
+                if _check_pod_terminal_or_running(pod_phase, pod_name):
                     break
         else:
-            if pod_phase == "Running":
-                logger.info(f"Pod '{pod_name}' is running.")
-                break
-            elif pod_phase in ["Failed", "Succeeded"]:
-                logger.warning(f"Pod '{pod_name}' entered terminal phase: {pod_phase}")
+            if _check_pod_terminal_or_running(pod_phase, pod_name):
                 break
         time.sleep(2)
     else:
