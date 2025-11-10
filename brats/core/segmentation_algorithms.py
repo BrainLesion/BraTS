@@ -167,6 +167,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
         backend: Optional[Backends] = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """Perform segmentation on a single subject with the provided images and save the result to the output file.
 
@@ -178,6 +179,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             output_file (Path | str): Path to save the segmentation
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
 
         self._infer_single(
@@ -185,6 +187,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             output_file=output_file,
             log_file=log_file,
             backend=backend,
+            kubernetes_kwargs=kubernetes_kwargs,
         )
 
     def infer_batch(
@@ -193,6 +196,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         output_folder: Path | str,
         log_file: Path | str | None = None,
         backend: Optional[Backends] = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
         Requires the following structure:\n
@@ -212,6 +216,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             output_folder (Path | str): Output folder to save the segmentations
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
 
         return self._infer_batch(
@@ -219,6 +224,7 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
             output_folder=output_folder,
             log_file=log_file,
             backend=backend,
+            kubernetes_kwargs=kubernetes_kwargs,
         )
 
 
@@ -438,6 +444,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
         backend: Optional[Backends] = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """
         Perform segmentation on a single subject with the provided T1C image and save the result to the output file.
@@ -447,6 +454,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             output_file (Path | str): Output file to save the segmentation.
             log_file (Optional[Path | str], optional): Save logs to this file. Defaults to None.
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
 
         self._infer_single(
@@ -454,6 +462,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             output_file=output_file,
             log_file=log_file,
             backend=backend,
+            kubernetes_kwargs=kubernetes_kwargs,
         )
 
     def infer_batch(
@@ -462,6 +471,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         output_folder: Path | str,
         log_file: Path | str | None = None,
         backend: Optional[Backends] = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """
         Perform segmentation on a batch of subjects with the provided T1C images and save the results to the output folder. \n
@@ -481,6 +491,7 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             output_folder (Path | str): Output folder to save the segmentations
             log_file (Path | str, optional): Save logs to this file
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
 
         return self._infer_batch(
@@ -488,4 +499,5 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             output_folder=output_folder,
             log_file=log_file,
             backend=backend,
+            kubernetes_kwargs=kubernetes_kwargs,
         )
