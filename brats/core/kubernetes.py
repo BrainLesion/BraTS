@@ -6,6 +6,7 @@ from typing import Dict, Optional
 import random
 import string
 import base64
+import docker
 from loguru import logger
 from kubernetes import client, config
 from kubernetes.stream import stream
@@ -502,7 +503,7 @@ def _create_namespaced_job(
     namespace: str,
     pvc_name: str,
     image: str,
-    device_requests: List[client.V1DeviceRequest],
+    device_requests: List[docker.types.DeviceRequest],
     pv_mounts: Dict[str, str],
     args: List[str] = None,
     shm_size: str = None,

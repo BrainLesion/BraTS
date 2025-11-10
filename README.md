@@ -70,7 +70,7 @@ segmenter.infer_single(
 
 ## Kubernetes Support
 BraTS orchestrator also supports Kubernetes to run the algorithms remotely, as an alternative to local execution with Docker or Singularity.
-To use Kubernetes for execution, ensure that the `KUBECONFIG` environment variable is set to the location of your kubeconfig file, as is standard when interacting with a Kubernetes cluster.
+To use Kubernetes for execution, the orchestrator will automatically use your kubeconfig file from the default location (`~/.kube/config`). If your kubeconfig file is not in the default location, set the `KUBECONFIG` environment variable to the location of your kubeconfig file:
 ```bash
 export KUBECONFIG=/path/to/kubeconfig
 ```
