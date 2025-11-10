@@ -554,7 +554,9 @@ def _create_namespaced_job(
     # group_id = int(user.split(":")[1]) if user else 0  # TODO: Implement security_context for container if/when user/group IDs are required.
     volume_mounts = []
     for pvc_mount_name, pvc_mount_path in pv_mounts.items():
-        volume_mounts.append(client.V1VolumeMount(name=pvc_mount_name, mount_path=pvc_mount_path))
+        volume_mounts.append(
+            client.V1VolumeMount(name=pvc_mount_name, mount_path=pvc_mount_path)
+        )
     container_spec = client.V1Container(
         name="job-container",
         image=image,
@@ -825,7 +827,10 @@ def run_job(
             mount_path=data_mount_path,
             parent_dir="parameters",
         )
-    commands = ["tree", data_mount_path if algorithm.meta.year <= 2024 else input_mount_path]
+    commands = [
+        "tree",
+        data_mount_path if algorithm.meta.year <= 2024 else input_mount_path,
+    ]
     _execute_command_in_pod(
         pod_name=pod_name,
         namespace=namespace,
@@ -862,7 +867,9 @@ def run_job(
         )
 
     pvc_name_output = pvc_name
-    mount_path = str(data_mount_path if algorithm.meta.year <= 2024 else input_mount_path)
+    mount_path = str(
+        data_mount_path if algorithm.meta.year <= 2024 else input_mount_path
+    )
     if algorithm.meta.year > 2024:
         pvc_name_output = pvc_name + "-output"
         mount_path = str(output_mount_path)
