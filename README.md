@@ -114,7 +114,7 @@ segmenter.infer_single(
 | 2025 | 2nd  | _Qu Lin, et al._         | N/A                                      | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_2)   |
 | 2025 | 3rd  | _Liwei Jin, et al._      | N/A                                      | &#x2705;    | [BraTS25_3A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3A) |
 | 2025 | 3rd  | _Adrian Celaya, et al._  | N/A                                      | &#x274C;    | [BraTS25_3B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3B) |
-| 2024 | 1st  | _André Ferreira, et al._ | N/A                                      | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1)         |
+| 2024 | 1st  | _André Ferreira, et al._ |[Link](https://arxiv.org/pdf/2411.04632v1)| &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1)         |
 | 2024 | 2nd  | _Heejong Kim, et al._    | [Link](https://arxiv.org/abs/2409.08143) | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2)         |
 | 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3)         |
 
