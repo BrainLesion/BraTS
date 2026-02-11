@@ -72,7 +72,7 @@ algorithms:
   BraTS24_1:
     meta:
       authors: André Ferreira, et al.
-      paper: N/A
+      paper: https://arxiv.org/pdf/2411.04632v1
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
