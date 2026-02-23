@@ -16,7 +16,15 @@ from brats.core.docker import (
 from brats.constants import PARAMETERS_DIR
 from loguru import logger
 import time
-from spython.main import Client
+import os
+import platform
+
+# Only available on Linux systems where Singularity runs.
+if platform.system() != "Windows":
+    from spython.main import Client
+else:
+    Client = None
+
 import docker
 import tempfile
 import os
