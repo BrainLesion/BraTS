@@ -51,6 +51,7 @@ coverage.xml
 .pytest_cache/
 cover/
 
+
 # Translations
 *.mo
 *.pot
@@ -163,3 +164,22 @@ brats/data/additional_files
 workspace
 .vscode
 local
+
+# Local data + outputs (BraTS / NIfTI)
+data/raw_case/
+data/preprocessed_case/
+outputs/
+*.nii
+*.nii.gz
+
+# Logs / run artifacts
+repro/*.log
+brainles_preprocessing_*.log
+
+# Poetry local plugin cache (project-local)
+.poetry/
+.poetry_backup/
+
+# OS / editor
+.DS_Store
+Thumbs.db
