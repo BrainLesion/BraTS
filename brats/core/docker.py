@@ -283,11 +283,15 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
         )
         # Check if the container exited with an error
         if exit_code["StatusCode"] != 0:
+            Console(stderr=True).print(
+                f"[red]Container finished with an error:[/red]\n" f"{container_output}"
+            )
             logger.error(f">> {container_output}")
             raise BraTSContainerException(
                 "Container finished with an error:\n"
                 f"{'-'*80}\n{container_output}\n {'-'*80}\n"
-                "For further debugging please specify a log file to capture the output or enable console logging (brats.utils.logging.enable())"
+                "A log file with detailed debug information has been saved. "
+                "Look for a message above with the log file path or pass log_file to infer_single/infer_batch."
             )
 
     return container_output

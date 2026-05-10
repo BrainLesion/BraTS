@@ -61,20 +61,55 @@ class TestDataHandlingUtils(unittest.TestCase):
         tmp_log_file.unlink(missing_ok=True)
 
     def test_inference_setup_without_log_file(self):
-        # Create a temporary log file
-        tmp_log_file = Path(tempfile.mktemp())
-
         with InferenceSetup() as (tmp_data_folder, tmp_output_folder):
             # Check that the folders are created
             self.assertTrue(tmp_data_folder.is_dir())
             self.assertTrue(tmp_output_folder.is_dir())
 
-            # Check that the log file exists
-            self.assertFalse(tmp_log_file.exists())  # Log file should not be created
-
         # Check if folders are cleaned up
         self.assertFalse(tmp_data_folder.exists())
         self.assertFalse(tmp_output_folder.exists())
+
+    def test_inference_setup_success_cleans_up_temp_log(self):
+        old_tempdir = tempfile.tempdir
+        tempfile.tempdir = str(self.test_dir)
+        try:
+            before = list(self.test_dir.glob("brats_*.log"))
+            with InferenceSetup():
+                pass
+            after = list(self.test_dir.glob("brats_*.log"))
+            self.assertEqual(len(after), len(before))
+        finally:
+            tempfile.tempdir = old_tempdir
+
+    def test_inference_setup_error_preserves_temp_log(self):
+        old_tempdir = tempfile.tempdir
+        tempfile.tempdir = str(self.test_dir)
+        try:
+            before = list(self.test_dir.glob("brats_*.log"))
+            with self.assertRaises(RuntimeError):
+                with InferenceSetup():
+                    raise RuntimeError("test error")
+            after = list(self.test_dir.glob("brats_*.log"))
+            self.assertEqual(len(after), len(before) + 1)
+            # Clean up the preserved log
+            for log in after:
+                if log not in before:
+                    log.unlink()
+        finally:
+            tempfile.tempdir = old_tempdir
+
+    def test_inference_setup_with_log_file_on_error(self):
+        tmp_log_file = self.test_dir / "error.log"
+        with self.assertRaises(RuntimeError):
+            with InferenceSetup(log_file=tmp_log_file) as (
+                tmp_data_folder,
+                tmp_output_folder,
+            ):
+                raise RuntimeError("test error")
+        self.assertTrue(tmp_log_file.exists())
+        self.assertGreater(tmp_log_file.stat().st_size, 0)
+        tmp_log_file.unlink()
 
     def test_remove_tmp_folder_success(self):
         # Test successful removal of a folder

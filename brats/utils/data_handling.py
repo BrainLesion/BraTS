@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import tempfile
 from contextlib import contextmanager
@@ -8,6 +9,7 @@ from typing import Generator, Optional, Tuple
 
 import nibabel as nib
 from loguru import logger
+from rich.console import Console
 
 
 def remove_tmp_folder(folder: Path):
@@ -52,23 +54,45 @@ def InferenceSetup(
     """
     Context manager for setting up the inference process. Creates temporary data and output folders and adds a log file handler if requested.
 
+    When no log_file is provided, a temporary log file is created automatically.
+    If an error occurs during inference, the temporary log is preserved and its
+    location is printed to stderr so users can inspect it for debugging.
+    On success, the temporary log is cleaned up.
+
     Yields:
         (data folder, output folder) (Tuple[Path, Path]): Two temporary folders (data folder, output folder)
     """
     if log_file is not None:
-        logger_id = add_log_file_handler(log_file)
+        log_path = Path(log_file)
+        logger_id = add_log_file_handler(log_path)
+    else:
+        fd, tmp_log_path = tempfile.mkstemp(suffix=".log", prefix="brats_")
+        os.close(fd)
+        log_path = Path(tmp_log_path)
+        logger_id = add_log_file_handler(log_path)
 
     tmp_data_folder = Path(tempfile.mkdtemp(prefix="data_"))
     tmp_output_folder = Path(tempfile.mkdtemp(prefix="output_"))
 
+    error_occurred = False
     try:
         yield tmp_data_folder, tmp_output_folder
+    except BaseException:
+        error_occurred = True
+        raise
     finally:
         remove_tmp_folder(tmp_data_folder)
         remove_tmp_folder(tmp_output_folder)
 
-        if log_file is not None:
-            logger.remove(logger_id)
+        logger.remove(logger_id)
+
+        if error_occurred and log_file is None:
+            Console(stderr=True).print(
+                f"[red]An error occurred during inference.[/red] "
+                f"[yellow]Log file saved to:[/yellow] [bold]{log_path.absolute()}[/bold]"
+            )
+        elif not error_occurred and log_file is None:
+            log_path.unlink(missing_ok=True)
 
 
 def input_sanity_check(
