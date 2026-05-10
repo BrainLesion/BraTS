@@ -77,7 +77,7 @@ def InferenceSetup(
     error_occurred = False
     try:
         yield tmp_data_folder, tmp_output_folder
-    except BaseException:
+    except Exception:
         error_occurred = True
         raise
     finally:

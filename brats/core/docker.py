@@ -290,8 +290,8 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
             raise BraTSContainerException(
                 "Container finished with an error:\n"
                 f"{'-'*80}\n{container_output}\n {'-'*80}\n"
-                "A log file with detailed debug information has been saved. "
-                "Look for a message above with the log file path or pass log_file to infer_single/infer_batch."
+                "A auto generated log file with detailed debug information has been saved. "
+                "Optionally, pass log_file to infer_single/infer_batch to control the location explicitly."
             )
 
     return container_output

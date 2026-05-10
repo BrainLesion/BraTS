@@ -71,21 +71,15 @@ class TestDataHandlingUtils(unittest.TestCase):
         self.assertFalse(tmp_output_folder.exists())
 
     def test_inference_setup_success_cleans_up_temp_log(self):
-        old_tempdir = tempfile.tempdir
-        tempfile.tempdir = str(self.test_dir)
-        try:
+        with patch.object(tempfile, "tempdir", str(self.test_dir)):
             before = list(self.test_dir.glob("brats_*.log"))
             with InferenceSetup():
                 pass
             after = list(self.test_dir.glob("brats_*.log"))
             self.assertEqual(len(after), len(before))
-        finally:
-            tempfile.tempdir = old_tempdir
 
     def test_inference_setup_error_preserves_temp_log(self):
-        old_tempdir = tempfile.tempdir
-        tempfile.tempdir = str(self.test_dir)
-        try:
+        with patch.object(tempfile, "tempdir", str(self.test_dir)):
             before = list(self.test_dir.glob("brats_*.log"))
             with self.assertRaises(RuntimeError):
                 with InferenceSetup():
@@ -96,8 +90,6 @@ class TestDataHandlingUtils(unittest.TestCase):
             for log in after:
                 if log not in before:
                     log.unlink()
-        finally:
-            tempfile.tempdir = old_tempdir
 
     def test_inference_setup_with_log_file_on_error(self):
         tmp_log_file = self.test_dir / "error.log"
