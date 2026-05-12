@@ -145,6 +145,8 @@ class AfricaAlgorithms(Algorithms):
     """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie) """
     BraTS25_3 = "BraTS25_3"
     """ BraTS25 BraTS-SSA Segmentation 3rd place """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 BraTS-SSA Segmentation baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 BraTS-Africa Segmentation 1st place """

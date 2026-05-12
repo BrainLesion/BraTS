@@ -202,6 +202,7 @@ segmenter.infer_single(
 | 2025 | 2nd  | _William Boonzaier, et al._     | N/A                                                  | &#x274C;    | [BraTS25_2A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_2A) |
 | 2025 | 2nd  | _Mohtady Barakat, et al._       | N/A                                                  | &#x274C;    | [BraTS25_2B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_2B) |
 | 2025 | 3rd  | _Ahmed Jaheen, et al._          | N/A                                                  | &#x274C;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_3)   |
+| 2025 | Baseline* | _Abhijeet Parida, et al._   | [Link](https://link.springer.com/chapter/10.1007/978-3-032-16365-3_22) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_B)   |
 | 2024 | 1st  | _Abhijeet Parida, et al._       | [Link](https://arxiv.org/abs/2412.04111)             | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _Yanguang Zhao, et al._         | [Link](https://doi.org/10.48550/arXiv.2410.18698)    | &#x2705;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Sarim Hashmi, et al._          | [Link](https://doi.org/10.48550/arXiv.2411.15872)    | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_3)   |
@@ -210,6 +211,9 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._           | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3)   |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Africa Segmentation challenges.
 <br>
