@@ -474,6 +474,7 @@ inpainter.infer_single(
 | 2025 | 1st  | _Juexin Zhang, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_1A) |
 | 2025 | 1st  | _André Ferreira, et al._ | N/A                                                  | &#x274C;    | [BraTS25_1B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_1B) |
 | 2025 | 2nd  | _Juhyung Ha, et al._     | N/A                                                  | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_2)   |
+| 2025 | Baseline* | _Nishad Kulkarni, et al._ | [Link](https://link.springer.com/chapter/10.1007/978-3-032-16370-7_13) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_B)   |
 | 2024 | 1st  | _Juexin Zhang et al._    | [Link](https://doi.org/10.48550/arXiv.2507.18126)    | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _André Ferreira, et al._ | [Link](https://arxiv.org/html/2411.04630v2)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Alicia Durrer, et al._  | N/A                                                  | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_3)   |
@@ -482,6 +483,9 @@ inpainter.infer_single(
 | 2023 | 3rd  | _Jiayu Huo, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_1)  | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_3)   |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
