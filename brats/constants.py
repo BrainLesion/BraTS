@@ -92,6 +92,8 @@ class MeningiomaAlgorithms(Algorithms):
     """BraTS25 Meningioma Segmentation 1st place """
     BraTS25_2 = "BraTS25_2"
     """BraTS25 Meningioma Segmentation 2nd place """
+    BraTS25_B = "BraTS25_B"
+    """BraTS25 Meningioma Segmentation baseline """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Meningioma Segmentation 1st place (GPU only)"""
