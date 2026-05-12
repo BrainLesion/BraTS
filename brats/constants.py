@@ -110,6 +110,8 @@ class PediatricAlgorithms(Algorithms):
     """ BraTS25 Pediatric Segmentation 2nd place"""
     BraTS25_3 = "BraTS25_3"
     """ BraTS25 Pediatric Segmentation 3rd place"""
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 Pediatric Segmentation baseline"""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Pediatric Segmentation 1st place """

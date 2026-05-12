@@ -352,6 +352,8 @@ segmenter.infer_single(
 
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 <br>
+**BraTS-PEDs Dataset Paper 2026** [Link](https://doi.org/10.1148/ryai.250902)
+<br>
 **Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2404.15009)
 <br>
 **Challenge Results Paper 2023** [Link](https://doi.org/10.48550/arXiv.2407.08855)
@@ -364,6 +366,7 @@ segmenter.infer_single(
 | 2025 | 1st  | _Yuxiao Yi, et al._              | N/A                                                        | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Meng-Yuan Chen, et al._         | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_2) |
 | 2025 | 3rd  | _Haitao Yu, et al._              | N/A                                                        | &#x274C;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_3) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016/) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_B) |
 | 2024 | 1st  | _Mehdi Astaraki_                 | N/A                                                        | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Tim Mulvany, et al._            | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Sarim Hashmi, et al._           | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
@@ -373,6 +376,9 @@ segmenter.infer_single(
 
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br> 
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
 <br>
