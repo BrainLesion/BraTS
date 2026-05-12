@@ -47,6 +47,8 @@ class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
     """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
     BraTS25_3B = "BraTS25_3B"
     """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 Adult Glioma Segmentation baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Adult Glioma Segmentation 1st place """
