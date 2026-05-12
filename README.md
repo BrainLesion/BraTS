@@ -281,12 +281,16 @@ segmenter.infer_single(
 | 2025 | 1st  | _Valeria Abramova, et al._     | N/A                                         | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Sanskriti Srivastava, et al._ | N/A                                         | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_2) |
 | 2025 | 3rd  | _Nima Sadeghzadeh, et al._     | N/A                                         | &#x2705;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_3) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_B) |
 | 2024 | 1st  | _Valeria Abramova_             | N/A                                         | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _Mehdi Astaraki_               | N/A                                         | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Andre Ferreira, et al._       | [Link](https://arxiv.org/html/2411.04632v1) | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_3)   |
 
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The MRI dataset in the Meningioma-Radiotherapy challenge was provided in native space. However,
 the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Meningioma Pre-operative challenges.
