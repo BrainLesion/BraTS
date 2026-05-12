@@ -328,11 +328,15 @@ segmenter.infer_single(
 | ---- | ---- | -------------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Maria Bancerek, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Wes Krikorian, et al._    | N/A                                                  | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_2) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_B) |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | [Link](https://arxiv.org/abs/2510.25058)             | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Siwei Yang, et al._       | [Link](https://doi.org/10.1007/978-3-031-76163-8_17) | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_3) |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Metastasis segmentation challenges.
 <br>

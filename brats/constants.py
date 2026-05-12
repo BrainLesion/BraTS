@@ -166,6 +166,8 @@ class MetastasesAlgorithms(Algorithms):
     """BraTS25  Brain Metastases Segmentation 1st place"""
     BraTS25_2 = "BraTS25_2"
     """BraTS25  Brain Metastases Segmentation 2nd place"""
+    BraTS25_B = "BraTS25_B"
+    """BraTS25  Brain Metastases Segmentation baseline"""
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
