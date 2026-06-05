@@ -82,3 +82,51 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: false
+
+
+# Additional algorithms from the ISBI GoAT challeng 2024 (not Miccai), only placholders so far
+
+  BraTS24_ISBI_1:
+    meta:
+      authors: "[AUTHOR_NAME_1, et al.]"
+      paper: "[PAPER_URL_1]"
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_isbi_algorithm1:latest
+      input_name_schema: *input_name_schema
+      requires_root: "[ROOT_REQUIREMENT_1]"
+      parameters_file: false
+
+
+  BraTS24_ISBI_2:
+    meta:
+      authors: "[AUTHOR_NAME_2, et al.]"
+      paper: "[PAPER_URL_2]"
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_isbi_algorithm2:latest
+      input_name_schema: *input_name_schema
+      requires_root: "[ROOT_REQUIREMENT_2]"
+      parameters_file: false
+
+
+
+  BraTS24_ISBI_3:
+    meta:
+      authors: "[AUTHOR_NAME_3, et al.]"
+      paper: "[PAPER_URL_3]"
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2024
+      rank: *rank_3
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_isbi_algorithm3:latest
+      input_name_schema: *input_name_schema
+      requires_root: "[ROOT_REQUIREMENT_3]"
+      parameters_file: false      

@@ -216,7 +216,9 @@ class MissingMRIAlgorithms(Algorithms):
 
 
 class GoATAlgorithms(Algorithms):
-    """Constants for the available missing mri  algorithms."""
+    """Constants for the available missing mri  algorithms.
+    BraTS GoAT algorithms from MICCAI conference.
+    """
 
     BraTS25_1A = "BraTS25_1A"
     """ BraTS25 Generalizability Across Tumors (BraTS-GoAT) 1st place (tie) """
@@ -230,6 +232,20 @@ class GoATAlgorithms(Algorithms):
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Generalizability Across Tumors (BraTS-GoAT) 1st place (The only submission)"""
 
+
+class ISBIGoATAlgorithms(Algorithms):
+    """Constants for the available ISBI BraTS GoAT algorithms.
+    
+    These algorithms are from the ISBI 2024 conference, separate from
+    the MICCAI BraTS GoAT algorithms in GoATAlgorithms.
+    """
+
+    BraTS24_ISBI_1 = "BraTS24_ISBI_1"
+    """ BraTS24 ISBI - Generalizability Across Tumors 1st place """
+    BraTS24_ISBI_2 = "BraTS24_ISBI_2"
+    """ BraTS24 ISBI - Generalizability Across Tumors 2nd place """
+    BraTS24_ISBI_3 = "BraTS24_ISBI_3"
+    """ BraTS24 ISBI - Generalizability Across Tumors 3rd place """
 
 # DIRECTORIES
 DATA_DIR = Path(__file__).parent / "data"

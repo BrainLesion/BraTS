@@ -379,6 +379,7 @@ segmenter.infer_single(
 
 #### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
 > Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
+
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -403,6 +404,8 @@ segmenter.infer_single(
 **Challenge Paper 2024:** N/A
 <br> 
 
+##### MICCAI BraTS-GoAT Algorithms (`GoATAlgorithms`)
+
 | Year | Rank | Author                      | Paper | CPU Support | Key Enum                                                                                                        |
 | ---- | ---- | --------------------------- | ----- | ----------- | --------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Meng-Yuan Chen, et al._    | N/A   | &#x274C;    | [BraTS25_1A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS25_1A) |
@@ -410,6 +413,16 @@ segmenter.infer_single(
 | 2025 | 1st  | _Vaidehi Satushe, et al._   | N/A   | &#x274C;    | [BraTS25_1C](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS25_1C) |
 | 2025 | 1st  | _Simone Bendazzoli, et al._ | N/A   | &#x274C;    | [BraTS25_1D](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS25_1D) |
 | 2024 | 1st  | _Frank Miao, Shengjie Niu_  | N/A   | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.GoATAlgorithms.BraTS24_1)   |
+
+##### ISBI BraTS-GoAT Algorithms (`ISBIGoATAlgorithms`)
+
+| Year | Rank | Author                    | Paper         | CPU Support     | Key Enum                                                                                                                    |
+| ---- | ---- | ------------------------- | ------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 2024 | 1st  | *[AUTHOR_NAME_1, et al.]* | [PAPER_URL_1] | [CPU_SUPPORT_1] | [BraTS24_ISBI_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_1) |
+| 2024 | 2nd  | *[AUTHOR_NAME_2, et al.]* | [PAPER_URL_2] | [CPU_SUPPORT_2] | [BraTS24_ISBI_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_2) |
+| 2024 | 3rd  | *[AUTHOR_NAME_3, et al.]* | [PAPER_URL_3] | [CPU_SUPPORT_3] | [BraTS24_ISBI_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_3) |
+
+</details>
 
 </details>
 
