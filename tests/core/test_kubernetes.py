@@ -345,8 +345,7 @@ def test_create_finalizer_job(monkeypatch):
     job_body = mock_batch.create_namespaced_job.call_args.kwargs["body"]
     assert job_body.spec.active_deadline_seconds == k8s._JOB_ACTIVE_DEADLINE_SECONDS
     assert (
-        job_body.spec.ttl_seconds_after_finished
-        == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
+        job_body.spec.ttl_seconds_after_finished == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
     )
 
 
@@ -396,8 +395,7 @@ def test_create_namespaced_job_deletes_old_pod_and_creates_new(monkeypatch):
     job_body = mock_batch.create_namespaced_job.call_args.kwargs["body"]
     assert job_body.spec.active_deadline_seconds == k8s._JOB_ACTIVE_DEADLINE_SECONDS
     assert (
-        job_body.spec.ttl_seconds_after_finished
-        == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
+        job_body.spec.ttl_seconds_after_finished == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
     )
     job_container = job_body.spec.template.spec.containers[0]
     assert job_container.command == ["infer", "--data_path=/data/input"]
@@ -531,9 +529,7 @@ def test_upload_input_data_year_2024(monkeypatch, dummy_algorithm, tmp_tree):
     monkeypatch.setattr(
         k8s, "_wait_for_init_container_ready", lambda **kw: calls.append("wait")
     )
-    monkeypatch.setattr(
-        k8s, "_check_files_in_pod", lambda **kw: calls.append("check")
-    )
+    monkeypatch.setattr(k8s, "_check_files_in_pod", lambda **kw: calls.append("check"))
     monkeypatch.setattr(
         k8s,
         "_download_additional_files",
@@ -644,8 +640,7 @@ def test_cleanup_job_resources_year_2024(monkeypatch, dummy_algorithm):
     )
 
     deleted_jobs = [
-        call.kwargs["name"]
-        for call in mock_batch.delete_namespaced_job.call_args_list
+        call.kwargs["name"] for call in mock_batch.delete_namespaced_job.call_args_list
     ]
     assert deleted_jobs == ["myjob", "myjob-finalizer"]
     mock_core.delete_namespaced_persistent_volume_claim.assert_called_once_with(

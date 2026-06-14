@@ -30,6 +30,7 @@ _ALPINE_IMAGE = "alpine:3.24.0"
 _JOB_ACTIVE_DEADLINE_SECONDS = 3600
 _JOB_TTL_SECONDS_AFTER_FINISHED = 3600
 
+
 def _build_command_args(
     algorithm: AlgorithmData,
     additional_files_path: str,
@@ -68,7 +69,12 @@ def _build_command_args(
     return command_args
 
 
-def _observe_job_output(pod_name: str, namespace: str, timeout_seconds: int = 600, poll_interval: float = 2.0,  ) -> str:
+def _observe_job_output(
+    pod_name: str,
+    namespace: str,
+    timeout_seconds: int = 600,
+    poll_interval: float = 2.0,
+) -> str:
     """Observe the output of a running job.
     Args:
         pod_name (str): The name of the pod to observe the output of
@@ -143,7 +149,7 @@ def _execute_command_in_pod(
         stdin (bool): Whether to capture stdin. Defaults to False.
         stdout (bool): Whether to capture stdout. Defaults to True.
         tty (bool): Whether to use a TTY. Defaults to False.
-        _preload_content (bool): Whether to preload the content. 
+        _preload_content (bool): Whether to preload the content.
             If True, returns the output as a string.
             If False, returns a streaming websocket client object.
     Returns:
@@ -215,14 +221,14 @@ def _download_additional_files(
                 f"  unzip {quoted_record_folder}/archive.zip -d {quoted_record_folder} && "
                 f"  rm {quoted_record_folder}/archive.zip && "
                 f"  for f in {quoted_record_folder}/*.zip; do "
-                f'    if [ -f \"$f\" ]; then unzip \"$f\" -d {quoted_record_folder} && rm \"$f\"; fi; '
+                f'    if [ -f "$f" ]; then unzip "$f" -d {quoted_record_folder} && rm "$f"; fi; '
                 f"  done "
                 f"else "
                 f"  echo 'Additional files already present in {quoted_record_folder}, skipping download.'; "
                 f"fi"
             ),
         ]
-   
+
         logger.info(f"Downloading additional files to {record_folder}...")
         output = _execute_command_in_pod(
             pod_name=pod_name,
@@ -253,7 +259,7 @@ def _check_files_in_pod(
         f"Checking files in pod '{pod_name}' in namespace '{namespace}' with mount path '{mount_path}'."
     )
     # Only prepend "input/" if mount_path is not "/input"
-    use_input_subdir = (mount_path != "/input")
+    use_input_subdir = mount_path != "/input"
     parent_dir = "input" if use_input_subdir else None
 
     for path in paths:
@@ -261,17 +267,23 @@ def _check_files_in_pod(
             if file.is_file():
                 # Build the remote path appropriately
                 if use_input_subdir:
-                    remote_path = str(Path(mount_path).joinpath("input", file.relative_to(path)))
+                    remote_path = str(
+                        Path(mount_path).joinpath("input", file.relative_to(path))
+                    )
                 else:
                     remote_path = str(Path(mount_path).joinpath(file.relative_to(path)))
-                commands = ["sh", "-c", f"test -f {remote_path} && echo EXISTS || echo MISSING"]   
+                commands = [
+                    "sh",
+                    "-c",
+                    f"test -f {remote_path} && echo EXISTS || echo MISSING",
+                ]
                 output = _execute_command_in_pod(
                     pod_name=pod_name,
                     namespace=namespace,
                     command=commands,
                     container="init-container",
                 )
-                if "MISSING" in output: 
+                if "MISSING" in output:
                     logger.warning(
                         f"File '{file.relative_to(path)}' is not present in pod '{pod_name}' in namespace '{namespace}'. Uploading it now..."
                     )
@@ -283,7 +295,6 @@ def _check_files_in_pod(
                         relative_to=path,
                         parent_dir=parent_dir,
                     )
-           
 
 
 def _download_folder_from_pod(
@@ -341,6 +352,7 @@ def _download_folder_from_pod(
             tarfile_obj.write(tar_data)
 
         with tarfile.open(tarfile_path, "r") as tar:
+
             def is_within_directory(directory, target):
                 abs_directory = Path(directory).resolve()
                 abs_target = Path(target).resolve()
@@ -354,11 +366,12 @@ def _download_folder_from_pod(
                 for member in tar_obj.getmembers():
                     member_path = Path(path) / member.name
                     if not is_within_directory(path, member_path):
-                        raise Exception(f"Attempted Path Traversal in Tar File: {member.name}")
+                        raise Exception(
+                            f"Attempted Path Traversal in Tar File: {member.name}"
+                        )
                 tar_obj.extractall(path=path)
 
             safe_extract(tar, local_base_dir)
-       
 
         tarfile_path.unlink()
 
@@ -368,8 +381,8 @@ def _upload_files_to_pod(
     namespace: str,
     paths: List[Path],
     mount_path: str = "/data",
-    relative_to: Optional[Path] = None,  
-    parent_dir: Optional[Path] = None,  
+    relative_to: Optional[Path] = None,
+    parent_dir: Optional[Path] = None,
 ) -> None:
     """Upload files to a pod in the specified namespace.
     Args:
@@ -520,7 +533,7 @@ def _create_finalizer_job(
                             )
                         ],
                     )
-                )
+                ),
             ),
         ),
     )
@@ -670,7 +683,7 @@ def _create_namespaced_job(
                         ],
                         containers=[container_spec],
                     )
-                )
+                ),
             ),
         ),
     )
@@ -1024,7 +1037,9 @@ def _cleanup_job_resources(
             logger.debug(f"Deleted job '{name}' in namespace '{namespace}'.")
         except Exception as e:
             if getattr(e, "status", None) == 404:
-                logger.debug(f"Job '{name}' not found in namespace '{namespace}', skipping.")
+                logger.debug(
+                    f"Job '{name}' not found in namespace '{namespace}', skipping."
+                )
             else:
                 logger.warning(
                     f"Failed to delete job '{name}' in namespace '{namespace}': {e}"
@@ -1054,9 +1069,7 @@ def _cleanup_job_resources(
                 name=output_pvc_name,
                 namespace=namespace,
             )
-            logger.debug(
-                f"Deleted PVC '{output_pvc_name}' in namespace '{namespace}'."
-            )
+            logger.debug(f"Deleted PVC '{output_pvc_name}' in namespace '{namespace}'.")
         except Exception as e:
             if getattr(e, "status", None) == 404:
                 logger.debug(
