@@ -74,7 +74,7 @@ To use Kubernetes for execution, the orchestrator will automatically use your ku
 ```bash
 export KUBECONFIG=/path/to/kubeconfig
 ```
-Then, specify the backend to use as `kubernetes` (or the corresponding enum value `Backends.KUBERNETES`) when running the inference:
+Then, specify the backend to use as `backend=Backends.KUBERNETES` when running the inference:
 ```python
 from brats.constants import Backends
 segmenter.infer_single(
