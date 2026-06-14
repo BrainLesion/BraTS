@@ -174,13 +174,13 @@ class BraTSAlgorithm(ABC):
     def _get_backend_runner(self, backend: Backends) -> Optional[Callable]:
         if backend == Backends.KUBERNETES:
             from brats.core.kubernetes import run_job as run_kubernetes_job
+
+            return run_kubernetes_job
         backend_dispatch = {
             Backends.DOCKER: run_docker_container,
             Backends.SINGULARITY: run_singularity_container,
-            Backends.KUBERNETES: run_kubernetes_job,
         }
-        runner = backend_dispatch.get(backend, None)
-        return runner
+        return backend_dispatch.get(backend, None)
 
     def _build_runner_kwargs(
         self, base_kwargs: dict, backend: Backends, kubernetes_kwargs: Optional[Dict]
