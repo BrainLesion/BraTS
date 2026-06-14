@@ -9,12 +9,15 @@ from loguru import logger
 
 from brats.core.docker import run_container as run_docker_container
 from brats.core.singularity import run_container as run_singularity_container
-from brats.core.kubernetes import run_job as run_kubernetes_job
 from brats.utils.algorithm_config import load_algorithms
 from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task, Backends
 from brats.utils.data_handling import InferenceSetup
 from brats.utils.exceptions import AlgorithmConfigException
 
+VALID_KUBERNETES_KWARGS = frozenset({  
+    "namespace", "pvc_name", "pvc_storage_size",  
+    "pvc_storage_class", "job_name", "data_mount_path",  
+}) 
 
 class BraTSAlgorithm(ABC):
     """
@@ -161,6 +164,8 @@ class BraTSAlgorithm(ABC):
             shutil.move(algorithm_output, output_file)
 
     def _get_backend_runner(self, backend: Backends) -> Optional[Callable]:
+        if backend == Backends.KUBERNETES:  
+            from brats.core.kubernetes import run_job as run_kubernetes_job  
         backend_dispatch = {
             Backends.DOCKER: run_docker_container,
             Backends.SINGULARITY: run_singularity_container,
@@ -168,6 +173,16 @@ class BraTSAlgorithm(ABC):
         }
         runner = backend_dispatch.get(backend, None)
         return runner
+
+    def _build_runner_kwargs(self, base_kwargs: dict, backend: Backends, kubernetes_kwargs: Optional[Dict]) -> dict:
+        unknown_kubernetes_kwargs = set(kubernetes_kwargs) - VALID_KUBERNETES_KWARGS  
+        if unknown_kubernetes_kwargs:  
+            raise ValueError(f"Unknown kubernetes_kwargs keys: {unknown_kubernetes_kwargs}")
+        if kubernetes_kwargs is not None:  
+            if backend != Backends.KUBERNETES:  
+                raise ValueError("kubernetes_kwargs can only be used with the Kubernetes backend.")  
+            return {**base_kwargs, **kubernetes_kwargs}  
+        return base_kwargs  
 
     def _infer_single(
         self,
@@ -200,7 +215,9 @@ class BraTSAlgorithm(ABC):
                 subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
 
-            runner = self._get_backend_runner(backend)
+            if kubernetes_kwargs is not None and backend != Backends.KUBERNETES:  
+                raise ValueError("kubernetes_kwargs can only be used with the Kubernetes backend.")  
+            runner = self._get_backend_runner(backend)  
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
             runner_kwargs = dict(
@@ -211,13 +228,7 @@ class BraTSAlgorithm(ABC):
                 force_cpu=self.force_cpu,
             )
             if kubernetes_kwargs is not None:
-                logger.debug(f"Adding Kubernetes kwargs: {kubernetes_kwargs}")
-                if backend != Backends.KUBERNETES:
-                    raise ValueError(
-                        "Kubernetes kwargs can only be used with the Kubernetes backend."
-                    )
-                for key, value in kubernetes_kwargs.items():
-                    runner_kwargs[key] = value
+                runner_kwargs = self._build_runner_kwargs(runner_kwargs, backend, kubernetes_kwargs)
             runner(**runner_kwargs)
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
@@ -257,7 +268,9 @@ class BraTSAlgorithm(ABC):
                 input_name_schema=self.algorithm.run_args.input_name_schema,
             )
             logger.info(f"Standardized input names to match algorithm requirements.")
-            runner = self._get_backend_runner(backend)
+            if kubernetes_kwargs is not None and backend != Backends.KUBERNETES:  
+                raise ValueError("kubernetes_kwargs can only be used with the Kubernetes backend.")  
+            runner = self._get_backend_runner(backend)  
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
             # run inference in container
@@ -270,13 +283,7 @@ class BraTSAlgorithm(ABC):
                 internal_external_name_map=internal_external_name_map,
             )
             if kubernetes_kwargs is not None:
-                logger.debug(f"Adding Kubernetes kwargs: {kubernetes_kwargs}")
-                if backend != Backends.KUBERNETES:
-                    raise ValueError(
-                        "Kubernetes kwargs can only be used with the Kubernetes backend."
-                    )
-                for key, value in kubernetes_kwargs.items():
-                    runner_kwargs[key] = value
+                runner_kwargs = self._build_runner_kwargs(runner_kwargs, backend, kubernetes_kwargs)
             runner(**runner_kwargs)
 
             self._process_batch_output(
