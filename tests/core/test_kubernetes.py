@@ -380,7 +380,7 @@ def test_create_namespaced_job_deletes_old_pod_and_creates_new(monkeypatch):
         image="alpine:latest",
         device_requests=[],
         pv_mounts={"pvc": "/data"},
-        command=["infer", "--data_path=/data/input"],
+        args=["infer", "--data_path=/data/input"],
         shm_size="1gb",
         user=None,
     )
@@ -395,8 +395,8 @@ def test_create_namespaced_job_deletes_old_pod_and_creates_new(monkeypatch):
         job_body.spec.ttl_seconds_after_finished == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
     )
     job_container = job_body.spec.template.spec.containers[0]
-    assert job_container.command == ["infer", "--data_path=/data/input"]
-    assert job_container.args is None
+    assert job_container.args == ["infer", "--data_path=/data/input"]
+    assert job_container.command is None
 
 
 ### run_job helpers
@@ -575,6 +575,24 @@ def test_wait_for_job_completion(monkeypatch):
 
     assert output == "LOGS"
     assert mock_core.read_namespaced_pod.call_count == 1
+
+
+def test_wait_for_job_completion_raises_on_failure(monkeypatch):
+    mock_core = MagicMock()
+    mock_core.read_namespaced_pod.return_value = _mk_pod(
+        name="job-pod", phase="Failed", init_running=True
+    )
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+    monkeypatch.setattr(k8s.time, "sleep", lambda _: None)
+    monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "container error logs")
+
+    with pytest.raises(RuntimeError, match="Job pod 'job-pod' failed"):
+        k8s._wait_for_job_completion(
+            pod_name="job-pod",
+            namespace="ns",
+            timeout_seconds=10,
+            poll_interval=2.0,
+        )
 
 
 def test_retrieve_output_year_2025(monkeypatch, dummy_algorithm, tmp_path):
