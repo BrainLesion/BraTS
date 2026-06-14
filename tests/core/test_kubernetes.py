@@ -180,9 +180,7 @@ def test_download_additional_files_zenodo_failure(dummy_algorithm, monkeypatch):
 
 
 def test_check_files_in_pod_uploads_missing(monkeypatch, tmp_tree):
-    monkeypatch.setattr(
-        k8s, "_execute_command_in_pod", lambda **kw: "MISSING"
-    )
+    monkeypatch.setattr(k8s, "_execute_command_in_pod", lambda **kw: "MISSING")
     uploaded = {"called": False, "args": None}
 
     def fake_upload(**kwargs):
