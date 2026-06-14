@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Dict, Optional, Union, List
+from typing import Dict, Optional, Union, List, Any
 import random
+import shlex
 import string
 import base64
-import docker
 import io
 import tarfile
 from loguru import logger
@@ -27,6 +27,7 @@ from brats.utils.zenodo import (
     get_dummy_path,
 )
 
+_ALPINE_IMAGE = "alpine:3.24.0"  
 
 def _build_command_args(
     algorithm: AlgorithmData,
@@ -66,17 +67,19 @@ def _build_command_args(
     return command_args
 
 
-def _observe_job_output(pod_name: str, namespace: str) -> str:
+def _observe_job_output(pod_name: str, namespace: str, timeout_seconds: int = 600, poll_interval: float = 2.0,  ) -> str:
     """Observe the output of a running job.
     Args:
         pod_name (str): The name of the pod to observe the output of
         namespace (str): The namespace of the pod to observe the output of
+        timeout_seconds (int): The timeout in seconds. Defaults to 600.
+        poll_interval (float): The poll interval in seconds. Defaults to 2.0.
     Returns:
         str: The output of the job
     """
     v1 = client.CoreV1Api()
 
-    for _ in range(300):  # up to 10 minutes
+    for _ in range(timeout_seconds / poll_interval):  # up to 10 minutes
         pod = v1.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
         statuses = pod.status.container_statuses
@@ -95,7 +98,7 @@ def _observe_job_output(pod_name: str, namespace: str) -> str:
         elif pod_phase in ["Failed", "Succeeded"]:
             logger.warning(f"Pod '{pod_name}' entered terminal phase: {pod_phase}")
             break
-        time.sleep(2)
+        time.sleep(poll_interval)
     else:
         logger.error(
             f"Timed out waiting for main container in pod '{pod_name}' to be running"
@@ -127,8 +130,9 @@ def _execute_command_in_pod(
     stdout: bool = True,
     tty: bool = False,
     _preload_content: bool = True,
-) -> str:
+) -> Union[str, Any]:
     """Execute a command in a pod.
+
     Args:
         pod_name (str): The name of the pod to execute the command in
         namespace (str): The namespace of the pod to execute the command in
@@ -138,9 +142,12 @@ def _execute_command_in_pod(
         stdin (bool): Whether to capture stdin. Defaults to False.
         stdout (bool): Whether to capture stdout. Defaults to True.
         tty (bool): Whether to use a TTY. Defaults to False.
-        _preload_content (bool): Whether to preload the content. Defaults to True.
+        _preload_content (bool): Whether to preload the content. 
+            If True, returns the output as a string.
+            If False, returns a streaming websocket client object.
     Returns:
-        str: The output of the command
+        Union[str, Any]: The output of the command if _preload_content is True, otherwise
+        a websocket streaming client as returned by kubernetes.stream.stream().
     """
     v1 = client.CoreV1Api()
     output = stream(
@@ -187,24 +194,28 @@ def _download_additional_files(
             )
         )
 
+        quoted_record_folder = shlex.quote(record_folder)
+        quoted_archive_url = shlex.quote(archive_url)
+
         commands = [
             "sh",
             "-c",
             (
-                f'if [ ! -d {record_folder} ] || [ -z "$(ls -A {record_folder})" ]; then '
-                f"  mkdir -p {record_folder} && "
-                f"  wget -O {record_folder}/archive.zip {archive_url} && "
+                f'if [ ! -d {quoted_record_folder} ] || [ -z "$(ls -A {quoted_record_folder})" ]; then '
+                f"  mkdir -p {quoted_record_folder} && "
+                f"  wget -O {quoted_record_folder}/archive.zip {quoted_archive_url} && "
                 f"  apk add --no-cache unzip && "
-                f"  unzip {record_folder}/archive.zip -d {record_folder} && "
-                f"  rm {record_folder}/archive.zip && "
-                f"  for f in {record_folder}/*.zip; do "
-                f'    if [ -f "$f" ]; then unzip "$f" -d {record_folder} && rm "$f"; fi; '
+                f"  unzip {quoted_record_folder}/archive.zip -d {quoted_record_folder} && "
+                f"  rm {quoted_record_folder}/archive.zip && "
+                f"  for f in {quoted_record_folder}/*.zip; do "
+                f'    if [ -f \"$f\" ]; then unzip \"$f\" -d {quoted_record_folder} && rm \"$f\"; fi; '
                 f"  done "
                 f"else "
-                f"  echo 'Additional files already present in {record_folder}, skipping download.'; "
+                f"  echo 'Additional files already present in {quoted_record_folder}, skipping download.'; "
                 f"fi"
             ),
         ]
+   
         logger.info(f"Downloading additional files to {record_folder}...")
         output = _execute_command_in_pod(
             pod_name=pod_name,
@@ -234,21 +245,26 @@ def _check_files_in_pod(
     logger.debug(
         f"Checking files in pod '{pod_name}' in namespace '{namespace}' with mount path '{mount_path}'."
     )
+    # Only prepend "input/" if mount_path is not "/input"
+    use_input_subdir = (mount_path != "/input")
+    parent_dir = "input" if use_input_subdir else None
+
     for path in paths:
         for file in path.glob("**/*"):
             if file.is_file():
-                commands = [
-                    "ls",
-                    "-la",
-                    str(Path(mount_path).joinpath("input", file.relative_to(path))),
-                ]
+                # Build the remote path appropriately
+                if use_input_subdir:
+                    remote_path = str(Path(mount_path).joinpath("input", file.relative_to(path)))
+                else:
+                    remote_path = str(Path(mount_path).joinpath(file.relative_to(path)))
+                commands = ["sh", "-c", f"test -f {remote_path} && echo EXISTS || echo MISSING"]   
                 output = _execute_command_in_pod(
                     pod_name=pod_name,
                     namespace=namespace,
                     command=commands,
                     container="init-container",
                 )
-                if "No such file or directory" in output:
+                if "MISSING" in output: 
                     logger.warning(
                         f"File '{file.relative_to(path)}' is not present in pod '{pod_name}' in namespace '{namespace}'. Uploading it now..."
                     )
@@ -258,8 +274,9 @@ def _check_files_in_pod(
                         paths=[file],
                         mount_path=mount_path,
                         relative_to=path,
-                        parent_dir="input",
+                        parent_dir=parent_dir,
                     )
+           
 
 
 def _download_folder_from_pod(
@@ -317,7 +334,24 @@ def _download_folder_from_pod(
             tarfile_obj.write(tar_data)
 
         with tarfile.open(tarfile_path, "r") as tar:
-            tar.extractall(path=local_base_dir)
+            def is_within_directory(directory, target):
+                abs_directory = Path(directory).resolve()
+                abs_target = Path(target).resolve()
+                try:
+                    abs_target.relative_to(abs_directory)
+                    return True
+                except ValueError:
+                    return False
+
+            def safe_extract(tar_obj, path):
+                for member in tar_obj.getmembers():
+                    member_path = Path(path) / member.name
+                    if not is_within_directory(path, member_path):
+                        raise Exception(f"Attempted Path Traversal in Tar File: {member.name}")
+                tar_obj.extractall(path=path)
+
+            safe_extract(tar, local_base_dir)
+       
 
         tarfile_path.unlink()
 
@@ -327,8 +361,8 @@ def _upload_files_to_pod(
     namespace: str,
     paths: List[Path],
     mount_path: str = "/data",
-    relative_to: Path = None,
-    parent_dir: Path = None,
+    relative_to: Optional[Path] = None,  
+    parent_dir: Optional[Path] = None,  
 ) -> None:
     """Upload files to a pod in the specified namespace.
     Args:
@@ -463,7 +497,7 @@ def _create_finalizer_job(
                         containers=[
                             client.V1Container(
                                 name="finalizer-container",
-                                image="alpine:latest",
+                                image=_ALPINE_IMAGE,
                                 command=[
                                     "sh",
                                     "-c",
@@ -509,7 +543,7 @@ def _create_namespaced_job(
     namespace: str,
     pvc_name: str,
     image: str,
-    device_requests: List[docker.types.DeviceRequest],
+    device_requests: List[Any],
     pv_mounts: Dict[str, str],
     args: List[str] = None,
     shm_size: str = None,
@@ -614,7 +648,7 @@ def _create_namespaced_job(
                         init_containers=[
                             client.V1Container(
                                 name="init-container",
-                                image="alpine:latest",
+                                image=_ALPINE_IMAGE,
                                 command=[
                                     "sh",
                                     "-c",
@@ -682,6 +716,8 @@ def run_job(
     pvc_storage_class: Optional[str] = None,
     job_name: Optional[str] = None,
     data_mount_path: Optional[str] = "/data",
+    timeout_seconds: int = 600,
+    poll_interval: float = 2.0,
 ):
     """Run a Kubernetes job for the provided algorithm.
 
@@ -698,6 +734,8 @@ def run_job(
         pvc_storage_class (Optional[str]): The storage class to use for the PVC. If None, the default storage class will be used.
         job_name (Optional[str]): Name of the Job to create. If None, a random name will be generated.
         data_mount_path (Optional[str]): The path to mount the PVC to. Defaults to "/data".
+        timeout_seconds (int): The timeout in seconds. Defaults to 600.
+        poll_interval (float): The poll interval in seconds. Defaults to 2.0.
     """
     if pvc_name is None:
         pvc_name = (
@@ -795,7 +833,7 @@ def run_job(
 
     core_v1_api = client.CoreV1Api()
     logger.info(f"Waiting for Pod '{pod_name}' to be running...")
-    for _ in range(300):  # wait up to 10 minutes
+    for _ in range(timeout_seconds / poll_interval):  # wait up to 10 minutes
         pod = core_v1_api.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
         if pod.status.init_container_statuses:
@@ -816,7 +854,7 @@ def run_job(
         else:
             if _check_pod_terminal_or_running(pod_phase, pod_name):
                 break
-        time.sleep(2)
+        time.sleep(poll_interval)
     else:
         raise RuntimeError(f"Timed out waiting for pod {pod_name} to be running")
     _check_files_in_pod(
@@ -870,13 +908,13 @@ def run_job(
     job_output = _observe_job_output(pod_name=pod_name, namespace=namespace)
 
     core_v1_api = client.CoreV1Api()
-    for _ in range(300):  # Wait up to 10 minutes
+    for _ in range(timeout_seconds / poll_interval):  # Wait up to 10 minutes
         pod = core_v1_api.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
         if pod_phase in ("Succeeded", "Failed"):
             logger.info(f"Job pod '{pod_name}' finished with phase: {pod_phase}")
             break
-        time.sleep(2)
+        time.sleep(poll_interval)
     else:
         raise RuntimeError(f"Timed out waiting for job pod '{pod_name}' to complete.")
 
