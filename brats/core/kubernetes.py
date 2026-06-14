@@ -73,20 +73,20 @@ def _observe_job_output(
     pod_name: str,
     namespace: str,
     timeout_seconds: int = 600,
-    poll_interval: float = 2.0,
+    poll_interval: int = 2,
 ) -> str:
     """Observe the output of a running job.
     Args:
         pod_name (str): The name of the pod to observe the output of
         namespace (str): The namespace of the pod to observe the output of
         timeout_seconds (int): The timeout in seconds. Defaults to 600.
-        poll_interval (float): The poll interval in seconds. Defaults to 2.0.
+        poll_interval (int): The poll interval in seconds. Defaults to 2.
     Returns:
         str: The output of the job
     """
     v1 = client.CoreV1Api()
 
-    for _ in range(timeout_seconds / poll_interval):  # up to 10 minutes
+    for _ in range(int(timeout_seconds / poll_interval)):  # up to 10 minutes
         pod = v1.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
         statuses = pod.status.container_statuses
@@ -275,7 +275,7 @@ def _check_files_in_pod(
                 commands = [
                     "sh",
                     "-c",
-                    f"test -f {remote_path} && echo EXISTS || echo MISSING",
+                    f"test -f {shlex.quote(remote_path)} && echo EXISTS || echo MISSING",
                 ]
                 output = _execute_command_in_pod(
                     pod_name=pod_name,
@@ -316,7 +316,7 @@ def _download_folder_from_pod(
     for path in remote_paths:
         folder_name = str(path)
 
-        command = ["sh", "-c", f"tar cf - -C {folder_name} . | base64"]
+        command = ["sh", "-c", f"tar cf - -C {shlex.quote(folder_name)} . | base64"]
         resp = _execute_command_in_pod(
             pod_name=pod_name,
             namespace=namespace,
@@ -329,6 +329,7 @@ def _download_folder_from_pod(
         )
 
         base64_chunks = []
+        stderr_chunks = []
 
         while resp.is_open():
             resp.update(timeout=1)
@@ -340,11 +341,26 @@ def _download_folder_from_pod(
             if resp.peek_stderr():
                 err = resp.read_stderr()
                 if err:
+                    stderr_chunks.append(err)
                     logger.error(f"STDERR: {err}")
         resp.close()
 
+        stderr_output = "".join(stderr_chunks).strip()
+        if stderr_output:
+            raise RuntimeError(
+                f"Failed to download '{folder_name}' from pod '{pod_name}': {stderr_output}"
+            )
+
         full_base64 = b"".join(base64_chunks)
+        if not full_base64:
+            raise RuntimeError(
+                f"Failed to download '{folder_name}' from pod '{pod_name}': no data received"
+            )
         tar_data = base64.b64decode(full_base64)
+        if not tar_data:
+            raise RuntimeError(
+                f"Failed to download '{folder_name}' from pod '{pod_name}': empty archive"
+            )
 
         base_folder_name = Path(folder_name).name
         tarfile_path = local_base_dir / f"{base_folder_name}"
@@ -363,13 +379,23 @@ def _download_folder_from_pod(
                     return False
 
             def safe_extract(tar_obj, path):
+                safe_members = []
+                abs_base = Path(path).resolve()
                 for member in tar_obj.getmembers():
-                    member_path = Path(path) / member.name
-                    if not is_within_directory(path, member_path):
+                    # Only allow regular files and directories
+                    if member.isfile() or member.isdir():
+                        member_path = abs_base / member.name
+                        if not is_within_directory(abs_base, member_path):
+                            raise Exception(
+                                f"Attempted Path Traversal in Tar File: {member.name}"
+                            )
+                        safe_members.append(member)
+                    else:
+                        # Disallow symlinks, hardlinks, devices, etc.
                         raise Exception(
-                            f"Attempted Path Traversal in Tar File: {member.name}"
+                            f"Blocked unsafe extraction for tar member: {member.name} ({member.type})"
                         )
-                tar_obj.extractall(path=path)
+                tar_obj.extractall(path=path, members=safe_members)
 
             safe_extract(tar, local_base_dir)
 
@@ -567,7 +593,7 @@ def _create_namespaced_job(
     image: str,
     device_requests: List[Any],
     pv_mounts: Dict[str, str],
-    command: List[str] = None,
+    args: List[str] = None,
     shm_size: str = None,
     user: str = None,
 ) -> str:
@@ -580,7 +606,7 @@ def _create_namespaced_job(
         image (str): The image to use for the Job
         device_requests (List[docker.types.DeviceRequest]): The device requests to use for the Job
         pv_mounts (Dict[str, str]): The PersistentVolumeClaims (PVCs) to mount to the Job.
-        command (List[str]): The command to use for the Job. Defaults to None.
+        args (List[str]): Container args passed to the image entrypoint. Defaults to None.
         shm_size (str): The size of the shared memory to use for the Job. Defaults to None.
         user (str): The user to run the Job as. Defaults to None (root is used if not specified).
     Returns:
@@ -656,8 +682,9 @@ def _create_namespaced_job(
             client.V1VolumeMount(name="shm", mount_path="/dev/shm")
         )
 
-    if command is not None:
-        container_spec.command = command
+    if args is not None:
+        # Match Docker behavior: override CMD only, keep the image ENTRYPOINT.
+        container_spec.args = args
     batch_v1_api.create_namespaced_job(
         namespace=namespace,
         body=client.V1Job(
@@ -710,17 +737,14 @@ def _create_namespaced_job(
 
 
 def _check_pod_terminal_or_running(pod_phase: str, pod_name: str) -> bool:
-    """Check if the pod is in a terminal phase or running.
+    """Check if the pod is in a terminal phase: Succeeded or Failed.
     Args:
         pod_phase (str): The phase of the pod
         pod_name (str): The name of the pod
     Returns:
-        bool: True if the pod is in a terminal phase or running, False otherwise
+        bool: True if the pod is in a terminal phase, False otherwise
     """
-    if pod_phase == "Running":
-        logger.info(f"Pod '{pod_name}' is running.")
-        return True
-    elif pod_phase in ["Failed", "Succeeded"]:
+    if pod_phase in ["Failed", "Succeeded"]:
         logger.warning(f"Pod '{pod_name}' entered terminal phase: {pod_phase}")
         return True
     else:
@@ -814,12 +838,12 @@ def _prepare_job_resources(
             output_path=output_mount_path,
             mount_path=data_mount_path,
         )
-        command = ["infer", *command_args.split(" ")]
+        args = ["infer", *shlex.split(command_args)]
         pv_mounts = {
             pvc_name: data_mount_path,
         }
     else:
-        command = None
+        args = None
         _create_namespaced_pvc(
             pvc_name=pvc_name + "-output",
             namespace=namespace,
@@ -839,7 +863,7 @@ def _prepare_job_resources(
         pv_mounts=pv_mounts,
         image=algorithm.run_args.docker_image,
         device_requests=device_requests,
-        command=command,
+        args=args,
         shm_size=algorithm.run_args.shm_size,
         user=user,
     )
@@ -860,7 +884,7 @@ def _wait_for_init_container_ready(
     pod_name: str,
     namespace: str,
     timeout_seconds: int,
-    poll_interval: float,
+    poll_interval: int,
 ) -> None:
     """Wait until the init container is running or the pod reaches a terminal phase."""
     core_v1_api = client.CoreV1Api()
@@ -897,7 +921,7 @@ def _upload_input_data(
     data_path: Union[Path, str],
     upload_mount_path: str,
     timeout_seconds: int,
-    poll_interval: float,
+    poll_interval: int,
     zenodo_response: Optional[Tuple[Dict, str]] = None,
 ) -> None:
     """Upload input files, parameters, and additional data, then release the init container."""
@@ -945,7 +969,7 @@ def _wait_for_job_completion(
     pod_name: str,
     namespace: str,
     timeout_seconds: int,
-    poll_interval: float,
+    poll_interval: int,
 ) -> str:
     """Observe job logs and poll until the job pod reaches a terminal phase."""
     time.sleep(2)
@@ -953,6 +977,7 @@ def _wait_for_job_completion(
 
     core_v1_api = client.CoreV1Api()
     poll_attempts = int(timeout_seconds / poll_interval)
+    pod_phase = None
     for _ in range(poll_attempts):
         pod = core_v1_api.read_namespaced_pod(name=pod_name, namespace=namespace)
         pod_phase = pod.status.phase
@@ -962,6 +987,11 @@ def _wait_for_job_completion(
         time.sleep(poll_interval)
     else:
         raise RuntimeError(f"Timed out waiting for job pod '{pod_name}' to complete.")
+
+    if pod_phase == "Failed":
+        raise RuntimeError(
+            f"Job pod '{pod_name}' failed. Container output:\n{job_output}"
+        )
 
     return job_output
 
@@ -1095,7 +1125,7 @@ def run_job(
     job_name: Optional[str] = None,
     data_mount_path: Optional[str] = "/data",
     timeout_seconds: int = 600,
-    poll_interval: float = 2.0,
+    poll_interval: int = 2,
     keep_resources: bool = False,
 ):
     """Run a Kubernetes job for the provided algorithm.
