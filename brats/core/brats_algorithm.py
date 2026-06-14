@@ -185,12 +185,12 @@ class BraTSAlgorithm(ABC):
     def _build_runner_kwargs(
         self, base_kwargs: dict, backend: Backends, kubernetes_kwargs: Optional[Dict]
     ) -> dict:
-        unknown_kubernetes_kwargs = set(kubernetes_kwargs) - VALID_KUBERNETES_KWARGS
-        if unknown_kubernetes_kwargs:
-            raise ValueError(
-                f"Unknown kubernetes_kwargs keys: {unknown_kubernetes_kwargs}"
-            )
         if kubernetes_kwargs is not None:
+            unknown_kubernetes_kwargs = set(kubernetes_kwargs) - VALID_KUBERNETES_KWARGS
+            if unknown_kubernetes_kwargs:
+                raise ValueError(
+                    f"Unknown kubernetes_kwargs keys: {unknown_kubernetes_kwargs}"
+                )
             if backend != Backends.KUBERNETES:
                 raise ValueError(
                     "kubernetes_kwargs can only be used with the Kubernetes backend."
