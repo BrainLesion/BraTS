@@ -61,9 +61,22 @@ python = ">=3.8,<4.0"
 pytest = ">=8.0.0"
 pytest-cov = ">=5.0.0"
 flake8 = ">=5.0.0"
+kubernetes = ">=34.1.0,<35.0.0"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
