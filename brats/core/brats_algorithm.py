@@ -16,7 +16,7 @@ from brats.utils.exceptions import AlgorithmConfigException
 
 VALID_KUBERNETES_KWARGS = frozenset({  
     "namespace", "pvc_name", "pvc_storage_size",  
-    "pvc_storage_class", "job_name", "data_mount_path",  
+    "pvc_storage_class", "job_name", "data_mount_path", "keep_resources",
 }) 
 
 class BraTSAlgorithm(ABC):

@@ -342,6 +342,12 @@ def test_create_finalizer_job(monkeypatch):
     )
     assert name == "final-pod"
     assert mock_batch.create_namespaced_job.call_count == 1
+    job_body = mock_batch.create_namespaced_job.call_args.kwargs["body"]
+    assert job_body.spec.active_deadline_seconds == k8s._JOB_ACTIVE_DEADLINE_SECONDS
+    assert (
+        job_body.spec.ttl_seconds_after_finished
+        == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
+    )
 
 
 ### _create_namespaced_job
@@ -378,7 +384,7 @@ def test_create_namespaced_job_deletes_old_pod_and_creates_new(monkeypatch):
         image="alpine:latest",
         device_requests=[],
         pv_mounts={"pvc": "/data"},
-        args=["echo", "hi"],
+        command=["infer", "--data_path=/data/input"],
         shm_size="1gb",
         user=None,
     )
@@ -387,6 +393,438 @@ def test_create_namespaced_job_deletes_old_pod_and_creates_new(monkeypatch):
     assert mock_batch.delete_namespaced_job.call_count == 1
     assert mock_core.delete_namespaced_pod.call_count == 1
     assert mock_batch.create_namespaced_job.call_count == 1
+    job_body = mock_batch.create_namespaced_job.call_args.kwargs["body"]
+    assert job_body.spec.active_deadline_seconds == k8s._JOB_ACTIVE_DEADLINE_SECONDS
+    assert (
+        job_body.spec.ttl_seconds_after_finished
+        == k8s._JOB_TTL_SECONDS_AFTER_FINISHED
+    )
+    job_container = job_body.spec.template.spec.containers[0]
+    assert job_container.command == ["infer", "--data_path=/data/input"]
+    assert job_container.args is None
+
+
+### run_job helpers
+
+
+def test_prepare_job_resources_year_2024(monkeypatch, dummy_algorithm):
+    algo = dummy_algorithm(year=2024, with_additional=True)
+    monkeypatch.setattr(k8s.config, "load_kube_config", lambda: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_pvc", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_log_algorithm_info", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_handle_device_requests", lambda **kw: [])
+    monkeypatch.setattr(k8s, "_get_container_user", lambda **kw: None)
+    monkeypatch.setattr(
+        k8s,
+        "_get_zenodo_metadata_and_archive_url",
+        lambda record_id: ({"version": "1"}, "http://example/zip"),
+    )
+    monkeypatch.setattr(k8s, "_create_namespaced_job", lambda **kw: "job-pod")
+
+    resources = k8s._prepare_job_resources(
+        algorithm=algo,
+        cuda_devices="",
+        force_cpu=True,
+        namespace="ns",
+        pvc_name="mypvc",
+        pvc_storage_size="1Gi",
+        pvc_storage_class=None,
+        job_name="myjob",
+        data_mount_path="/data",
+    )
+
+    assert resources == k8s._JobResources(
+        job_name="myjob",
+        pvc_name="mypvc",
+        pod_name="job-pod",
+        input_mount_path="/data",
+        output_mount_path=Path("/data/output"),
+        upload_mount_path="/data",
+        zenodo_response=({"version": "1"}, "http://example/zip"),
+    )
+
+
+def test_prepare_job_resources_year_2025_creates_output_pvc(
+    monkeypatch, dummy_algorithm
+):
+    algo = dummy_algorithm(year=2025, with_additional=False)
+    created = []
+
+    monkeypatch.setattr(k8s.config, "load_kube_config", lambda: None)
+    monkeypatch.setattr(
+        k8s,
+        "_create_namespaced_pvc",
+        lambda **kw: created.append(kw["pvc_name"]),
+    )
+    monkeypatch.setattr(k8s, "_log_algorithm_info", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_handle_device_requests", lambda **kw: [])
+    monkeypatch.setattr(k8s, "_get_container_user", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_job", lambda **kw: "job-pod")
+
+    resources = k8s._prepare_job_resources(
+        algorithm=algo,
+        cuda_devices="",
+        force_cpu=True,
+        namespace="ns",
+        pvc_name="mypvc2",
+        pvc_storage_size="1Gi",
+        pvc_storage_class=None,
+        job_name="myjob2",
+        data_mount_path="/data",
+    )
+
+    assert "mypvc2" in created
+    assert "mypvc2-output" in created
+    assert resources.upload_mount_path == "/input"
+    assert resources.output_mount_path == "/output"
+    assert resources.zenodo_response is None
+
+
+def test_download_additional_files_uses_prefetched_zenodo_response(
+    dummy_algorithm, monkeypatch
+):
+    algo = dummy_algorithm(year=2024, with_additional=True)
+    fetch_calls = []
+
+    monkeypatch.setattr(
+        k8s,
+        "_get_zenodo_metadata_and_archive_url",
+        lambda record_id: fetch_calls.append(record_id) or None,
+    )
+    monkeypatch.setattr(k8s, "_execute_command_in_pod", lambda **kw: "ok")
+
+    prefetched = ({"version": "3"}, "http://example/archive.zip")
+    p = k8s._download_additional_files(
+        algorithm=algo,
+        pod_name="p",
+        namespace="ns",
+        mount_path="/data",
+        zenodo_response=prefetched,
+    )
+
+    assert fetch_calls == []
+    assert str(p) == "/data/12345_v3"
+
+
+def test_wait_for_init_container_ready(monkeypatch):
+    mock_core = MagicMock()
+    mock_core.read_namespaced_pod.return_value = _mk_pod(
+        name="job-pod", phase="Running", init_running=True
+    )
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+    monkeypatch.setattr(k8s.time, "sleep", lambda _: None)
+
+    k8s._wait_for_init_container_ready(
+        pod_name="job-pod",
+        namespace="ns",
+        timeout_seconds=10,
+        poll_interval=2.0,
+    )
+
+    assert mock_core.read_namespaced_pod.call_count == 1
+
+
+def test_upload_input_data_year_2024(monkeypatch, dummy_algorithm, tmp_tree):
+    algo = dummy_algorithm(year=2024, with_additional=True)
+    calls = []
+
+    monkeypatch.setattr(
+        k8s, "_wait_for_init_container_ready", lambda **kw: calls.append("wait")
+    )
+    monkeypatch.setattr(
+        k8s, "_check_files_in_pod", lambda **kw: calls.append("check")
+    )
+    monkeypatch.setattr(
+        k8s,
+        "_download_additional_files",
+        lambda **kw: calls.append("download") or Path("/data/12345_v1"),
+    )
+    monkeypatch.setattr(
+        k8s, "_upload_files_to_pod", lambda **kw: calls.append("upload")
+    )
+    monkeypatch.setattr(
+        k8s,
+        "_execute_command_in_pod",
+        lambda **kw: calls.append(kw["command"]),
+    )
+    monkeypatch.setattr(k8s, "PARAMETERS_DIR", tmp_tree / "params")
+    (tmp_tree / "params").mkdir(exist_ok=True)
+
+    k8s._upload_input_data(
+        algorithm=algo,
+        pod_name="job-pod",
+        namespace="ns",
+        data_path=tmp_tree / "input",
+        upload_mount_path="/data",
+        timeout_seconds=10,
+        poll_interval=2.0,
+    )
+
+    assert calls[:4] == ["wait", "check", "download", "upload"]
+    assert calls[4] == ["touch", "/etc/content_verified"]
+
+
+def test_wait_for_job_completion(monkeypatch):
+    mock_core = MagicMock()
+    mock_core.read_namespaced_pod.return_value = _mk_pod(
+        name="job-pod", phase="Succeeded", init_running=True
+    )
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+    monkeypatch.setattr(k8s.time, "sleep", lambda _: None)
+    monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "LOGS")
+
+    output = k8s._wait_for_job_completion(
+        pod_name="job-pod",
+        namespace="ns",
+        timeout_seconds=10,
+        poll_interval=2.0,
+    )
+
+    assert output == "LOGS"
+    assert mock_core.read_namespaced_pod.call_count == 1
+
+
+def test_retrieve_output_year_2025(monkeypatch, dummy_algorithm, tmp_path):
+    algo = dummy_algorithm(year=2025, with_additional=False)
+    calls = []
+
+    monkeypatch.setattr(
+        k8s,
+        "_create_finalizer_job",
+        lambda **kw: calls.append(kw) or "final-pod",
+    )
+    monkeypatch.setattr(
+        k8s, "_download_folder_from_pod", lambda **kw: calls.append("download")
+    )
+    monkeypatch.setattr(
+        k8s,
+        "_execute_command_in_pod",
+        lambda **kw: calls.append(kw["command"]),
+    )
+    monkeypatch.setattr(k8s, "_sanity_check_output", lambda **kw: calls.append("check"))
+    monkeypatch.setattr(k8s.time, "sleep", lambda _: None)
+
+    k8s._retrieve_output(
+        algorithm=algo,
+        job_name="myjob2",
+        pvc_name="mypvc2",
+        namespace="ns",
+        output_path=tmp_path / "out",
+        data_path=tmp_path / "input",
+        data_mount_path="/data",
+        input_mount_path="/input",
+        output_mount_path="/output",
+        job_output="LOGS",
+        internal_external_name_map=None,
+    )
+
+    assert calls[0]["pvc_name"] == "mypvc2-output"
+    assert calls[0]["mount_path"] == "/output"
+    assert "download" in calls
+    assert ["touch", "/etc/content_verified"] in calls
+    assert "check" in calls
+
+
+### _cleanup_job_resources
+
+
+def test_cleanup_job_resources_year_2024(monkeypatch, dummy_algorithm):
+    algo = dummy_algorithm(year=2024, with_additional=False)
+    mock_batch = MagicMock()
+    mock_core = MagicMock()
+    monkeypatch.setattr(k8s.client, "BatchV1Api", lambda: mock_batch)
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+
+    k8s._cleanup_job_resources(
+        algorithm=algo,
+        job_name="myjob",
+        pvc_name="mypvc",
+        namespace="ns",
+        delete_input_pvc=True,
+    )
+
+    deleted_jobs = [
+        call.kwargs["name"]
+        for call in mock_batch.delete_namespaced_job.call_args_list
+    ]
+    assert deleted_jobs == ["myjob", "myjob-finalizer"]
+    mock_core.delete_namespaced_persistent_volume_claim.assert_called_once_with(
+        name="mypvc", namespace="ns"
+    )
+
+
+def test_cleanup_job_resources_year_2025_deletes_output_pvc(
+    monkeypatch, dummy_algorithm
+):
+    algo = dummy_algorithm(year=2025, with_additional=False)
+    mock_batch = MagicMock()
+    mock_core = MagicMock()
+    monkeypatch.setattr(k8s.client, "BatchV1Api", lambda: mock_batch)
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+
+    k8s._cleanup_job_resources(
+        algorithm=algo,
+        job_name="myjob2",
+        pvc_name="mypvc2",
+        namespace="ns",
+        delete_input_pvc=False,
+    )
+
+    deleted_pvcs = [
+        call.kwargs["name"]
+        for call in mock_core.delete_namespaced_persistent_volume_claim.call_args_list
+    ]
+    assert deleted_pvcs == ["mypvc2-output"]
+
+
+def test_run_job_cleans_up_on_success(monkeypatch, tmp_tree, tmp_path, dummy_algorithm):
+    algo = dummy_algorithm(year=2024, with_additional=True)
+    cleanup_calls = []
+
+    monkeypatch.setattr(k8s.config, "load_kube_config", lambda: None)
+    monkeypatch.setattr(k8s, "_log_algorithm_info", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_handle_device_requests", lambda **kw: [])
+    monkeypatch.setattr(k8s, "_get_container_user", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_get_parameters_arg", lambda algorithm=None: "")
+    monkeypatch.setattr(
+        k8s,
+        "_get_zenodo_metadata_and_archive_url",
+        lambda record_id: ({"version": "1"}, "http://example/zip"),
+    )
+    monkeypatch.setattr(k8s, "PARAMETERS_DIR", tmp_tree / "params")
+    (tmp_tree / "params").mkdir(exist_ok=True)
+    monkeypatch.setattr(k8s, "get_dummy_path", lambda: Path("/dummy"))
+    monkeypatch.setattr(k8s, "_sanity_check_output", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_pvc", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_job", lambda **kw: "job-pod")
+    monkeypatch.setattr(k8s, "_check_files_in_pod", lambda **kw: None)
+    monkeypatch.setattr(
+        k8s, "_download_additional_files", lambda **kw: Path("/data/12345_v1")
+    )
+    monkeypatch.setattr(k8s, "_upload_files_to_pod", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_execute_command_in_pod", lambda **kw: "ok")
+    monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "LOGS")
+    monkeypatch.setattr(k8s, "_create_finalizer_job", lambda **kw: "final-pod")
+    monkeypatch.setattr(k8s, "_download_folder_from_pod", lambda **kw: None)
+    monkeypatch.setattr(
+        k8s,
+        "_cleanup_job_resources",
+        lambda **kw: cleanup_calls.append(kw),
+    )
+
+    mock_core = MagicMock()
+    mock_core.read_namespaced_pod.side_effect = [
+        _mk_pod(name="job-pod", phase="Running", init_running=True),
+        _mk_pod(name="job-pod", phase="Succeeded", init_running=True),
+    ]
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+
+    k8s.run_job(
+        algorithm=algo,
+        data_path=tmp_tree / "input",
+        output_path=tmp_path / "out",
+        cuda_devices="",
+        force_cpu=True,
+        namespace="default",
+        pvc_name="mypvc",
+        job_name="myjob",
+        data_mount_path="/data",
+    )
+
+    assert cleanup_calls == [
+        {
+            "algorithm": algo,
+            "job_name": "myjob",
+            "pvc_name": "mypvc",
+            "namespace": "default",
+            "delete_input_pvc": False,
+        }
+    ]
+
+
+def test_run_job_keep_resources_skips_cleanup(
+    monkeypatch, tmp_tree, tmp_path, dummy_algorithm
+):
+    algo = dummy_algorithm(year=2024, with_additional=False)
+    cleanup_calls = []
+
+    monkeypatch.setattr(k8s.config, "load_kube_config", lambda: None)
+    monkeypatch.setattr(k8s, "_log_algorithm_info", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_handle_device_requests", lambda **kw: [])
+    monkeypatch.setattr(k8s, "_get_container_user", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_get_parameters_arg", lambda algorithm=None: "")
+    monkeypatch.setattr(k8s, "_sanity_check_output", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_pvc", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_job", lambda **kw: "job-pod")
+    monkeypatch.setattr(k8s, "_check_files_in_pod", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_upload_files_to_pod", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_execute_command_in_pod", lambda **kw: "ok")
+    monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "LOGS")
+    monkeypatch.setattr(k8s, "_create_finalizer_job", lambda **kw: "final-pod")
+    monkeypatch.setattr(k8s, "_download_folder_from_pod", lambda **kw: None)
+    monkeypatch.setattr(
+        k8s,
+        "_cleanup_job_resources",
+        lambda **kw: cleanup_calls.append(kw),
+    )
+
+    mock_core = MagicMock()
+    mock_core.read_namespaced_pod.side_effect = [
+        _mk_pod(name="job-pod", phase="Running", init_running=True),
+        _mk_pod(name="job-pod", phase="Succeeded", init_running=True),
+    ]
+    monkeypatch.setattr(k8s.client, "CoreV1Api", lambda: mock_core)
+
+    k8s.run_job(
+        algorithm=algo,
+        data_path=tmp_tree / "input",
+        output_path=tmp_path / "out",
+        cuda_devices="",
+        force_cpu=True,
+        namespace="default",
+        job_name="myjob",
+        data_mount_path="/data",
+        keep_resources=True,
+    )
+
+    assert cleanup_calls == []
+
+
+def test_run_job_cleans_up_on_failure(monkeypatch, tmp_tree, tmp_path, dummy_algorithm):
+    algo = dummy_algorithm(year=2024, with_additional=False)
+    cleanup_calls = []
+
+    monkeypatch.setattr(k8s.config, "load_kube_config", lambda: None)
+    monkeypatch.setattr(k8s, "_log_algorithm_info", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_handle_device_requests", lambda **kw: [])
+    monkeypatch.setattr(k8s, "_get_container_user", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_pvc", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_create_namespaced_job", lambda **kw: "job-pod")
+    monkeypatch.setattr(
+        k8s,
+        "_upload_input_data",
+        lambda **kw: (_ for _ in ()).throw(RuntimeError("upload failed")),
+    )
+    monkeypatch.setattr(
+        k8s,
+        "_cleanup_job_resources",
+        lambda **kw: cleanup_calls.append(kw),
+    )
+
+    with pytest.raises(RuntimeError, match="upload failed"):
+        k8s.run_job(
+            algorithm=algo,
+            data_path=tmp_tree / "input",
+            output_path=tmp_path / "out",
+            cuda_devices="",
+            force_cpu=True,
+            namespace="default",
+            job_name="myjob",
+            data_mount_path="/data",
+        )
+
+    assert cleanup_calls[0]["job_name"] == "myjob"
+    assert cleanup_calls[0]["delete_input_pvc"] is True
 
 
 ### run_job (two branches)
@@ -457,6 +895,7 @@ def test_run_job_year_2024_flow(monkeypatch, tmp_tree, tmp_path, dummy_algorithm
     # Finalizer job
     monkeypatch.setattr(k8s, "_create_finalizer_job", lambda **kw: "final-pod")
     monkeypatch.setattr(k8s, "_download_folder_from_pod", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_cleanup_job_resources", lambda **kw: None)
 
     out_dir = tmp_path / "out"
     k8s.run_job(
@@ -513,6 +952,7 @@ def test_run_job_year_2025_flow(monkeypatch, tmp_tree, tmp_path, dummy_algorithm
     monkeypatch.setattr(k8s, "_observe_job_output", lambda **kw: "LOGS")
     monkeypatch.setattr(k8s, "_create_finalizer_job", lambda **kw: "final-pod")
     monkeypatch.setattr(k8s, "_download_folder_from_pod", lambda **kw: None)
+    monkeypatch.setattr(k8s, "_cleanup_job_resources", lambda **kw: None)
 
     out_dir = tmp_path / "out2"
     k8s.run_job(
