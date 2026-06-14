@@ -67,6 +67,8 @@ flake8 = ">=5.0.0"
 pythonpath = ["."]
 
 
+
+
 [tool.poetry.group.docs]
 optional = true
 
