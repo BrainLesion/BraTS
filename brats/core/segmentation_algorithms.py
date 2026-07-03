@@ -365,7 +365,7 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
 
     Args:
-        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
+        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS25_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
