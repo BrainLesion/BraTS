@@ -377,19 +377,29 @@ segmenter.infer_single(
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
 <br>
 
-#### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
-> Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
+## Generalizability Across Tumors (BraTS-GoAT) Segmentation
+
+Segmentation algorithms for generalization across brain tumors with multiple tumor sub-region labels.  
+This section includes **MICCAI BraTS-GoAT** and **ISBI BraTS-GoAT (2024)** submissions as separate algorithm families.
+
+---
 
 <details>
-<summary> Usage example (code) and top 3 participants </summary>
+<summary>Usage example (code)</summary>
 <br>
+
+### MICCAI BraTS-GoAT example
 
 ```python
 from brats import GoATSegmenter
 from brats.constants import GoATAlgorithms
 
-segmenter = GoATSegmenter(algorithm=GoATAlgorithms.BraTS25_1A, cuda_devices="0")
-# these parameters are optional, by default the latest winning algorithm will be used on cuda:0
+segmenter = GoATSegmenter(
+    algorithm=GoATAlgorithms.BraTS25_1A,
+    cuda_devices="0"
+)
+
+# Optional: defaults to latest MICCAI GoAT model on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
@@ -398,8 +408,20 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+### IEEE-ISBI BraTS-GoAT example
 
-**Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+```python
+from brats import ISBIGoATSegmenter
+from brats.constants import ISBIGoATAlgorithms
+
+segmenter = GoATSegmenter(
+    algorithm=ISBIGoATAlgorithms.BraTS24_ISBI_1,
+    cuda_devices="0"
+)
+```
+
+**Class:** `brats.GoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.GoATSegmenter))
+**Class:** `brats.ISBIGoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.ISBIGoATSegmenter))
 <br>
 **Challenge Paper 2024:** N/A
 <br> 
@@ -418,9 +440,9 @@ segmenter.infer_single(
 
 | Year | Rank | Author                    | Paper         | CPU Support     | Key Enum                                                                                                                    |
 | ---- | ---- | ------------------------- | ------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 2024 | 1st  | *[AUTHOR_NAME_1, et al.]* | [PAPER_URL_1] | [CPU_SUPPORT_1] | [BraTS24_ISBI_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_1) |
-| 2024 | 2nd  | *[AUTHOR_NAME_2, et al.]* | [PAPER_URL_2] | [CPU_SUPPORT_2] | [BraTS24_ISBI_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_2) |
-| 2024 | 3rd  | *[AUTHOR_NAME_3, et al.]* | [PAPER_URL_3] | [CPU_SUPPORT_3] | [BraTS24_ISBI_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_3) |
+| 2024 | 1st  | _André Ferreira, et al._ | [PAPER_URL_1] |[CPU_SUPPORT_1] | [BraTS24_ISBI_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_1) |
+| 2024 | 2nd  | _Anees Hashimi, et al._ | [PAPER_URL_2] | [CPU_SUPPORT_2] | [BraTS24_ISBI_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_2) |
+
 
 </details>
 
