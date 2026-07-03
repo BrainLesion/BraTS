@@ -414,14 +414,14 @@ segmenter.infer_single(
 from brats import ISBIGoATSegmenter
 from brats.constants import ISBIGoATAlgorithms
 
-segmenter = GoATSegmenter(
+segmenter = ISBIGoATSegmenter(
     algorithm=ISBIGoATAlgorithms.BraTS24_ISBI_1,
     cuda_devices="0"
 )
 ```
 
-**Class:** `brats.GoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.GoATSegmenter))
-**Class:** `brats.ISBIGoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.ISBIGoATSegmenter))
+**MICCAI Class:** `brats.GoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.GoATSegmenter))
+**ISBI Class:** `brats.ISBIGoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.ISBIGoATSegmenter))
 <br>
 **Challenge Paper 2024:** N/A
 <br> 
