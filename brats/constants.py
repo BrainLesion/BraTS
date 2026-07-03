@@ -244,8 +244,7 @@ class ISBIGoATAlgorithms(Algorithms):
     """ BraTS24 ISBI - Generalizability Across Tumors 1st place """
     BraTS24_ISBI_2 = "BraTS24_ISBI_2"
     """ BraTS24 ISBI - Generalizability Across Tumors 2nd place """
-    BraTS24_ISBI_3 = "BraTS24_ISBI_3"
-    """ BraTS24 ISBI - Generalizability Across Tumors 3rd place """
+ 
 
 # DIRECTORIES
 DATA_DIR = Path(__file__).parent / "data"
