@@ -440,8 +440,8 @@ segmenter = ISBIGoATSegmenter(
 
 | Year | Rank | Author                    | Paper         | CPU Support     | Key Enum                                                                                                                    |
 | ---- | ---- | ------------------------- | ------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 2024 | 1st  | _André Ferreira, et al._ | [PAPER_URL_1] |[CPU_SUPPORT_1] | [BraTS24_ISBI_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_1) |
-| 2024 | 2nd  | _Anees Hashimi, et al._ | [PAPER_URL_2] | [CPU_SUPPORT_2] | [BraTS24_ISBI_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_2) |
+| 2024 | 1st  | _André Ferreira, et al._ | https://arxiv.org/abs/2402.17317 | &#x274C; | [BraTS24_ISBI_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_1) |
+| 2024 | 2nd  | _Anees Hashmi, et al._ | [PAPER_URL_2] | [CPU_SUPPORT_2] | [BraTS24_ISBI_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.ISBIGoATAlgorithms.BraTS24_ISBI_2) |
 
 
 </details>
