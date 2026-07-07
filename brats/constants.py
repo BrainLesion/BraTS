@@ -235,7 +235,7 @@ class GoATAlgorithms(Algorithms):
 
 class ISBIGoATAlgorithms(Algorithms):
     """Constants for the available ISBI BraTS GoAT algorithms.
-    
+
     These algorithms are from the ISBI 2024 conference, separate from
     the MICCAI BraTS GoAT algorithms in GoATAlgorithms.
     """
@@ -244,7 +244,7 @@ class ISBIGoATAlgorithms(Algorithms):
     """ BraTS24 ISBI - Generalizability Across Tumors 1st place """
     BraTS24_ISBI_2 = "BraTS24_ISBI_2"
     """ BraTS24 ISBI - Generalizability Across Tumors 2nd place """
- 
+
 
 # DIRECTORIES
 DATA_DIR = Path(__file__).parent / "data"

@@ -383,9 +383,10 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
             force_cpu=force_cpu,
         )
 
+
 class ISBIGoATSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms from the ISBI 2024 BraTS Generalizability Across Tumors (BraTS-GoAT) challenge.
-    
+
     Note: This class contains algorithms from the ISBI 2024 conference.
     For MICCAI 2024 algorithms, use GoATSegmenter instead.
 
@@ -407,6 +408,7 @@ class ISBIGoATSegmenter(SegmentationAlgorithmWith4Modalities):
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
+
 
 ### Radio Therapy specific segmenter (only T1C) ###
 
