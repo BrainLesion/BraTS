@@ -1,9 +1,15 @@
 constants:
   input_name_schema: &input_name_schema "BraTS-GLI-{id:05d}-000"
   challenge: &challenge "BraTS Generalizability Across Tumors (BraTS-GoAT)"
+  isbi_challenge: &isbi_challenge "IEEE-ISBI BraTS GoAT Challenge 2024"
+
   challenge_manuscript:
     2025: &challenge_manuscript_2025 "N/A"
     2024: &challenge_manuscript_2024 "N/A"
+
+  isbi_challenge_manuscript:
+    2024: &isbi_challenge_manuscript_2024 "https://ieeexplore.ieee.org/document/10635839"
+
   years:
     2025: &year_2025 2025
     2024: &year_2024 2024
@@ -82,3 +88,39 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: false
+
+
+# Additional algorithms from the ISBI GoAT challeng 2024 (not Miccai), only placholders so far
+
+  BraTS24_ISBI_1:
+    meta:
+      authors: "[André Ferreira, et al.]"
+      paper: "https://arxiv.org/abs/2402.17317"
+      challenge: *isbi_challenge
+      challenge_manuscript: *isbi_challenge_manuscript_2024
+      rank: *rank_1
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_isbi_goat_faking_it:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: false
+
+
+  BraTS24_ISBI_2:
+    meta:
+      authors: "[Anees Hashmi, et al.]"
+      paper: "[PAPER_URL_2]"
+      challenge: *isbi_challenge
+      challenge_manuscript: *isbi_challenge_manuscript_2024
+      rank: *rank_2
+      year: *year_2024
+    run_args:
+      docker_image: brainles/brats24_isbi_goat_biomedia_mbzuai:latest
+      input_name_schema: *input_name_schema
+      requires_root: false
+      parameters_file: true
+    additional_files:
+      record_id: "00000000"
+      param_name: ["checkpoint_dir"]  
+

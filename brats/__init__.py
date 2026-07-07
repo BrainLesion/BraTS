@@ -7,6 +7,7 @@ from brats.core.segmentation_algorithms import (
     AdultGliomaPreAndPostTreatmentSegmenter,
     AfricaSegmenter,
     GoATSegmenter,
+    ISBIGoATSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
     MeningiomaRTSegmenter,
