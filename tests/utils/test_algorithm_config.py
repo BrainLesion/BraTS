@@ -48,18 +48,20 @@ def test_integrity_year(configs):
 
 
 def test_integrity_challenge_manuscript(configs):
-    """Should be the same for all algorithms within a year"""
-    for configs in configs:
-        algorithms = load_algorithms(file_path=configs)
-        # group by year
-        challenge_manuscripts_by_years = {}
+    """Should be the same for all algorithms within the same challenge and year"""
+    for config in configs:
+        algorithms = load_algorithms(file_path=config)
+        # group by (year, challenge)
+        challenge_manuscripts_by_group = {}
         for alg_data in algorithms.values():
-            year = alg_data.meta.year
-            if year not in challenge_manuscripts_by_years:
-                challenge_manuscripts_by_years[year] = []
-            challenge_manuscripts_by_years[year].append(
+            key = (alg_data.meta.year, alg_data.meta.challenge)
+            if key not in challenge_manuscripts_by_group:
+                challenge_manuscripts_by_group[key] = []
+            challenge_manuscripts_by_group[key].append(
                 alg_data.meta.challenge_manuscript
             )
 
-        for year, challenge_manuscripts in challenge_manuscripts_by_years.items():
-            assert len(set(challenge_manuscripts)) == 1
+        for group, challenge_manuscripts in challenge_manuscripts_by_group.items():
+            assert len(set(challenge_manuscripts)) == 1, (
+                f"Multiple challenge_manuscript values for {group} in {config}: {set(challenge_manuscripts)}"
+            )
