@@ -21,6 +21,7 @@ from brats.constants import (
     AfricaAlgorithms,
     Algorithms,
     GoATAlgorithms,
+    ISBIGoATAlgorithms,
     MeningiomaAlgorithms,
     MeningiomaRTAlgorithms,
     MetastasesAlgorithms,
@@ -364,7 +365,7 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
 
     Args:
-        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
+        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS25_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
     """
@@ -372,6 +373,32 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
     def __init__(
         self,
         algorithm: GoATAlgorithms = GoATAlgorithms.BraTS25_1A,
+        cuda_devices: str = "0",
+        force_cpu: bool = False,
+    ):
+        super().__init__(
+            algorithm=algorithm,
+            algorithms_file_path=GOAT_SEGMENTATION_ALGORITHMS,
+            cuda_devices=cuda_devices,
+            force_cpu=force_cpu,
+        )
+
+
+class ISBIGoATSegmenter(SegmentationAlgorithmWith4Modalities):
+    """Provides algorithms from the ISBI 2024 BraTS Generalizability Across Tumors (BraTS-GoAT) challenge.
+
+    Note: This class contains algorithms from the ISBI 2024 conference.
+    For MICCAI 2024 algorithms, use GoATSegmenter instead.
+
+    Args:
+        algorithm (ISBIGoATAlgorithms, optional): Select an algorithm. Defaults to ISBIGoATAlgorithms.BraTS24_ISBI_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+    """
+
+    def __init__(
+        self,
+        algorithm: ISBIGoATAlgorithms = ISBIGoATAlgorithms.BraTS24_ISBI_1,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
