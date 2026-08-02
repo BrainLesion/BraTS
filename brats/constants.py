@@ -13,6 +13,9 @@ class Backends(str, Enum):
     SINGULARITY = "singularity"
     """Run the algorithms using Singularity containers."""
 
+    KUBERNETES = "kubernetes"
+    """Run the algorithms using Kubernetes Jobs."""
+
 
 class Task(str, Enum):
     """Available tasks."""

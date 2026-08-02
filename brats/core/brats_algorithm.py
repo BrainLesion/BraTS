@@ -14,6 +14,18 @@ from brats.constants import OUTPUT_NAME_SCHEMA, Algorithms, Task, Backends
 from brats.utils.data_handling import InferenceSetup
 from brats.utils.exceptions import AlgorithmConfigException
 
+VALID_KUBERNETES_KWARGS = frozenset(
+    {
+        "namespace",
+        "pvc_name",
+        "pvc_storage_size",
+        "pvc_storage_class",
+        "job_name",
+        "data_mount_path",
+        "keep_resources",
+    }
+)
+
 
 class BraTSAlgorithm(ABC):
     """
@@ -160,12 +172,31 @@ class BraTSAlgorithm(ABC):
             shutil.move(algorithm_output, output_file)
 
     def _get_backend_runner(self, backend: Backends) -> Optional[Callable]:
+        if backend == Backends.KUBERNETES:
+            from brats.core.kubernetes import run_job as run_kubernetes_job
+
+            return run_kubernetes_job
         backend_dispatch = {
             Backends.DOCKER: run_docker_container,
             Backends.SINGULARITY: run_singularity_container,
         }
-        runner = backend_dispatch.get(backend, None)
-        return runner
+        return backend_dispatch.get(backend, None)
+
+    def _build_runner_kwargs(
+        self, base_kwargs: dict, backend: Backends, kubernetes_kwargs: Optional[Dict]
+    ) -> dict:
+        if kubernetes_kwargs is not None:
+            unknown_kubernetes_kwargs = set(kubernetes_kwargs) - VALID_KUBERNETES_KWARGS
+            if unknown_kubernetes_kwargs:
+                raise ValueError(
+                    f"Unknown kubernetes_kwargs keys: {unknown_kubernetes_kwargs}"
+                )
+            if backend != Backends.KUBERNETES:
+                raise ValueError(
+                    "kubernetes_kwargs can only be used with the Kubernetes backend."
+                )
+            return {**base_kwargs, **kubernetes_kwargs}
+        return base_kwargs
 
     def _infer_single(
         self,
@@ -173,6 +204,7 @@ class BraTSAlgorithm(ABC):
         output_file: Path | str,
         log_file: Optional[Path | str] = None,
         backend: Backends = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ) -> None:
         """
         Perform a single inference run with the provided inputs and save the output in the specified file.
@@ -181,7 +213,8 @@ class BraTSAlgorithm(ABC):
             inputs (dict[str, Path  |  str]): Input Images for the task
             output_file (Path | str): File to save the output
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
-            backend (Backends | str, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
             logger.info(f"Performing single inference")
@@ -196,16 +229,25 @@ class BraTSAlgorithm(ABC):
                 subject_modality_separator=self.algorithm.run_args.subject_modality_separator,
             )
 
+            if kubernetes_kwargs is not None and backend != Backends.KUBERNETES:
+                raise ValueError(
+                    "kubernetes_kwargs can only be used with the Kubernetes backend."
+                )
             runner = self._get_backend_runner(backend)
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
-            runner(
+            runner_kwargs = dict(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
                 cuda_devices=self.cuda_devices,
                 force_cpu=self.force_cpu,
             )
+            if kubernetes_kwargs is not None:
+                runner_kwargs = self._build_runner_kwargs(
+                    runner_kwargs, backend, kubernetes_kwargs
+                )
+            runner(**runner_kwargs)
             self._process_single_output(
                 tmp_output_folder=tmp_output_folder,
                 subject_id=subject_id,
@@ -219,6 +261,7 @@ class BraTSAlgorithm(ABC):
         output_folder: Path | str,
         log_file: Optional[Path | str] = None,
         backend: Backends = Backends.DOCKER,
+        kubernetes_kwargs: Optional[Dict] = None,
     ):
         """Perform a batch inference run with the provided inputs and save the outputs in the specified folder.
 
@@ -227,6 +270,7 @@ class BraTSAlgorithm(ABC):
             output_folder (Path | str): Folder to save the outputs
             log_file (Optional[Path  |  str], optional): Log file with extra information. Defaults to None.
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
+            kubernetes_kwargs (Optional[Dict], optional): Optional keyword arguments for Kubernetes Backend. Defaults to None.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
 
@@ -242,11 +286,15 @@ class BraTSAlgorithm(ABC):
                 input_name_schema=self.algorithm.run_args.input_name_schema,
             )
             logger.info(f"Standardized input names to match algorithm requirements.")
+            if kubernetes_kwargs is not None and backend != Backends.KUBERNETES:
+                raise ValueError(
+                    "kubernetes_kwargs can only be used with the Kubernetes backend."
+                )
             runner = self._get_backend_runner(backend)
             if runner is None:
                 raise ValueError(f"Unsupported backend: {backend}")
             # run inference in container
-            runner(
+            runner_kwargs = dict(
                 algorithm=self.algorithm,
                 data_path=tmp_data_folder,
                 output_path=tmp_output_folder,
@@ -254,6 +302,11 @@ class BraTSAlgorithm(ABC):
                 force_cpu=self.force_cpu,
                 internal_external_name_map=internal_external_name_map,
             )
+            if kubernetes_kwargs is not None:
+                runner_kwargs = self._build_runner_kwargs(
+                    runner_kwargs, backend, kubernetes_kwargs
+                )
+            runner(**runner_kwargs)
 
             self._process_batch_output(
                 tmp_output_folder=tmp_output_folder,

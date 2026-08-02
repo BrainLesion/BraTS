@@ -68,6 +68,41 @@ segmenter.infer_single(
 )
 ```
 
+## Kubernetes Support
+BraTS orchestrator also supports Kubernetes to run the algorithms remotely, as an alternative to local execution with Docker or Singularity.
+To use Kubernetes for execution, the orchestrator will automatically use your kubeconfig file from the default location (`~/.kube/config`). If your kubeconfig file is not in the default location, set the `KUBECONFIG` environment variable to the location of your kubeconfig file:
+```bash
+export KUBECONFIG=/path/to/kubeconfig
+```
+Then, specify the backend to use as `backend=Backends.KUBERNETES` when running the inference:
+```python
+from brats.constants import Backends
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.KUBERNETES
+)
+```
+By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) for the run (for BraTS 2025+ algorithms, an additional `-output` PVC is created for outputs). If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `data_mount_path` parameter determines where the PVC will be mounted inside the Pod.
+
+By default, created Jobs and PVCs are deleted automatically after each run (including on failure). Jobs also have a one-hour active deadline and TTL so they cannot run indefinitely if cleanup is interrupted. Pre-existing PVCs passed via `pvc_name` are not deleted. To retain resources for debugging, pass `keep_resources=True` in `kubernetes_kwargs`.
+```python
+segmenter.infer_single(
+    t1c="path/to/t1c.nii.gz",
+    output_file="path/to/segmentation.nii.gz",
+    backend=Backends.KUBERNETES,
+    kubernetes_kwargs={
+        "namespace": "brats",
+        "pvc_name": "brats-iwydw55ej7qm-pvc",
+        "pvc_storage_size": "2Gi",
+        "pvc_storage_class": "brats-pvc-storage-class",
+        "job_name": "brats-oxh24nu4dhk9-job",
+        "data_mount_path": "/data",
+        "keep_resources": False,
+    }
+)
+```
+
 ## Available Algorithms and Usage
 
 > [!IMPORTANT]
