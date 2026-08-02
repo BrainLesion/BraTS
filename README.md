@@ -83,8 +83,7 @@ segmenter.infer_single(
     backend=Backends.KUBERNETES
 )
 ```
-By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) to manage input and output data. If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `data_mount_path` parameter determines where the PVC will be mounted inside the Pod.
-When using Kubernetes, the algorithm is executed inside a Kubernetes Job. Input data is first uploaded to a PersistentVolume, which is mounted into the Pod running the job. After the algorithm finishes running in the Pod, the output data is transferred back from the cluster to your local machine.
+By default, as shown above, the algorithm runs in the default Kubernetes namespace. It uses the default StorageClass and automatically creates a 1Gi PersistentVolumeClaim (PVC) for the run (for BraTS 2025+ algorithms, an additional `-output` PVC is created for outputs). If needed, you can customize settings such as the namespace, PVC name, storage size, storage class, job name, and mount path by providing related keyword arguments to the `infer_single` method. The `data_mount_path` parameter determines where the PVC will be mounted inside the Pod.
 
 By default, created Jobs and PVCs are deleted automatically after each run (including on failure). Jobs also have a one-hour active deadline and TTL so they cannot run indefinitely if cleanup is interrupted. Pre-existing PVCs passed via `pvc_name` are not deleted. To retain resources for debugging, pass `keep_resources=True` in `kubernetes_kwargs`.
 ```python
