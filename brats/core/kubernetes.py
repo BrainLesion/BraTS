@@ -1143,9 +1143,7 @@ def run_job(
         pvc_storage_class (Optional[str]): The storage class to use for the PVC. If None, the default storage class will be used.
         job_name (Optional[str]): Name of the Job to create. If None, a random name will be generated.
         data_mount_path (Optional[str]): The path to mount the PVC to. Defaults to "/data".
-        timeout_seconds (int): The timeout in seconds. Defaults to 600.
-        poll_interval (float): The poll interval in seconds. Defaults to 2.0.
-        keep_resources (bool): When False (default), delete created jobs and PVCs after the run completes or fails.
+        poll_interval (int): The poll interval in seconds. Defaults to 2.
     """
     pvc_name_provided = pvc_name is not None
     resources = None
