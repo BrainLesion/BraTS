@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import subprocess
 import tempfile
@@ -118,7 +120,7 @@ def _convert_volume_mappings_to_singularity_format(
     singularity_bindings = []
     for host_path, val in volume_mappings.items():
         container_path = val["bind"]
-        singularity_bindings.append(f"{host_path!s}:{container_path}")
+        singularity_bindings.append(f"{host_path}:{container_path}")
     return singularity_bindings
 
 

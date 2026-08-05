@@ -151,8 +151,8 @@ class TestSingularityHelpers(unittest.TestCase):
             }
         )
         expected = [
-            f"{self.data_folder.absolute()!s}:/input",
-            f"{self.output_folder.absolute()!s}:/output",
+            f"{self.data_folder.absolute()}:/input",
+            f"{self.output_folder.absolute()}:/output",
         ]
         self.assertEqual(result, expected)
 
