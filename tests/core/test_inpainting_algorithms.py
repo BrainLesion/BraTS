@@ -34,7 +34,7 @@ class TestInpaintingAlgorithms(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    ### Standardization tests
+    # Standardization tests
 
     @patch("brats.core.inpainting_algorithms.input_sanity_check")
     def test_successful_single_standardization(self, mock_input_sanity_check):
@@ -89,7 +89,7 @@ class TestInpaintingAlgorithms(unittest.TestCase):
         )
         mock_standardize_single_inputs.assert_called_once()
 
-    ### Initialization tests
+    # Initialization tests
 
     def test_inpainter_initialization(self):
         # Test default initialization

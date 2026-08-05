@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import shutil
-import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from loguru import logger
 
-from brats.constants import MISSING_MRI_ALGORITHMS, MissingMRIAlgorithms, Task, Backends
+from brats.constants import MISSING_MRI_ALGORITHMS, Backends, MissingMRIAlgorithms, Task
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
 
@@ -70,18 +69,23 @@ class MissingMRI(BraTSAlgorithm):
     def _standardize_batch_inputs(
         self,
         data_folder: Path,
-        subjects: List[Path],
+        subjects: list[Path],
         input_name_schema: str,
-    ) -> Dict[str, str]:
-        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+    ) -> dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements
+        of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
-            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
-            data_folder (Path): Parent folder where the subject folders will be created
-            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+            subjects (List[Path]): List of subject folders, each with a t1c,
+                t1n, t2f, t2w image in standard format
+            data_folder (Path): Parent folder where the subject folders will
+                be created
+            input_name_schema (str): Schema to be used for the subject folder
+                and filenames depending on the BraTS Challenge
 
         Returns:
-            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+            Dict[str, str]: Dictionary mapping internal name (in standardized
+                format) to external subject name provided by user
         """
         internal_external_name_map = {}
         for i, subject in enumerate(subjects):
@@ -95,7 +99,9 @@ class MissingMRI(BraTSAlgorithm):
                 "t2f": subject / f"{subject.name}-t2f.nii.gz",
                 "t2w": subject / f"{subject.name}-t2w.nii.gz",
             }
-            valid_inputs = {k: v for k, v in possible_inputs.items() if v.exists()}
+            valid_inputs: dict[str, Path | str] = {
+                k: v for k, v in possible_inputs.items() if v.exists()
+            }
             assert (
                 len(valid_inputs) == 3
             ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
@@ -119,7 +125,8 @@ class MissingMRI(BraTSAlgorithm):
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """
-        Perform synthesis of the missing modality for a single subject with the provided images and save the result to the output file.
+        Perform synthesis of the missing modality for a single subject with the
+        provided images and save the result to the output file.
 
         Note:
             Exactly 3 input modalities are required to perform synthesis of the missing modality.
@@ -134,9 +141,9 @@ class MissingMRI(BraTSAlgorithm):
             backend (Backends, optional): Backend to use for inference. Defaults to Backends.DOCKER.
         """
 
-        inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
+        raw_inputs = {"t1c": t1c, "t1n": t1n, "t2f": t2f, "t2w": t2w}
         # filter out None values
-        inputs = {k: v for k, v in inputs.items() if v is not None}
+        inputs = {k: v for k, v in raw_inputs.items() if v is not None}
 
         # assert exactly 3 inputs are given (to compute the missing one)
         assert (
@@ -157,7 +164,8 @@ class MissingMRI(BraTSAlgorithm):
         log_file: Path | str | None = None,
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
-        """Perform synthesis on a batch of subjects with the provided images and save the results to the output folder. \n
+        """Perform synthesis on a batch of subjects with the provided images
+        and save the results to the output folder. \n
 
         Requires the following structure (if e.g. t2f should be synthesized):\n
         data_folder\n

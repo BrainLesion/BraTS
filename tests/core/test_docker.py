@@ -3,16 +3,17 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 from rich.progress import Progress
 
+from brats.constants import PARAMETERS_DIR
 from brats.core.docker import (
     _build_command_args,
-    _get_container_user,
     _ensure_image,
     _get_additional_files_path,
+    _get_container_user,
     _get_parameters_arg,
     _get_volume_mappings_docker_only,
     _get_volume_mappings_mlcube,
@@ -25,7 +26,6 @@ from brats.core.docker import (
     run_container,
 )
 from brats.utils.algorithm_config import AlgorithmData
-from brats.constants import PARAMETERS_DIR
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
@@ -153,7 +153,7 @@ class TestDockerHelpers(unittest.TestCase):
 
     @patch("subprocess.run")
     def test_is_cuda_available_fail(self, MockRun):
-        MockRun.side_effect = Exception()
+        MockRun.side_effect = subprocess.SubprocessError()
         self.assertFalse(_is_cuda_available())
         MockRun.assert_called_once_with(
             ["nvidia-smi"],
@@ -226,7 +226,7 @@ class TestDockerHelpers(unittest.TestCase):
 
     def test_get_parameters_arg_dummy(self):
         result = _get_parameters_arg(self.algorithm_gpu)
-        expected = f" --parameters_file=/mlcube_io3/dummy.yml"
+        expected = " --parameters_file=/mlcube_io3/dummy.yml"
         self.assertEqual(result, expected)
 
     def test_get_parameters_arg_file(self):

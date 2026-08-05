@@ -33,7 +33,6 @@ class Task(str, Enum):
 class Algorithms(str, Enum):
     """Parent class for constants of the available algorithms."""
 
-    pass
 
 
 class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
@@ -154,7 +153,7 @@ class AfricaAlgorithms(Algorithms):
 
 
 class MetastasesAlgorithms(Algorithms):
-    """Constants for the available Inpainting algorithms."""
+    """Constants for the available Metastases segmentation algorithms."""
 
     BraTS25_1 = "BraTS25_1"
     """BraTS25  Brain Metastases Segmentation 1st place"""

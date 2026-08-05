@@ -1,16 +1,15 @@
 import shutil
-
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from brats.core.singularity import (
-    run_container,
-    _ensure_image,
-    _get_docker_working_dir,
     _build_command_args,
     _convert_volume_mappings_to_singularity_format,
+    _ensure_image,
+    _get_docker_working_dir,
+    run_container,
 )
 from brats.utils.algorithm_config import AlgorithmData
 
@@ -152,8 +151,8 @@ class TestSingularityHelpers(unittest.TestCase):
             }
         )
         expected = [
-            f"{str(self.data_folder.absolute())}:/input",
-            f"{str(self.output_folder.absolute())}:/output",
+            f"{self.data_folder.absolute()!s}:/input",
+            f"{self.output_folder.absolute()!s}:/output",
         ]
         self.assertEqual(result, expected)
 
