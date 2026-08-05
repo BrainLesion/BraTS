@@ -64,16 +64,6 @@ flake8 = ">=5.0.0"
 [tool.pytest.ini_options]
 pythonpath = ["."]
 
-
-
-
-
-
-
-
-
-
-
 [tool.poetry.group.docs]
 optional = true
 
