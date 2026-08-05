@@ -16,6 +16,7 @@ version = "0.0.0.dev"
 
 [project]
 dynamic = ["version"]
+requires-python = ">=3.9"
 name = "brats"
 description = "BraTS algorithms"
 authors = [
