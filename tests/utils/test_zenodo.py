@@ -140,9 +140,7 @@ class TestZenodoUtils(unittest.TestCase):
         mock_requests_get.return_value = mock_response
 
         # Call the function
-        _download_additional_files(
-            mock_zenodo_metadata, "12345", mock_archive_url
-        )
+        _download_additional_files(mock_zenodo_metadata, "12345", mock_archive_url)
 
         # Assertions
         # mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)

@@ -84,7 +84,7 @@ furo = ">=2024.8.6"
 myst-parser = ">=2.0.0"
 
 [tool.ruff]
-line-length = 100
+line-length = 88
 target-version = "py38"
 
 [tool.ruff.lint]
@@ -103,6 +103,7 @@ select = [
     "PERF",   # perflint
 ]
 ignore = [
+    "E501",    # line too long — black handles this
     "UP007",  # X | Y union syntax — needs Python 3.10+
     "UP045",  # X | None optional syntax — needs Python 3.10+
     "PERF203", # try/except in loop — acceptable in tests

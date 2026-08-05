@@ -34,7 +34,6 @@ class Algorithms(str, Enum):
     """Parent class for constants of the available algorithms."""
 
 
-
 class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
     """Constants for the available adult glioma pre and post treatment segmentation algorithms."""
 

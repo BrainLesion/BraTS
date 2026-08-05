@@ -95,8 +95,8 @@ class BraTSAlgorithm(ABC):
         """
         # rename output
         if self.task == Task.MISSING_MRI:
-                # Missing MRI has no fixed names since the missing modality
-                # differs and is included in the name
+            # Missing MRI has no fixed names since the missing modality
+            # differs and is included in the name
             algorithm_output = Path(tmp_output_folder).iterdir().__next__()
         else:
             # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
@@ -132,8 +132,8 @@ class BraTSAlgorithm(ABC):
         output_folder.mkdir(parents=True, exist_ok=True)
         for internal_name, external_name in mapping.items():
             if self.task == Task.MISSING_MRI:
-            # Missing MRI has no fixed names since the missing modality differs
-            # and is included in the name
+                # Missing MRI has no fixed names since the missing modality differs
+                # and is included in the name
                 algorithm_output = (
                     Path(tmp_output_folder).glob(f"*{internal_name}*").__next__()
                 )
@@ -161,7 +161,9 @@ class BraTSAlgorithm(ABC):
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
 
-    def _get_backend_runner(self, backend: Optional[Backends]) -> Optional[Callable[..., object]]:
+    def _get_backend_runner(
+        self, backend: Optional[Backends]
+    ) -> Optional[Callable[..., object]]:
         if backend is None:
             return None
         backend_dispatch = {

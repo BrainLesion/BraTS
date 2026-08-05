@@ -347,9 +347,7 @@ def _sanity_check_output(
         if np.count_nonzero(content) == 0:
             name = "<unknown>"
             if internal_external_name_map is not None:
-                name_key = [
-                    k for k in internal_external_name_map if k in output.name
-                ]
+                name_key = [k for k in internal_external_name_map if k in output.name]
                 if name_key:
                     name = internal_external_name_map[name_key[0]]
 

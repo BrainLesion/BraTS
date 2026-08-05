@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import time
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import docker
 from loguru import logger
@@ -39,7 +39,7 @@ except docker.errors.DockerException:
 
 def _build_command_args(
     algorithm: AlgorithmData,
-) -> List[str]:
+) -> list[str]:
     """Build the command arguments for the singularity container.
 
     Args:
