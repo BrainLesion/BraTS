@@ -3,9 +3,10 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Optional
 
 import nibabel as nib
 from loguru import logger

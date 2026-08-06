@@ -105,7 +105,7 @@ def _get_latest_version_folder_name(folders: list[Path]) -> str | None:
     if not folders:
         return None
     latest_downloaded_folder = max(
-        folders, key=lambda x: tuple(map(int, str(x).split("_v")[1].split(".")))
+        folders, key=lambda x: tuple(map(int, x.name.split("_v")[1].split(".")))
     )
     # check folder is not empty
     if not list(latest_downloaded_folder.glob("*")):

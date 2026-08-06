@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import shutil
 from abc import abstractmethod
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Mapping, Optional, Union
+from typing import Optional, Union
 
 from loguru import logger
 
@@ -154,10 +155,10 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         return internal_external_name_map
 
     @abstractmethod
-    def infer_single(  # type: ignore[no-untyped-def]
+    def infer_single(
         self,
-        *args,
-        **kwargs,
+        *args: object,
+        **kwargs: object,
     ) -> None:
         pass
 

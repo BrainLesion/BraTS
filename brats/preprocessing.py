@@ -379,7 +379,7 @@ def preprocess_for_challenge(
     challenge_name = str(challenge)
 
     # Helper to validate all modalities are present
-    def _require_all_modalities() -> list:  # type: ignore[type-arg]
+    def _require_all_modalities() -> list[str | Path]:
         all_paths = [
             t1_input,
             t1c_input,
@@ -400,14 +400,14 @@ def preprocess_for_challenge(
     if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_mni152reg_bet(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )
 
     elif str(PediatricAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )
 
@@ -436,6 +436,6 @@ def preprocess_for_challenge(
     else:  # Most challenges use SRI24 with BET
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_bet(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )

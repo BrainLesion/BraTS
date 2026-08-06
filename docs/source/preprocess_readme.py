@@ -9,7 +9,7 @@ def preprocess_readme(input_file: str, output_file: str) -> None:
         output_file (str): processed README file
 
     """
-    with open(input_file, "r") as file:
+    with open(input_file) as file:
         content = file.read()
 
     admonition_types = ["IMPORTANT", "NOTE", "TIP", "WARNING", "CAUTION"]

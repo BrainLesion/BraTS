@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 import yaml
 from dacite import DaciteError, from_dict
@@ -57,10 +57,10 @@ class AdditionalFilesData:
 
     record_id: str
     """The Zenodo record ID of the additional files"""
-    param_name: Optional[List[str]] = field(default_factory=lambda: ["weights"])
+    param_name: Optional[list[str]] = field(default_factory=lambda: ["weights"])
     """The parameter(s) that specify additional file(s) in the algorithm
     execution, typically 'weights' but differs for some and can be multiple"""
-    param_path: Optional[List[str]] = None
+    param_path: Optional[list[str]] = None
     """The path(s) to specific file(s) / folder(s) in the additional files
     folder. Not required since some algorithms accept the entire additional
     files folder"""
@@ -81,10 +81,10 @@ class AlgorithmData:
 
 @dataclass
 class AlgorithmList:
-    algorithms: Dict[str, AlgorithmData]
+    algorithms: dict[str, AlgorithmData]
 
 
-def load_algorithms(file_path: Path) -> Dict[str, AlgorithmData]:
+def load_algorithms(file_path: Path) -> dict[str, AlgorithmData]:
     """Load the algorithms data from the specified yaml file
 
     Params:
@@ -94,7 +94,7 @@ def load_algorithms(file_path: Path) -> Dict[str, AlgorithmData]:
         FileNotFoundError: If the file is not found
 
     Returns:
-        Dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
+        dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
     """
     try:
         with open(file_path) as file:
