@@ -26,7 +26,7 @@ class BraTSAlgorithm(ABC):
         algorithm: Algorithms,
         algorithms_file_path: Path,
         task: Task,
-        cuda_devices: str | None = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         # inference device setup

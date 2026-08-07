@@ -16,7 +16,7 @@ class MissingMRI(BraTSAlgorithm):
     def __init__(
         self,
         algorithm: MissingMRIAlgorithms = MissingMRIAlgorithms.BraTS24_1,
-        cuda_devices: str | None = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
