@@ -73,3 +73,32 @@ Sphinx = ">=7.0.0"
 sphinx-copybutton = ">=0.5.2"
 furo = ">=2024.8.6"
 myst-parser = ">=2.0.0"
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+per-file-ignores = { "brats/__init__.py" = ["F401"] }
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort (import sorting)
+    "UP",     # pyupgrade
+    "PIE",    # flake8-pie
+    "RUF",    # ruff-specific
+    "SIM",    # flake8-simplify
+    "FURB",   # refurb
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except
+    "PERF",   # perflint
+]
+ignore = [
+    "E501",    # line too long — black handles this
+    "UP007",  # X | Y union syntax — needs Python 3.10+
+    "UP045",  # X | None optional syntax — needs Python 3.10+
+    "PERF203", # try/except in loop — acceptable in tests
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["brats"]

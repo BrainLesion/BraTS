@@ -1,26 +1,30 @@
 from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 from brats.constants import (
+    AdultGliomaPreAndPostTreatmentAlgorithms,
     Algorithms,
+    MeningiomaRTAlgorithms,
     MissingMRIAlgorithms,
     PediatricAlgorithms,
-    AdultGliomaPreAndPostTreatmentAlgorithms,
-    MeningiomaRTAlgorithms,
 )
 
 try:
-    from brainles_preprocessing.modality import Modality, CenterModality
+    from brainles_preprocessing.constants import Atlas
+    from brainles_preprocessing.modality import CenterModality, Modality
+    from brainles_preprocessing.normalization import Normalizer
     from brainles_preprocessing.preprocessor import (
         AtlasCentricPreprocessor,
         NativeSpacePreprocessor,
     )
-    from brainles_preprocessing.constants import Atlas
-    from brainles_preprocessing.normalization import Normalizer
 except ImportError as e:
     raise ImportError(
-        "The `brainles_preprocessing` extra is required for preprocessing tasks, please ensure you installed it via `pip install brats[preprocessing]`. Note that this is only supported for Python >= 3.10."
+        "The `brainles_preprocessing` extra is required for preprocessing "
+        "tasks, please ensure you installed it via "
+        "`pip install brats[preprocessing]`. "
+        "Note that this is only supported for Python >= 3.10."
     ) from e
 
 
@@ -183,7 +187,8 @@ def preprocess_coreg_sri24reg_bet(
     flair_output: Union[str, Path],
     normalizer: Optional[Normalizer] = None,
 ) -> None:
-    """t1, t1c, t2, flair to SRI24 with co-registration and BET (most segmentation challenges and inpainting)
+    """t1, t1c, t2, flair to SRI24 with co-registration and BET (most
+    segmentation challenges and inpainting)
 
     Args:
         t1_input (Union[str, Path]): Path to the input T1 image.
@@ -309,7 +314,8 @@ def preprocess_coreg_sri24reg_bet_allow_missing(
     flair_output: Optional[Union[str, Path]] = None,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
-    """t1, t1c, t2, flair to SRI24 with co-registration and BET while allowing one missing modality (missing MRI challenge)
+    """t1, t1c, t2, flair to SRI24 with co-registration and BET while
+    allowing one missing modality (missing MRI challenge)
 
     Args:
         t1_input (Optional[Union[str, Path]]): Path to the input T1 image.
@@ -373,7 +379,7 @@ def preprocess_for_challenge(
     challenge_name = str(challenge)
 
     # Helper to validate all modalities are present
-    def _require_all_modalities():
+    def _require_all_modalities() -> list[str | Path]:
         all_paths = [
             t1_input,
             t1c_input,
@@ -388,20 +394,20 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"All modalities required for {challenge_name} preprocessing"
             )
-        return all_paths  # Type checker knows these are not None after the check
+        return cast(list[str | Path], all_paths)
 
     # Route to appropriate preprocessing function
     if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_mni152reg_bet(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )
 
     elif str(PediatricAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )
 
@@ -430,6 +436,6 @@ def preprocess_for_challenge(
     else:  # Most challenges use SRI24 with BET
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_bet(
-            *paths,  # type: ignore
+            *paths,
             normalizer=normalizer,
         )
