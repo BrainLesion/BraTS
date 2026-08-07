@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 from brats.constants import (
     AdultGliomaPreAndPostTreatmentAlgorithms,
@@ -394,7 +394,7 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"All modalities required for {challenge_name} preprocessing"
             )
-        return all_paths  # Type checker knows these are not None after the check
+        return cast(list[str | Path], all_paths)
 
     # Route to appropriate preprocessing function
     if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:

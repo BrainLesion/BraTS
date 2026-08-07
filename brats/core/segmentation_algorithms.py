@@ -446,8 +446,8 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
     Radio Therapy MRI data.
 
     Args:
-        algorithm (MeningiomaAlgorithms, optional): Select an algorithm.
-            Defaults to MeningiomaAlgorithms.BraTS23_1.
+        algorithm (MeningiomaRTAlgorithms, optional): Select an algorithm.
+            Defaults to MeningiomaRTAlgorithms.BraTS25_1.
         cuda_devices (Optional[str], optional): Which cuda devices to use.
             Defaults to "0".
         force_cpu (bool, optional): Execution will default to GPU, this flag

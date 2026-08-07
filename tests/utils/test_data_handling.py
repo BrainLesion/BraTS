@@ -93,14 +93,12 @@ class TestDataHandlingUtils(unittest.TestCase):
 
     def test_inference_setup_with_log_file_on_error(self):
         tmp_log_file = self.test_dir / "error.log"
-        with (
-            self.assertRaises(RuntimeError),
-            InferenceSetup(log_file=tmp_log_file) as (
+        with self.assertRaises(RuntimeError):  # noqa: SIM117
+            with InferenceSetup(log_file=tmp_log_file) as (
                 _tmp_data_folder,
                 _tmp_output_folder,
-            ),
-        ):
-            raise RuntimeError("test error")
+            ):
+                raise RuntimeError("test error")
         self.assertTrue(tmp_log_file.exists())
         self.assertGreater(tmp_log_file.stat().st_size, 0)
         tmp_log_file.unlink()
