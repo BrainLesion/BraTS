@@ -30,7 +30,7 @@ algorithms:
       docker_image: brainles/brats25_missing_mri_faking_it:latest
       input_name_schema: *input_name_schema
       requires_root: true
-      
+
   BraTS25_2:
     meta:
       authors: Agustin Ujarky Cartaya Lathulerie, et al.

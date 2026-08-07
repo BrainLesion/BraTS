@@ -45,7 +45,7 @@ algorithms:
       input_name_schema: *input_name_schema
       cpu_compatible: true # ~ 1 min/subject
       subject_modality_separator: "_"
-  
+
   BraTS25_3:
     meta:
       authors: Nima Sadeghzadeh, et al.
@@ -76,7 +76,7 @@ algorithms:
       parameters_file: true
       shm_size: "16gb"
       subject_modality_separator: "_"
-  
+
   BraTS24_2:
     meta:
       authors: Mehdi Astaraki
@@ -91,7 +91,7 @@ algorithms:
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
-  
+
   BraTS24_3:
     meta:
       authors: Andre Ferreira, et al.
@@ -108,6 +108,3 @@ algorithms:
       shm_size: "4gb"
       cpu_compatible: true # ~8 hours
       subject_modality_separator: "_"
-
-
-

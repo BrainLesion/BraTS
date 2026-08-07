@@ -30,7 +30,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats25_men_qing:latest
       input_name_schema: *input_name_schema
-  
+
   BraTS25_2:
     meta:
       authors: Mohammad Mahdi Danesh Pajouh, et al.
@@ -55,7 +55,7 @@ algorithms:
       year: *year_2023
       dataset_manuscript: *dataset_manuscript
     run_args:
-      docker_image: brainles/brats23_meningioma_nvauto:latest 
+      docker_image: brainles/brats23_meningioma_nvauto:latest
       input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
@@ -73,11 +73,11 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_meningioma_blackbean:latest
       input_name_schema: *input_name_schema
-      requires_root: true 
+      requires_root: true
       parameters_file: true
       shm_size: "4gb"
       cpu_compatible: true
-      
+
   BraTS23_3:
     meta:
       authors: Daniel Capellán-Martín et al.
@@ -91,6 +91,5 @@ algorithms:
       docker_image: brainles/brats23_meningioma_cnmc_pmi2023:latest
       input_name_schema: *input_name_schema
       requires_root: true
-      parameters_file: false 
+      parameters_file: false
       shm_size: "2gb"
-      

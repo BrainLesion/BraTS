@@ -241,13 +241,12 @@ class BraTSAlgorithm(ABC):
                 Defaults to Backends.DOCKER.
         """
         with InferenceSetup(log_file=log_file) as (tmp_data_folder, tmp_output_folder):
-
             # find subjects
             subjects = [f for f in Path(data_folder).iterdir() if f.is_dir()]
             logger.info(
                 f"Found {len(subjects)} subjects: "
                 f"{', '.join([s.name for s in subjects][:5])}"
-                f"{' ...' if len(subjects) > 5 else '' }"
+                f"{' ...' if len(subjects) > 5 else ''}"
             )
             # map to brats names
             internal_external_name_map = self._standardize_batch_inputs(

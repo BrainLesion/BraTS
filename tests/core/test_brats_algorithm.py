@@ -10,7 +10,6 @@ from brats.utils.exceptions import AlgorithmConfigException
 
 
 class TestBraTSAlgorithm(unittest.TestCase):
-
     def setUp(self):
         # Create a temporary directory for testing
         self.test_dir = Path(tempfile.mkdtemp())
@@ -46,7 +45,6 @@ class TestBraTSAlgorithm(unittest.TestCase):
     def test_infer_single(
         self, mock_inference_setup, mock_input_sanity_check, mock_run_container
     ):
-
         # Mock InferenceSetup context manager
         mock_inference_setup_ret = mock_inference_setup.return_value
         mock_inference_setup_ret.__enter__.return_value = (
@@ -84,7 +82,6 @@ class TestBraTSAlgorithm(unittest.TestCase):
     def test_infer_batch(
         self, mock_inference_setup, mock_input_sanity_check, mock_run_container
     ):
-
         # Mock InferenceSetup context manager
         mock_inference_setup_ret = mock_inference_setup.return_value
         mock_inference_setup_ret.__enter__.return_value = (

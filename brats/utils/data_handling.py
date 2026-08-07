@@ -130,7 +130,9 @@ def input_sanity_check(
 
     # Load and check shapes
     shapes = {
-        label: nib.load(img).shape for label, img in images.items() if img is not None  # type: ignore[attr-defined]
+        label: nib.load(img).shape
+        for label, img in images.items()
+        if img is not None  # type: ignore[attr-defined]
     }
 
     assert shapes, "No input images provided. At least one image is required."

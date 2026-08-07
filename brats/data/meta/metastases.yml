@@ -28,7 +28,7 @@ algorithms:
       docker_image: brainles/brats25_met_gli-team:latest
       input_name_schema: *input_name_schema
       requires_root: true
-  
+
   BraTS25_2:
     meta:
       authors: Wes Krikorian, et al.
@@ -54,7 +54,7 @@ algorithms:
       rank: *rank_1
       year: *year_2023
     run_args:
-      docker_image: brainles/brats23_met_nvauto:latest 
+      docker_image: brainles/brats23_met_nvauto:latest
       input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
@@ -71,11 +71,11 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_met_sy:latest
       input_name_schema: *input_name_schema
-      requires_root: true 
+      requires_root: true
       parameters_file: false
     additional_files:
       record_id: "13380822"
-      
+
   BraTS23_3:
     meta:
       authors: Ziyan Huang, et al.
@@ -87,8 +87,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats23_met_blackbean:latest
       input_name_schema: *input_name_schema
-      requires_root: true 
+      requires_root: true
       parameters_file: true
       shm_size: "4gb"
       cpu_compatible: true
-      

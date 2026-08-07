@@ -4,14 +4,14 @@ Utils
 Constants
 ------------------------------
 
-.. automodule:: brats.constants 
+.. automodule:: brats.constants
     :members:
 
 
 Exceptions
 ------------------------------
 
-.. automodule:: brats.utils.exceptions 
+.. automodule:: brats.utils.exceptions
     :members:
 
 Logging
