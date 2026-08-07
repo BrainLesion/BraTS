@@ -524,6 +524,69 @@ You can install the package with the preprocessing extra using:
 pip install brats[preprocessing]
 ```
 
+## Data Preprocessing Specifications
+
+> [!IMPORTANT]
+> **Voxel Intensity Preservation:** All MRI volumes across all challenge tracks retain their post-preprocessing spatial intensity values. **No global voxel intensity normalization** (e.g., z-score standardization or min-max scaling) has been pre-applied to the dataset files. Models expect raw intensity inputs as processed by the official BraTS pipeline.
+
+---
+
+### Overview of Preprocessing Standards
+
+Depending on the specific challenge task and edition year, input multi-parametric MRI (mpMRI) sequences undergo specific spatial registration and other preprocessing steps (e.g., skull-stripping vs. defacing):
+
+| Challenge Task | Modalities | Reference Space | Anonymization / Masking | Notes / Timeline |
+| :--- | :--- | :--- | :--- | :--- |
+| **Adult Glioma (Pre-Treatment)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 (pre-2025)<br>MNI152 (2025+) | Skull-stripped | Updated to MNI152 template starting in BraTS 2025. |
+| **Adult Glioma (Post-Treatment)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | MNI152 | Skull-stripped | Standardized on MNI152 template. |
+| **Brain Metastases (MET)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 (pre-2024)<br>Native Space (2025+ additions) | Skull-stripped | Pre-2024 cases aligned to SRI24. 2025+ additions (pre & post-treatment) are in native space, co-registered to `T1c`. |
+| **Meningioma (Pre-Operative)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 | Skull-stripped | Standard pre-operative diagnostic imaging. |
+| **Meningioma (Radiotherapy RT)** | Single sequence (`T1c`) | Native Space | Defaced | Treatment planning sequence; defaced rather than skull-stripped. |
+| **Pediatric Brain Tumors (PED)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 | Defaced | defaced rather than skull-stripped. |
+| **Sub-Saharan Africa Glioma (SSA)** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 | Skull-stripped | Standardized on SRI24 template. |
+| **Cross-Tumor Generalizability** | 4 mpMRI (`T1c`, `T1n`, `T2f`, `T2w`) | SRI24 | Skull-stripped (Defaced for PED) | Combined dataset spanning adult/SSA glioma, pediatric, pre-op meningioma, and brain metastases. |
+
+---
+
+### Per-Task Technical Details
+
+#### 1. Adult Glioma Segmentation (Pre-Treatment)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:**
+  * **BraTS early challenges–2024:** Co-registered and normalized to the **SRI24 atlas space**, followed by rigid skull-stripping.
+  * **BraTS 2025+ (Lighthouse & future):** Updated pipeline registered to the **MNI152 atlas space**, maintaining full skull-stripping.
+
+#### 2. Adult Glioma Segmentation (Post-Treatment)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:** Co-registered and template-matched to **MNI152 atlas space** with skull-stripping applied across all exams.
+
+#### 3. Brain Metastases Segmentation (Pre & Post-Treatment)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:**
+  * **Pre-2024 Cohorts:** Pre-treatment exams registered to **SRI24 atlas space** and skull-stripped.
+  * **2025+ Cohorts:** Expanded to include both pre- and post-treatment cases provided in **Native Space** (co-registered directly to the `T1c` acquisition volume) with skull-stripping applied.
+
+#### 4. Pre-Operative Meningioma Segmentation
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:** Diagnostic co-registered mpMRI volumes aligned to **SRI24 atlas space** and skull-stripped.
+
+#### 5. Radiotherapy Planning Meningioma Segmentation (Meningioma-RT)
+* **Modalities:** Single sequence contrast-enhanced T1-weighted (`T1c`) MRI.
+* **Spatial Alignment & Anonymization:** Provided in **Native Space** (no template registration) and processed using (**defacing**) rather than skull-stripping.
+
+#### 6. Pediatric Brain Tumor Segmentation (PED)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:** Registered to **SRI24 atlas space**. Uses **defacing** algorithms rather than skull-stripping.
+
+#### 7. Sub-Saharan Africa Glioma Segmentation (SSA)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Spatial Alignment & Anonymization:** Standardized to **SRI24 atlas space** with complete skull-stripping.
+
+#### 8. Cross-Tumor Generalizability (GLiNR)
+* **Modalities:** 4 mpMRI sequences (`T1c`, `T1n`, `T2f`, `T2w`).
+* **Composition:** Aggregated multi-site dataset combining Adult Glioma, Sub-Saharan Africa Glioma, Pediatric Tumors, Pre-operative Meningioma, and Brain Metastases.
+* **Spatial Alignment & Anonymization:** Standardized to **SRI24 atlas space**. All sub-datasets are skull-stripped, with the exception of the **Pediatric (PED)** cohort which remains defaced.
+
 The modular architecture of the `BraTS Orchestrator` facilitates employing your own preprocessing routines.  
 Alternatively, the [preprocessing package](https://github.com/BrainLesion/preprocessing) can be used independently to design custom preprocessing pipelines tailored to your specific needs.
 
