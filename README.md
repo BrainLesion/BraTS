@@ -114,10 +114,14 @@ segmenter.infer_single(
 | 2025 | 2nd  | _Qu Lin, et al._         | N/A                                      | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_2)   |
 | 2025 | 3rd  | _Liwei Jin, et al._      | N/A                                      | &#x2705;    | [BraTS25_3A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3A) |
 | 2025 | 3rd  | _Adrian Celaya, et al._  | N/A                                      | &#x274C;    | [BraTS25_3B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_3B) |
+| 2025 | Baseline* | _Abhijeet Parida, et al._ | [Link](https://link.springer.com/chapter/10.1007/978-3-032-16365-3_22) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_B) |
 | 2024 | 1st  | _André Ferreira, et al._ |[Link](https://arxiv.org/pdf/2411.04632v1)| &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_1)         |
 | 2024 | 2nd  | _Heejong Kim, et al._    | [Link](https://arxiv.org/abs/2409.08143) | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2)         |
 | 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3)         |
 
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The MNI152 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2024 and subsequent BraTS Glioma Post-treatment Segmentation challenges.
 
@@ -198,6 +202,7 @@ segmenter.infer_single(
 | 2025 | 2nd  | _William Boonzaier, et al._     | N/A                                                  | &#x274C;    | [BraTS25_2A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_2A) |
 | 2025 | 2nd  | _Mohtady Barakat, et al._       | N/A                                                  | &#x274C;    | [BraTS25_2B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_2B) |
 | 2025 | 3rd  | _Ahmed Jaheen, et al._          | N/A                                                  | &#x274C;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_3)   |
+| 2025 | Baseline* | _Abhijeet Parida, et al._   | [Link](https://link.springer.com/chapter/10.1007/978-3-032-16365-3_22) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS25_B)   |
 | 2024 | 1st  | _Abhijeet Parida, et al._       | [Link](https://arxiv.org/abs/2412.04111)             | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _Yanguang Zhao, et al._         | [Link](https://doi.org/10.48550/arXiv.2410.18698)    | &#x2705;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Sarim Hashmi, et al._          | [Link](https://doi.org/10.48550/arXiv.2411.15872)    | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS24_3)   |
@@ -206,6 +211,9 @@ segmenter.infer_single(
 | 2023 | 3rd  | _Ziyan Huang, et al._           | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AfricaAlgorithms.BraTS23_3)   |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Africa Segmentation challenges.
 <br>
@@ -241,11 +249,16 @@ segmenter.infer_single(
 | ---- | ---- | -------------------------------------- | ---------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Yu Haitao, et al._                    | N/A                                                        | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Mohammad Mahdi Danesh Pajouh, et al._ | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_2) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._   | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016)  | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS25_B) |
 | 2023 | 1st  | _Andriy Myronenko, et al._             | [Link](https://arxiv.org/abs/2510.25058)                   | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Ziyan Huang, et al._                  | [Link](https://doi.org/10.1007/978-3-031-76163-8_13)       | &#x2705;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Daniel Capellán-Martín et al._        | [Link](https://api.semanticscholar.org/CorpusID:272599903) | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS23_3) |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
+
 <br>
 
 #### Meningioma Radio Therapy Segmentation
@@ -276,12 +289,16 @@ segmenter.infer_single(
 | 2025 | 1st  | _Valeria Abramova, et al._     | N/A                                         | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Sanskriti Srivastava, et al._ | N/A                                         | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_2) |
 | 2025 | 3rd  | _Nima Sadeghzadeh, et al._     | N/A                                         | &#x2705;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_3) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaRTAlgorithms.BraTS25_B) |
 | 2024 | 1st  | _Valeria Abramova_             | N/A                                         | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _Mehdi Astaraki_               | N/A                                         | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Andre Ferreira, et al._       | [Link](https://arxiv.org/html/2411.04632v1) | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_3)   |
 
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The MRI dataset in the Meningioma-Radiotherapy challenge was provided in native space. However,
 the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Meningioma Pre-operative challenges.
@@ -319,11 +336,15 @@ segmenter.infer_single(
 | ---- | ---- | -------------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Maria Bancerek, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Wes Krikorian, et al._    | N/A                                                  | &#x2705;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_2) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_B) |
 | 2023 | 1st  | _Andriy Myronenko, et al._ | [Link](https://arxiv.org/abs/2510.25058)             | &#x274C;    | [BraTS23_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_1) |
 | 2023 | 2nd  | _Siwei Yang, et al._       | [Link](https://doi.org/10.1007/978-3-031-76163-8_17) | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Ziyan Huang, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS23_3) |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Metastasis segmentation challenges.
 <br>
@@ -352,6 +373,8 @@ segmenter.infer_single(
 
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 <br>
+**BraTS-PEDs Dataset Paper 2026** [Link](https://doi.org/10.1148/ryai.250902)
+<br>
 **Challenge Paper 2024** [Link](https://doi.org/10.48550/arXiv.2404.15009)
 <br>
 **Challenge Results Paper 2023** [Link](https://doi.org/10.48550/arXiv.2407.08855)
@@ -364,6 +387,7 @@ segmenter.infer_single(
 | 2025 | 1st  | _Yuxiao Yi, et al._              | N/A                                                        | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_1) |
 | 2025 | 2nd  | _Meng-Yuan Chen, et al._         | N/A                                                        | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_2) |
 | 2025 | 3rd  | _Haitao Yu, et al._              | N/A                                                        | &#x274C;    | [BraTS25_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_3) |
+| 2025 | Baseline* | _Daniel Capellán-Martín, et al._ | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016/) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS25_B) |
 | 2024 | 1st  | _Mehdi Astaraki_                 | N/A                                                        | &#x274C;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_1) |
 | 2024 | 2nd  | _Tim Mulvany, et al._            | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_2) |
 | 2024 | 3rd  | _Sarim Hashmi, et al._           | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS24_3) |
@@ -373,6 +397,9 @@ segmenter.infer_single(
 
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br> 
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
 <br>
@@ -447,6 +474,7 @@ inpainter.infer_single(
 | 2025 | 1st  | _Juexin Zhang, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_1A) |
 | 2025 | 1st  | _André Ferreira, et al._ | N/A                                                  | &#x274C;    | [BraTS25_1B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_1B) |
 | 2025 | 2nd  | _Juhyung Ha, et al._     | N/A                                                  | &#x274C;    | [BraTS25_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_2)   |
+| 2025 | Baseline* | _Nishad Kulkarni, et al._ | [Link](https://link.springer.com/chapter/10.1007/978-3-032-16370-7_13) | &#x274C;    | [BraTS25_B](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_B)   |
 | 2024 | 1st  | _Juexin Zhang et al._    | [Link](https://doi.org/10.48550/arXiv.2507.18126)    | &#x2705;    | [BraTS24_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_1)   |
 | 2024 | 2nd  | _André Ferreira, et al._ | [Link](https://arxiv.org/html/2411.04630v2)          | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Alicia Durrer, et al._  | N/A                                                  | &#x274C;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS24_3)   |
@@ -455,6 +483,9 @@ inpainter.infer_single(
 | 2023 | 3rd  | _Jiayu Huo, et al._      | [Link](https://doi.org/10.1007/978-3-031-76163-8_1)  | &#x2705;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS23_3)   |
 
 </details>
+
+> Baseline*: The unranked baseline was provided by participating team(s) that included BraTS organizers. In an unofficial evaluation, it achieved performance within the range of the top 3 officially ranked models.
+<br>
 
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>

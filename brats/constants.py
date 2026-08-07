@@ -45,6 +45,8 @@ class AdultGliomaPreAndPostTreatmentAlgorithms(Algorithms):
     """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
     BraTS25_3B = "BraTS25_3B"
     """ BraTS25 Adult Glioma Segmentation 3rd place (tie) """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 Adult Glioma Segmentation baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Adult Glioma Segmentation 1st place """
@@ -74,6 +76,8 @@ class MeningiomaRTAlgorithms(Algorithms):
     """ BraTS25 Meningioma Segmentation 2nd place """
     BraTS25_3 = "BraTS25_3"
     """ BraTS25 Meningioma Segmentation 3rd place """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 Meningioma Segmentation baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Meningioma Segmentation 1st place """
@@ -90,6 +94,8 @@ class MeningiomaAlgorithms(Algorithms):
     """BraTS25 Meningioma Segmentation 1st place """
     BraTS25_2 = "BraTS25_2"
     """BraTS25 Meningioma Segmentation 2nd place """
+    BraTS25_B = "BraTS25_B"
+    """BraTS25 Meningioma Segmentation baseline """
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23 Meningioma Segmentation 1st place (GPU only)"""
@@ -108,6 +114,8 @@ class PediatricAlgorithms(Algorithms):
     """ BraTS25 Pediatric Segmentation 2nd place"""
     BraTS25_3 = "BraTS25_3"
     """ BraTS25 Pediatric Segmentation 3rd place"""
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 Pediatric Segmentation baseline"""
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 Pediatric Segmentation 1st place """
@@ -135,6 +143,8 @@ class AfricaAlgorithms(Algorithms):
     """ BraTS25 BraTS-SSA Segmentation 2nd place (Tie) """
     BraTS25_3 = "BraTS25_3"
     """ BraTS25 BraTS-SSA Segmentation 3rd place """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25 BraTS-SSA Segmentation baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24 BraTS-Africa Segmentation 1st place """
@@ -158,6 +168,8 @@ class MetastasesAlgorithms(Algorithms):
     """BraTS25  Brain Metastases Segmentation 1st place"""
     BraTS25_2 = "BraTS25_2"
     """BraTS25  Brain Metastases Segmentation 2nd place"""
+    BraTS25_B = "BraTS25_B"
+    """BraTS25  Brain Metastases Segmentation baseline"""
 
     BraTS23_1 = "BraTS23_1"
     """BraTS23  Brain Metastases Segmentation 1st place (GPU only)"""
@@ -176,6 +188,8 @@ class InpaintingAlgorithms(Algorithms):
     """ BraTS25  Inpainting shared 1st place (tie)"""
     BraTS25_2 = "BraTS25_2"
     """ BraTS25  Inpainting 2nd place """
+    BraTS25_B = "BraTS25_B"
+    """ BraTS25  Inpainting baseline """
 
     BraTS24_1 = "BraTS24_1"
     """ BraTS24  Inpainting 1st place """

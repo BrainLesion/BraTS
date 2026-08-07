@@ -14,6 +14,7 @@ constants:
     1st: &rank_1 1st
     2nd: &rank_2 2nd
     3rd: &rank_3 3rd
+    Baseline: &rank_baseline Baseline
 
 
 algorithms:
@@ -74,6 +75,20 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats25_ssa_biomedia_mbzuai:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_B:
+    meta:
+      authors: Abhijeet Parida, et al.
+      paper: https://link.springer.com/chapter/10.1007/978-3-032-16365-3_22
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_baseline
+      year: *year_2025
+      dataset_manuscript: *dataset_manuscript
+    run_args:
+      docker_image: aparida12/brats2025:ssa
       input_name_schema: *input_name_schema
       requires_root: true
 
@@ -182,4 +197,3 @@ algorithms:
       requires_root: true
       parameters_file: true
       cpu_compatible: true
-

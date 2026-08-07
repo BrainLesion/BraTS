@@ -13,6 +13,7 @@ constants:
     1st: &rank_1 1st
     2nd: &rank_2 2nd
     3rd: &rank_3 3rd
+    Baseline: &rank_baseline Baseline
 
 algorithms:
 
@@ -53,6 +54,19 @@ algorithms:
       year: *year_2025
     run_args:
       docker_image: brainles/brats25_ped_qing:latest
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS25_B:
+    meta:
+      authors: Daniel Capellán-Martín et al.
+      paper: https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016
+      challenge: *challenge
+      challenge_manuscript: *challenge_manuscript_2025
+      rank: *rank_baseline
+      year: *year_2025
+    run_args:
+      docker_image: aparida12/brats2025:peds
       input_name_schema: *input_name_schema
       requires_root: true
 
