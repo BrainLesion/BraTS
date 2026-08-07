@@ -60,10 +60,11 @@ To enable Singularity, install it following the [official guide](https://docs.sy
 
 ```python
 from brats.constants import Backends
+
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     output_file="path/to/segmentation.nii.gz",
-    backend=Backends.SINGULARITY
+    backend=Backends.SINGULARITY,
 )
 ```
 
@@ -90,7 +91,9 @@ segmenter.infer_single(
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
 from brats.constants import AdultGliomaPreAndPostTreatmentAlgorithms
 
-segmenter = AdultGliomaPreAndPostTreatmentSegmenter(algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter(
+    algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -135,7 +138,9 @@ segmenter.infer_single(
 from brats import AdultGliomaPreTreatmentSegmenter
 from brats.constants import AdultGliomaPreTreatmentAlgorithms
 
-segmenter = AdultGliomaPreTreatmentSegmenter(algorithm=AdultGliomaPreTreatmentAlgorithms.BraTS23_1, cuda_devices="0")
+segmenter = AdultGliomaPreTreatmentSegmenter(
+    algorithm=AdultGliomaPreTreatmentAlgorithms.BraTS23_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -224,7 +229,9 @@ from brats import MeningiomaSegmenter
 from brats.constants import MeningiomaAlgorithms
 
 ### Example for 2023 algorithms
-segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MeningiomaSegmenter(
+    algorithm=MeningiomaAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -262,7 +269,9 @@ segmenter.infer_single(
 from brats import MeningiomaRTSegmenter
 from brats.constants import MeningiomaRTAlgorithms
 
-segmenter = MeningiomaRTSegmenter(algorithm=MeningiomaRTAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MeningiomaRTSegmenter(
+    algorithm=MeningiomaRTAlgorithms.BraTS25_1, cuda_devices="0"
+)
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     output_file="segmentation_24.nii.gz",
@@ -300,7 +309,9 @@ the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was
 from brats import MetastasesSegmenter
 from brats.constants import MetastasesAlgorithms
 
-segmenter = MetastasesSegmenter(algorithm=MetastasesAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MetastasesSegmenter(
+    algorithm=MetastasesAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -309,7 +320,6 @@ segmenter.infer_single(
     t2w="path/to/t2w.nii.gz",
     output_file="segmentation.nii.gz",
 )
-
 ```
 
 > Note: If you're interested in Brain Metastases Segmentation, the [BrainLes AURORA package](https://github.com/BrainLesion/AURORA#aurora) may also be of interest.
@@ -344,7 +354,9 @@ segmenter.infer_single(
 from brats import PediatricSegmenter
 from brats.constants import PediatricAlgorithms
 
-segmenter = PediatricSegmenter(algorithm=PediatricAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = PediatricSegmenter(
+    algorithm=PediatricAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
