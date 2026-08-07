@@ -46,7 +46,6 @@ dependencies = [
   "nibabel>=5.0.0",
   "numpy>=1.21.0; python_version<='3.9'",
   "numpy>=1.26.0; python_version>='3.10'",
-  "poetry>=2.2.1",
 ]
 
 [project.optional-dependencies]

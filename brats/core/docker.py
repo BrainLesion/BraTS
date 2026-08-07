@@ -299,7 +299,7 @@ def _observe_docker_output(
             logger.error(f">> {container_output}")
             raise BraTSContainerException(
                 "Container finished with an error:\n"
-                f"{'-' * 80}\n{container_output}\n {'-' * 80}\n"
+                f"{'-' * 80}\n{container_output}\n{'-' * 80}\n"
                 "An auto generated log file with detailed debug "
                 "information has been saved. "
                 "Optionally, pass log_file to infer_single/infer_batch "

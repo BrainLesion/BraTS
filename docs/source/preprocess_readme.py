@@ -17,7 +17,7 @@ def preprocess_readme(input_file: str, output_file: str) -> None:
     for ad_type in admonition_types:
         # Replace > [!ad_type] with Sphinx admonition syntax
         content = re.sub(
-            r"> \[!" + ad_type + "\]\s*\n((?:> .*\n)*)",
+            rf"> \[!{ad_type}\]\s*\n((?:> .*\n)*)",
             lambda m, t=ad_type: (
                 "```{" + t + "}\n" + m.group(1).replace("> ", "").strip() + "\n```"
             ),
