@@ -10,14 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: astral-sh/ruff-action@v3
         with:
-          python-version: "3.13"
-          cache: "poetry"
-      - name: Install dependencies
-        run: poetry install
-      - name: Lint with ruff
-        run: poetry run ruff check . --show-fixes
+          args: check --show-fixes

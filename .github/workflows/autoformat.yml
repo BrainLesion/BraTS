@@ -14,19 +14,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-          cache: "poetry"
-      - name: Install dependencies
-        run: poetry install
+      - uses: astral-sh/ruff-action@v3
       - name: Format with ruff
         run: |
-          poetry run ruff format .
-          poetry run ruff check --fix .
+          ruff format .
+          ruff check --fix .
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
