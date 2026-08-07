@@ -16,7 +16,7 @@ def test_configs_valid(configs):
     for config in configs:
         try:
             load_algorithms(file_path=config)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 (test validation)
             pytest.fail(f"Failed to load config {config}: {e}")
 
 
@@ -49,8 +49,8 @@ def test_integrity_year(configs):
 
 def test_integrity_challenge_manuscript(configs):
     """Should be the same for all algorithms within a year"""
-    for configs in configs:
-        algorithms = load_algorithms(file_path=configs)
+    for config in configs:
+        algorithms = load_algorithms(file_path=config)
         # group by year
         challenge_manuscripts_by_years = {}
         for alg_data in algorithms.values():
@@ -61,5 +61,5 @@ def test_integrity_challenge_manuscript(configs):
                 alg_data.meta.challenge_manuscript
             )
 
-        for year, challenge_manuscripts in challenge_manuscripts_by_years.items():
+        for challenge_manuscripts in challenge_manuscripts_by_years.values():
             assert len(set(challenge_manuscripts)) == 1

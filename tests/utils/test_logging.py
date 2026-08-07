@@ -2,11 +2,11 @@ import pytest
 from loguru import logger
 
 from brats.utils.logging import (
+    _reset_logging_state_for_tests,
     add_console_handler,
     disable,
     enable,
     remove_console_handler,
-    _reset_logging_state_for_tests,
 )
 
 
@@ -69,7 +69,7 @@ def test_add_console_handler_is_singleton(capfd):
     add_console_handler(level="INFO")
     logger.info("Second")
 
-    out, err = capfd.readouterr()
+    _out, err = capfd.readouterr()
     assert err.count("First") == 1
     assert err.count("Second") == 1
 
@@ -81,7 +81,7 @@ def test_remove_console_handler_stops_logging(capfd):
     remove_console_handler()
     logger.info("Will NOT appear")
 
-    out, err = capfd.readouterr()
+    _out, err = capfd.readouterr()
     assert "Will appear" in err
     assert "Will NOT appear" not in err
 
@@ -97,7 +97,7 @@ def test_remove_console_handler_removes_handler(capfd):
     # Step 1: Add handler and verify logging works
     add_console_handler(level="INFO")
     logger.info("This should appear")
-    out1, err1 = capfd.readouterr()
+    _out1, err1 = capfd.readouterr()
     assert "This should appear" in err1
 
     # Step 2: Remove handler
@@ -105,5 +105,5 @@ def test_remove_console_handler_removes_handler(capfd):
 
     # Step 3: Log again and verify nothing appears
     logger.info("This should NOT appear")
-    out2, err2 = capfd.readouterr()
+    _out2, err2 = capfd.readouterr()
     assert "This should NOT appear" not in err2

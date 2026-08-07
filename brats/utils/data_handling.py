@@ -3,16 +3,17 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, Optional, Tuple
+from typing import Optional
 
 import nibabel as nib
 from loguru import logger
 from rich.console import Console
 
 
-def remove_tmp_folder(folder: Path):
+def remove_tmp_folder(folder: Path) -> None:
     """Remove a temporary folder and log a warning if it fails.
 
     Args:
@@ -22,7 +23,9 @@ def remove_tmp_folder(folder: Path):
         shutil.rmtree(folder)
     except PermissionError as e:
         logger.warning(
-            f"Failed to remove temporary folder {folder}. This is most likely caused by bad permission management of the docker container. \nError: {e}"
+            f"Failed to remove temporary folder {folder}. This is most "
+            f"likely caused by bad permission management of the docker "
+            f"container. \nError: {e}"
         )
     except FileNotFoundError as e:
         logger.warning(f"Failed to delete folder {folder}. {e}")
@@ -50,9 +53,10 @@ def add_log_file_handler(log_file: Path | str) -> int:
 @contextmanager
 def InferenceSetup(
     log_file: Optional[Path | str] = None,
-) -> Generator[Tuple[Path, Path], None, None]:
+) -> Generator[tuple[Path, Path], None, None]:
     """
-    Context manager for setting up the inference process. Creates temporary data and output folders and adds a log file handler if requested.
+    Context manager for setting up the inference process. Creates temporary
+    data and output folders and adds a log file handler if requested.
 
     When no log_file is provided, a temporary log file is created automatically.
     If an error occurs during inference, the temporary log is preserved and its
@@ -60,7 +64,8 @@ def InferenceSetup(
     On success, the temporary log is cleaned up.
 
     Yields:
-        (data folder, output folder) (Tuple[Path, Path]): Two temporary folders (data folder, output folder)
+        (data folder, output folder) (Tuple[Path, Path]): Two temporary
+        folders (data folder, output folder)
     """
     if log_file is not None:
         log_path = Path(log_file)
@@ -101,7 +106,7 @@ def input_sanity_check(
     t2f: Optional[Path | str] = None,
     t2w: Optional[Path | str] = None,
     mask: Optional[Path | str] = None,
-):
+) -> None:
     """
     Check if input images have the default shape (240, 240, 155) and log a warning if not.
     Supports different input combinations for segmentation and inpainting tasks.
@@ -125,14 +130,16 @@ def input_sanity_check(
 
     # Load and check shapes
     shapes = {
-        label: nib.load(img).shape for label, img in images.items() if img is not None
+        label: nib.load(img).shape for label, img in images.items() if img is not None  # type: ignore[attr-defined]
     }
 
     assert shapes, "No input images provided. At least one image is required."
 
     if any(shape != (240, 240, 155) for shape in shapes.values()):
         logger.warning(
-            "Input images do not have the default shape (240, 240, 155). This might cause issues with some algorithms and could lead to errors."
+            "Input images do not have the default shape (240, 240, 155). "
+            "This might cause issues with some algorithms and could lead to "
+            "errors."
         )
         logger.warning(f"Image shapes: {shapes}")
         logger.warning(

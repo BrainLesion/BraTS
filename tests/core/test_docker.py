@@ -3,16 +3,17 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 from rich.progress import Progress
 
+from brats.constants import PARAMETERS_DIR
 from brats.core.docker import (
     _build_command_args,
-    _get_container_user,
     _ensure_image,
     _get_additional_files_path,
+    _get_container_user,
     _get_parameters_arg,
     _get_volume_mappings_docker_only,
     _get_volume_mappings_mlcube,
@@ -25,7 +26,6 @@ from brats.core.docker import (
     run_container,
 )
 from brats.utils.algorithm_config import AlgorithmData
-from brats.constants import PARAMETERS_DIR
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
@@ -153,7 +153,7 @@ class TestDockerHelpers(unittest.TestCase):
 
     @patch("subprocess.run")
     def test_is_cuda_available_fail(self, MockRun):
-        MockRun.side_effect = Exception()
+        MockRun.side_effect = subprocess.SubprocessError()
         self.assertFalse(_is_cuda_available())
         MockRun.assert_called_once_with(
             ["nvidia-smi"],
@@ -226,7 +226,7 @@ class TestDockerHelpers(unittest.TestCase):
 
     def test_get_parameters_arg_dummy(self):
         result = _get_parameters_arg(self.algorithm_gpu)
-        expected = f" --parameters_file=/mlcube_io3/dummy.yml"
+        expected = " --parameters_file=/mlcube_io3/dummy.yml"
         self.assertEqual(result, expected)
 
     def test_get_parameters_arg_file(self):
@@ -250,6 +250,31 @@ class TestDockerHelpers(unittest.TestCase):
         ]
         for arg in expected_command_args:
             self.assertIn(arg, result)
+
+    def test_build_command_args_param_name_none(self):
+        algorithm = AlgorithmData(
+            run_args=MagicMock(
+                docker_image="brainles/test-image:latest",
+                parameters_file=True,
+                shm_size="1g",
+                cpu_compatible=False,
+            ),
+            additional_files=MagicMock(
+                param_name=None,
+                param_path=[],
+            ),
+            meta=MagicMock(
+                challenge="Challenge",
+                rank="1st",
+                paper="paper_url",
+                authors="author_names",
+            ),
+        )
+        result = _build_command_args(algorithm)
+        self.assertIn("--data_path=/mlcube_io0", result)
+        self.assertIn("--output_path=/mlcube_io2", result)
+        self.assertIn("--parameters_file=/mlcube_io3/dummy.yml", result)
+        self.assertNotIn("--weights", result)
 
     def test_get_container_user_requires_root(self):
         # Test when requires_root is True

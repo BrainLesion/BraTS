@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import shutil
-import sys
 import zipfile
 from io import BytesIO
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any
 
 import requests
 from loguru import logger
@@ -50,7 +49,7 @@ def check_additional_files_path(record_id: str) -> Path:
             msg = "Additional files not found locally and Zenodo could not be reached. Exiting..."
             logger.error(msg)
             raise ZenodoException(msg)
-        logger.info(f"Additional files not found locally")
+        logger.info("Additional files not found locally")
 
         zenodo_metadata, archive_url = zenodo_response
         return _download_additional_files(
@@ -78,7 +77,9 @@ def check_additional_files_path(record_id: str) -> Path:
         return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
     logger.info(
-        f"New additional files available on Zenodo ({zenodo_metadata['version']}). Deleting old and fetching new additional files..."
+        f"New additional files available on Zenodo "
+        f"({zenodo_metadata['version']}). "
+        f"Deleting old and fetching new additional files..."
     )
     # delete old additional files
     shutil.rmtree(
@@ -92,7 +93,7 @@ def check_additional_files_path(record_id: str) -> Path:
     )
 
 
-def _get_latest_version_folder_name(folders: List[Path]) -> str | None:
+def _get_latest_version_folder_name(folders: list[Path]) -> str | None:
     """Get the latest (non empty) version folder name from the list of folders.
 
     Args:
@@ -103,30 +104,34 @@ def _get_latest_version_folder_name(folders: List[Path]) -> str | None:
     """
     if not folders:
         return None
-    latest_downloaded_folder = sorted(
-        folders,
-        reverse=True,
-        key=lambda x: tuple(map(int, str(x).split("_v")[1].split("."))),
-    )[0]
+    latest_downloaded_folder = max(
+        folders, key=lambda x: tuple(map(int, x.name.split("_v")[1].split(".")))
+    )
     # check folder is not empty
     if not list(latest_downloaded_folder.glob("*")):
         return None
     return latest_downloaded_folder.name
 
 
-def _get_zenodo_metadata_and_archive_url(record_id: str) -> Tuple[Dict, str] | None:
+def _get_zenodo_metadata_and_archive_url(
+    record_id: str,
+) -> tuple[dict[str, Any], str] | None:
     """Get the metadata for the Zenodo record and the files archive url.
 
     Args:
         record_id (str): Zenodo record ID.
 
     Returns:
-        Union[Tuple[Dict,str], None]: Tuple with Metadata dict and archive URL if the record exists, else None.
+        Union[Tuple[Dict,str], None]: Tuple with Metadata dict and archive
+            URL if the record exists, else None.
     """
     try:
         response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}")
         if response.status_code != 200:
-            error_msg = f"Can not find additional files for record_id '{record_id}' on Zenodo ({response.status_code=}). Exiting..."
+            error_msg = (
+                f"Can not find additional files for record_id '{record_id}' "
+                f"on Zenodo ({response.status_code=}). Exiting..."
+            )
             logger.error(error_msg)
             raise ZenodoException(error_msg)
 
@@ -139,9 +144,10 @@ def _get_zenodo_metadata_and_archive_url(record_id: str) -> Tuple[Dict, str] | N
 
 
 def _download_additional_files(
-    zenodo_metadata: Dict, record_id: str, archive_url: str
+    zenodo_metadata: dict[str, object], record_id: str, archive_url: str
 ) -> Path:
-    """Download the latest additional files from Zenodo for the requested record and extract them to the target folder.
+    """Download the latest additional files from Zenodo for the requested
+    record and extract them to the target folder.
 
     Args:
         zenodo_metadata (Dict): Metadata for the Zenodo record.
@@ -160,7 +166,7 @@ def _download_additional_files(
     # ensure folder exists
     record_folder.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"Downloading additional files from Zenodo. This might take a while...")
+    logger.info("Downloading additional files from Zenodo. This might take a while...")
     # Make a GET request to the URL
     response = requests.get(archive_url, stream=True)
     # Ensure the request was successful
@@ -177,7 +183,7 @@ def _download_additional_files(
     return record_folder
 
 
-def _extract_archive(response: requests.Response, record_folder: Path):
+def _extract_archive(response: requests.Response, record_folder: Path) -> None:
     # Download with progress bar
     chunk_size = 1024  # 1KB
     bytes_io = BytesIO()

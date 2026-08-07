@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
 import shutil
-import sys
-from typing import Dict, Optional
+from pathlib import Path
+from typing import Optional
 
 from loguru import logger
 
+from brats.constants import INPAINTING_ALGORITHMS, Backends, InpaintingAlgorithms, Task
 from brats.core.brats_algorithm import BraTSAlgorithm
-from brats.constants import INPAINTING_ALGORITHMS, InpaintingAlgorithms, Task, Backends
 from brats.utils.data_handling import input_sanity_check
 
 
@@ -17,7 +16,7 @@ class Inpainter(BraTSAlgorithm):
     def __init__(
         self,
         algorithm: InpaintingAlgorithms = InpaintingAlgorithms.BraTS23_1,
-        cuda_devices: str | None = "0",
+        cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
@@ -47,7 +46,8 @@ class Inpainter(BraTSAlgorithm):
 
         subject_folder = data_folder / subject_id
         subject_folder.mkdir(parents=True, exist_ok=True)
-        # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
+        # TODO: investigate usage of symlinks (might cause issues on windows
+        # and would probably require different volume handling)
         t1n, mask = inputs["t1n"], inputs["mask"]
         try:
             shutil.copy(
@@ -68,16 +68,21 @@ class Inpainter(BraTSAlgorithm):
 
     def _standardize_batch_inputs(
         self, data_folder: Path, subjects: list[Path], input_name_schema: str
-    ) -> Dict[str, str]:
-        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+    ) -> dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements
+        of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
-            subjects (List[Path]): List of subject folders, each with a voided t1n and a mask image
-            data_folder (Path): Parent folder where the subject folders will be created
-            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+            subjects (List[Path]): List of subject folders, each with a voided
+                t1n and a mask image
+            data_folder (Path): Parent folder where the subject folders will
+                be created
+            input_name_schema (str): Schema to be used for the subject folder
+                and filenames depending on the BraTS Challenge
 
         Returns:
-            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+            Dict[str, str]: Dictionary mapping internal name (in standardized
+                format) to external subject name provided by user
         """
         internal_external_name_map = {}
         for i, subject in enumerate(subjects):
@@ -104,7 +109,8 @@ class Inpainter(BraTSAlgorithm):
         log_file: Optional[Path | str] = None,
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
-        """Perform inpainting task on a single subject with the provided images and save the result to the output file.
+        """Perform inpainting task on a single subject with the provided images
+        and save the result to the output file.
 
         Args:
             t1n (Path | str): Path to the voided T1n image
@@ -128,7 +134,8 @@ class Inpainter(BraTSAlgorithm):
         log_file: Path | str | None = None,
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
-        """Perform inpainting on a batch of subjects with the provided images and save the results to the output folder. \n
+        """Perform inpainting on a batch of subjects with the provided images
+        and save the results to the output folder. \n
         Requires the following structure:\n
         data_folder\n
         ┣ A\n

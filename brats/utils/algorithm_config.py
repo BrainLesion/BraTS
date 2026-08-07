@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
-from brats.utils.exceptions import AlgorithmConfigException
+from typing import Optional
 
 import yaml
 from dacite import DaciteError, from_dict
+
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 @dataclass
@@ -24,7 +25,8 @@ class MetaData:
     year: int
     """The year the algorithm was submitted"""
     dataset_manuscript: Optional[str] = None
-    """If available, a url to the dataset manuscript of the algorithm. Optional since some algorithms do not have a dataset manuscript"""
+    """If available, a url to the dataset manuscript of the algorithm.
+    Optional since some algorithms do not have a dataset manuscript"""
 
 
 @dataclass
@@ -38,13 +40,15 @@ class RunArgs:
     parameters_file: bool = False
     """Whether the algorithm requires a parameters file"""
     requires_root: bool = False
-    """Whether the Docker container requires root access. This is !discouraged! but some submission do not work without it"""
+    """Whether the Docker container requires root access. This is strongly
+    discouraged but some submissions do not work without it"""
     shm_size: Optional[str] = "4gb"
     """The required shared memory size for the Docker container"""
     cpu_compatible: Optional[bool] = False
     """Whether the algorithm is compatible with CPU"""
     subject_modality_separator: str = "-"
-    """The separator between the subject ID and the modality, differs e.g. for BraTS24 Meningioma Challenge"""
+    """The separator between the subject ID and the modality, differs e.g.
+    for BraTS24 Meningioma Challenge"""
 
 
 @dataclass
@@ -53,10 +57,13 @@ class AdditionalFilesData:
 
     record_id: str
     """The Zenodo record ID of the additional files"""
-    param_name: Optional[List[str]] = field(default_factory=lambda: ["weights"])
-    """The parameter(s) that specify additional file(s) in the algorithm execution, typically 'weights' but differs for some and can be multiple"""
-    param_path: Optional[List[str]] = None
-    """The path(s) to specific file(s) / folder(s) in the additional files folder. Not required since some algorithms accept the entire additional files folder"""
+    param_name: Optional[list[str]] = field(default_factory=lambda: ["weights"])
+    """The parameter(s) that specify additional file(s) in the algorithm
+    execution, typically 'weights' but differs for some and can be multiple"""
+    param_path: Optional[list[str]] = None
+    """The path(s) to specific file(s) / folder(s) in the additional files
+    folder. Not required since some algorithms accept the entire additional
+    files folder"""
 
 
 @dataclass
@@ -68,15 +75,16 @@ class AlgorithmData:
     run_args: RunArgs
     """The run arguments of the algorithm"""
     additional_files: Optional[AdditionalFilesData]
-    """The additional files of the algorithm. Optional since some algorithms include them in the docker image"""
+    """The additional files of the algorithm. Optional since some algorithms
+    include them in the docker image"""
 
 
 @dataclass
 class AlgorithmList:
-    algorithms: Dict[str, AlgorithmData]
+    algorithms: dict[str, AlgorithmData]
 
 
-def load_algorithms(file_path: Path) -> Dict[str, AlgorithmData]:
+def load_algorithms(file_path: Path) -> dict[str, AlgorithmData]:
     """Load the algorithms data from the specified yaml file
 
     Params:
@@ -86,17 +94,17 @@ def load_algorithms(file_path: Path) -> Dict[str, AlgorithmData]:
         FileNotFoundError: If the file is not found
 
     Returns:
-        Dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
+        dict[str, AlgorithmData]: Dict of algorithm @AlgorithmKeys:@AlgorithmData  pairs
     """
     try:
-        with open(file_path, "r") as file:
+        with open(file_path) as file:
             data = yaml.safe_load(file)
-    except FileNotFoundError:
-        raise FileNotFoundError("Algorithm meta data file not found")
+    except FileNotFoundError as e:
+        raise FileNotFoundError("Algorithm meta data file not found") from e
 
     try:
         # Convert the dictionary to the dataclass
         algorithms = from_dict(data_class=AlgorithmList, data=data).algorithms
     except DaciteError as e:
-        raise AlgorithmConfigException(f"Error loading algorithm data: {e}")
+        raise AlgorithmConfigException(f"Error loading algorithm data: {e}") from e
     return algorithms

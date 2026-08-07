@@ -4,19 +4,19 @@ import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import docker
 import nibabel as nib
 import numpy as np
 from docker.errors import DockerException
 from loguru import logger
+from rich import box
 from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
-from rich import box
 
-from brats.constants import DUMMY_PARAMETERS, PARAMETERS_DIR, PACKAGE_CITATION
+from brats.constants import DUMMY_PARAMETERS, PACKAGE_CITATION, PARAMETERS_DIR
 from brats.utils.algorithm_config import AlgorithmData
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
@@ -28,12 +28,15 @@ try:
     client = docker.from_env()
 except DockerException as e:
     logger.error(
-        f"Failed to connect to docker daemon. Please make sure docker is installed and running. Error: {e}"
+        f"Failed to connect to docker daemon. Please make sure docker is "
+        f"installed and running. Error: {e}"
     )
     # not aborting since this happens during read the docs builds. not a great solution tbf
 
 
-def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
+def _show_docker_pull_progress(
+    tasks: dict[str, Any], progress: Progress, line: dict[str, Any]
+) -> None:
     """Show the progress of a docker pull operation.
 
     Args:
@@ -66,7 +69,7 @@ def _show_docker_pull_progress(tasks: Dict, progress: Progress, line: Dict):
             progress.update(tasks[task_key], advance=0.1)
 
 
-def _ensure_image(image: str):
+def _ensure_image(image: str) -> None:
     """Ensure the docker image is present on the system. If not, pull it.
 
     Args:
@@ -74,7 +77,7 @@ def _ensure_image(image: str):
     """
     if not client.images.list(name=image):
         logger.info(f"Pulling docker image {image}")
-        tasks = {}
+        tasks: dict[str, Any] = {}
         with Progress() as progress:
             resp = client.api.pull(image, stream=True, decode=True)
             for line in resp:
@@ -93,13 +96,13 @@ def _is_cuda_available() -> bool:
             check=True,
         )
         return True
-    except:
+    except (OSError, subprocess.SubprocessError):
         return False
 
 
 def _handle_device_requests(
     algorithm: AlgorithmData, cuda_devices: str, force_cpu: bool
-) -> List[docker.types.DeviceRequest]:
+) -> list[docker.types.DeviceRequest]:
     """Handle the device requests for the docker container (request cuda or cpu).
 
     Args:
@@ -142,7 +145,8 @@ def _get_additional_files_path(algorithm: AlgorithmData) -> Path:
             record_id=algorithm.additional_files.record_id
         )
     else:
-        # if no additional_files are directly specified a dummy additional_files folder will be mounted
+        # if no additional_files are directly specified a dummy additional_files
+        # folder will be mounted
         return get_dummy_path()
 
 
@@ -151,7 +155,7 @@ def _get_volume_mappings_mlcube(
     additional_files_path: Path,
     output_path: Path,
     parameters_path: Path,
-) -> Dict:
+) -> dict[Path, dict[str, str]]:
     """Get the volume mappings for the docker container.
 
     Args:
@@ -179,7 +183,7 @@ def _get_volume_mappings_mlcube(
 def _get_volume_mappings_docker_only(
     data_path: Path,
     output_path: Path,
-) -> Dict[str, Dict[str, str]]:
+) -> dict[str, dict[str, str]]:
     """Get the volume mappings for the docker container.
 
     Args:
@@ -202,7 +206,8 @@ def _get_parameters_arg(algorithm: AlgorithmData) -> Optional[str]:
         algorithm (AlgorithmData): The algorithm data
 
     Returns:
-        Optional[str]: The parameters argument for the docker container or None if a parameter file is not required
+        Optional[str]: The parameters argument for the docker container or None
+        if a parameter file is not required
     """
     if algorithm.run_args.parameters_file:
         # Docker image name is used as the identifier for the param file
@@ -227,9 +232,10 @@ def _build_command_args(
         command_args: The command arguments
     """
     # Build command that will be run in the docker container
-    command_args = f"--data_path=/mlcube_io0 --output_path=/mlcube_io2"
+    command_args = "--data_path=/mlcube_io0 --output_path=/mlcube_io2"
     if algorithm.additional_files is not None:
-        for i, param in enumerate(algorithm.additional_files.param_name):
+        param_name = algorithm.additional_files.param_name or []
+        for i, param in enumerate(param_name):
             additional_files_arg = f"--{param}=/mlcube_io1"
             if algorithm.additional_files.param_path:
                 additional_files_arg += f"/{algorithm.additional_files.param_path[i]}"
@@ -263,8 +269,11 @@ def _get_container_user(
     return None
 
 
-def _observe_docker_output(container: docker.models.containers.Container) -> str:
-    """Observe the output of a running docker container and display a spinner. On Errors log container output.
+def _observe_docker_output(
+    container: docker.models.containers.Container,
+) -> str:
+    """Observe the output of a running docker container and display a spinner.
+    On Errors log container output.
 
     Args:
         container (docker.models.containers.Container): The container to observe
@@ -290,8 +299,10 @@ def _observe_docker_output(container: docker.models.containers.Container) -> str
             raise BraTSContainerException(
                 "Container finished with an error:\n"
                 f"{'-'*80}\n{container_output}\n {'-'*80}\n"
-                "A auto generated log file with detailed debug information has been saved. "
-                "Optionally, pass log_file to infer_single/infer_batch to control the location explicitly."
+                "An auto generated log file with detailed debug "
+                "information has been saved. "
+                "Optionally, pass log_file to infer_single/infer_batch "
+                "to control the location explicitly."
             )
 
     return container_output
@@ -301,49 +312,57 @@ def _sanity_check_output(
     data_path: Path,
     output_path: Path,
     container_output: str,
-    internal_external_name_map: Optional[Dict[str, str]] = None,
+    internal_external_name_map: Optional[dict[str, str]] = None,
 ) -> None:
-    """Sanity check that the number of output files matches the number of input files and the output is not empty.
+    """Sanity check that the number of output files matches the number of input files
+    and the output is not empty.
 
     Args:
         data_path (Path): The path to the input data
         output_path (Path): The path to the output data
         container_output (str): The output of the docker container
-        internal_external_name_map (Optional[Dict[str, str]]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
+        internal_external_name_map (Optional[Dict[str, str]]): Dictionary
+            mapping internal name (in standardized format) to external subject
+            name provided by user (only used for batch inference)
 
     Raises:
         BraTSContainerException: If not enough output files exist
     """
 
-    # some algorithms create extra files in the data folder, so we only check for files starting with "BraTS"
-    # (should result in only counting actual inputs)
+    # some algorithms create extra files in the data folder, so we only check
+    # for files starting with "BraTS" (should result in only counting actual inputs)
     inputs = [e for e in data_path.iterdir() if e.name.startswith("BraTS")]
     outputs = list(output_path.iterdir())
     if len(outputs) < len(inputs):
         logger.error(f"Docker container output: \n\r{container_output}")
         raise BraTSContainerException(
-            f"Not enough output files were created by the algorithm. Expected: {len(inputs)} Got: {len(outputs)}. Please check the logging output of the docker container for more information."
+            f"Not enough output files were created by the algorithm. "
+            f"Expected: {len(inputs)} Got: {len(outputs)}. "
+            "Please check the logging output of the docker container "
+            "for more information."
         )
 
-    for i, output in enumerate(outputs, start=1):
-        content = nib.load(output).get_fdata()
+    for _i, output in enumerate(outputs, start=1):
+        content = nib.load(output).get_fdata()  # type: ignore[attr-defined]
         if np.count_nonzero(content) == 0:
             name = "<unknown>"
             if internal_external_name_map is not None:
-                name_key = [
-                    k for k in internal_external_name_map.keys() if k in output.name
-                ]
+                name_key = [k for k in internal_external_name_map if k in output.name]
                 if name_key:
                     name = internal_external_name_map[name_key[0]]
 
             logger.warning(
-                f"""Output file for subject {name} contains only zeros.
-                Potentially the selected algorithm might not work properly with your data unless this behavior is correct for your use case.
-                If this seems wrong please try to use one of the other provided algorithms and file an issue on GitHub if the problem persists."""
+                f"Output file for subject {name} contains only zeros.\n"
+                f"Potentially the selected algorithm might not work "
+                f"properly with your data unless this behavior is correct "
+                f"for your use case.\n"
+                "If this seems wrong please try to use one of the other "
+                "provided algorithms and file an issue on GitHub if the "
+                "problem persists."
             )
 
 
-def _log_algorithm_info(algorithm: AlgorithmData):
+def _log_algorithm_info(algorithm: AlgorithmData) -> None:
     """Log information about the algorithm and citation reminder.
 
     Args:
@@ -354,7 +373,8 @@ def _log_algorithm_info(algorithm: AlgorithmData):
     console = Console()
     console.rule("[bold red]Citation Reminder[/bold red]")
     console.print(
-        "Please support our development by citing the relevant manuscripts for the used algorithm:\n"
+        "Please support our development by citing the relevant "
+        "manuscripts for the used algorithm:\n"
     )
     table = Table(
         show_header=False,
@@ -371,13 +391,14 @@ def _log_algorithm_info(algorithm: AlgorithmData):
     )
     table.add_row(f"Algorithm ({algorithm.meta.authors})", algorithm.meta.paper)
     if algorithm.meta.dataset_manuscript:
-        table.add_row(f"Dataset", algorithm.meta.dataset_manuscript)
+        table.add_row("Dataset", algorithm.meta.dataset_manuscript)
 
     console.print(table)
     console.rule()
 
     logger.opt(colors=True).info(
-        f"Running algorithm: <light-green> BraTS {algorithm.meta.year} {algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
+        f"Running algorithm: <light-green> BraTS {algorithm.meta.year} "
+        f"{algorithm.meta.challenge} [{algorithm.meta.rank} place]</>"
     )
     logger.debug(f"Docker image: {algorithm.run_args.docker_image}")
 
@@ -388,8 +409,8 @@ def run_container(
     output_path: Path,
     cuda_devices: str,
     force_cpu: bool,
-    internal_external_name_map: Optional[Dict[str, str]] = None,
-):
+    internal_external_name_map: Optional[dict[str, str]] = None,
+) -> None:
     """Run a docker container for the provided algorithm.
 
     Args:
@@ -398,7 +419,9 @@ def run_container(
         output_path (Path | str): The path to save the output
         cuda_devices (str): The CUDA devices to use
         force_cpu (bool): Whether to force CPU execution
-        internal_external_name_map (Dict[str, str]): Dictionary mapping internal name (in standardized format) to external subject name provided by user (only used for batch inference)
+        internal_external_name_map (Dict[str, str]): Dictionary mapping
+            internal name (in standardized format) to external subject name
+            provided by user (only used for batch inference)
     """
     _log_algorithm_info(algorithm=algorithm)
 
@@ -419,11 +442,12 @@ def run_container(
     logger.debug(f"GPU Device requests: {device_requests}")
 
     user = _get_container_user(algorithm=algorithm)
-    logger.debug(f"Container user: {user if user else 'root (required by algorithm)'}")
+    logger.debug(f"Container user: {user or 'root (required by algorithm)'}")
 
     logger.info(f"{'Starting inference'}")
     start_time = time.time()
 
+    volume_mappings: dict[Any, dict[str, str]]
     if algorithm.meta.year <= 2024:
         volume_mappings = _get_volume_mappings_mlcube(
             data_path=data_path,
