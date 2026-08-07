@@ -1,6 +1,7 @@
 import shutil
 import tempfile
 import unittest
+from contextlib import suppress
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -81,9 +82,8 @@ class TestDataHandlingUtils(unittest.TestCase):
     def test_inference_setup_error_preserves_temp_log(self):
         with patch.object(tempfile, "tempdir", str(self.test_dir)):
             before = list(self.test_dir.glob("brats_*.log"))
-            with self.assertRaises(RuntimeError):
-                with InferenceSetup():
-                    raise RuntimeError("test error")
+            with self.assertRaises(RuntimeError), InferenceSetup():
+                raise RuntimeError("test error")
             after = list(self.test_dir.glob("brats_*.log"))
             self.assertEqual(len(after), len(before) + 1)
             # Clean up the preserved log
@@ -93,10 +93,10 @@ class TestDataHandlingUtils(unittest.TestCase):
 
     def test_inference_setup_with_log_file_on_error(self):
         tmp_log_file = self.test_dir / "error.log"
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(RuntimeError):  # noqa: SIM117
             with InferenceSetup(log_file=tmp_log_file) as (
-                tmp_data_folder,
-                tmp_output_folder,
+                _tmp_data_folder,
+                _tmp_output_folder,
             ):
                 raise RuntimeError("test error")
         self.assertTrue(tmp_log_file.exists())
@@ -114,10 +114,8 @@ class TestDataHandlingUtils(unittest.TestCase):
         # Create a folder and then set it to read-only to simulate a permission error
         temp_folder = Path(tempfile.mkdtemp())
         temp_folder.chmod(0o444)  # Read-only permissions
-        try:
+        with suppress(PermissionError):
             remove_tmp_folder(temp_folder)
-        except PermissionError:
-            pass  # We expect this exception as we are simulating it
         self.assertFalse(temp_folder.exists())  # Folder should still be removed
 
     def test_remove_tmp_folder_file_not_found(self):

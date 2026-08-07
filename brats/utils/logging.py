@@ -1,5 +1,6 @@
 import sys
 import threading
+from contextlib import suppress
 from typing import Optional, Union
 
 from loguru import logger
@@ -9,7 +10,7 @@ _console_handler_id: Optional[int] = None
 _console_handler_lock = threading.Lock()
 
 
-def _reset_logging_state_for_tests():
+def _reset_logging_state_for_tests() -> None:
     """
     Reset internal logging state. Only intended for use in tests.
     """
@@ -18,7 +19,7 @@ def _reset_logging_state_for_tests():
     _console_handler_id = None
 
 
-def disable():
+def disable() -> None:
     """
     Disable the logging for the brats package.
     """
@@ -26,7 +27,7 @@ def disable():
     logger.disable("brats")
 
 
-def enable():
+def enable() -> None:
     """
     Enable the logging for the brats package.
     """
@@ -34,7 +35,7 @@ def enable():
     logger.enable("brats")
 
 
-def add_console_handler(level: Union[str, int] = "WARNING"):
+def add_console_handler(level: Union[str, int] = "WARNING") -> None:
     """
     Add a console handler to the logger for the brats package.
 
@@ -49,15 +50,12 @@ def add_console_handler(level: Union[str, int] = "WARNING"):
         if _console_handler_id is None:
             _console_handler_id = logger.add(sys.stderr, level=level)
         else:
-            try:
+            with suppress(ValueError):
                 logger.remove(_console_handler_id)
-            except ValueError:
-                # If the handler was already removed or doesn't exist, we can safely ignore this.
-                pass
             _console_handler_id = logger.add(sys.stderr, level=level)
 
 
-def remove_console_handler():
+def remove_console_handler() -> None:
     """
     Remove the console handler if it was added.
     """
@@ -65,9 +63,6 @@ def remove_console_handler():
 
     with _console_handler_lock:
         if _console_handler_id is not None:
-            try:
+            with suppress(ValueError):
                 logger.remove(_console_handler_id)
-            except ValueError:
-                # If the handler was already removed or doesn't exist, we can safely ignore this.
-                pass
             _console_handler_id = None

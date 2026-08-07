@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import shutil
 from abc import abstractmethod
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Dict, List, Mapping, Optional, Union
+from typing import Optional, Union
 
 from loguru import logger
 
@@ -20,20 +21,22 @@ from brats.constants import (
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
     Algorithms,
+    Backends,
     GoATAlgorithms,
     MeningiomaAlgorithms,
     MeningiomaRTAlgorithms,
     MetastasesAlgorithms,
     PediatricAlgorithms,
     Task,
-    Backends,
 )
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):
-    """This class provides algorithms to perform tumor segmentation on MRI data. It is the base class for all segmentation algorithms and provides the common interface for single and batch inference."""
+    """This class provides algorithms to perform tumor segmentation on MRI data. It is
+    the base class for all segmentation algorithms and provides the common interface
+    for single and batch inference."""
 
     def __init__(
         self,
@@ -57,7 +60,8 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         inputs: Mapping[str, Path | str],
         subject_modality_separator: str,
     ) -> None:
-        """Standardize the input images for a single subject to match requirements of all algorithms and save them in @data_folder/@subject_id.
+        """Standardize the input images for a single subject to match requirements
+        of all algorithms and save them in @data_folder/@subject_id.
         Example:
             Meaning, e.g. for adult glioma:
                 BraTS-GLI-00000-000 \n
@@ -67,15 +71,19 @@ class SegmentationAlgorithm(BraTSAlgorithm):
                 ┗ BraTS-GLI-00000-000-t2w.nii.gz \n
 
         Args:
-            data_folder (Path): Parent folder where the subject folder will be created
-            subject_id (str): Subject ID to be used for the folder and filenames
+            data_folder (Path): Parent folder where the subject folder will
+                be created
+            subject_id (str): Subject ID to be used for the folder and
+                filenames
             inputs (Dict[str, Path | str]): Dictionary with the input images
-            subject_modality_separator (str): Separator between the subject ID and the modality
+            subject_modality_separator (str): Separator between the subject
+                ID and the modality
         """
 
         subject_folder = data_folder / subject_id
         subject_folder.mkdir(parents=True, exist_ok=True)
-        # TODO: investigate usage of symlinks (might cause issues on windows and would probably require different volume handling)
+        # TODO: investigate usage of symlinks (might cause issues on windows
+        # and would probably require different volume handling)
         try:
             for modality, path in inputs.items():
                 shutil.copy(
@@ -86,7 +94,10 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         except FileNotFoundError as e:
             logger.error(f"Error while standardizing files: {e}")
             logger.error(
-                "If you use batch processing please ensure the input files are in the correct format, i.e.:\n A/A-t1c.nii.gz, A/A-t1n.nii.gz, A/A-t2f.nii.gz, A/A-t2w.nii.gz"
+                "If you use batch processing please ensure the input files "
+                "are in the correct format, i.e.:\n "
+                "A/A-t1c.nii.gz, A/A-t1n.nii.gz, "
+                "A/A-t2f.nii.gz, A/A-t2w.nii.gz"
             )
             raise
 
@@ -101,20 +112,26 @@ class SegmentationAlgorithm(BraTSAlgorithm):
     def _standardize_batch_inputs(
         self,
         data_folder: Path,
-        subjects: List[Path],
+        subjects: list[Path],
         input_name_schema: str,
         only_t1c: bool = False,
-    ) -> Dict[str, str]:
-        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+    ) -> dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements
+        of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
-            subjects (List[Path]): List of subject folders, each with a t1c, t1n, t2f, t2w image in standard format
-            data_folder (Path): Parent folder where the subject folders will be created
-            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
-            only_t1c (bool, optional): If True, only the t1c image will be used. Defaults to False.
+            subjects (List[Path]): List of subject folders, each with a t1c,
+                t1n, t2f, t2w image in standard format
+            data_folder (Path): Parent folder where the subject folders will
+                be created
+            input_name_schema (str): Schema to be used for the subject folder
+                and filenames depending on the BraTS Challenge
+            only_t1c (bool, optional): If True, only the t1c image will be
+                used. Defaults to False.
 
         Returns:
-            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+            Dict[str, str]: Dictionary mapping internal name (in standardized
+                format) to external subject name provided by user
         """
         internal_external_name_map = {}
         for i, subject in enumerate(subjects):
@@ -140,8 +157,8 @@ class SegmentationAlgorithm(BraTSAlgorithm):
     @abstractmethod
     def infer_single(
         self,
-        *args,
-        **kwargs,
+        *args: object,
+        **kwargs: object,
     ) -> None:
         pass
 
@@ -168,7 +185,8 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         log_file: Optional[Path | str] = None,
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
-        """Perform segmentation on a single subject with the provided images and save the result to the output file.
+        """Perform segmentation on a single subject with the provided images and save
+        the result to the output file.
 
         Args:
             t1c (Path | str): Path to the T1c image
@@ -194,7 +212,8 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
         log_file: Path | str | None = None,
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
-        """Perform segmentation on a batch of subjects with the provided images and save the results to the output folder. \n
+        """Perform segmentation on a batch of subjects with the provided images
+        and save the results to the output folder. \n
         Requires the following structure:\n
         data_folder\n
         ┣ A\n
@@ -223,12 +242,18 @@ class SegmentationAlgorithmWith4Modalities(SegmentationAlgorithm):
 
 
 class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
-    """Provides algorithms to perform tumor segmentation on adult glioma pre treatment MRI data.
+    """Provides algorithms to perform tumor segmentation on adult glioma pre
+    treatment MRI data.
 
     Args:
-        algorithm (AdultGliomaPreTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreTreatmentAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (AdultGliomaPreTreatmentAlgorithms, optional): Select an
+            algorithm. Defaults to
+            AdultGliomaPreTreatmentAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -246,17 +271,25 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
 
 
 class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
-    """Provides algorithms to perform tumor segmentation on adult glioma pre and post treatment MRI data.
+    """Provides algorithms to perform tumor segmentation on adult glioma pre
+    and post treatment MRI data.
 
     Args:
-        algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional): Select an algorithm. Defaults to AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional):
+            Select an algorithm. Defaults to
+            AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
         self,
-        algorithm: AdultGliomaPreAndPostTreatmentAlgorithms = AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1,
+        algorithm: AdultGliomaPreAndPostTreatmentAlgorithms = (
+            AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1
+        ),
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
@@ -269,12 +302,17 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
 
 
 class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):
-    """Provides algorithms to perform tumor segmentation on adult meningioma MRI data.
+    """Provides algorithms to perform tumor segmentation on adult meningioma
+    MRI data.
 
     Args:
-        algorithm (MeningiomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (MeningiomaAlgorithms, optional): Select an algorithm.
+            Defaults to MeningiomaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -295,9 +333,13 @@ class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms to perform tumor segmentation on pediatric MRI data
 
     Args:
-        algorithm (PediatricAlgorithms, optional): Select an algorithm. Defaults to PediatricAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (PediatricAlgorithms, optional): Select an algorithm.
+            Defaults to PediatricAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -318,9 +360,13 @@ class AfricaSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms from the BraTSAfrica challenge
 
     Args:
-        algorithm (AfricaAlgorithms, optional): Select an algorithm. Defaults to AfricaAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (AfricaAlgorithms, optional): Select an algorithm.
+            Defaults to AfricaAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -341,9 +387,13 @@ class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
     """Provides algorithms from the Brain Metastases Segmentation challenge
 
     Args:
-        algorithm (MetastasesAlgorithms, optional): Select an algorithm. Defaults to MetastasesAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (MetastasesAlgorithms, optional): Select an algorithm.
+            Defaults to MetastasesAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -361,12 +411,17 @@ class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
 
 
 class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
-    """Provides algorithms from the BraTS Generalizability Across Tumors (BraTS-GoAT)
+    """Provides algorithms from the BraTS Generalizability Across Tumors
+    (BraTS-GoAT)
 
     Args:
-        algorithm (GoATAlgorithms, optional): Select an algorithm. Defaults to GoATAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (GoATAlgorithms, optional): Select an algorithm.
+            Defaults to GoATAlgorithms.BraTS23_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -387,12 +442,17 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
 
 
 class MeningiomaRTSegmenter(SegmentationAlgorithm):
-    """Provides algorithms to perform tumor segmentation on adult meningioma Radio Therapy MRI data.
+    """Provides algorithms to perform tumor segmentation on adult meningioma
+    Radio Therapy MRI data.
 
     Args:
-        algorithm (MeningiomaAlgorithms, optional): Select an algorithm. Defaults to MeningiomaAlgorithms.BraTS23_1.
-        cuda_devices (Optional[str], optional): Which cuda devices to use. Defaults to "0".
-        force_cpu (bool, optional): Execution will default to GPU, this flag allows forced CPU execution if the algorithm is compatible. Defaults to False.
+        algorithm (MeningiomaRTAlgorithms, optional): Select an algorithm.
+            Defaults to MeningiomaRTAlgorithms.BraTS25_1.
+        cuda_devices (Optional[str], optional): Which cuda devices to use.
+            Defaults to "0".
+        force_cpu (bool, optional): Execution will default to GPU, this flag
+            allows forced CPU execution if the algorithm is compatible.
+            Defaults to False.
     """
 
     def __init__(
@@ -411,19 +471,24 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
     def _standardize_batch_inputs(
         self,
         data_folder: Path,
-        subjects: List[Path],
+        subjects: list[Path],
         input_name_schema: str,
         only_t1c: bool = False,
-    ) -> Dict[str, str]:
-        """Standardize the input images for a list of subjects to match requirements of all algorithms and save them in @tmp_data_folder/@subject_id.
+    ) -> dict[str, str]:
+        """Standardize the input images for a list of subjects to match requirements
+        of all algorithms and save them in @tmp_data_folder/@subject_id.
 
         Args:
-            subjects (List[Path]): List of subject folders, each with a t1c image in standard format
-            data_folder (Path): Parent folder where the subject folders will be created
-            input_name_schema (str): Schema to be used for the subject folder and filenames depending on the BraTS Challenge
+            subjects (List[Path]): List of subject folders, each with a t1c
+                image in standard format
+            data_folder (Path): Parent folder where the subject folders will
+                be created
+            input_name_schema (str): Schema to be used for the subject folder
+                and filenames depending on the BraTS Challenge
 
         Returns:
-            Dict[str, str]: Dictionary mapping internal name (in standardized format) to external subject name provided by user
+            Dict[str, str]: Dictionary mapping internal name (in standardized
+                format) to external subject name provided by user
         """
         return super()._standardize_batch_inputs(
             data_folder=data_folder,
@@ -440,7 +505,8 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """
-        Perform segmentation on a single subject with the provided T1C image and save the result to the output file.
+        Perform segmentation on a single subject with the provided T1C image
+        and save the result to the output file.
 
         Args:
             t1c (Path | str): Path to the T1c image
@@ -464,7 +530,8 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
         backend: Optional[Backends] = Backends.DOCKER,
     ) -> None:
         """
-        Perform segmentation on a batch of subjects with the provided T1C images and save the results to the output folder. \n
+        Perform segmentation on a batch of subjects with the provided T1C
+        images and save the results to the output folder. \n
 
 
         Requires the following structure:\n

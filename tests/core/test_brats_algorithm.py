@@ -1,8 +1,8 @@
-import unittest
-from unittest.mock import MagicMock, patch
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
 from brats.constants import OUTPUT_NAME_SCHEMA
@@ -31,7 +31,9 @@ class TestBraTSAlgorithm(unittest.TestCase):
         for file in self.input_files.values():
             file.touch()
 
-        # the core inference method is the same for all segmentation and inpainting algorithms, we use AdultGliomaSegmenter as an example during testing
+        # the core inference method is the same for all segmentation and
+        # inpainting algorithms, we use AdultGliomaSegmenter as an example
+        # during testing
         self.segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 
     def tearDown(self):

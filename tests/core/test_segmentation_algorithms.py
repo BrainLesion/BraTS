@@ -11,9 +11,9 @@ from brats import (
     AdultGliomaPreTreatmentSegmenter,
     AfricaSegmenter,
     GoATSegmenter,
+    MeningiomaRTSegmenter,
     MeningiomaSegmenter,
     MetastasesSegmenter,
-    MeningiomaRTSegmenter,
     PediatricSegmenter,
 )
 from brats.constants import (
@@ -54,7 +54,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         # Remove the temporary directory after the test
         shutil.rmtree(self.test_dir)
 
-    ### Standardization tests
+    # Standardization tests
 
     @patch("brats.core.segmentation_algorithms.input_sanity_check")
     def test_successful_single_standardization(self, mock_input_sanity_check):
@@ -118,7 +118,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         )
         mock_standardize_single_inputs.assert_called_once()
 
-    ### Initialization tests
+    # Initialization tests
 
     def test_adult_glioma_pre_op_segmenter_initialization(self):
         # Test default initialization
@@ -205,7 +205,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         )
         self.assertIsInstance(custom_segmenter, GoATSegmenter)
 
-    ## Test MeningiomaSegmenter specialty
+    # Test MeningiomaSegmenter specialty
 
     @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
     def test_meningioma_segmenter_infer_single_valid(self, mock_infer_single):
@@ -242,7 +242,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
         self.assertEqual(mock_standardize_single_inputs.call_count, 1)
         # assert algorithms was called with just t1c
-        args, kwargs = mock_standardize_single_inputs.call_args
+        _args, kwargs = mock_standardize_single_inputs.call_args
         input_keys = list(kwargs["inputs"].keys())
         self.assertEqual(input_keys, ["t1c"])
 
@@ -270,7 +270,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
         self.assertEqual(mock_standardize_single_inputs.call_count, 1)
         # assert algorithms was called with all modalities
-        args, kwargs = mock_standardize_single_inputs.call_args
+        _args, kwargs = mock_standardize_single_inputs.call_args
         input_keys = list(kwargs["inputs"].keys())
         self.assertEqual(input_keys, ["t1c", "t1n", "t2f", "t2w"])
 
