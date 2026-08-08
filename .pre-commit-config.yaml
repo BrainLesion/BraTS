@@ -8,9 +8,9 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.16.2
     hooks:
-      - id: ruff-format
       - id: ruff
         args: [--fix]
+      - id: ruff-format
   # Fallback to Black if needed (ruff-format is 99.9% Black-compatible):
   # - repo: https://github.com/psf/black
   #   rev: 24.8.0

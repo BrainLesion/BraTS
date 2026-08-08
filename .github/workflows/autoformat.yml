@@ -14,11 +14,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
-      - uses: astral-sh/ruff-action@v3
+      - uses: astral-sh/ruff-action@278981a28ce3188b1e39527901f38254bf3aac89
+        with:
+          version: "0.16.2"
+          args: "--version"
       - name: Format with ruff
         run: |
-          ruff format .
           ruff check --fix .
+          ruff format .
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
