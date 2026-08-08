@@ -11,6 +11,9 @@ version-file = "brats/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["brats"]
 
+[tool.hatch.build.targets.sdist]
+exclude = ["tests", "docs", "figures", ".github"]
+
 [project]
 dynamic = ["version"]
 requires-python = ">=3.9,<4.0"
