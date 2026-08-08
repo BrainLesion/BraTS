@@ -12,7 +12,6 @@ from brats.utils.data_handling import input_sanity_check
 
 
 class Inpainter(BraTSAlgorithm):
-
     def __init__(
         self,
         algorithm: InpaintingAlgorithms = InpaintingAlgorithms.BraTS23_1,

@@ -81,7 +81,7 @@ algorithms:
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
-      year: *year_2024  
+      year: *year_2024
     run_args:
       docker_image: brainles/brats24_inpainting_faking_it:latest
       input_name_schema: *input_name_schema
@@ -105,7 +105,7 @@ algorithms:
     additional_files:
       record_id: "14231079"
       param_path: ["savedmodel395000.pt"]
-      
+
   ######## 2023 Algorithms ########
 
   BraTS23_1:

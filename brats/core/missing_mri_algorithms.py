@@ -12,7 +12,6 @@ from brats.utils.data_handling import input_sanity_check
 
 
 class MissingMRI(BraTSAlgorithm):
-
     def __init__(
         self,
         algorithm: MissingMRIAlgorithms = MissingMRIAlgorithms.BraTS24_1,
@@ -102,9 +101,9 @@ class MissingMRI(BraTSAlgorithm):
             valid_inputs: dict[str, Path | str] = {
                 k: v for k, v in possible_inputs.items() if v.exists()
             }
-            assert (
-                len(valid_inputs) == 3
-            ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
+            assert len(valid_inputs) == 3, (
+                "Exactly 3 inputs are required to perform synthesis of the missing modality"
+            )
 
             self._standardize_single_inputs(
                 data_folder=data_folder,
@@ -146,9 +145,9 @@ class MissingMRI(BraTSAlgorithm):
         inputs = {k: v for k, v in raw_inputs.items() if v is not None}
 
         # assert exactly 3 inputs are given (to compute the missing one)
-        assert (
-            len(inputs) == 3
-        ), "Exactly 3 inputs are required to perform synthesis of the missing modality"
+        assert len(inputs) == 3, (
+            "Exactly 3 inputs are required to perform synthesis of the missing modality"
+        )
 
         self._infer_single(
             inputs=inputs,

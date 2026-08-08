@@ -34,7 +34,7 @@ Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS
 
 ## Installation
 
-With a Python 3.8+ environment, you can install BraTS orchestrator directly from [PyPI](https://pypi.org/project/brats/):
+With a Python 3.9+ environment, you can install BraTS orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
 # lightweight base package
@@ -43,13 +43,10 @@ pip install brats
 pip install brats[preprocessing]
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > To run BraTS orchestrator, you require a Docker installation. <br>
 > Many algorithms also require GPU support (NVIDIA Docker). <br>
 > In case you do not have access to a CUDA-capable GPU, the overview tables in the [Available Algorithms and Usage](#available-algorithms-and-usage) section indicate which algorithms are CPU compatible.
-
-
-
 
 ### Docker and NVIDIA Container Toolkit Setup
 
@@ -57,14 +54,17 @@ pip install brats[preprocessing]
 - **NVIDIA Container Toolkit**: Refer to the [NVIDIA install guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) and the official [GitHub page](https://github.com/NVIDIA/nvidia-container-toolkit)
 
 ## Singularity Support
-BraTS orchestrator also supports Singularity as an alternative to Docker.  
+
+BraTS orchestrator also supports Singularity as an alternative to Docker.
 To enable Singularity, install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) and specify the backend to use as `Backends.SINGULARITY` when running the inference:
+
 ```python
 from brats.constants import Backends
+
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     output_file="path/to/segmentation.nii.gz",
-    backend=Backends.SINGULARITY
+    backend=Backends.SINGULARITY,
 )
 ```
 
@@ -74,14 +74,15 @@ segmenter.infer_single(
 > BraTS challenge algorithms require preprocessed brain images. See section [Data preprocessing requirements](#data-preprocessing-requirements)
 
 ### Segmentation Challenges
+
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
 > Note: Some legacy segmentation algorithms from BraTS challenges before 2023 are available via [BraTS Toolkit](https://github.com/neuronflow/BraTS-Toolkit).
 <br>
 
-
-#### Adult Glioma Segmentation (Pre & Post-Treatment) 
-> Adult Glioma Segmentation on pre- and post-treatment brain MRI exams.  
+#### Adult Glioma Segmentation (Pre & Post-Treatment)
+>
+> Adult Glioma Segmentation on pre- and post-treatment brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -90,7 +91,9 @@ segmenter.infer_single(
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
 from brats.constants import AdultGliomaPreAndPostTreatmentAlgorithms
 
-segmenter = AdultGliomaPreAndPostTreatmentSegmenter(algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter(
+    algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -100,6 +103,7 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+
 > Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
 <br>
 
@@ -118,14 +122,14 @@ segmenter.infer_single(
 | 2024 | 2nd  | _Heejong Kim, et al._    | [Link](https://arxiv.org/abs/2409.08143) | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_2)         |
 | 2024 | 3rd  | _Adrian Celaya_          | N/A                                      | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.AdultGliomaPostTreatmentAlgorithms.BraTS24_3)         |
 
-
 > Note: The MNI152 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2024 and subsequent BraTS Glioma Post-treatment Segmentation challenges.
 
 </details>
 <br>
 
-#### Adult Glioma Segmentation (Pre-Treatment) 
-> Adult Glioma Segmentation on pre-treatment brain MRI exams.  
+#### Adult Glioma Segmentation (Pre-Treatment)
+>
+> Adult Glioma Segmentation on pre-treatment brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -134,7 +138,9 @@ segmenter.infer_single(
 from brats import AdultGliomaPreTreatmentSegmenter
 from brats.constants import AdultGliomaPreTreatmentAlgorithms
 
-segmenter = AdultGliomaPreTreatmentSegmenter(algorithm=AdultGliomaPreTreatmentAlgorithms.BraTS23_1, cuda_devices="0")
+segmenter = AdultGliomaPreTreatmentSegmenter(
+    algorithm=AdultGliomaPreTreatmentAlgorithms.BraTS23_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -144,6 +150,7 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+
 > Note: If you're interested in Adult Glioma Segmentation, the [BrainLes GlioMODA package](https://github.com/BrainLesion/GlioMODA?tab=readme-ov-file#gliomoda) may also be of interest.
 <br>
 
@@ -163,9 +170,9 @@ segmenter.infer_single(
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in the 2023 and prior BraTS Glioma Pre-Treatment Segmentation challenges.
 <br>
 
-
 #### BraTS-Africa Segmentation
-> Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.  
+>
+> Adult Glioma Segmentation on brain MRI exams in Sub-Sahara-Africa patient population.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -211,6 +218,7 @@ segmenter.infer_single(
 <br>
 
 #### Meningioma Segmentation
+>
 > Segmentation of Meningioma on brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
@@ -221,7 +229,9 @@ from brats import MeningiomaSegmenter
 from brats.constants import MeningiomaAlgorithms
 
 ### Example for 2023 algorithms
-segmenter = MeningiomaSegmenter(algorithm=MeningiomaAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MeningiomaSegmenter(
+    algorithm=MeningiomaAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -249,17 +259,19 @@ segmenter.infer_single(
 <br>
 
 #### Meningioma Radio Therapy Segmentation
+>
 > Segmentation of Meningioma on T1C brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
 
-
 ```python
 from brats import MeningiomaRTSegmenter
 from brats.constants import MeningiomaRTAlgorithms
 
-segmenter = MeningiomaRTSegmenter(algorithm=MeningiomaRTAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MeningiomaRTSegmenter(
+    algorithm=MeningiomaRTAlgorithms.BraTS25_1, cuda_devices="0"
+)
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     output_file="segmentation_24.nii.gz",
@@ -280,7 +292,6 @@ segmenter.infer_single(
 | 2024 | 2nd  | _Mehdi Astaraki_               | N/A                                         | &#x274C;    | [BraTS24_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_2)   |
 | 2024 | 3rd  | _Andre Ferreira, et al._       | [Link](https://arxiv.org/html/2411.04632v1) | &#x2705;    | [BraTS24_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MeningiomaAlgorithms.BraTS24_3)   |
 
-
 </details>
 
 > Note: The MRI dataset in the Meningioma-Radiotherapy challenge was provided in native space. However,
@@ -288,7 +299,8 @@ the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was
 <br>
 
 #### Brain Metastases Segmentation
-> Segmentation on brain metastases on MRI exams for pre- and post-treatment cases. 
+>
+> Segmentation on brain metastases on MRI exams for pre- and post-treatment cases.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -297,7 +309,9 @@ the SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was
 from brats import MetastasesSegmenter
 from brats.constants import MetastasesAlgorithms
 
-segmenter = MetastasesSegmenter(algorithm=MetastasesAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = MetastasesSegmenter(
+    algorithm=MetastasesAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -306,8 +320,8 @@ segmenter.infer_single(
     t2w="path/to/t2w.nii.gz",
     output_file="segmentation.nii.gz",
 )
-
 ```
+
 > Note: If you're interested in Brain Metastases Segmentation, the [BrainLes AURORA package](https://github.com/BrainLesion/AURORA#aurora) may also be of interest.
 <br>
 
@@ -315,6 +329,7 @@ segmenter.infer_single(
 <br>
 **Challenge Paper 2023** [Link](https://doi.org/10.48550/arXiv.2306.00838)
 <br>
+
 | Year | Rank | Author                     | Paper                                                | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | -------------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Maria Bancerek, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MetastasesAlgorithms.BraTS25_1) |
@@ -329,7 +344,8 @@ segmenter.infer_single(
 <br>
 
 #### Pediatric Segmentation
-> Segmentation of pediatric brain tumors on MRI exams. 
+>
+> Segmentation of pediatric brain tumors on MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -338,7 +354,9 @@ segmenter.infer_single(
 from brats import PediatricSegmenter
 from brats.constants import PediatricAlgorithms
 
-segmenter = PediatricSegmenter(algorithm=PediatricAlgorithms.BraTS25_1, cuda_devices="0")
+segmenter = PediatricSegmenter(
+    algorithm=PediatricAlgorithms.BraTS25_1, cuda_devices="0"
+)
 # these parameters are optional, by default the latest winning algorithm will be used on cuda:0
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
@@ -348,6 +366,7 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
+
 > Note: If you're interested in Pediatric Segmentation, the [BrainLes PeTu package](https://github.com/BrainLesion/PeTu?tab=readme-ov-file#petu) may also be of interest.
 
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
@@ -371,14 +390,14 @@ segmenter.infer_single(
 | 2023 | 2nd  | _Andriy Myronenko, et al._       | [Link](https://arxiv.org/abs/2510.25058)                   | &#x274C;    | [BraTS23_2](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_2) |
 | 2023 | 3rd  | _Yubo Zhou_                      | [Link](https://doi.org/10.1007/978-3-031-76163-8_5)        | &#x274C;    | [BraTS23_3](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.PediatricAlgorithms.BraTS23_3) |
 
-
 </details>
 
 > Note: The SRI24 atlas, available on [Zenodo](https://zenodo.org/records/15927391), was employed for registration in BraTS Pediatric Tumor Segmentation challenges.
 <br>
 
-#### Generalizability Across Tumors (BraTS-GoAT) Segmentation 
-> Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions. 
+#### Generalizability Across Tumors (BraTS-GoAT) Segmentation
+>
+> Segmentation algorithm, adapting and generalizing to different brain tumors with segmentation labels of different tumor sub-regions.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -401,7 +420,7 @@ segmenter.infer_single(
 **Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
 <br>
 **Challenge Paper 2024:** N/A
-<br> 
+<br>
 
 | Year | Rank | Author                      | Paper | CPU Support | Key Enum                                                                                                        |
 | ---- | ---- | --------------------------- | ----- | ----------- | --------------------------------------------------------------------------------------------------------------- |
@@ -416,15 +435,14 @@ segmenter.infer_single(
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
 
-### Inpainting Challenge 
+### Inpainting Challenge
+
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/inpainting_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
-
-> Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.  
+> Algorithm to realistically synthesize and fill 3D healthy brain tissue in a region affected by glioma in brain MRI exams.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
-
 
 ```python
 from brats import Inpainter
@@ -442,6 +460,7 @@ inpainter.infer_single(
 <br>
 **Challenge Paper 2023 and 2024** [Link](https://arxiv.org/pdf/2305.08992)
 <br>
+
 | Year | Rank | Author                   | Paper                                                | CPU Support | Key Enum                                                                                                              |
 | ---- | ---- | ------------------------ | ---------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _Juexin Zhang, et al._   | N/A                                                  | &#x274C;    | [BraTS25_1A](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.InpaintingAlgorithms.BraTS25_1A) |
@@ -459,12 +478,11 @@ inpainter.infer_single(
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
 
-
 ### Missing MRI Challenge
+
 <img src="https://github.com/BrainLesion/brats/blob/main/figures/missingmri_fig.png?raw=true" alt="matched_instance_figure" height="250"/>
 
-
-> Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.  
+> Algorithm to realistically synthesize missing MRI modalities from available sequences to enhance brain tumor segmentation.
 <details>
 <summary> Usage example (code) and top 3 participants </summary>
 <br>
@@ -489,6 +507,7 @@ missing_mri.infer_single(
 **Challenge Paper 2024:** N/A
 <br>
 <br>
+
 | Year | Rank | Author                                      | Paper                                             | CPU Support | Key Enum                                                                                                            |
 | ---- | ---- | ------------------------------------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | 2025 | 1st  | _André Ferreira, et al._                    | N/A                                               | &#x274C;    | [BraTS25_1](https://brats.readthedocs.io/en/latest/utils/utils.html#brats.constants.MissingMRIAlgorithms.BraTS25_1) |
@@ -504,27 +523,26 @@ missing_mri.infer_single(
 > Note: The datasets used in this challenge were adapted from other segmentation challenges, so the atlas type depends on the original dataset.
 <br>
 
---- 
+---
 
 > [!TIP]
-> For a full notebook example with more details, please check here:  
+> For a full notebook example with more details, please check here:
 > [![nbviewer](https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg)](https://nbviewer.org/github/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)
 
-
 ## Data Preprocessing Requirements
-BraTS challenge algorithms require preprocessed brain scans.  
-This preprocessing typically includes co-registration, brain extraction, and registration to a challenge-specific brain atlas (template).  
-Please refer to each challenge’s documentation for details on which template to use.  
 
-For convenience, we provide challenge-specific wrappers around our [preprocessing package](https://github.com/BrainLesion/preprocessing), part of the [BrainLesion Suite](https://github.com/BrainLesion).  
-You can install the package with the preprocessing extra using:  
+BraTS challenge algorithms require preprocessed brain scans.
+This preprocessing typically includes co-registration, brain extraction, and registration to a challenge-specific brain atlas (template).
+Please refer to each challenge’s documentation for details on which template to use.
 
+For convenience, we provide challenge-specific wrappers around our [preprocessing package](https://github.com/BrainLesion/preprocessing), part of the [BrainLesion Suite](https://github.com/BrainLesion).
+You can install the package with the preprocessing extra using:
 
 ```bash
 pip install brats[preprocessing]
 ```
 
-The modular architecture of the `BraTS Orchestrator` facilitates employing your own preprocessing routines.  
+The modular architecture of the `BraTS Orchestrator` facilitates employing your own preprocessing routines.
 Alternatively, the [preprocessing package](https://github.com/BrainLesion/preprocessing) can be used independently to design custom preprocessing pipelines tailored to your specific needs.
 
 ## Citation
@@ -534,16 +552,15 @@ Alternatively, the [preprocessing package](https://github.com/BrainLesion/prepro
 
 Kofler, F., Rosier, M., Astaraki, M., Baid, U., Möller, H., Buchner, J. A., Steinbauer, F., Oswald, E., Rosa, E. de la, Ezhov, I., See, C. von, Kirschke, J., Schmick, A., Pati, S., Linardos, A., Pitarch, C., Adap, S., Rudie, J., Verdier, M. C. de, … Menze, B. (2025). BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis [arXiv preprint arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
 
-
 ```
 @misc{kofler2025bratsorchestratordemocratizing,
-      title={BraTS orchestrator : Democratizing and Disseminating state-of-the-art brain tumor image analysis}, 
+      title={BraTS orchestrator : Democratizing and Disseminating state-of-the-art brain tumor image analysis},
       author={Florian Kofler and Marcel Rosier and Mehdi Astaraki and Ujjwal Baid and Hendrik Möller and Josef A. Buchner and Felix Steinbauer and Eva Oswald and Ezequiel de la Rosa and Ivan Ezhov and Constantin von See and Jan Kirschke and Anton Schmick and Sarthak Pati and Akis Linardos and Carla Pitarch and Sanyukta Adap and Jeffrey Rudie and Maria Correia de Verdier and Rachit Saluja and Evan Calabrese and Dominic LaBella and Mariam Aboian and Ahmed W. Moawad and Nazanin Maleki and Udunna Anazodo and Maruf Adewole and Marius George Linguraru and Anahita Fathi Kazerooni and Zhifan Jiang and Gian Marco Conte and Hongwei Li and Juan Eugenio Iglesias and Spyridon Bakas and Benedikt Wiestler and Marie Piraud and Bjoern Menze},
       year={2025},
       eprint={2506.13807},
       archivePrefix={arXiv},
       primaryClass={eess.IV},
-      url={https://arxiv.org/abs/2506.13807}, 
+      url={https://arxiv.org/abs/2506.13807},
 }
 ```
 

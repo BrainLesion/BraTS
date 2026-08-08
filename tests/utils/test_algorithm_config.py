@@ -12,7 +12,6 @@ def configs():
 
 
 def test_configs_valid(configs):
-
     for config in configs:
         try:
             load_algorithms(file_path=config)
@@ -21,7 +20,6 @@ def test_configs_valid(configs):
 
 
 def test_integrity_rank(configs):
-
     ordinal_map = {
         "1": "1st",
         "2": "2nd",
@@ -31,13 +29,12 @@ def test_integrity_rank(configs):
         algorithms = load_algorithms(file_path=config)
         for alg_key, alg_data in algorithms.items():
             name_rank = alg_key.split("_")[-1][0]
-            assert (
-                alg_data.meta.rank == ordinal_map[name_rank]
-            ), f"Rank mismatch for {alg_key} in {config}"
+            assert alg_data.meta.rank == ordinal_map[name_rank], (
+                f"Rank mismatch for {alg_key} in {config}"
+            )
 
 
 def test_integrity_year(configs):
-
     for config in configs:
         algorithms = load_algorithms(file_path=config)
         for alg_key, alg_data in algorithms.items():

@@ -15,7 +15,6 @@ from brats.utils.algorithm_config import AlgorithmData
 
 
 class TestSingularityHelpers(unittest.TestCase):
-
     def setUp(self):
         # Create a temporary directory for testing
         self.test_dir = Path(tempfile.mkdtemp())

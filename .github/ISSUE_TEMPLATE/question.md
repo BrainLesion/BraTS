@@ -8,6 +8,6 @@ assignees: ''
 ---
 
 # Your question
-Have you already checked out our [tutorial](https://github.com/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)? 
+Have you already checked out our [tutorial](https://github.com/BrainLesion/tutorials/blob/main/BraTS/tutorial.ipynb)?
 
 If you didn't find the answer, we are here to help :)

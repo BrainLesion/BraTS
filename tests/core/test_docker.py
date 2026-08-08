@@ -33,7 +33,6 @@ from brats.utils.exceptions import (
 
 
 class TestDockerHelpers(unittest.TestCase):
-
     def setUp(self):
         # Create a temporary directory for testing
         self.test_dir = Path(tempfile.mkdtemp())
@@ -480,7 +479,6 @@ class TestDockerHelpers(unittest.TestCase):
         mock_ensure_image,
         mock_log_algorithm_info,
     ):
-
         # setup mocks
         mock_build_command_args.return_value = "args"
 
