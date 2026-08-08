@@ -59,10 +59,10 @@ dev = [
   "pre-commit>=3.8.0",
 ]
 docs = [
-  "Sphinx>=7.0.0",
-  "sphinx-copybutton>=0.5.2",
-  "furo>=2024.8.6",
-  "myst-parser>=2.0.0",
+  "mkdocs-material>=9.5",
+  "mkdocstrings[python]>=0.25",
+  "mkdocs-jupyter>=0.25",
+  "mkdocs-git-revision-date-localized-plugin>=1.2",
 ]
 
 [tool.pytest.ini_options]
