@@ -1,22 +1,19 @@
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.poetry-dynamic-versioning]
-enable = true
+[tool.hatch.version]
+source = "vcs"
 
-[tool.poetry]
-exclude = [
-  "tests",   # Test files
-  "docs",    # Documentation files
-  "figures", # Figures and images
-  ".github", # GitHub workflows, actions, etc.
-]
-version = "0.0.0.dev"
+[tool.hatch.build.hooks.vcs]
+version-file = "brats/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["brats"]
 
 [project]
 dynamic = ["version"]
-requires-python = ">=3.9"
+requires-python = ">=3.9,<4.0"
 name = "brats"
 description = "BraTS algorithms"
 authors = [
@@ -51,29 +48,22 @@ dependencies = [
 [project.optional-dependencies]
 preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10'"]
 
-[tool.poetry.requires-plugins]
-poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
-
-[tool.poetry.dependencies]
-python = ">=3.9,<4.0"
-
-[tool.poetry.group.dev.dependencies]
-pytest = ">=8.0.0"
-pytest-cov = ">=5.0.0"
-ruff = ">=0.16.2"
-pre-commit = ">=3.8.0"
+[dependency-groups]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-cov>=5.0.0",
+  "ruff>=0.16.2",
+  "pre-commit>=3.8.0",
+]
+docs = [
+  "Sphinx>=7.0.0",
+  "sphinx-copybutton>=0.5.2",
+  "furo>=2024.8.6",
+  "myst-parser>=2.0.0",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-Sphinx = ">=7.0.0"
-sphinx-copybutton = ">=0.5.2"
-furo = ">=2024.8.6"
-myst-parser = ">=2.0.0"
 
 [tool.ruff]
 line-length = 88

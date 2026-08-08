@@ -3,22 +3,22 @@
 
 # Contributing to BraTS
 
-First off, thanks for taking the time to contribute! 🎉
+First off, thanks for taking the time to contribute!
 
 
 ## Contribute Code
 Fork the repository, clone it and implement your contribution.
 
 **Setup:**
-- We use [poetry](https://python-poetry.org/), make sure it is installed: `pip install poetry`
-- Install dependencies by running: `poetry install --with dev`
-- Install pre-commit hooks: `poetry run pre-commit install`
-- (First time only) Run hooks against all files to catch existing issues: `poetry run pre-commit run --all-files`
+- We use [uv](https://docs.astral.sh/uv/), install it via `pip install uv` or `brew install uv`
+- Install dependencies by running: `uv sync`
+- Install pre-commit hooks: `uv run pre-commit install`
+- (First time only) Run hooks against all files to catch existing issues: `uv run pre-commit run --all-files`
 
 **Requirements:**
 - Our project uses [ruff](https://docs.astral.sh/ruff/) for linting and formatting. Pre-commit hooks will auto-format and lint on commit.
 - Please add _meaningful_ docstring for your functions and annotate types
-- Please add _meaningful_ tests for your contribution in `/tests` and make sure _all_ tests are passing by running `poetry run pytest`
+- Please add _meaningful_ tests for your contribution in `/tests` and make sure _all_ tests are passing by running `uv run pytest`
 
 
 
