@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --frozen
       - name: Log python version
         run: uv run python --version
       - name: Test with pytest
