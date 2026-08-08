@@ -417,7 +417,7 @@ segmenter.infer_single(
 )
 ```
 
-**Class:** `brats.PediatricSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.PediatricSegmenter))
+**Class:** `brats.GoATSegmenter` ([Docs](https://brats.readthedocs.io/en/latest/core/segmentation_algorithms.html#brats.core.segmentation_algorithms.GoATSegmenter))
 <br>
 **Challenge Paper 2024:** N/A
 <br>
