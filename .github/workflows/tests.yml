@@ -17,19 +17,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
       - name: Install dependencies
-        run: poetry install --with dev
+        run: uv sync --frozen
       - name: Log python version
-        run: poetry run python --version
+        run: uv run python --version
       - name: Test with pytest
-        run: poetry run pytest --cov=brats --cov-report=xml --cov-report=term
+        run: uv run pytest --cov=brats --cov-report=xml --cov-report=term
       - name: Upload results to Codecov
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: codecov/codecov-action@v5
