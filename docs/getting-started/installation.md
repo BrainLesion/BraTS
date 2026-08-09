@@ -5,13 +5,8 @@
 With a Python 3.9+ environment, you can install BraTS Orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
-# via pip
 pip install brats
 pip install brats[preprocessing]
-
-# or via uv
-uv add brats
-uv add 'brats[preprocessing]'
 ```
 
 !!! important

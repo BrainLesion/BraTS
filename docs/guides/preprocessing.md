@@ -21,7 +21,6 @@ Install the preprocessing extra:
 
 ```bash
 pip install brats[preprocessing]
-# or: uv add 'brats[preprocessing]'
 ```
 
 The `brats.preprocessing` module provides convenience wrappers around the [preprocessing package](https://github.com/BrainLesion/preprocessing):

@@ -2,7 +2,7 @@
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
-[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](http://brats.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](https://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/BrainLesion/BraTS/graph/badge.svg?token=A7FWUKO9Y4)](https://codecov.io/gh/BrainLesion/BraTS)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -30,7 +30,6 @@ BraTS Orchestrator provides the top-performing algorithms from the Brain Tumor S
 
 ```bash
 pip install brats
-# or: uv add brats
 ```
 
 ## Quick Example

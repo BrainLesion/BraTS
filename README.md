@@ -58,13 +58,8 @@ Generate missing MRI sequences.<br>
 ## Installation
 
 ```bash
-# via pip
 pip install brats
 pip install brats[preprocessing]
-
-# or via uv
-uv add brats
-uv add 'brats[preprocessing]'
 ```
 
 > [!IMPORTANT]
