@@ -2,7 +2,7 @@
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
-[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](http://brats.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](https://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/BrainLesion/BraTS/graph/badge.svg?token=A7FWUKO9Y4)](https://codecov.io/gh/BrainLesion/BraTS)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -24,18 +24,51 @@ ______         _____ _____
  \___/|_|  \___|_| |_|\___||___/\__|_|  \__,_|\__\___/|_|
 ```
 
-Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API powered by Docker or Singularity.
+Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API.
+
+## Documentation
+
+<table>
+<tr>
+<td align="center" width="50%">
+<strong>Quickstart</strong><br>
+Get up and running in minutes.<br>
+<a href="https://brats.readthedocs.io/en/latest/getting-started/quickstart/">Go to Quickstart</a>
+</td>
+<td align="center" width="50%">
+<strong>Segmentation</strong><br>
+Adult glioma, meningioma, metastases, and more.<br>
+<a href="https://brats.readthedocs.io/en/latest/guides/segmentation/">Go to Segmentation</a>
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<strong>Inpainting</strong><br>
+Synthesize healthy tissue in tumor regions.<br>
+<a href="https://brats.readthedocs.io/en/latest/guides/inpainting/">Go to Inpainting</a>
+</td>
+<td align="center" width="50%">
+<strong>Missing MRI</strong><br>
+Generate missing MRI sequences.<br>
+<a href="https://brats.readthedocs.io/en/latest/guides/missing-mri/">Go to Missing MRI</a>
+</td>
+</tr>
+</table>
 
 ## Installation
 
 ```bash
+# via pip
 pip install brats
-# with preprocessing support
 pip install brats[preprocessing]
+
+# or via uv
+uv add brats
+uv add 'brats[preprocessing]'
 ```
 
 > [!IMPORTANT]
-> BraTS Orchestrator requires [Docker](https://docs.docker.com/get-docker/) and, for most algorithms, [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit). [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) is also supported.
+> BraTS Orchestrator requires **Docker** or **Singularity** to run algorithm containers. Most algorithms also need GPU support ([NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit)). See the [installation docs](https://brats.readthedocs.io/en/latest/getting-started/installation/) for full setup instructions.
 
 ## Quick Example
 
@@ -51,23 +84,6 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
 )
 ```
-
-## Documentation
-
-- **[Full Documentation](https://brats.readthedocs.io)** — installation, quickstart, guides, and API reference
-- **[Tutorial Notebook](https://brats.readthedocs.io/en/latest/tutorials/tutorial/)** — interactive Jupyter notebook with full examples
-
-## Supported Tasks
-
-BraTS Orchestrator provides access to top-performing algorithms for:
-
-| Task | Description |
-|------|-------------|
-| **Segmentation** | 10 challenges: adult glioma (pre/post), Africa, meningioma, meningioma RT, metastases, pediatric, GoAT |
-| **Inpainting** | Synthesizing healthy brain tissue in tumor-affected regions |
-| **Missing MRI** | Synthesizing missing MRI modalities from available sequences |
-
-See the [documentation](https://brats.readthedocs.io) for usage guides and the full algorithm tables.
 
 ## Citation
 
