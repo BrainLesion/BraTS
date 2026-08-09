@@ -50,7 +50,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10' and python_version < '3.13'"]
+preprocessing = ["brainles_preprocessing>=0.6.13; python_version >= '3.10'"]
 
 [dependency-groups]
 dev = [
