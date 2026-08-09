@@ -1,5 +1,6 @@
 site_name: BraTS Orchestrator
-site_description: Top-performing algorithms from the BraTS challenges through an easy-to-use Python API
+site_description: Top-performing algorithms from the BraTS challenges through an
+  easy-to-use Python API
 site_url: https://brats.readthedocs.io
 repo_url: https://github.com/BrainLesion/brats
 repo_name: BrainLesion/brats
@@ -61,8 +62,8 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: docs/snippets
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji ""
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
   - attr_list
   - md_in_html
   - tables
@@ -75,13 +76,12 @@ nav:
       - Installation: getting-started/installation.md
       - Quickstart: getting-started/quickstart.md
   - Using BraTS:
+      - Preprocessing: guides/preprocessing.md
       - Segmentation: guides/segmentation.md
       - Inpainting: guides/inpainting.md
       - Missing MRI: guides/missing-mri.md
-      - Tutorial: tutorials/tutorial.ipynb
-  - Prerequisites:
-      - Preprocessing: guides/preprocessing.md
       - Docker & Singularity: guides/backends.md
+      - Tutorial: tutorials/tutorial.ipynb
   - Reference:
       - Algorithm Tables: reference/algorithms.md
       - API:

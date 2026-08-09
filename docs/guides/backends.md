@@ -4,7 +4,7 @@ BraTS Orchestrator supports two backends for running algorithm containers.
 
 ## Docker (Default)
 
-Docker is the default backend. No special configuration is needed beyond a working Docker installation.
+Docker is the default backend. No special code configuration is needed — just a working Docker installation.
 
 ```python
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
@@ -19,6 +19,14 @@ segmenter.infer_single(
     output_file="segmentation.nii.gz",
     backend=Backends.DOCKER,  # default
 )
+```
+
+### GPU Acceleration
+
+Most algorithms require GPU acceleration. Ensure the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) is installed, then pass `cuda_devices` to specify which GPU to use:
+
+```python
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter(cuda_devices="0")
 ```
 
 ## Singularity
@@ -38,15 +46,16 @@ segmenter.infer_single(
 )
 ```
 
-## GPU Support
+### GPU Acceleration
 
-Most algorithms require GPU acceleration. Pass `cuda_devices` to specify which GPU to use:
+Singularity uses the `--nv` flag to expose host GPUs — no additional toolkit is needed. However, `cuda_devices` is ignored; `--nv` [exposes all host GPUs](https://docs.sylabs.io/guides/latest/user-guide/gpu.html#multiple-gpus). To limit GPUs:
 
-```python
-segmenter = AdultGliomaPreAndPostTreatmentSegmenter(cuda_devices="0")
+```bash
+export SINGULARITYENV_CUDA_VISIBLE_DEVICES=0
 ```
 
-!!! warning "Singularity GPU selection"
-    The Singularity backend uses the `--nv` flag, which [exposes all host GPUs](https://docs.sylabs.io/guides/latest/user-guide/gpu.html#multiple-gpus) regardless of `cuda_devices`. To limit GPUs with Singularity, set `SINGULARITYENV_CUDA_VISIBLE_DEVICES` before running. See [issue #164](https://github.com/BrainLesion/BraTS/issues/164).
+See [issue #164](https://github.com/BrainLesion/BraTS/issues/164).
+
+---
 
 Check the [algorithm tables](../reference/algorithms.md) to see which algorithms support CPU-only execution.

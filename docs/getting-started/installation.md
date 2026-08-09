@@ -11,7 +11,7 @@ pip install brats[preprocessing]
 
 !!! important
     BraTS Orchestrator requires **Docker** or **Singularity** to run algorithm containers.
-    Most algorithms also need GPU support (NVIDIA Container Toolkit).
+    Most algorithms also need GPU support ([NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)).
     The [algorithm tables](../reference/algorithms.md) indicate which algorithms are CPU compatible.
 
 ## Docker Setup
