@@ -59,6 +59,7 @@ Generate missing MRI sequences.<br>
 
 ```bash
 pip install brats
+# Python >= 3.10 required for preprocessing:
 pip install brats[preprocessing]
 ```
 
@@ -89,7 +90,7 @@ If you use BraTS Orchestrator in your research, please cite:
 ```bibtex
 @misc{kofler2025bratsorchestratordemocratizing,
       title={BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis},
-      author={Florian Kofler and Marcel Rosier et al.},
+      author={Florian Kofler and Marcel Rosier and others},
       year={2025},
       eprint={2506.13807},
       archivePrefix={arXiv},

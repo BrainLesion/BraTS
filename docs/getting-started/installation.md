@@ -2,7 +2,7 @@
 
 ## pip install
 
-With a Python 3.9+ environment, you can install BraTS Orchestrator directly from [PyPI](https://pypi.org/project/brats/):
+With Python 3.9+ (3.10+ for preprocessing), you can install BraTS Orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
 pip install brats
