@@ -85,12 +85,12 @@ segmenter.infer_single(
 
 If you use BraTS Orchestrator in your research, please cite:
 
-> Kofler, F., Rosier, M., et al. (2025). BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis. [arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
+> Kofler, F., et al. (2025). BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis. [arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
 
 ```bibtex
 @misc{kofler2025bratsorchestratordemocratizing,
       title={BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis},
-      author={Florian Kofler and Marcel Rosier and others},
+      author={Florian Kofler and others},
       year={2025},
       eprint={2506.13807},
       archivePrefix={arXiv},
