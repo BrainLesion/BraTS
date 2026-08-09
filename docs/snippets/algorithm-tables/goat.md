@@ -6,4 +6,4 @@
 | 2025 | 1st  | *Simone Bendazzoli, et al.* | N/A   | :x: | `BraTS25_1D`  |
 | 2024 | 1st  | *Frank Miao, Shengjie Niu*  | N/A   | :x: | `BraTS24_1`   |
 
-*Datasets adapted from other challenges; atlas type depends on original dataset.*
+**Atlas:** Datasets adapted from other challenges; atlas type depends on original dataset.

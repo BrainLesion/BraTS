@@ -7,4 +7,4 @@
 | 2024 | 2nd  | *Mehdi Astaraki*               | N/A                                         | :x: | `BraTS24_2`   |
 | 2024 | 3rd  | *Andre Ferreira, et al.*       | [Link](https://arxiv.org/html/2411.04632v1) | :white_check_mark: | `BraTS24_3`   |
 
-*MRI data was native space. SRI24 atlas used for pre-operative challenges.*
+**Atlas:** MRI data was native space. SRI24 atlas used for pre-operative challenges.

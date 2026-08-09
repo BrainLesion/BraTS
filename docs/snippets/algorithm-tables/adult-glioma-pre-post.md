@@ -8,4 +8,4 @@
 | 2024 | 2nd  | *Heejong Kim, et al.*    | [Link](https://arxiv.org/abs/2409.08143)  | :x: | `BraTS24_2`    |
 | 2024 | 3rd  | *Adrian Celaya*          | N/A                                      | :white_check_mark: | `BraTS24_3`    |
 
-*MNI152 atlas ([Zenodo](https://zenodo.org/records/15927391)). Companion: [GlioMODA](https://github.com/BrainLesion/GlioMODA).*
+**Atlas:** MNI152 atlas ([Zenodo](https://zenodo.org/records/15927391)). Companion: [GlioMODA](https://github.com/BrainLesion/GlioMODA).

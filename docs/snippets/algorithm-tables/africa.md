@@ -11,4 +11,4 @@
 | 2023 | 2nd  | *Alyssa R Amod, et al.*         | [Link](https://doi.org/10.1007/978-3-031-76163-8_22) | :x: | `BraTS23_2`   |
 | 2023 | 3rd  | *Ziyan Huang, et al.*           | [Link](https://doi.org/10.1007/978-3-031-76163-8_13) | :white_check_mark: | `BraTS23_3`   |
 
-*SRI24 atlas ([Zenodo](https://zenodo.org/records/15927391)).*
+**Atlas:** SRI24 atlas ([Zenodo](https://zenodo.org/records/15927391)).
