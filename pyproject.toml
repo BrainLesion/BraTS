@@ -45,11 +45,12 @@ dependencies = [
   "loguru>=0.7.0",
   "nibabel>=5.0.0",
   "numpy>=1.21.0; python_version<='3.9'",
+  "numpy>=2.1; python_version>='3.13'",
   "numpy>=1.26.0; python_version>='3.10'",
 ]
 
 [project.optional-dependencies]
-preprocessing = ["brainles_preprocessing>=0.6.7; python_version >= '3.10'"]
+preprocessing = ["brainles_preprocessing>=0.6.13; python_version >= '3.10'"]
 
 [dependency-groups]
 dev = [
