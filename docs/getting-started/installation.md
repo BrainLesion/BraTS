@@ -5,16 +5,18 @@
 With a Python 3.9+ environment, you can install BraTS Orchestrator directly from [PyPI](https://pypi.org/project/brats/):
 
 ```bash
-# lightweight base package
+# via pip
 pip install brats
-
-# with preprocessing functionalities
 pip install brats[preprocessing]
+
+# or via uv
+uv add brats
+uv add 'brats[preprocessing]'
 ```
 
 !!! important
-    To run BraTS Orchestrator, you require a **Docker** installation.
-    Many algorithms also require GPU support (NVIDIA Docker).
+    BraTS Orchestrator requires **Docker** or **Singularity** to run algorithm containers.
+    Most algorithms also need GPU support (NVIDIA Container Toolkit).
     The [algorithm tables](../reference/algorithms.md) indicate which algorithms are CPU compatible.
 
 ## Docker Setup
@@ -24,7 +26,7 @@ pip install brats[preprocessing]
 
 ## Singularity Setup
 
-[Singularity](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) is supported as an alternative to Docker. Install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html).
+[Singularity](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) provides a container runtime alternative to Docker, commonly used on HPC clusters. Install it following the [official guide](https://docs.sylabs.io/guides/3.0/user-guide/installation.html).
 
 Specify the Singularity backend when running inference:
 

@@ -2,7 +2,7 @@
 
 ![Segmentation example](https://github.com/BrainLesion/brats/blob/main/figures/segmentation_fig.png?raw=true)
 
-BraTS Orchestrator provides access to top-performing segmentation algorithms from multiple BraTS challenges.
+BraTS Orchestrator provides top-performing segmentation algorithms from multiple BraTS challenges.
 
 ## Adult Glioma (Pre & Post-Treatment)
 
@@ -198,6 +198,22 @@ segmenter.infer_single(
 ```
 
 --8<-- "algorithm-tables/goat.md"
+
+---
+
+## Batch Processing
+
+Process multiple subjects at once by organizing them into subdirectories:
+
+```python
+segmenter.infer_batch(
+    data_folder="path/to/subjects/",
+    output_folder="path/to/output/",
+)
+```
+
+!!! info "Folder Structure"
+    Each subject must be in its own subdirectory containing the required modalities. See the [API reference](../reference/api/core.md) for the expected layout.
 
 ---
 

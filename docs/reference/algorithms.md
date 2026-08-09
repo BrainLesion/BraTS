@@ -1,8 +1,5 @@
 # Algorithm Tables
 
-!!! important
-    All algorithms require **preprocessed** brain images. See the [preprocessing guide](../guides/preprocessing.md).
-
 ## Segmentation
 
 ### Adult Glioma (Pre & Post-Treatment)

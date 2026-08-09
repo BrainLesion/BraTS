@@ -2,9 +2,9 @@
 
 ![Inpainting example](https://github.com/BrainLesion/brats/blob/main/figures/inpainting_fig.png?raw=true)
 
-Inpainting algorithms realistically synthesize and fill 3D healthy brain tissue in regions affected by glioma in brain MRI exams.
+Synthesize healthy brain tissue in tumor-affected regions of brain MRI exams.
 
-## Usage
+## Single Subject
 
 ```python
 from brats import Inpainter
@@ -18,6 +18,15 @@ inpainter.infer_single(
     t1n="path/to/voided_t1n.nii.gz",
     mask="path/to/mask.nii.gz",
     output_file="inpainting.nii.gz",
+)
+```
+
+## Batch Processing
+
+```python
+inpainter.infer_batch(
+    data_folder="path/to/subjects/",
+    output_folder="path/to/output/",
 )
 ```
 

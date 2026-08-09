@@ -8,12 +8,8 @@
 
 ```python
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
-from brats.constants import AdultGliomaPreAndPostTreatmentAlgorithms
 
-segmenter = AdultGliomaPreAndPostTreatmentSegmenter(
-    algorithm=AdultGliomaPreAndPostTreatmentAlgorithms.BraTS25_1,
-    cuda_devices="0",
-)
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
@@ -23,18 +19,14 @@ segmenter.infer_single(
 )
 ```
 
-See the [segmentation guide](../guides/segmentation.md) for all supported segmentation tasks.
+See the [segmentation guide](../guides/segmentation.md) for all task types and available algorithms.
 
 ## Inpainting
 
 ```python
 from brats import Inpainter
-from brats.constants import InpaintingAlgorithms
 
-inpainter = Inpainter(
-    algorithm=InpaintingAlgorithms.BraTS25_1A,
-    cuda_devices="0",
-)
+inpainter = Inpainter()
 inpainter.infer_single(
     t1n="path/to/voided_t1n.nii.gz",
     mask="path/to/mask.nii.gz",
@@ -42,18 +34,14 @@ inpainter.infer_single(
 )
 ```
 
-See the [inpainting guide](../guides/inpainting.md) for details.
+See the [inpainting guide](../guides/inpainting.md) for available algorithms and details.
 
 ## Missing MRI Synthesis
 
 ```python
 from brats import MissingMRI
-from brats.constants import MissingMRIAlgorithms
 
-missing_mri = MissingMRI(
-    algorithm=MissingMRIAlgorithms.BraTS25_1,
-    cuda_devices="0",
-)
+missing_mri = MissingMRI()
 missing_mri.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
@@ -63,10 +51,10 @@ missing_mri.infer_single(
 )
 ```
 
-See the [missing MRI guide](../guides/missing-mri.md) for details.
+See the [missing MRI guide](../guides/missing-mri.md) for available algorithms and details.
 
 ## Next Steps
 
 - :material-notebook: Walk through the full [Tutorial Notebook](../tutorials/tutorial.ipynb)
-- :material-book-open-variant: Dive into the [Segmentation Guide](../guides/segmentation.md)
+- :material-brain: Explore all [Segmentation Tasks](../guides/segmentation.md)
 - :material-cog: Browse the [API Reference](../reference/api/core.md)

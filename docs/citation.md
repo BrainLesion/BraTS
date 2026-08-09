@@ -3,7 +3,7 @@
 !!! important
     If you use BraTS Orchestrator in your research, please cite it to support the development!
 
-Kofler, F., Rosier, M., Astaraki, M., Baid, U., Möller, H., Buchner, J. A., Steinbauer, F., Oswald, E., Rosa, E. de la, Ezhov, I., See, C. von, Kirschke, J., Schmick, A., Pati, S., Linardos, A., Pitarch, C., Adap, S., Rudie, J., Verdier, M. C. de, … Menze, B. (2025). BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis. [arXiv preprint arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
+Kofler, F., Rosier, M., Astaraki, M., Baid, U., Möller, H., Buchner, J. A., Steinbauer, F., Oswald, E., Rosa, E. de la, Ezhov, I., See, C. von, Kirschke, J., Schmick, A., Pati, S., Linardos, A., Pitarch, C., Adap, S., Rudie, J., Verdier, M. C. de, … Menze, B. (2025). BraTS Orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis. [arXiv preprint arXiv:2506.13807](https://doi.org/10.48550/arXiv.2506.13807)
 
 ## BibTeX
 

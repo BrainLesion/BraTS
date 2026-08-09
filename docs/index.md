@@ -24,12 +24,13 @@ ______         _____ _____
  \___/|_|  \___|_| |_|\___||___/\__|_|  \__,_|\__\___/|_|
 ```
 
-Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API powered by Docker or Singularity.
+BraTS Orchestrator provides the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API backed by containers.
 
 ## Quick Install
 
 ```bash
 pip install brats
+# or: uv add brats
 ```
 
 ## Quick Example
@@ -37,7 +38,7 @@ pip install brats
 ```python
 from brats import AdultGliomaPreAndPostTreatmentSegmenter
 
-segmenter = AdultGliomaPreAndPostTreatmentSegmenter(cuda_devices="0")
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
 segmenter.infer_single(
     t1c="path/to/t1c.nii.gz",
     t1n="path/to/t1n.nii.gz",
@@ -57,11 +58,11 @@ segmenter.infer_single(
 
     [:octicons-arrow-right-24: Quickstart](getting-started/quickstart.md)
 
-- :material-book-open-variant: **Guides**
+- :material-brain: **Using BraTS**
 
-    Detailed usage guides for segmentation, inpainting, missing MRI, and more.
+    Segmentation, inpainting, and missing MRI synthesis — pick your task.
 
-    [:octicons-arrow-right-24: Guides](guides/segmentation.md)
+    [:octicons-arrow-right-24: Using BraTS](guides/segmentation.md)
 
 - :material-notebook: **Tutorial**
 
@@ -79,4 +80,5 @@ segmenter.infer_single(
 
 ---
 
-> If you use BraTS Orchestrator in your research, please [cite it](citation.md).
+!!! important "Citation"
+    If you use BraTS Orchestrator in your research, please [cite it](citation.md).

@@ -21,9 +21,10 @@ Install the preprocessing extra:
 
 ```bash
 pip install brats[preprocessing]
+# or: uv add 'brats[preprocessing]'
 ```
 
-The `brats.preprocessing` module provides convenience wrappers around our [preprocessing package](https://github.com/BrainLesion/preprocessing):
+The `brats.preprocessing` module provides convenience wrappers around the [preprocessing package](https://github.com/BrainLesion/preprocessing):
 
 ```python
 from brats.preprocessing import preprocess_coreg_sri24reg_bet

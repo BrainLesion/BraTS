@@ -17,8 +17,7 @@ segmenter.infer_single(
     t2f="path/to/t2f.nii.gz",
     t2w="path/to/t2w.nii.gz",
     output_file="segmentation.nii.gz",
-    # backend=Backends.DOCKER is the default, so this line is optional:
-    backend=Backends.DOCKER,
+    backend=Backends.DOCKER,  # default
 )
 ```
 
