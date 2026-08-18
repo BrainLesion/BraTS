@@ -9,7 +9,7 @@ Kofler, F., et al. (2025). BraTS Orchestrator: Democratizing and Disseminating s
 
 ```bibtex
 @misc{kofler2025bratsorchestratordemocratizing,
-      title={BraTS orchestrator : Democratizing and Disseminating state-of-the-art brain tumor image analysis},
+      title={BraTS orchestrator: Democratizing and Disseminating state-of-the-art brain tumor image analysis},
       author={Florian Kofler and others},
       year={2025},
       eprint={2506.13807},

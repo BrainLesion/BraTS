@@ -16,7 +16,8 @@ def visualize_segmentation_data(
     """Visualize the MRI modalities for a given slice index
 
     Args:
-        data_folder (Union[str, Path], optional): Path to the folder containing the t1, t1c, t2 & flair file. Defaults to DATA_FOLDER.
+        data_folder (Union[str, Path], optional): Path to the folder containing the t1n, t1c, t2f & t2w files. Defaults to DATA_FOLDER.
+        subject_id (str, optional): Subject ID to visualize. Defaults to "BraTS-GLI-00001-000".
         slice_index (int, optional): Slice to be visualized (first index in data of shape (155, 240, 240)). Defaults to 75.
     """
     _, axes = plt.subplots(1, 4, figsize=(12, 10))
@@ -36,10 +37,11 @@ def visualize_inpainting_data(
     subject_id: str = "BraTS-GLI-00001-000",
     slice_index: int = 75,
 ):
-    """Visualize the MRI modalities for a given slice index
+    """Visualize the inpainting input data for a given slice index
 
     Args:
-        data_folder (Union[str, Path], optional): Path to the folder containing the t1n and mask files. Defaults to DATA_FOLDER.
+        data_folder (Union[str, Path], optional): Path to the folder containing the t1n-voided and mask files. Defaults to DATA_FOLDER.
+        subject_id (str, optional): Subject ID to visualize. Defaults to "BraTS-GLI-00001-000".
         slice_index (int, optional): Slice to be visualized (first index in data of shape (155, 240, 240)). Defaults to 75.
     """
     _, axes = plt.subplots(1, 2, figsize=(6, 10))
