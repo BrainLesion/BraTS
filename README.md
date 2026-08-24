@@ -1,6 +1,6 @@
 # BraTS Orchestrator
 
-[![Python Versions](https://img.shields.io/badge/python-%3E%3D3.9%2C%3C4.0-blue?logo=python&logoColor=white)](https://pypi.org/project/brats/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
 [![Documentation Status](https://readthedocs.org/projects/brats/badge/?version=latest)](https://brats.readthedocs.io/?badge=latest)
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
