@@ -6,7 +6,10 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README = REPOSITORY_ROOT / "README.md"
 DOCS_INDEX = REPOSITORY_ROOT / "docs" / "index.md"
 PYPROJECT = REPOSITORY_ROOT / "pyproject.toml"
-PYTHON_BADGE = "https://img.shields.io/pypi/pyversions/brats"
+PYTHON_BADGE = (
+    "https://img.shields.io/badge/python-%3E%3D3.9%2C%3C4.0-blue"
+    "?logo=python&logoColor=white"
+)
 PYTHON_BADGE_MARKDOWN = f"[![Python Versions]({PYTHON_BADGE})](https://pypi.org/project/brats/)"
 
 
