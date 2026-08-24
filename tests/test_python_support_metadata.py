@@ -1,20 +1,18 @@
-from pathlib import Path
 import unittest
-
+from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README = REPOSITORY_ROOT / "README.md"
 DOCS_INDEX = REPOSITORY_ROOT / "docs" / "index.md"
 PYPROJECT = REPOSITORY_ROOT / "pyproject.toml"
-PYTHON_BADGE = (
-    "https://img.shields.io/badge/python-%3E%3D3.9%2C%3C4.0-blue"
-    "?logo=python&logoColor=white"
+PYTHON_BADGE = "https://img.shields.io/pypi/pyversions/brats"
+PYTHON_BADGE_MARKDOWN = (
+    f"[![Python Versions]({PYTHON_BADGE})](https://pypi.org/project/brats/)"
 )
-PYTHON_BADGE_MARKDOWN = f"[![Python Versions]({PYTHON_BADGE})](https://pypi.org/project/brats/)"
 
 
 class TestPythonSupportMetadata(unittest.TestCase):
-    def test_python_badge_is_explicit_in_readme_and_docs(self):
+    def test_python_badge_uses_dynamic_pypi_metadata_in_readme_and_docs(self):
         self.assertIn(PYTHON_BADGE_MARKDOWN, README.read_text(encoding="utf-8"))
         self.assertIn(PYTHON_BADGE_MARKDOWN, DOCS_INDEX.read_text(encoding="utf-8"))
 
