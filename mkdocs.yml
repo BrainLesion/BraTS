@@ -1,0 +1,92 @@
+site_name: BraTS Orchestrator
+site_description: Top-performing algorithms from the BraTS challenges through an
+  easy-to-use Python API
+site_url: https://brats.readthedocs.io
+repo_url: https://github.com/BrainLesion/brats
+repo_name: BrainLesion/brats
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.share
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      include_source: true
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: false
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: docs/snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji ""
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quickstart: getting-started/quickstart.md
+  - Using BraTS:
+      - Preprocessing: guides/preprocessing.md
+      - Segmentation: guides/segmentation.md
+      - Inpainting: guides/inpainting.md
+      - Missing MRI: guides/missing-mri.md
+      - Docker & Singularity: guides/backends.md
+      - Tutorial: tutorials/tutorial.ipynb
+  - Reference:
+      - Algorithm Tables: reference/algorithms.md
+      - API:
+          - Core: reference/api/core.md
+          - Constants: reference/api/constants.md
+          - Exceptions: reference/api/exceptions.md
+          - Logging: reference/api/logging.md
+  - Citation: citation.md
