@@ -89,4 +89,10 @@ nav:
           - Constants: reference/api/constants.md
           - Exceptions: reference/api/exceptions.md
           - Logging: reference/api/logging.md
+  - Project:
+      - Glossary: glossary.md
+      - Architecture Decisions:
+          - Overview: adr/README.md
+          - Container Orchestration: adr/0001-docker-container-wrapping.md
+          - Algorithm Registry: adr/0002-yaml-driven-algorithm-registry.md
   - Citation: citation.md

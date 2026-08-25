@@ -1,23 +1,50 @@
-# {TITLE}
+# ADR-0000: [Title]
 
-## Status
+**Date:** YYYY-MM-DD
+**Status:** Proposed | Accepted | Superseded | Deprecated
+**Deciders**: Names of Persons involved
 
-{Proposed | Accepted | Deprecated | Superseded by [ADR-XXXX](XXXX.md)}
+<!--
+ADR Writing Guidelines:
 
-## Context and Problem Statement
+PURPOSE: Capture the "why" behind decisions, not implementation details.
+TARGET LENGTH: 50-80 lines. If longer, you're likely including too much detail.
 
-{Describe the context and the problem we are trying to solve. Why is this decision necessary? What constraints or forces are at play?}
+INCLUDE:
+- The problem/constraint that triggered the decision
+- What was decided (high-level)
+- Key tradeoffs and reasoning
+- Alternatives considered (brief)
+- Expected consequences
 
-## Considered Options
+AVOID:
+- Specific configuration values (ports, timeouts, paths)
+- Step-by-step implementation instructions
+- Troubleshooting details (belong in code comments or docs)
+- Excessive bullet points per section (aim for 3-5 max)
 
-- **Option A**: {Description}
-- **Option B**: {Description}
-- **Option C**: {Description}
+AMENDMENTS: Use sparingly—only for actual decision changes, not implementation fixes.
+-->
 
-## Decision Outcome
+## Context
 
-{Describe the chosen option and the rationale behind it. Why was this option selected over the alternatives?}
+Why did we need to make this decision? What was the problem or constraint?
+
+## Decision
+
+What did we decide to do?
+
+## Rationale
+
+Why this option? What were the key tradeoffs?
+
+## Alternatives Considered
+
+- **Option A:** Why we didn't choose it
+- **Option B:** Why we didn't choose it
 
 ## Consequences
 
-{Describe the resulting context after applying the decision. Include both positive and negative consequences — what becomes easier, what becomes harder, and any risks introduced.}
+- Benefits
+- Drawbacks
+- Required follow-up actions (if any)

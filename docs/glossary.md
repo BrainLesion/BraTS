@@ -22,7 +22,7 @@ Domain terminology for the BraTS orchestrator.
 
 ## Algorithm Naming
 
-Algorithms are named using the pattern `BraTS{YY}_{rank}`, where `YY` is the challenge year (e.g., 25) and `rank` is the placement (1 = 1st place). Suffix letters (`3A`, `3B`, `1A`, `1B`) indicate ties or multiple winning entries.
+Algorithms are named using the pattern `BraTS{YY}_{rank}`, where `YY` is the challenge year (e.g., 25) and `rank` is the placement (1 = 1st place). Suffix letters (`3A`, `3B`, `1A`, `1B`) indicate ties or multiple winning entries. Each identifier is represented both by a public enum member in `brats/constants.py` and by a matching key in a metadata `.yml` file.
 
 ## Backends
 
@@ -69,7 +69,7 @@ Segmentation of pediatric brain tumors. Uses 4 modalities, registered to SRI24 a
 
 ### Generalizability Across Tumors (BraTS-GoAT)
 
-Segmentation across different tumor types, testing generalization to unseen tumor categories. Uses 4 modalities. Atlas depends on the source dataset (adapted from other segmentation challenges).
+Segmentation across different tumor types, testing generalization to unseen tumor categories. Uses 4 modalities. Atlas requirements depend on the source dataset (adapted from other segmentation challenges). The current preprocessing router falls back to the SRI24 pipeline for this task, so use custom preprocessing when the source dataset requires another atlas.
 
 ### Inpainting
 
@@ -77,7 +77,7 @@ Synthesize healthy brain tissue in a glioma-affected region. Input: voided T1n (
 
 ### Missing MRI (BraSyn)
 
-Synthesize a missing MRI modality from 3 available modalities. Input: any 3 of t1c, t1n, t2f, t2w. Output: the missing 4th modality. Atlas depends on the source dataset. Formal challenge name: Brain MRI Synthesis Challenge (BraSyn).
+Synthesize a missing MRI modality from 3 available modalities. Input: any 3 of t1c, t1n, t2f, t2w. Output: the missing 4th modality. Atlas requirements depend on the source dataset; the current preprocessing router uses the SRI24 pipeline for this task. Formal challenge name: Brain MRI Synthesis Challenge (BraSyn).
 
 ## Preprocessing
 
