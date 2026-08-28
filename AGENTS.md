@@ -85,7 +85,6 @@ logs warnings, but it does not perform registration, skull stripping, or defacin
 - Model weights and other additional files are downloaded from Zenodo on first use and cached under `brats/data/additional_files/`.
 - Algorithm tables in `docs/snippets/algorithm-tables/` are maintained documentation and are not generated from the YAML metadata.
 - Preprocessing wrappers are implemented in `brats/preprocessing.py` and delegate to the optional `brainles_preprocessing` package.
-- Output files are collected and renamed in `brats/core/brats_algorithm.py`; `OUTPUT_NAME_SCHEMA` is used by tests and is not the runtime output-discovery implementation.
 
 ## Adding algorithms
 

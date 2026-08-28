@@ -6,10 +6,10 @@
 
 ## Context
 
-The package provides 66 algorithm variants across 10 challenge tracks and multiple
-BraTS competition years. Each variant has descriptive metadata, runtime settings,
-and may reference additional model files. Keeping all of this information in Python
-would mix changing challenge data with the orchestration implementation.
+The package provides algorithm variants across multiple challenge tracks and BraTS
+competition years. Each variant has descriptive metadata, runtime settings, and may
+reference additional model files. Keeping all of this information in Python would
+mix changing challenge data with the orchestration implementation.
 
 The public API also needs stable, discoverable identifiers so users can select an
 algorithm with the appropriate challenge-specific enum. The registry therefore has

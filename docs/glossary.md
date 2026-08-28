@@ -6,12 +6,12 @@ Domain terminology for the BraTS orchestrator.
 
 | Term | Definition |
 |------|------------|
-| **t1c** (T1c, T1C) | T1-weighted MRI with gadolinium contrast enhancement |
+| **t1c** (T1c, T1C) | Contrast-enhanced T1-weighted MRI |
 | **t1n** (T1, t1) | T1-weighted MRI without contrast (native) |
 | **t2f** (FLAIR) | T2-weighted Fluid-Attenuated Inversion Recovery MRI |
 | **t2w** (T2, t2) | T2-weighted MRI |
-| **mask** | Binary mask indicating the region to inpaint |
-| **t1n-voided** | T1n image with the tumor region artificially removed; input for inpainting |
+| **mask** | Binary mask indicating the region to inpaint; used by inpainting algorithms |
+| **t1n-voided** | T1n image with the tumor region artificially removed; input to inpainting algorithms |
 
 ## Brain Atlases
 
@@ -87,4 +87,4 @@ Synthesize a missing MRI modality from 3 available modalities. Input: any 3 of t
 | **Defacing** | Removing facial features from brain MRI for privacy protection. Used in the pediatric challenge instead of BET. |
 | **Co-registration** | Aligning multiple MRI modalities of the same subject to a common spatial reference frame. |
 | **Atlas registration** | Warping a subject's brain MRI to a standard atlas template (SRI24 or MNI152). |
-| **Native space** | The original (non-registered) image coordinate space. Meningioma RT data is in native space and does not undergo atlas registration. |
+| **Native space** | The original (non-registered) image coordinate space. |

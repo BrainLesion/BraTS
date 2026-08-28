@@ -12,7 +12,8 @@ BraTS challenge algorithms require **preprocessed** brain scans. This typically 
 |-------|---------|-------------|
 | **SRI24** | Pre-2024 Glioma Pre-Treatment, Africa, Meningioma, Metastases, Pediatric | [Zenodo](https://zenodo.org/records/15927391) |
 | **MNI152** | 2024+ Glioma Post-Treatment | [Zenodo](https://zenodo.org/records/15927391) |
-| **Native space** | Meningioma RT (defacing only) | N/A |
+
+Meningioma RT data remains in native image space and uses defacing only; it does not require an atlas.
 
 The required atlas is also noted in each algorithm's table in the [algorithm reference](../reference/algorithms.md).
 
