@@ -23,3 +23,9 @@ Fork the repository, clone it and implement your contribution.
 
 
 Once done, create a Pull Request to integrate the code into our project!
+
+## Project Documentation
+
+- **[AGENTS.md](AGENTS.md)** — Build commands, architecture overview, source-of-truth map, and conventions (for human contributors and AI coding assistants)
+- **[Architecture Decision Records](docs/adr/)** — Records of significant design decisions and their rationale
+- **[Glossary](docs/glossary.md)** — Domain terminology reference (MRI modalities, challenge types, container jargon)
