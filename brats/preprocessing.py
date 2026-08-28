@@ -493,7 +493,7 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"All modalities required for {challenge_name} preprocessing"
             )
-        return cast(list[str | Path], all_paths)
+        return cast(list[Union[str, Path]], all_paths)
 
     # Route to appropriate preprocessing function
     if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
@@ -503,14 +503,18 @@ def preprocess_for_challenge(
             normalizer=normalizer,
         )
 
-    elif isinstance(challenge, MetastasesAlgorithms) and challenge.value.startswith(
-        "BraTS25"
-    ):
+    elif isinstance(challenge, MetastasesAlgorithms):
         paths = _require_all_modalities()
-        preprocess_coreg_native_space_bet(
-            *paths,
-            normalizer=normalizer,
-        )
+        if challenge.value.startswith("BraTS23"):
+            preprocess_coreg_sri24reg_bet(
+                *paths,
+                normalizer=normalizer,
+            )
+        else:
+            preprocess_coreg_native_space_bet(
+                *paths,
+                normalizer=normalizer,
+            )
 
     elif str(PediatricAlgorithms.__name__) in challenge_name:
         paths = _require_all_modalities()
