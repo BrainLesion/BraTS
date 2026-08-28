@@ -18,7 +18,7 @@ Domain terminology for the BraTS orchestrator.
 | Term | Definition |
 |------|------------|
 | **SRI24** | MRI-based brain atlas used for spatial registration in 2023 and most pre-2024 challenges |
-| **MNI152** | Montreal Neurological Institute 152 template; used for 2024+ Glioma Post-treatment challenges |
+| **MNI152** | Montreal Neurological Institute 152 template; used for 2024+ Adult Glioma (Pre & Post-Treatment) challenges |
 
 ## Algorithm Naming
 
