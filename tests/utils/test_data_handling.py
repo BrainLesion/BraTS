@@ -13,6 +13,7 @@ from brats.utils.data_handling import (
     input_sanity_check,
     remove_tmp_folder,
 )
+from brats.utils.logging import enable
 
 
 class TestDataHandlingUtils(unittest.TestCase):
@@ -93,6 +94,7 @@ class TestDataHandlingUtils(unittest.TestCase):
 
     def test_inference_setup_with_log_file_on_error(self):
         tmp_log_file = self.test_dir / "error.log"
+        enable()
         with self.assertRaises(RuntimeError):  # noqa: SIM117
             with InferenceSetup(log_file=tmp_log_file) as (
                 _tmp_data_folder,

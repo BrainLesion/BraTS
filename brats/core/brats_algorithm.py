@@ -97,7 +97,12 @@ class BraTSAlgorithm(ABC):
         if self.task == Task.MISSING_MRI:
             # Missing MRI has no fixed names since the missing modality
             # differs and is included in the name
-            algorithm_output = Path(tmp_output_folder).iterdir().__next__()
+            possible_outputs = list(Path(tmp_output_folder).iterdir())
+            if len(possible_outputs) == 0:
+                raise FileNotFoundError(
+                    f"No output found for subject {subject_id} in {tmp_output_folder}"
+                )
+            algorithm_output = possible_outputs[0]
         else:
             # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
             identifier = self.extract_identifier_from_subject_id(subject_id)
@@ -134,9 +139,15 @@ class BraTSAlgorithm(ABC):
             if self.task == Task.MISSING_MRI:
                 # Missing MRI has no fixed names since the missing modality differs
                 # and is included in the name
-                algorithm_output = (
-                    Path(tmp_output_folder).glob(f"*{internal_name}*").__next__()
+                possible_outputs = list(
+                    Path(tmp_output_folder).glob(f"*{internal_name}*")
                 )
+                if len(possible_outputs) == 0:
+                    raise FileNotFoundError(
+                        f"No output found for subject {internal_name} "
+                        f"in {tmp_output_folder}"
+                    )
+                algorithm_output = possible_outputs[0]
                 try:
                     modality = algorithm_output.name.split("-")[-1].split(".")[0]
                 except IndexError:
