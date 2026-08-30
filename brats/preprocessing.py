@@ -399,7 +399,7 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"All modalities required for {challenge_name} preprocessing"
             )
-        return cast(list[str | Path], all_paths)
+        return cast(list[Union[str, Path]], all_paths)
 
     # Route to appropriate preprocessing function
     if isinstance(challenge, AdultGliomaPreAndPostTreatmentAlgorithms):
