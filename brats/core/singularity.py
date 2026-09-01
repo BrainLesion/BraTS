@@ -284,9 +284,10 @@ def run_container(
     options = []
 
     enable_gpu = len(device_requests) > 0 and not force_cpu
+    devices = normalize_cuda_devices(cuda_devices) if enable_gpu else cuda_devices
     if enable_gpu:
         logger.info(
-            f"Restricting container GPUs to CUDA devices: {cuda_devices} "
+            f"Restricting container GPUs to CUDA devices: {devices} "
             f"(via {_SINGULARITY_CUDA_ENV_VAR})"
         )
         options.append("--nv")  # Singularity uses --nv to enable GPU support
@@ -320,7 +321,7 @@ def run_container(
         )
         overlay_created = True
     try:
-        with _cuda_device_selection_env(cuda_devices=cuda_devices, enabled=enable_gpu):
+        with _cuda_device_selection_env(cuda_devices=devices, enabled=enable_gpu):
             executor = Client.run(
                 image,
                 options=options,
