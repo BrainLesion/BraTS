@@ -27,6 +27,7 @@ from brats.core.docker import (
     _sanity_check_output,
 )
 from brats.utils.algorithm_config import AlgorithmData
+from brats.utils.cuda import normalize_cuda_devices
 
 try:
     docker_client = docker.from_env()
@@ -177,6 +178,12 @@ def _cuda_device_selection_env(cuda_devices: str, enabled: bool) -> Iterator[Non
             visible inside the container.
         enabled (bool): Whether to restrict GPUs at all. If ``False`` (CPU
             run), the environment is left untouched.
+
+    Note:
+        The environment override is process-global and therefore not
+        thread-safe. Concurrent Singularity runs within the same process
+        may interfere with each other's GPU selection; run containers
+        sequentially.
     """
     if not enabled:
         yield
@@ -195,7 +202,7 @@ def _cuda_device_selection_env(cuda_devices: str, enabled: bool) -> Iterator[Non
             f"(e.g. by a batch scheduler). The cuda_devices parameter refers "
             f"to host GPU IDs and takes precedence inside the container."
         )
-    os.environ[_SINGULARITY_CUDA_ENV_VAR] = cuda_devices
+    os.environ[_SINGULARITY_CUDA_ENV_VAR] = normalize_cuda_devices(cuda_devices)
     try:
         yield
     finally:

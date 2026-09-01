@@ -282,20 +282,25 @@ class TestSingularityHelpers(unittest.TestCase):
 
         mock_client.run.side_effect = capture_env
 
-        run_container(
-            algorithm=self.algorithm_gpu,
-            data_path=self.data_folder,
-            output_path=self.output_folder,
-            cuda_devices="0,1",
-            force_cpu=False,
-        )
+        with patch.dict(os.environ):
+            # hermetic: ensure the variable is not set by the surrounding environment
+            os.environ.pop("SINGULARITYENV_CUDA_VISIBLE_DEVICES", None)
 
-        # the container sees only the requested devices while running
-        self.assertEqual(captured_env["value"], "0,1")
-        options = mock_client.run.call_args.kwargs["options"]
-        self.assertIn("--nv", options)
-        # environment is restored after the run
-        self.assertNotIn("SINGULARITYENV_CUDA_VISIBLE_DEVICES", os.environ)
+            run_container(
+                algorithm=self.algorithm_gpu,
+                data_path=self.data_folder,
+                output_path=self.output_folder,
+                cuda_devices=" 0 , 1 ",
+                force_cpu=False,
+            )
+
+            # the container sees only the requested devices while running;
+            # whitespace around ids is normalized away
+            self.assertEqual(captured_env["value"], "0,1")
+            options = mock_client.run.call_args.kwargs["options"]
+            self.assertIn("--nv", options)
+            # environment is restored after the run
+            self.assertNotIn("SINGULARITYENV_CUDA_VISIBLE_DEVICES", os.environ)
 
     @patch("brats.core.singularity.logger")
     @patch("brats.core.singularity._log_algorithm_info")
@@ -403,15 +408,21 @@ class TestSingularityHelpers(unittest.TestCase):
 
         mock_client.run.side_effect = capture_env
 
-        run_container(
-            algorithm=self.algorithm_gpu,
-            data_path=self.data_folder,
-            output_path=self.output_folder,
-            cuda_devices="0",
-            force_cpu=False,
-        )
+        with patch.dict(os.environ):
+            os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"] = "sentinel"
 
-        self.assertIsNone(captured_env["value"])
-        options = mock_client.run.call_args.kwargs["options"]
-        self.assertNotIn("--nv", options)
-        self.assertNotIn("SINGULARITYENV_CUDA_VISIBLE_DEVICES", os.environ)
+            run_container(
+                algorithm=self.algorithm_gpu,
+                data_path=self.data_folder,
+                output_path=self.output_folder,
+                cuda_devices="0",
+                force_cpu=False,
+            )
+
+            # the sentinel survives the run: the CPU path does not touch the env
+            self.assertEqual(captured_env["value"], "sentinel")
+            options = mock_client.run.call_args.kwargs["options"]
+            self.assertNotIn("--nv", options)
+            self.assertEqual(
+                os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"], "sentinel"
+            )

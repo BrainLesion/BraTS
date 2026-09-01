@@ -18,6 +18,7 @@ from rich.table import Table
 
 from brats.constants import DUMMY_PARAMETERS, PACKAGE_CITATION, PARAMETERS_DIR
 from brats.utils.algorithm_config import AlgorithmData
+from brats.utils.cuda import normalize_cuda_devices
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
@@ -128,7 +129,7 @@ def _handle_device_requests(
     # request gpu with chosen devices
     return [
         docker.types.DeviceRequest(
-            device_ids=[device.strip() for device in cuda_devices.split(",")],
+            device_ids=normalize_cuda_devices(cuda_devices).split(","),
             capabilities=[["gpu"]],
         )
     ]

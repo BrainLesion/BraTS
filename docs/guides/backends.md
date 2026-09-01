@@ -60,6 +60,7 @@ Notes:
 
 - `cuda_devices` refers to **host** GPU IDs. If the host already defines `CUDA_VISIBLE_DEVICES` (e.g., set by a batch scheduler such as SLURM), the `cuda_devices` value takes precedence inside the container.
 - Manually setting `SINGULARITYENV_CUDA_VISIBLE_DEVICES` is no longer necessary; the `cuda_devices` parameter overrides it.
+- The environment override is process-global and not thread-safe: run Singularity containers sequentially within a single process.
 
 ---
 
