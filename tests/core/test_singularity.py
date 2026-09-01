@@ -1,3 +1,4 @@
+import os
 import shutil
 import tempfile
 import unittest
@@ -239,3 +240,178 @@ class TestSingularityHelpers(unittest.TestCase):
         mock_get_docker_working_dir.assert_called_once()
         mock_subprocess_run.assert_called_once()
         mock_client.run.assert_called_once()
+
+    @patch("brats.core.singularity.logger")
+    @patch("brats.core.singularity._log_algorithm_info")
+    @patch("brats.core.singularity._ensure_image")
+    @patch("brats.core.singularity._get_additional_files_path")
+    @patch("brats.core.singularity._get_volume_mappings_mlcube")
+    @patch("brats.core.singularity._build_command_args")
+    @patch("brats.core.singularity._handle_device_requests")
+    @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
+    @patch("brats.core.singularity.Client")
+    @patch("brats.core.singularity.subprocess.run")
+    @patch("brats.core.singularity._get_docker_working_dir")
+    def test_run_container_sets_cuda_visible_devices(
+        self,
+        mock_get_docker_working_dir,
+        mock_subprocess_run,
+        mock_client,
+        mock_convert_volume_mappings_to_singularity_format,
+        mock_handle_device_requests,
+        mock_build_command_args,
+        mock_get_volume_mappings_mlcube,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+        mock_logger,
+    ):
+        mock_handle_device_requests.return_value = [MagicMock()]  # GPU requested
+        mock_build_command_args.return_value = ["--data_path=/mlcube_io0"]
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
+
+        captured_env = {}
+
+        def capture_env(*args, **kwargs):
+            captured_env["value"] = os.environ.get(
+                "SINGULARITYENV_CUDA_VISIBLE_DEVICES"
+            )
+            return iter([])
+
+        mock_client.run.side_effect = capture_env
+
+        run_container(
+            algorithm=self.algorithm_gpu,
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+            cuda_devices="0,1",
+            force_cpu=False,
+        )
+
+        # the container sees only the requested devices while running
+        self.assertEqual(captured_env["value"], "0,1")
+        options = mock_client.run.call_args.kwargs["options"]
+        self.assertIn("--nv", options)
+        # environment is restored after the run
+        self.assertNotIn("SINGULARITYENV_CUDA_VISIBLE_DEVICES", os.environ)
+
+    @patch("brats.core.singularity.logger")
+    @patch("brats.core.singularity._log_algorithm_info")
+    @patch("brats.core.singularity._ensure_image")
+    @patch("brats.core.singularity._get_additional_files_path")
+    @patch("brats.core.singularity._get_volume_mappings_mlcube")
+    @patch("brats.core.singularity._build_command_args")
+    @patch("brats.core.singularity._handle_device_requests")
+    @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
+    @patch("brats.core.singularity.Client")
+    @patch("brats.core.singularity.subprocess.run")
+    @patch("brats.core.singularity._get_docker_working_dir")
+    def test_run_container_overrides_and_restores_existing_cuda_env(
+        self,
+        mock_get_docker_working_dir,
+        mock_subprocess_run,
+        mock_client,
+        mock_convert_volume_mappings_to_singularity_format,
+        mock_handle_device_requests,
+        mock_build_command_args,
+        mock_get_volume_mappings_mlcube,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+        mock_logger,
+    ):
+        mock_handle_device_requests.return_value = [MagicMock()]  # GPU requested
+        mock_build_command_args.return_value = ["--data_path=/mlcube_io0"]
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
+        mock_client.run.return_value = iter([])
+
+        captured_env = {}
+
+        def capture_env(*args, **kwargs):
+            captured_env["value"] = os.environ.get(
+                "SINGULARITYENV_CUDA_VISIBLE_DEVICES"
+            )
+            return iter([])
+
+        mock_client.run.side_effect = capture_env
+
+        os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"] = "3"
+        try:
+            run_container(
+                algorithm=self.algorithm_gpu,
+                data_path=self.data_folder,
+                output_path=self.output_folder,
+                cuda_devices="0",
+                force_cpu=False,
+            )
+
+            # cuda_devices parameter takes precedence while running
+            self.assertEqual(captured_env["value"], "0")
+            # pre-existing value is restored afterwards
+            self.assertEqual(os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"], "3")
+            # overriding a user-provided value is flagged
+            warnings = [call.args[0] for call in mock_logger.warning.call_args_list]
+            self.assertTrue(
+                any("already set" in message for message in warnings),
+                f"Expected an 'already set' warning, got: {warnings}",
+            )
+        finally:
+            os.environ.pop("SINGULARITYENV_CUDA_VISIBLE_DEVICES", None)
+
+    @patch("brats.core.singularity.logger")
+    @patch("brats.core.singularity._log_algorithm_info")
+    @patch("brats.core.singularity._ensure_image")
+    @patch("brats.core.singularity._get_additional_files_path")
+    @patch("brats.core.singularity._get_volume_mappings_mlcube")
+    @patch("brats.core.singularity._build_command_args")
+    @patch("brats.core.singularity._handle_device_requests")
+    @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
+    @patch("brats.core.singularity.Client")
+    @patch("brats.core.singularity.subprocess.run")
+    @patch("brats.core.singularity._get_docker_working_dir")
+    def test_run_container_cpu_does_not_touch_cuda_env(
+        self,
+        mock_get_docker_working_dir,
+        mock_subprocess_run,
+        mock_client,
+        mock_convert_volume_mappings_to_singularity_format,
+        mock_handle_device_requests,
+        mock_build_command_args,
+        mock_get_volume_mappings_mlcube,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+        mock_logger,
+    ):
+        mock_handle_device_requests.return_value = []  # CPU run
+        mock_build_command_args.return_value = ["--data_path=/mlcube_io0"]
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
+
+        captured_env = {}
+
+        def capture_env(*args, **kwargs):
+            captured_env["value"] = os.environ.get(
+                "SINGULARITYENV_CUDA_VISIBLE_DEVICES"
+            )
+            return iter([])
+
+        mock_client.run.side_effect = capture_env
+
+        run_container(
+            algorithm=self.algorithm_gpu,
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+            cuda_devices="0",
+            force_cpu=False,
+        )
+
+        self.assertIsNone(captured_env["value"])
+        options = mock_client.run.call_args.kwargs["options"]
+        self.assertNotIn("--nv", options)
+        self.assertNotIn("SINGULARITYENV_CUDA_VISIBLE_DEVICES", os.environ)

@@ -127,7 +127,10 @@ def _handle_device_requests(
         return []
     # request gpu with chosen devices
     return [
-        docker.types.DeviceRequest(device_ids=[cuda_devices], capabilities=[["gpu"]])
+        docker.types.DeviceRequest(
+            device_ids=[device.strip() for device in cuda_devices.split(",")],
+            capabilities=[["gpu"]],
+        )
     ]
 
 
