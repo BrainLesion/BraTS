@@ -344,8 +344,9 @@ class TestSingularityHelpers(unittest.TestCase):
 
         mock_client.run.side_effect = capture_env
 
-        os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"] = "3"
-        try:
+        with patch.dict(os.environ):
+            os.environ["SINGULARITYENV_CUDA_VISIBLE_DEVICES"] = "3"
+
             run_container(
                 algorithm=self.algorithm_gpu,
                 data_path=self.data_folder,
@@ -364,8 +365,6 @@ class TestSingularityHelpers(unittest.TestCase):
                 any("already set" in message for message in warnings),
                 f"Expected an 'already set' warning, got: {warnings}",
             )
-        finally:
-            os.environ.pop("SINGULARITYENV_CUDA_VISIBLE_DEVICES", None)
 
     @patch("brats.core.singularity.logger")
     @patch("brats.core.singularity._log_algorithm_info")
