@@ -97,16 +97,21 @@ class BraTSAlgorithm(ABC):
         if self.task == Task.MISSING_MRI:
             # Missing MRI has no fixed names since the missing modality
             # differs and is included in the name
-            algorithm_output = Path(tmp_output_folder).iterdir().__next__()
-        else:
-            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
-            identifier = self.extract_identifier_from_subject_id(subject_id)
-            possible_output = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
-            if len(possible_output) == 0:
+            algorithm_output = next(Path(tmp_output_folder).iterdir(), None)
+            if algorithm_output is None:
                 raise FileNotFoundError(
                     f"No output found for subject {subject_id} in {tmp_output_folder}"
                 )
-            algorithm_output = possible_output[0]
+        else:
+            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
+            identifier = self.extract_identifier_from_subject_id(subject_id)
+            algorithm_output = next(
+                Path(tmp_output_folder).glob(f"*{identifier}*"), None
+            )
+            if algorithm_output is None:
+                raise FileNotFoundError(
+                    f"No output found for subject {subject_id} in {tmp_output_folder}"
+                )
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
@@ -134,9 +139,14 @@ class BraTSAlgorithm(ABC):
             if self.task == Task.MISSING_MRI:
                 # Missing MRI has no fixed names since the missing modality differs
                 # and is included in the name
-                algorithm_output = (
-                    Path(tmp_output_folder).glob(f"*{internal_name}*").__next__()
+                algorithm_output = next(
+                    Path(tmp_output_folder).glob(f"*{internal_name}*"), None
                 )
+                if algorithm_output is None:
+                    raise FileNotFoundError(
+                        f"No output found for subject {internal_name} "
+                        f"in {tmp_output_folder}"
+                    )
                 try:
                     modality = algorithm_output.name.split("-")[-1].split(".")[0]
                 except IndexError:
@@ -150,13 +160,14 @@ class BraTSAlgorithm(ABC):
                 )
             else:
                 identifier = self.extract_identifier_from_subject_id(internal_name)
-                possible_outputs = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
-                if len(possible_outputs) == 0:
+                algorithm_output = next(
+                    Path(tmp_output_folder).glob(f"*{identifier}*"), None
+                )
+                if algorithm_output is None:
                     logger.error(
                         f"No output found for subject {internal_name} in {tmp_output_folder}"
                     )
                     continue
-                algorithm_output = possible_outputs[0]
 
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
