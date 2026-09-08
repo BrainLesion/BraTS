@@ -170,6 +170,15 @@ class MetastasesAlgorithms(Algorithms):
 class InpaintingAlgorithms(Algorithms):
     """Constants for the available BraTS Inpainting algorithms."""
 
+    BraTS26_1 = "BraTS26_1"
+    """ BraTS26  Inpainting 1st place """
+    BraTS26_2A = "BraTS26_2A"
+    """ BraTS26  Inpainting shared 2nd place (tie)"""
+    BraTS26_2B = "BraTS26_2B"
+    """ BraTS26  Inpainting shared 2nd place (tie)"""
+    BraTS26_3 = "BraTS26_3"
+    """ BraTS26  Inpainting 3rd place """
+
     BraTS25_1A = "BraTS25_1A"
     """ BraTS25  Inpainting shared 1st place (tie) """
     BraTS25_1B = "BraTS25_1B"
