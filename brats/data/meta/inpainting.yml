@@ -29,6 +29,8 @@ algorithms:
     run_args:
       docker_image: brainles/brats26_inpainting_kubilaykagankomurcu_itu
       input_name_schema: *input_name_schema
+      requires_root: true
+      shm_size: "4gb"
 
   BraTS26_2A:
     meta:
@@ -41,6 +43,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats26_inpainting_startorch_academy
       input_name_schema: *input_name_schema
+      requires_root: true
 
   BraTS26_2B:
     meta:
