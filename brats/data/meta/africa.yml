@@ -49,7 +49,7 @@ algorithms:
       docker_image: brainles/brats25_ssa_spark2025_team_sparkans:latest
       input_name_schema: *input_name_schema
       requires_root: true
-  
+
   BraTS25_2B:
     meta:
       authors: Mohtady Barakat, et al.
@@ -105,11 +105,11 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_africa_cnmc_pmi:latest
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: false
       shm_size: "2gb"
-  
+
   BraTS24_2:
     meta:
       authors: Yanguang Zhao, et al.
@@ -121,12 +121,12 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_africa_cuhk_rpai
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
       cpu_compatible: true
-  
+
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
@@ -138,7 +138,7 @@ algorithms:
       dataset_manuscript: *dataset_manuscript
     run_args:
       docker_image: brainles/brats24_africa_biomedia-mbzu
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
       shm_size: "2gb"
@@ -159,7 +159,7 @@ algorithms:
       year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_nvauto:latest
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       shm_size: "32gb"
@@ -175,7 +175,7 @@ algorithms:
       year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_sparkunn:latest
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: false
       parameters_file: true
     additional_files:
@@ -193,7 +193,7 @@ algorithms:
       year: *year_2023
     run_args:
       docker_image: brainles/brats23_africa_blackbean:latest
-      input_name_schema: *input_name_schema 
+      input_name_schema: *input_name_schema
       requires_root: true
       parameters_file: true
       cpu_compatible: true

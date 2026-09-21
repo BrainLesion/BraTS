@@ -53,7 +53,7 @@ algorithms:
       docker_image: brainles/brats25_goat_satushe:latest
       input_name_schema: *input_name_schema
       requires_root: true
-  
+
   BraTS25_1D: # This could not be tested due to a cuda version mismatch on the development machine
     meta:
       authors: Simone Bendazzoli, et al.

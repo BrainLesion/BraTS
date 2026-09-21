@@ -1,0 +1,3 @@
+# Exceptions
+
+::: brats.utils.exceptions

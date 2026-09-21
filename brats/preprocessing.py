@@ -41,7 +41,6 @@ def _coreg_atlasreg_bet(
     allow_missing: bool = False,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
-
     # Build modality mapping in a cleaner way
     modality_pairs = [
         ("t1", t1_input, t1_output),
@@ -111,7 +110,6 @@ def _coreg_atlasreg_deface(
     atlas: Atlas,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
-
     center = CenterModality(
         normalizer=normalizer,
         modality_name="t1c",

@@ -61,7 +61,7 @@ python --version
 ```
 
 ### Docker version
-please specify your docker version, You can find it by running: 
+please specify your docker version, You can find it by running:
 ```sh
 docker --version
 ```

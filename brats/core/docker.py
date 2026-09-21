@@ -18,6 +18,7 @@ from rich.table import Table
 
 from brats.constants import DUMMY_PARAMETERS, PACKAGE_CITATION, PARAMETERS_DIR
 from brats.utils.algorithm_config import AlgorithmData
+from brats.utils.cuda import normalize_cuda_devices
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
     BraTSContainerException,
@@ -64,7 +65,8 @@ def _show_docker_pull_progress(
         else:
             if task_key not in tasks:
                 tasks[task_key] = progress.add_task(
-                    f"{task_key}", total=None  # total=None means indeterminate
+                    f"{task_key}",
+                    total=None,  # total=None means indeterminate
                 )
             progress.update(tasks[task_key], advance=0.1)
 
@@ -126,7 +128,10 @@ def _handle_device_requests(
         return []
     # request gpu with chosen devices
     return [
-        docker.types.DeviceRequest(device_ids=[cuda_devices], capabilities=[["gpu"]])
+        docker.types.DeviceRequest(
+            device_ids=normalize_cuda_devices(cuda_devices).split(","),
+            capabilities=[["gpu"]],
+        )
     ]
 
 
@@ -293,12 +298,12 @@ def _observe_docker_output(
         # Check if the container exited with an error
         if exit_code["StatusCode"] != 0:
             Console(stderr=True).print(
-                f"[red]Container finished with an error:[/red]\n" f"{container_output}"
+                f"[red]Container finished with an error:[/red]\n{container_output}"
             )
             logger.error(f">> {container_output}")
             raise BraTSContainerException(
                 "Container finished with an error:\n"
-                f"{'-'*80}\n{container_output}\n {'-'*80}\n"
+                f"{'-' * 80}\n{container_output}\n{'-' * 80}\n"
                 "An auto generated log file with detailed debug "
                 "information has been saved. "
                 "Optionally, pass log_file to infer_single/infer_batch "

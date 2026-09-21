@@ -19,7 +19,6 @@ from brats.utils.zenodo import (
 
 
 class TestZenodoUtils(unittest.TestCase):
-
     @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
     @patch("brats.utils.zenodo._get_latest_version_folder_name")
     @patch("brats.utils.zenodo._download_additional_files")
