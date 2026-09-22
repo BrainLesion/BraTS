@@ -53,7 +53,8 @@ algorithms:
       rank: *rank_baseline
       year: *year_2025
     run_args:
-      docker_image: aparida12/brats2025:met
+      # docker_image: aparida12/brats2025:met
+      docker_image: brainles/brats25_met_baseline:latest
       input_name_schema: *input_name_schema
       requires_root: true
 
