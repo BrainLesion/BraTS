@@ -55,7 +55,7 @@ algorithms:
       docker_image: brainles/brats25_inpainting_iu_brats:latest
       input_name_schema: *input_name_schema
 
-  BraTS25_B:
+  BraTS25_CNMC_PAI:
     meta:
       authors: Nishad Kulkarni, et al.
       paper: https://link.springer.com/chapter/10.1007/978-3-032-16370-7_13

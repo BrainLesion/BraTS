@@ -78,7 +78,7 @@ algorithms:
       input_name_schema: *input_name_schema
       requires_root: true
 
-  BraTS25_B:
+  BraTS25_CNMC_PAI:
     meta:
       authors: Abhijeet Parida, et al.
       paper: https://link.springer.com/chapter/10.1007/978-3-032-16365-3_22

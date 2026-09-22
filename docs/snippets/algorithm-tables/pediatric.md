@@ -3,7 +3,7 @@
 | 2025 | 1st  | *Yuxiao Yi, et al.*              | N/A                                                        | :x: | `BraTS25_1`   |
 | 2025 | 2nd  | *Meng-Yuan Chen, et al.*         | N/A                                                        | :x: | `BraTS25_2`   |
 | 2025 | 3rd  | *Haitao Yu, et al.*              | N/A                                                        | :x: | `BraTS25_3`   |
-| 2025 | Baseline* | *Daniel Capellán-Martín, et al.* | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016/) | :x: | `BraTS25_B` |
+| 2025 | Baseline* | *Daniel Capellán-Martín, et al.* | [Link](https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016/) | :x: | `BraTS25_CNMC_PAI` |
 | 2024 | 1st  | *Mehdi Astaraki*                 | N/A                                                        | :x: | `BraTS24_1`   |
 | 2024 | 2nd  | *Tim Mulvany, et al.*            | [Link](https://doi.org/10.48550/arXiv.2410.14020)          | :x: | `BraTS24_2`   |
 | 2024 | 3rd  | *Sarim Hashmi, et al.*           | [Link](https://doi.org/10.48550/arXiv.2411.15872)          | :x: | `BraTS24_3`   |

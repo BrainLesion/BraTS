@@ -21,7 +21,7 @@ def test_configs_valid(configs):
 
 def test_integrity_rank(configs):
     ordinal_map = {
-        "B": "Baseline",
+        "CNMC_PAI": "Baseline",
         "1": "1st",
         "2": "2nd",
         "3": "3rd",
@@ -29,8 +29,8 @@ def test_integrity_rank(configs):
     for config in configs:
         algorithms = load_algorithms(file_path=config)
         for alg_key, alg_data in algorithms.items():
-            rank_suffix = alg_key.split("_")[-1]
-            name_rank = rank_suffix if rank_suffix == "B" else rank_suffix[0]
+            rank_suffix = alg_key.split("_", 1)[1]
+            name_rank = rank_suffix if rank_suffix == "CNMC_PAI" else rank_suffix[0]
             assert alg_data.meta.rank == ordinal_map[name_rank], (
                 f"Rank mismatch for {alg_key} in {config}"
             )

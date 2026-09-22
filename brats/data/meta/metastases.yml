@@ -44,7 +44,7 @@ algorithms:
       requires_root: true
       cpu_compatible: true
 
-  BraTS25_B:
+  BraTS25_CNMC_PAI:
     meta:
       authors: Daniel Capellán-Martín, et al.
       paper: https://pmc.ncbi.nlm.nih.gov/articles/PMC13148016
