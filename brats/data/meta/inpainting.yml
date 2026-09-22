@@ -66,6 +66,7 @@ algorithms:
     run_args:
       docker_image: aparida12/brats2025:inpt
       input_name_schema: *input_name_schema
+      requires_root: true
 
   ######## 2024 Algorithms ########
 

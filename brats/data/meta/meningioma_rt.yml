@@ -74,6 +74,7 @@ algorithms:
       docker_image: aparida12/brats2025:menrt
       input_name_schema: *input_name_schema
       requires_root: true
+      subject_modality_separator: "_"
 
 ##### 2024 #####
   BraTS24_1:
