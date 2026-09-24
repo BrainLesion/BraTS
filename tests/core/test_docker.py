@@ -170,6 +170,34 @@ class TestDockerHelpers(unittest.TestCase):
         self.assertEqual(result[0].device_ids, ["42"])
         self.assertEqual(result[0].capabilities, [["gpu"]])
 
+    @patch("brats.core.docker._is_cuda_available", return_value=True)
+    def test_handle_device_requests_cuda_multiple_devices(self, MockIsCudaAvailable):
+        result = _handle_device_requests(
+            algorithm=self.algorithm_gpu, cuda_devices="0,1", force_cpu=False
+        )
+        self.assertEqual(result[0].device_ids, ["0", "1"])
+
+        # whitespace around device ids is tolerated
+        result = _handle_device_requests(
+            algorithm=self.algorithm_gpu, cuda_devices=" 0 , 1 ", force_cpu=False
+        )
+        self.assertEqual(result[0].device_ids, ["0", "1"])
+
+        # empty entries (e.g. trailing commas) are dropped
+        result = _handle_device_requests(
+            algorithm=self.algorithm_gpu, cuda_devices="0,1,", force_cpu=False
+        )
+        self.assertEqual(result[0].device_ids, ["0", "1"])
+
+    @patch("brats.core.docker._is_cuda_available", return_value=True)
+    def test_handle_device_requests_cuda_invalid_input_raises(
+        self, MockIsCudaAvailable
+    ):
+        with self.assertRaises(ValueError):
+            _handle_device_requests(
+                algorithm=self.algorithm_gpu, cuda_devices=" , ", force_cpu=False
+            )
+
     @patch("brats.core.docker._is_cuda_available", return_value=False)
     def test_handle_device_requests_force_cpu_valid(self, MockIsCudaAvailable):
         device_requests = _handle_device_requests(
