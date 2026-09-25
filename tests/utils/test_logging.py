@@ -1,6 +1,10 @@
+import importlib
+from io import StringIO
+
 import pytest
 from loguru import logger
 
+import brats
 from brats.utils.logging import (
     _reset_logging_state_for_tests,
     add_console_handler,
@@ -35,6 +39,18 @@ def test_disable_and_enable(monkeypatch):
 
     enable()
     assert enabled_modules.get("brats") is True
+
+
+def test_import_brats_preserves_existing_loguru_handler():
+    sink = StringIO()
+    handler_id = logger.add(sink, format="{message}")
+
+    try:
+        importlib.reload(brats)
+        logger.info("handler survived import")
+        assert "handler survived import" in sink.getvalue()
+    finally:
+        logger.remove(handler_id)
 
 
 def test_add_console_handler_writes_to_stderr(capfd):
