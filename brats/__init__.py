@@ -13,4 +13,4 @@ from brats.core.segmentation_algorithms import (
     PediatricSegmenter,
 )
 
-logger.remove()
+logger.disable("brats")
