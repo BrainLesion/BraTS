@@ -26,6 +26,7 @@ from brats.constants import (
     MetastasesAlgorithms,
     PediatricAlgorithms,
 )
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class TestSegmentationAlgorithms(unittest.TestCase):
@@ -206,6 +207,112 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         self.assertIsInstance(custom_segmenter, GoATSegmenter)
 
     # Test MeningiomaSegmenter specialty
+
+    def test_pre_and_post_segmenter_timepoint_default(self):
+        segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
+        self.assertIsNone(segmenter.subject_id_suffix)
+        self.assertEqual(segmenter.algorithm.run_args.subject_id_suffix, "100")
+        self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-100")
+
+    def test_pre_and_post_segmenter_timepoint_pre_treatment(self):
+        segmenter = AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="pre")
+        self.assertEqual(segmenter.subject_id_suffix, "000")
+        self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-000")
+
+    def test_pre_and_post_segmenter_timepoint_post_treatment(self):
+        segmenter = AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="post")
+        self.assertEqual(segmenter.subject_id_suffix, "100")
+        self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-100")
+
+    def test_pre_and_post_segmenter_invalid_timepoint(self):
+        with self.assertRaises(AlgorithmConfigException):
+            AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="invalid")
+
+    def test_timepoint_schema_without_configured_suffix_raises(self):
+        segmenter = MeningiomaSegmenter()
+        with self.assertRaises(AlgorithmConfigException):
+            segmenter._format_input_name(
+                i=0, input_name_schema="BraTS-GLI-{id:05d}-{timepoint}"
+            )
+
+    @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_single_output")
+    @patch("brats.core.brats_algorithm.run_docker_container")
+    @patch("brats.core.segmentation_algorithms.input_sanity_check")
+    @patch("brats.core.brats_algorithm.InferenceSetup")
+    def test_pre_treatment_infer_single_uses_pre_op_subject_id(
+        self,
+        mock_inference_setup,
+        mock_input_sanity_check,
+        mock_run_container,
+        mock_process_single_output,
+    ):
+        segmenter = AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="pre")
+        mock_inference_setup_ret = mock_inference_setup.return_value
+        mock_inference_setup_ret.__enter__.return_value = (
+            self.tmp_data_folder,
+            self.tmp_data_folder,
+        )
+
+        mock_run_container.side_effect = lambda *args, **kwargs: None
+
+        segmenter.infer_single(
+            t1c=self.t1c,
+            t1n=self.t1n,
+            t2f=self.t2f,
+            t2w=self.t2w,
+            output_file=self.tmp_data_folder / "output.nii.gz",
+        )
+
+        _args, kwargs = mock_run_container.call_args
+        self.assertEqual(kwargs["data_path"], self.tmp_data_folder)
+        self.assertTrue((self.tmp_data_folder / "BraTS-GLI-00000-000").is_dir())
+
+    @patch("brats.core.segmentation_algorithms.input_sanity_check")
+    def test_standardize_batch_inputs_uses_timepoint(self, mock_input_sanity_check):
+        subjects = [f for f in self.data_folder.iterdir() if f.is_dir()]
+        mapping = self.segmenter._standardize_batch_inputs(
+            data_folder=self.tmp_data_folder,
+            subjects=subjects,
+            input_name_schema="BraTS-GLI-{id:05d}-{timepoint}",
+        )
+        self.assertDictEqual(
+            mapping,
+            {
+                "BraTS-GLI-00000-100": "subject",
+            },
+        )
+
+        pre_segmenter = AdultGliomaPreAndPostTreatmentSegmenter(
+            treatment_timepoint="pre"
+        )
+        mapping = pre_segmenter._standardize_batch_inputs(
+            data_folder=self.tmp_data_folder,
+            subjects=subjects,
+            input_name_schema="BraTS-GLI-{id:05d}-{timepoint}",
+        )
+        self.assertDictEqual(
+            mapping,
+            {
+                "BraTS-GLI-00000-000": "subject",
+            },
+        )
+
+    @patch("brats.core.segmentation_algorithms.input_sanity_check")
+    def test_standardize_batch_inputs_ignores_timepoint_for_other_schemas(
+        self, mock_input_sanity_check
+    ):
+        subjects = [f for f in self.data_folder.iterdir() if f.is_dir()]
+        mapping = self.segmenter._standardize_batch_inputs(
+            data_folder=self.tmp_data_folder,
+            subjects=subjects,
+            input_name_schema="BraTS-GLI-{id:05d}-000",
+        )
+        self.assertDictEqual(
+            mapping,
+            {
+                "BraTS-GLI-00000-000": "subject",
+            },
+        )
 
     @patch("brats.core.segmentation_algorithms.MeningiomaSegmenter._infer_single")
     def test_meningioma_segmenter_infer_single_valid(self, mock_infer_single):

@@ -85,7 +85,9 @@ class Inpainter(BraTSAlgorithm):
         """
         internal_external_name_map = {}
         for i, subject in enumerate(subjects):
-            internal_name = input_name_schema.format(id=i)
+            internal_name = self._format_input_name(
+                i=i, input_name_schema=input_name_schema
+            )
             internal_external_name_map[internal_name] = subject.name
             # TODO Add support for .nii files
 

@@ -21,6 +21,11 @@ class BraTSAlgorithm(ABC):
     interface and implements the logic for single and batch inference.
     """
 
+    subject_id_suffix: Optional[str] = None
+    """Suffix substituted into the ``{timepoint}`` placeholder of an
+    ``input_name_schema``. ``None`` means no placeholder is resolved unless the
+    algorithm metadata declares a default"""
+
     def __init__(
         self,
         algorithm: Algorithms,
@@ -78,6 +83,33 @@ class BraTSAlgorithm(ABC):
             str: Extracted identifier
         """
         return "-".join(subject_id.split("-")[-2:])
+
+    def _format_input_name(self, i: int, input_name_schema: str | None = None) -> str:
+        """Format an input name schema for subject index @i.
+
+        Schemas that contain a ``{timepoint}`` placeholder (used by the adult
+        glioma pre & post treatment track) are formatted with a suffix resolved
+        from the instance override (:attr:`subject_id_suffix`) or, if unset, the
+        algorithm metadata default.
+
+        Args:
+            i (int): Subject index
+            input_name_schema (str, optional): Schema to format. Defaults to
+                the schema of the selected algorithm.
+
+        Returns:
+            str: Standardized internal subject name
+        """
+        schema = input_name_schema or self.algorithm.run_args.input_name_schema
+        if "{timepoint}" not in schema:
+            return schema.format(id=i)
+        suffix = self.subject_id_suffix or self.algorithm.run_args.subject_id_suffix
+        if suffix is None:
+            raise AlgorithmConfigException(
+                f"Algorithm {self.algorithm_key} requires a subject ID timepoint, "
+                "but no default suffix is configured and none was provided"
+            )
+        return schema.format(id=i, timepoint=suffix)
 
     def _process_single_output(
         self,
@@ -196,7 +228,7 @@ class BraTSAlgorithm(ABC):
             logger.info("Performing single inference")
 
             # the id here is arbitrary
-            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
+            subject_id = self._format_input_name(i=0)
 
             self._standardize_single_inputs(
                 data_folder=tmp_data_folder,

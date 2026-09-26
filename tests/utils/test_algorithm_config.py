@@ -1,6 +1,9 @@
 import pytest
 
-from brats.constants import META_DIR
+from brats.constants import (
+    ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
+    META_DIR,
+)
 from brats.utils.algorithm_config import load_algorithms
 
 
@@ -60,3 +63,21 @@ def test_integrity_challenge_manuscript(configs):
 
         for challenge_manuscripts in challenge_manuscripts_by_years.values():
             assert len(set(challenge_manuscripts)) == 1
+
+
+def test_subject_id_suffix_defaults_to_none(configs):
+    """Only the pre & post treatment track encodes a timepoint suffix."""
+    for config in configs:
+        if config == ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS:
+            continue
+        for alg_data in load_algorithms(file_path=config).values():
+            assert alg_data.run_args.subject_id_suffix is None
+
+
+def test_pre_and_post_subject_id_suffix():
+    algorithms = load_algorithms(
+        file_path=ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS
+    )
+    for alg_data in algorithms.values():
+        assert "{timepoint}" in alg_data.run_args.input_name_schema
+        assert alg_data.run_args.subject_id_suffix == "100"
