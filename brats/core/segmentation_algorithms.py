@@ -282,8 +282,7 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
     treatment scan and select the corresponding pipeline. By default the suffix
     declared in the algorithm metadata is used (currently "100", post
     treatment), which matches the behavior of previous releases. Use "pre" for
-    pre-operative scans to avoid spurious resection cavity labels (see
-    https://github.com/BrainLesion/BraTS/issues/180).
+    pre-operative scans to avoid spurious resection cavity labels.
 
     Args:
         algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional):
