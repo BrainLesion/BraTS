@@ -81,11 +81,6 @@ segmenter.infer_single(
 )
 ```
 
-> [!NOTE]
-> `AdultGliomaPreAndPostTreatmentSegmenter` uses the timepoint declared in the
-> algorithm metadata (currently post-treatment, ID suffix `-100`).
-> For pre-operative exams, pass `treatment_timepoint="pre"` to avoid spurious resection cavity labels.
-
 ## Citation
 
 If you use BraTS Orchestrator in your research, please cite:

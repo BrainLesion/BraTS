@@ -4,7 +4,7 @@ import shutil
 from abc import abstractmethod
 from collections.abc import Mapping
 from pathlib import Path
-from typing import ClassVar, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
 from loguru import logger
 
@@ -296,11 +296,9 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
             Defaults to False.
         treatment_timepoint (Literal["pre", "post"], optional): Whether the
             images are pre- or post-treatment scans. Determines the timepoint
-            suffix ("-000" vs "-100") used in the standardized subject IDs.
-            Defaults to the suffix declared by the algorithm metadata (post).
+            suffix ("-000" vs "-100") resolved from the algorithm metadata.
+            Defaults to "post".
     """
-
-    _TIMEPOINTS: ClassVar[dict[str, str]] = {"pre": "000", "post": "100"}
 
     def __init__(
         self,
@@ -309,7 +307,7 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
         ),
         cuda_devices: str = "0",
         force_cpu: bool = False,
-        treatment_timepoint: Optional[Literal["pre", "post"]] = None,
+        treatment_timepoint: Literal["pre", "post"] = "post",
     ):
         super().__init__(
             algorithm=algorithm,
@@ -317,13 +315,13 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
-        if treatment_timepoint is not None:
-            if treatment_timepoint not in self._TIMEPOINTS:
-                raise AlgorithmConfigException(
-                    f"Unsupported treatment_timepoint: {treatment_timepoint}. "
-                    f"Must be one of {sorted(self._TIMEPOINTS)}"
-                )
-            self.subject_id_suffix = self._TIMEPOINTS[treatment_timepoint]
+        suffix_by_timepoint = self.algorithm.run_args.suffix_by_timepoint or {}
+        if treatment_timepoint not in suffix_by_timepoint:
+            raise AlgorithmConfigException(
+                f"Unsupported treatment_timepoint: {treatment_timepoint}. "
+                f"Must be one of {sorted(suffix_by_timepoint)}"
+            )
+        self.timepoint_suffix = suffix_by_timepoint[treatment_timepoint]
 
 
 class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):

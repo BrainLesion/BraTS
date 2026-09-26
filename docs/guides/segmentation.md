@@ -27,8 +27,9 @@ segmenter.infer_single(
 
 !!! warning "Pre- vs post-treatment timepoint"
     The BraTS25 pre & post-treatment containers infer the treatment timepoint from the
-    standardized subject ID. `AdultGliomaPreAndPostTreatmentSegmenter` uses the suffix
-    declared in the algorithm metadata (currently `-100`, post-treatment). For
+    standardized subject ID. `AdultGliomaPreAndPostTreatmentSegmenter` resolves the
+    `treatment_timepoint` ("pre"/"post") against the timepoint suffixes declared in the
+    algorithm metadata (currently `-000` for pre and `-100` for post). For
     **pre-operative** exams, pass `treatment_timepoint="pre"` to use the `-000` suffix
     and avoid spurious resection cavity (label 4) predictions:
 

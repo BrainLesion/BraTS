@@ -21,10 +21,10 @@ class BraTSAlgorithm(ABC):
     interface and implements the logic for single and batch inference.
     """
 
-    subject_id_suffix: Optional[str] = None
-    """Suffix substituted into the ``{timepoint}`` placeholder of an
-    ``input_name_schema``. ``None`` means no placeholder is resolved unless the
-    algorithm metadata declares a default"""
+    timepoint_suffix: Optional[str] = None
+    """Suffix substituted into the ``{timepoint_suffix}`` placeholder of an
+    ``input_name_schema``. ``None`` for algorithms that do not encode a
+    treatment timepoint"""
 
     def __init__(
         self,
@@ -87,10 +87,9 @@ class BraTSAlgorithm(ABC):
     def _format_input_name(self, i: int, input_name_schema: str | None = None) -> str:
         """Format an input name schema for subject index @i.
 
-        Schemas that contain a ``{timepoint}`` placeholder (used by the adult
-        glioma pre & post treatment track) are formatted with a suffix resolved
-        from the instance override (:attr:`subject_id_suffix`) or, if unset, the
-        algorithm metadata default.
+        Schemas that contain a ``{timepoint_suffix}`` placeholder (used by the
+        adult glioma pre & post treatment track) are formatted with the
+        instance's :attr:`timepoint_suffix`.
 
         Args:
             i (int): Subject index
@@ -101,15 +100,14 @@ class BraTSAlgorithm(ABC):
             str: Standardized internal subject name
         """
         schema = input_name_schema or self.algorithm.run_args.input_name_schema
-        if "{timepoint}" not in schema:
+        if "{timepoint_suffix}" not in schema:
             return schema.format(id=i)
-        suffix = self.subject_id_suffix or self.algorithm.run_args.subject_id_suffix
-        if suffix is None:
+        if self.timepoint_suffix is None:
             raise AlgorithmConfigException(
-                f"Algorithm {self.algorithm_key} requires a subject ID timepoint, "
-                "but no default suffix is configured and none was provided"
+                f"Algorithm {self.algorithm_key} requires a timepoint suffix, "
+                "but none was configured"
             )
-        return schema.format(id=i, timepoint=suffix)
+        return schema.format(id=i, timepoint_suffix=self.timepoint_suffix)
 
     def _process_single_output(
         self,

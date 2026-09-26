@@ -210,18 +210,17 @@ class TestSegmentationAlgorithms(unittest.TestCase):
 
     def test_pre_and_post_segmenter_timepoint_default(self):
         segmenter = AdultGliomaPreAndPostTreatmentSegmenter()
-        self.assertIsNone(segmenter.subject_id_suffix)
-        self.assertEqual(segmenter.algorithm.run_args.subject_id_suffix, "100")
+        self.assertEqual(segmenter.timepoint_suffix, "100")
         self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-100")
 
     def test_pre_and_post_segmenter_timepoint_pre_treatment(self):
         segmenter = AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="pre")
-        self.assertEqual(segmenter.subject_id_suffix, "000")
+        self.assertEqual(segmenter.timepoint_suffix, "000")
         self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-000")
 
     def test_pre_and_post_segmenter_timepoint_post_treatment(self):
         segmenter = AdultGliomaPreAndPostTreatmentSegmenter(treatment_timepoint="post")
-        self.assertEqual(segmenter.subject_id_suffix, "100")
+        self.assertEqual(segmenter.timepoint_suffix, "100")
         self.assertEqual(segmenter._format_input_name(i=0), "BraTS-GLI-00000-100")
 
     def test_pre_and_post_segmenter_invalid_timepoint(self):
@@ -232,7 +231,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         segmenter = MeningiomaSegmenter()
         with self.assertRaises(AlgorithmConfigException):
             segmenter._format_input_name(
-                i=0, input_name_schema="BraTS-GLI-{id:05d}-{timepoint}"
+                i=0, input_name_schema="BraTS-GLI-{id:05d}-{timepoint_suffix}"
             )
 
     @patch("brats.core.brats_algorithm.BraTSAlgorithm._process_single_output")
@@ -273,7 +272,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         mapping = self.segmenter._standardize_batch_inputs(
             data_folder=self.tmp_data_folder,
             subjects=subjects,
-            input_name_schema="BraTS-GLI-{id:05d}-{timepoint}",
+            input_name_schema="BraTS-GLI-{id:05d}-{timepoint_suffix}",
         )
         self.assertDictEqual(
             mapping,
@@ -288,7 +287,7 @@ class TestSegmentationAlgorithms(unittest.TestCase):
         mapping = pre_segmenter._standardize_batch_inputs(
             data_folder=self.tmp_data_folder,
             subjects=subjects,
-            input_name_schema="BraTS-GLI-{id:05d}-{timepoint}",
+            input_name_schema="BraTS-GLI-{id:05d}-{timepoint_suffix}",
         )
         self.assertDictEqual(
             mapping,
