@@ -5,6 +5,7 @@ constants:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
+    2026: &year_2026 2026
     2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -14,6 +15,56 @@ constants:
     3rd: &rank_3 3rd
 
 algorithms:
+
+  ######## 2026 Algorithms ########
+
+  BraTS26_1:
+    meta:
+      authors: TODO
+      paper: TODO
+      challenge: *challenge
+      challenge_manuscript: TODO
+      rank: *rank_1
+      year: *year_2026
+    run_args:
+      docker_image: # TODO Define URL
+      input_name_schema: *input_name_schema
+
+  BraTS26_2A:
+    meta:
+      authors: TODO
+      paper: TODO
+      challenge: *challenge
+      challenge_manuscript: TODO
+      rank: *rank_2
+      year: *year_2026
+    run_args:
+      docker_image: # TODO Define URL
+      input_name_schema: *input_name_schema
+
+  BraTS26_2B:
+    meta:
+      authors: TODO
+      paper: TODO
+      challenge: *challenge
+      challenge_manuscript: TODO
+      rank: *rank_2
+      year: *year_2026
+    run_args:
+      docker_image: # TODO Define URL
+      input_name_schema: *input_name_schema
+
+  BraTS26_3:
+    meta:
+      authors: TODO
+      paper: TODO
+      challenge: *challenge
+      challenge_manuscript: TODO
+      rank: *rank_3
+      year: *year_2026
+    run_args:
+      docker_image: # TODO Define URL
+      input_name_schema: *input_name_schema
 
   ######## 2025 Algorithms ########
 
