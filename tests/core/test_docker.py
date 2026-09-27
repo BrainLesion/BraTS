@@ -124,10 +124,10 @@ class TestDockerHelpers(unittest.TestCase):
             _show_docker_pull_progress(tasks, progress, line)
             self.assertIn("[Extracting id2]", tasks)
 
-    @patch("brats.core.docker.client.images.list", return_value=[])
-    @patch("brats.core.docker.client.api.pull")
-    def test_ensure_image(self, MockPull, MockList):
-        MockPull.return_value = iter(
+    @patch("brats.core.docker.client")
+    def test_ensure_image(self, MockClient):
+        MockClient.images.list.return_value = []
+        MockClient.api.pull.return_value = iter(
             [
                 {
                     "status": "Downloading",
@@ -137,7 +137,9 @@ class TestDockerHelpers(unittest.TestCase):
             ]
         )
         _ensure_image("test-image:latest")
-        MockPull.assert_called_once_with("test-image:latest", stream=True, decode=True)
+        MockClient.api.pull.assert_called_once_with(
+            "test-image:latest", stream=True, decode=True
+        )
 
     @patch("subprocess.run")
     def test_is_cuda_available_ok(self, MockRun):

@@ -21,6 +21,11 @@ class BraTSAlgorithm(ABC):
     interface and implements the logic for single and batch inference.
     """
 
+    timepoint_suffix: Optional[str] = None
+    """Suffix substituted into the ``{timepoint_suffix}`` placeholder of an
+    ``input_name_schema``. ``None`` for algorithms that do not encode a
+    treatment timepoint"""
+
     def __init__(
         self,
         algorithm: Algorithms,
@@ -78,6 +83,31 @@ class BraTSAlgorithm(ABC):
             str: Extracted identifier
         """
         return "-".join(subject_id.split("-")[-2:])
+
+    def _format_input_name(self, i: int, input_name_schema: str | None = None) -> str:
+        """Format an input name schema for subject index @i.
+
+        Schemas that contain a ``{timepoint_suffix}`` placeholder (used by the
+        adult glioma pre & post treatment track) are formatted with the
+        instance's :attr:`timepoint_suffix`.
+
+        Args:
+            i (int): Subject index
+            input_name_schema (str, optional): Schema to format. Defaults to
+                the schema of the selected algorithm.
+
+        Returns:
+            str: Standardized internal subject name
+        """
+        schema = input_name_schema or self.algorithm.run_args.input_name_schema
+        if "{timepoint_suffix}" not in schema:
+            return schema.format(id=i)
+        if self.timepoint_suffix is None:
+            raise AlgorithmConfigException(
+                f"Algorithm {self.algorithm_key} requires a timepoint suffix, "
+                "but none was configured"
+            )
+        return schema.format(id=i, timepoint_suffix=self.timepoint_suffix)
 
     def _process_single_output(
         self,
@@ -207,7 +237,7 @@ class BraTSAlgorithm(ABC):
             logger.info("Performing single inference")
 
             # the id here is arbitrary
-            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
+            subject_id = self._format_input_name(i=0)
 
             self._standardize_single_inputs(
                 data_folder=tmp_data_folder,
