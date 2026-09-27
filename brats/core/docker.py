@@ -33,6 +33,7 @@ except DockerException as e:
         f"installed and running. Error: {e}"
     )
     # not aborting since this happens during read the docs builds. not a great solution tbf
+    client = None
 
 
 def _show_docker_pull_progress(
