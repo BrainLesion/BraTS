@@ -253,6 +253,26 @@ MISSING_MRI_ALGORITHMS = META_DIR / "missing_mri.yml"
 
 DUMMY_PARAMETERS = PARAMETERS_DIR / "dummy.yml"
 
+# Mapping of the public algorithm enum classes to their metadata files. This is
+# the single source of truth binding the public enum API to the YAML registry
+# and is validated by the config-contract tests.
+ALGORITHM_META_FILE_BY_ENUM: dict[type[Algorithms], Path] = {
+    AdultGliomaPreAndPostTreatmentAlgorithms: (
+        ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS
+    ),
+    AdultGliomaPreTreatmentAlgorithms: (
+        ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS
+    ),
+    MeningiomaRTAlgorithms: MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
+    MeningiomaAlgorithms: MENINGIOMA_SEGMENTATION_ALGORITHMS,
+    PediatricAlgorithms: PEDIATRIC_SEGMENTATION_ALGORITHMS,
+    AfricaAlgorithms: AFRICA_SEGMENTATION_ALGORITHMS,
+    MetastasesAlgorithms: METASTASES_SEGMENTATION_ALGORITHMS,
+    GoATAlgorithms: GOAT_SEGMENTATION_ALGORITHMS,
+    InpaintingAlgorithms: INPAINTING_ALGORITHMS,
+    MissingMRIAlgorithms: MISSING_MRI_ALGORITHMS,
+}
+
 # ZENODO
 ZENODO_RECORD_BASE_URL = "https://zenodo.org/api/records"
 

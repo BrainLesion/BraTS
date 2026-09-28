@@ -1,0 +1,65 @@
+# Selection manifest for the end-to-end smoke-test suite.
+#
+# Each entry runs one representative algorithm through the full containerized
+# inference workflow on de-identified sample data from the
+# BrainLesion/tutorials repository. Run with:
+#
+#   uv run python scripts/smoke_test.py
+#   uv run python scripts/smoke_test.py --case inpainting --keep
+#   uv run pytest -m smoke
+#
+# Fields:
+#   id              Unique case identifier (used by --case and pytest ids)
+#   task            One of: segmentation, inpainting, missing_mri
+#   algorithm_class Public class name exported from `brats`
+#   algorithm       `<EnumClassName>.<MEMBER>` selecting the algorithm
+#   data            Which sample dataset to use: segmentation or inpainting
+#   modalities      Optional subset of modalities to feed (defaults to all
+#                   modalities required by the task)
+#   synthesize      Optional modality expected to be synthesized (missing_mri);
+#                   used for output validation only
+#   kwargs          Optional extra constructor keyword arguments
+#   allowed_labels  Optional allowed label set for segmentation validation
+#
+# Defaults:
+#   timeout         Optional per-case timeout in seconds. `null` means no limit.
+#                   Must cover container image pull and weight download on a
+#                   cold host, so CI sets a generous value.
+#
+# Prefer algorithms that are fast to download and run. The selection can be
+# overridden entirely with --manifest.
+
+defaults:
+  backend: docker
+  cuda_devices: "0"
+  force_cpu: false
+  timeout: null
+
+cases:
+  - id: segmentation_adult_glioma
+    task: segmentation
+    algorithm_class: AdultGliomaPreTreatmentSegmenter
+    algorithm: AdultGliomaPreTreatmentAlgorithms.BraTS23_1
+    data: segmentation
+    modalities: [t1c, t1n, t2f, t2w]
+
+  - id: inpainting
+    task: inpainting
+    algorithm_class: Inpainter
+    algorithm: InpaintingAlgorithms.BraTS23_1
+    data: inpainting
+
+  - id: missing_mri
+    task: missing_mri
+    algorithm_class: MissingMRI
+    algorithm: MissingMRIAlgorithms.BraTS24_1
+    data: segmentation
+    modalities: [t1c, t1n, t2f]
+    synthesize: t2w
+
+  - id: meningioma_rt
+    task: segmentation
+    algorithm_class: MeningiomaRTSegmenter
+    algorithm: MeningiomaRTAlgorithms.BraTS25_1
+    data: segmentation
+    modalities: [t1c]
