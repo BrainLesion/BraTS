@@ -1,4 +1,9 @@
-# BraTS Orchestrator
+<table>
+<tr>
+<td><img src="https://raw.githubusercontent.com/BrainLesion/brats/main/docs/assets/brats-logo.png" alt="BraTS Orchestrator logo" width="110"></td>
+<td><h1>BraTS Orchestrator</h1></td>
+</tr>
+</table>
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
@@ -6,23 +11,6 @@
 [![tests](https://github.com/BrainLesion/brats/actions/workflows/tests.yml/badge.svg)](https://github.com/BrainLesion/brats/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/BrainLesion/BraTS/graph/badge.svg?token=A7FWUKO9Y4)](https://codecov.io/gh/BrainLesion/BraTS)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-```
-______         _____ _____
-| ___ \       |_   _/  ___|
-| |_/ /_ __ __ _| | \ `--.
-| ___ \ '__/ _` | |  `--. \
-| |_/ / | | (_| | | /\__/ /
-\____/|_|  \__,_\_/ \____/
-
-
- _____          _               _             _
-|  _  |        | |             | |           | |
-| | | |_ __ ___| |__   ___  ___| |_ _ __ __ _| |_ ___  _ __
-| | | | '__/ __| '_ \ / _ \/ __| __| '__/ _` | __/ _ \| '__|
-\ \_/ / | | (__| | | |  __/\__ \ |_| | | (_| | || (_) | |
- \___/|_|  \___|_| |_|\___||___/\__|_|  \__,_|\__\___/|_|
-```
 
 Providing the top-performing algorithms from the Brain Tumor Segmentation (BraTS) challenges, through an easy-to-use Python API.
 
