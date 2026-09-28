@@ -1,9 +1,8 @@
-<table>
-<tr>
-<td><img src="https://raw.githubusercontent.com/BrainLesion/brats/main/docs/assets/brats-logo.png" alt="BraTS Orchestrator logo" width="110"></td>
-<td><h1>BraTS Orchestrator</h1></td>
-</tr>
-</table>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BrainLesion/brats/main/docs/assets/brats-logo.png" alt="BraTS Orchestrator logo" width="120">
+</p>
+
+# BraTS Orchestrator
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/brats)](https://pypi.org/project/brats/)
 [![Stable Version](https://img.shields.io/pypi/v/brats?label=stable)](https://pypi.python.org/pypi/brats/)
