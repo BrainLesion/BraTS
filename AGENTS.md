@@ -51,10 +51,10 @@ Backend selection uses a Strategy pattern via dictionary dispatch in `_get_backe
 - **Docker** (`brats/core/docker.py`): Default backend. For algorithms from 2024 and earlier, it uses the MLCube `/mlcube_io0` through `/mlcube_io3` mounts and runs `infer`. For 2025 and newer algorithms, it mounts `/input` and `/output` and uses the image's default command. Images are pulled from Docker Hub when needed.
 - **Singularity** (`brats/core/singularity.py`): HPC-friendly backend. Converts Docker images to a sandbox, uses `--bind` for volume mounts, `--nv` for GPU support, and a temporary `--overlay` for writable storage. It follows the same year-dependent MLCube/native container split as Docker.
 
-Both backends expose a `run_container()` function with the same caller signature.
-Docker requests the IDs in `cuda_devices`; Singularity's `--nv` exposes host GPUs
-and does not apply that value as a GPU restriction. Use
-`SINGULARITYENV_CUDA_VISIBLE_DEVICES` when GPU selection is required.
+Both backends expose a `run_container()` function with the same caller signature
+and both honor `cuda_devices`: Docker requests the given device IDs (split on
+commas), while Singularity sets `SINGULARITYENV_CUDA_VISIBLE_DEVICES` around the
+container run to restrict the GPUs exposed by `--nv`. IDs refer to host GPUs.
 
 ### Algorithm configuration (data-driven registry)
 

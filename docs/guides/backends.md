@@ -29,6 +29,8 @@ Most algorithms require GPU acceleration. Ensure the [NVIDIA Container Toolkit](
 segmenter = AdultGliomaPreAndPostTreatmentSegmenter(cuda_devices="0")
 ```
 
+Multiple GPUs can be selected with a comma-separated string, e.g. `cuda_devices="0,1"`.
+
 ## Singularity
 
 [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) is fully supported for environments where Docker isn't available (e.g., HPC clusters).
@@ -48,13 +50,17 @@ segmenter.infer_single(
 
 ### GPU Acceleration
 
-Singularity uses the `--nv` flag to expose host GPUs — no additional toolkit is needed. However, `cuda_devices` is ignored; `--nv` [exposes all host GPUs](https://docs.sylabs.io/guides/latest/user-guide/gpu.html#multiple-gpus). To limit GPUs:
+Singularity uses the `--nv` flag to expose host GPUs — no additional toolkit is needed. The `cuda_devices` parameter is honored: the orchestrator sets `SINGULARITYENV_CUDA_VISIBLE_DEVICES` around the container run, so only the requested GPUs are visible inside it:
 
-```bash
-export SINGULARITYENV_CUDA_VISIBLE_DEVICES=0
+```python
+segmenter = AdultGliomaPreAndPostTreatmentSegmenter(cuda_devices="0,1")
 ```
 
-See [issue #164](https://github.com/BrainLesion/BraTS/issues/164).
+Notes:
+
+- `cuda_devices` refers to **host** GPU IDs. If the host already defines `CUDA_VISIBLE_DEVICES` (e.g., set by a batch scheduler such as SLURM), the `cuda_devices` value takes precedence inside the container.
+- Manually setting `SINGULARITYENV_CUDA_VISIBLE_DEVICES` is no longer necessary; the `cuda_devices` parameter overrides it.
+- The environment override is process-global and not thread-safe: run Singularity containers sequentially within a single process.
 
 ---
 

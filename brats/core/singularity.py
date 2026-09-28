@@ -4,6 +4,8 @@ import os
 import subprocess
 import tempfile
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Optional
 
@@ -25,6 +27,7 @@ from brats.core.docker import (
     _sanity_check_output,
 )
 from brats.utils.algorithm_config import AlgorithmData
+from brats.utils.cuda import normalize_cuda_devices
 
 try:
     docker_client = docker.from_env()
@@ -156,6 +159,59 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
         return Path(workdir)
 
 
+_SINGULARITY_CUDA_ENV_VAR = "SINGULARITYENV_CUDA_VISIBLE_DEVICES"
+_HOST_CUDA_ENV_VAR = "CUDA_VISIBLE_DEVICES"
+
+
+@contextmanager
+def _cuda_device_selection_env(cuda_devices: str, enabled: bool) -> Iterator[None]:
+    """Temporarily expose only the requested GPUs inside the container.
+
+    Singularity's ``--nv`` flag exposes all host GPUs, so GPU selection is
+    enforced via the ``SINGULARITYENV_CUDA_VISIBLE_DEVICES`` environment
+    variable, which Singularity passes into the container as
+    ``CUDA_VISIBLE_DEVICES``. The previous value of the variable (if any) is
+    restored on exit.
+
+    Args:
+        cuda_devices (str): Comma-separated list of host GPU IDs to make
+            visible inside the container.
+        enabled (bool): Whether to restrict GPUs at all. If ``False`` (CPU
+            run), the environment is left untouched.
+
+    Note:
+        The environment override is process-global and therefore not
+        thread-safe. Concurrent Singularity runs within the same process
+        may interfere with each other's GPU selection; run containers
+        sequentially.
+    """
+    if not enabled:
+        yield
+        return
+
+    previous_value = os.environ.get(_SINGULARITY_CUDA_ENV_VAR)
+    if previous_value is not None:
+        logger.warning(
+            f"The {_SINGULARITY_CUDA_ENV_VAR} environment variable is already "
+            f"set to '{previous_value}'. It will be overridden with the "
+            f"cuda_devices parameter value '{cuda_devices}'."
+        )
+    if os.environ.get(_HOST_CUDA_ENV_VAR) is not None:
+        logger.warning(
+            f"The host's {_HOST_CUDA_ENV_VAR} environment variable is set "
+            f"(e.g. by a batch scheduler). The cuda_devices parameter refers "
+            f"to host GPU IDs and takes precedence inside the container."
+        )
+    os.environ[_SINGULARITY_CUDA_ENV_VAR] = normalize_cuda_devices(cuda_devices)
+    try:
+        yield
+    finally:
+        if previous_value is None:
+            os.environ.pop(_SINGULARITY_CUDA_ENV_VAR, None)
+        else:
+            os.environ[_SINGULARITY_CUDA_ENV_VAR] = previous_value
+
+
 def run_container(
     algorithm: AlgorithmData,
     data_path: Path,
@@ -227,8 +283,13 @@ def run_container(
 
     options = []
 
-    if len(device_requests) > 0 and not force_cpu:
-        logger.info(f"Using CUDA devices: {cuda_devices}")
+    enable_gpu = len(device_requests) > 0 and not force_cpu
+    devices = normalize_cuda_devices(cuda_devices) if enable_gpu else cuda_devices
+    if enable_gpu:
+        logger.info(
+            f"Restricting container GPUs to CUDA devices: {devices} "
+            f"(via {_SINGULARITY_CUDA_ENV_VAR})"
+        )
         options.append("--nv")  # Singularity uses --nv to enable GPU support
 
     # TODO: The --fakeroot option may be required for certain algorithms that
@@ -260,14 +321,15 @@ def run_container(
         )
         overlay_created = True
     try:
-        executor = Client.run(
-            image,
-            options=options,
-            args=args,
-            stream=True,
-            bind=singularity_bindings,
-        )
-        container_output = list(executor)
+        with _cuda_device_selection_env(cuda_devices=devices, enabled=enable_gpu):
+            executor = Client.run(
+                image,
+                options=options,
+                args=args,
+                stream=True,
+                bind=singularity_bindings,
+            )
+            container_output = list(executor)
 
         _sanity_check_output(
             data_path=data_path,
