@@ -310,7 +310,7 @@ class TestDockerHelpers(unittest.TestCase):
         algorithm = MagicMock()
         algorithm.run_args.requires_root = True
         user = _get_container_user(algorithm)
-        self.assertIsNone(user)
+        self.assertEqual(user, "0:0")
 
     @patch("brats.core.docker.os.getuid", return_value=42)
     @patch("brats.core.docker.os.getgid", return_value=1000)
