@@ -257,22 +257,24 @@ def _build_command_args(
 
 def _get_container_user(
     algorithm: AlgorithmData,
-) -> Optional[str]:
-    """Build extra arguments for the docker container.
+) -> str:
+    """Determine the user to run the docker container as.
 
     Args:
         algorithm (AlgorithmData): The algorithm data
 
     Returns:
-        Optional[str]: The user to run the container as or None if root is required
+        str: uid:gid to run the container as. "0:0" (root) for algorithms that
+            require it, otherwise the current user so that written files are
+            owned by them (also better security-wise).
 
+    Note:
+        Must be an explicit uid:gid. Passing None to docker means "inherit the
+        image's USER directive", which is not the same as root for images that
+        declare one.
     """
 
-    if not algorithm.run_args.requires_root:
-        # run the container as the current user to ensure written files are always owned by the user
-        # also overall better security-wise
-        return f"{os.getuid()}:{os.getgid()}"
-    return None
+    return "0:0" if algorithm.run_args.requires_root else f"{os.getuid()}:{os.getgid()}"
 
 
 def _observe_docker_output(
@@ -448,7 +450,10 @@ def run_container(
     logger.debug(f"GPU Device requests: {device_requests}")
 
     user = _get_container_user(algorithm=algorithm)
-    logger.debug(f"Container user: {user or 'root (required by algorithm)'}")
+    logger.debug(
+        f"Container user: {user}"
+        f"{' (root required by algorithm)' if algorithm.run_args.requires_root else ''}"
+    )
 
     logger.info(f"{'Starting inference'}")
     start_time = time.time()
