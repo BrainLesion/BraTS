@@ -93,6 +93,7 @@ algorithms:
     run_args:
       docker_image: brainles/brats26_inpainting_superinpaint
       input_name_schema: *input_name_schema
+      requires_root: true
 
   ######## 2025 Algorithms ########
 
