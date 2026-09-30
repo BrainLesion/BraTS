@@ -13,6 +13,7 @@ constants:
     1st: &rank_1 1st
     2nd: &rank_2 2nd
     3rd: &rank_3 3rd
+    4th: &rank_4 4th
 
 algorithms:
 
@@ -67,6 +68,30 @@ algorithms:
       year: *year_2026
     run_args:
       docker_image: brainles/brats26_inpainting_the_brat-tein_shakes
+      input_name_schema: *input_name_schema
+
+  BraTS26_4A:
+    meta:
+      authors: Danese et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_4
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_morpheus
+      input_name_schema: *input_name_schema
+
+  BraTS26_4B:
+    meta:
+      authors: Karimaghaloo et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_4
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_superinpaint
       input_name_schema: *input_name_schema
 
   ######## 2025 Algorithms ########

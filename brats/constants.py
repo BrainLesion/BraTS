@@ -178,6 +178,10 @@ class InpaintingAlgorithms(Algorithms):
     """ BraTS26  Inpainting shared 2nd place (tie)"""
     BraTS26_3 = "BraTS26_3"
     """ BraTS26  Inpainting 3rd place """
+    BraTS26_4A = "BraTS26_4A"
+    """ BraTS26  Inpainting shared 4th place (tie)"""
+    BraTS26_4B = "BraTS26_4B"
+    """ BraTS26  Inpainting shared 4th place (tie)"""
 
     BraTS25_1A = "BraTS25_1A"
     """ BraTS25  Inpainting shared 1st place (tie) """
