@@ -5,8 +5,14 @@ from typing import Optional, Union, cast
 
 from brats.constants import (
     AdultGliomaPreAndPostTreatmentAlgorithms,
+    AdultGliomaPreTreatmentAlgorithms,
+    AfricaAlgorithms,
     Algorithms,
+    GoATAlgorithms,
+    InpaintingAlgorithms,
+    MeningiomaAlgorithms,
     MeningiomaRTAlgorithms,
+    MetastasesAlgorithms,
     MissingMRIAlgorithms,
     PediatricAlgorithms,
 )
@@ -373,6 +379,7 @@ def preprocess_for_challenge(
 
     Raises:
         ValueError: If required modalities are missing for the challenge
+        TypeError: If challenge is not a supported Algorithms enum member
     """
     challenge_name = str(challenge)
 
@@ -392,24 +399,24 @@ def preprocess_for_challenge(
             raise ValueError(
                 f"All modalities required for {challenge_name} preprocessing"
             )
-        return cast(list[str | Path], all_paths)
+        return cast(list[Union[str, Path]], all_paths)
 
     # Route to appropriate preprocessing function
-    if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
+    if isinstance(challenge, AdultGliomaPreAndPostTreatmentAlgorithms):
         paths = _require_all_modalities()
         preprocess_coreg_mni152reg_bet(
             *paths,
             normalizer=normalizer,
         )
 
-    elif str(PediatricAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, PediatricAlgorithms):
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(
             *paths,
             normalizer=normalizer,
         )
 
-    elif str(MissingMRIAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, MissingMRIAlgorithms):
         preprocess_coreg_sri24reg_bet_allow_missing(
             t1_input,
             t1c_input,
@@ -421,7 +428,7 @@ def preprocess_for_challenge(
             flair_output,
             normalizer=normalizer,
         )
-    elif str(MeningiomaRTAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, MeningiomaRTAlgorithms):
         if t1c_input is None or t1c_output is None:
             raise ValueError(
                 f"T1c modality required for {challenge_name} preprocessing"
@@ -431,9 +438,24 @@ def preprocess_for_challenge(
             t1c_output=t1c_output,
             normalizer=normalizer,
         )
-    else:  # Most challenges use SRI24 with BET
+    elif isinstance(
+        challenge,
+        (
+            AdultGliomaPreTreatmentAlgorithms,
+            AfricaAlgorithms,
+            GoATAlgorithms,
+            InpaintingAlgorithms,
+            MeningiomaAlgorithms,
+            MetastasesAlgorithms,
+        ),
+    ):
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_bet(
             *paths,
             normalizer=normalizer,
+        )
+    else:
+        raise TypeError(
+            "challenge must be a supported Algorithms enum member, "
+            f"not {type(challenge).__name__}"
         )

@@ -124,10 +124,10 @@ class TestDockerHelpers(unittest.TestCase):
             _show_docker_pull_progress(tasks, progress, line)
             self.assertIn("[Extracting id2]", tasks)
 
-    @patch("brats.core.docker.client.images.list", return_value=[])
-    @patch("brats.core.docker.client.api.pull")
-    def test_ensure_image(self, MockPull, MockList):
-        MockPull.return_value = iter(
+    @patch("brats.core.docker.client")
+    def test_ensure_image(self, MockClient):
+        MockClient.images.list.return_value = []
+        MockClient.api.pull.return_value = iter(
             [
                 {
                     "status": "Downloading",
@@ -137,7 +137,9 @@ class TestDockerHelpers(unittest.TestCase):
             ]
         )
         _ensure_image("test-image:latest")
-        MockPull.assert_called_once_with("test-image:latest", stream=True, decode=True)
+        MockClient.api.pull.assert_called_once_with(
+            "test-image:latest", stream=True, decode=True
+        )
 
     @patch("subprocess.run")
     def test_is_cuda_available_ok(self, MockRun):
@@ -308,7 +310,7 @@ class TestDockerHelpers(unittest.TestCase):
         algorithm = MagicMock()
         algorithm.run_args.requires_root = True
         user = _get_container_user(algorithm)
-        self.assertIsNone(user)
+        self.assertEqual(user, "0:0")
 
     @patch("brats.core.docker.os.getuid", return_value=42)
     @patch("brats.core.docker.os.getgid", return_value=1000)
@@ -509,6 +511,7 @@ class TestDockerHelpers(unittest.TestCase):
     ):
         # setup mocks
         mock_build_command_args.return_value = "args"
+        mock_get_container_user.return_value = "1234:5678"
 
         # run
         cuda_devices = "0"
@@ -529,6 +532,10 @@ class TestDockerHelpers(unittest.TestCase):
         mock_get_volume_mappings_mlcube.assert_called_once()
         mock_build_command_args.assert_called_once()
         mock_handle_device_requests.assert_called_once()
+        mock_client.containers.run.assert_called_once()
+        self.assertEqual(
+            mock_client.containers.run.call_args.kwargs.get("user"), "1234:5678"
+        )
 
     @patch("brats.core.docker._log_algorithm_info")
     @patch("brats.core.docker._ensure_image")
@@ -549,6 +556,8 @@ class TestDockerHelpers(unittest.TestCase):
         mock_ensure_image,
         mock_log_algorithm_info,
     ):
+        mock_get_container_user.return_value = "1234:5678"
+
         # run
         cuda_devices = "0"
         force_cpu = False
@@ -569,3 +578,7 @@ class TestDockerHelpers(unittest.TestCase):
         mock_get_container_user.assert_called_once()
         mock_get_volume_mappings_docker_only.assert_called_once()
         mock_handle_device_requests.assert_called_once()
+        mock_client.containers.run.assert_called_once()
+        self.assertEqual(
+            mock_client.containers.run.call_args.kwargs.get("user"), "1234:5678"
+        )
