@@ -5,6 +5,7 @@ constants:
     2024: &challenge_manuscript_2024 "https://arxiv.org/abs/2305.08992" # same as 2023
     2023: &challenge_manuscript_2023 "https://arxiv.org/abs/2305.08992"
   years:
+    2026: &year_2026 2026
     2025: &year_2025 2025
     2024: &year_2024 2024
     2023: &year_2023 2023
@@ -12,8 +13,87 @@ constants:
     1st: &rank_1 1st
     2nd: &rank_2 2nd
     3rd: &rank_3 3rd
+    4th: &rank_4 4th
 
 algorithms:
+
+  ######## 2026 Algorithms ########
+
+  BraTS26_1:
+    meta:
+      authors: Kömürcü et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_1
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_kubilaykagankomurcu_itu
+      input_name_schema: *input_name_schema
+      requires_root: true
+      shm_size: "4gb"
+
+  BraTS26_2A:
+    meta:
+      authors: Hung et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_2
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_startorch_academy
+      input_name_schema: *input_name_schema
+      requires_root: true
+
+  BraTS26_2B:
+    meta:
+      authors: Cap et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_2
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_thecapybara
+      input_name_schema: *input_name_schema
+
+  BraTS26_3:
+    meta:
+      authors: Persson et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_3
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_the_brat-tein_shakes
+      input_name_schema: *input_name_schema
+
+  BraTS26_4A:
+    meta:
+      authors: Danese et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_4
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_morpheus
+      input_name_schema: *input_name_schema
+
+  BraTS26_4B:
+    meta:
+      authors: Karimaghaloo et al.
+      paper: N/A
+      challenge: *challenge
+      challenge_manuscript: N/A
+      rank: *rank_4
+      year: *year_2026
+    run_args:
+      docker_image: brainles/brats26_inpainting_superinpaint
+      input_name_schema: *input_name_schema
+      requires_root: true
 
   ######## 2025 Algorithms ########
 
