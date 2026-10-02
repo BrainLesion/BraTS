@@ -7,7 +7,8 @@ repo_name: BrainLesion/brats
 
 theme:
   name: material
-  logo: assets/logo.svg
+  logo: assets/brats-logo.png
+  favicon: assets/brats-logo.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
