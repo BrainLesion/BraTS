@@ -27,6 +27,7 @@ def test_integrity_rank(configs):
         "1": "1st",
         "2": "2nd",
         "3": "3rd",
+        "4": "4th",
     }
     for config in configs:
         algorithms = load_algorithms(file_path=config)
