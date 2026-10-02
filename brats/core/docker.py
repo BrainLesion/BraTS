@@ -16,8 +16,8 @@ from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from brats.constants import DUMMY_PARAMETERS, PACKAGE_CITATION, PARAMETERS_DIR
-from brats.utils.algorithm_config import AlgorithmData
+from brats.constants import PACKAGE_CITATION, PARAMETERS_DIR
+from brats.utils.algorithm_config import AlgorithmData, parameters_file_path
 from brats.utils.cuda import normalize_cuda_devices
 from brats.utils.exceptions import (
     AlgorithmNotCPUCompatibleException,
@@ -216,12 +216,9 @@ def _get_parameters_arg(algorithm: AlgorithmData) -> Optional[str]:
         if a parameter file is not required
     """
     if algorithm.run_args.parameters_file:
-        # Docker image name is used as the identifier for the param file
-        identifier = algorithm.run_args.docker_image.split(":")[0].split("/")[-1]
-        file = PARAMETERS_DIR / f"{identifier}.yml"
-        # Some algorithms do require a param file to be present but don't actually use it
-        # In this case we simply use a dummy file
-        param_file = file if file.exists() else DUMMY_PARAMETERS
+        # Some algorithms do require a param file to be present but don't actually
+        # use it. In this case parameters_file_path falls back to a dummy file.
+        param_file = parameters_file_path(algorithm.run_args.docker_image)
         return f" --parameters_file=/mlcube_io3/{param_file.name}"
     return None
 

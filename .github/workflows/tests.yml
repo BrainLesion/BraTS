@@ -33,3 +33,20 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
+
+  # Network-dependent registry checks (container image and Zenodo record
+  # existence). These are excluded from the default test run, so they are
+  # executed once here instead of in every Python-version matrix job.
+  registry-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Check container images and Zenodo records
+        run: uv run pytest tests/config -m network

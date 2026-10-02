@@ -259,7 +259,7 @@ class TestDockerHelpers(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_get_parameters_arg_file(self):
-        with patch("brats.core.docker.PARAMETERS_DIR", self.test_dir):
+        with patch("brats.utils.algorithm_config.PARAMETERS_DIR", self.test_dir):
             identifier = self.algorithm_gpu.run_args.docker_image.split(":")[0].split(
                 "/"
             )[-1]

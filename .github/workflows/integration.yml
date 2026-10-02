@@ -1,0 +1,81 @@
+name: integration
+
+# Manual, resource-heavy end-to-end smoke tests. These run real containers and
+# therefore require a self-hosted runner with a GPU (and access to Docker Hub,
+# Zenodo and GitHub). They are intentionally NOT triggered on push/PR.
+#
+# The Python script (scripts/smoke_test.py) is the single source of truth; this
+# workflow only wires it up for CI.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: "Space-separated case ids to run (default: all manifest cases)"
+        required: false
+        default: ""
+      backend:
+        description: "Container backend"
+        required: false
+        default: "docker"
+        type: choice
+        options:
+          - docker
+          - singularity
+      force_cpu:
+        description: "Force CPU execution (only CPU-compatible algorithms)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+      timeout:
+        description: "Per-case timeout in seconds (0 disables the limit)"
+        required: false
+        default: "3600"
+
+jobs:
+  smoke:
+    # TODO: adjust the runner labels to match the GPU server.
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 240
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run smoke tests
+        env:
+          BRATS_SMOKE_DATA: ${{ github.workspace }}/.smoke-data
+          BRATS_SMOKE_BACKEND: ${{ inputs.backend }}
+          BRATS_SMOKE_FORCE_CPU: ${{ inputs.force_cpu }}
+          BRATS_SMOKE_TIMEOUT: ${{ inputs.timeout }}
+          CASES: ${{ inputs.cases }}
+        run: |
+          ARGS="--backend $BRATS_SMOKE_BACKEND --junit-xml smoke-report.xml"
+          if [ -n "$CASES" ]; then
+            for case in $CASES; do
+              ARGS="$ARGS --case $case"
+            done
+          fi
+          if [ "$BRATS_SMOKE_FORCE_CPU" = "true" ]; then
+            ARGS="$ARGS --force-cpu"
+          fi
+          if [ -n "$BRATS_SMOKE_TIMEOUT" ] && [ "$BRATS_SMOKE_TIMEOUT" != "0" ]; then
+            ARGS="$ARGS --timeout $BRATS_SMOKE_TIMEOUT"
+          fi
+          uv run python scripts/smoke_test.py $ARGS
+
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: smoke-report
+          path: smoke-report.xml
+          if-no-files-found: ignore
