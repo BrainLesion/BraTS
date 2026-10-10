@@ -123,7 +123,7 @@ Root `~/brats_data`. `infer_single` reassigns internal names, so only per-modali
 | `MetastasesAlgorithms` | `metastases/BraTS-MET-00013-000` (≤2024) / `MET25/BraTS-MET-00833-000` (2025) | 4-mod | select by `year` |
 | `GoATAlgorithms` | `adult_glioma/BraTS-GLI-00001-000` | 4-mod | generic source |
 | `InpaintingAlgorithms` | `inpainting/BraTS-GLI-00001-000` | `t1n`=`...-t1n-voided.nii.gz`, `mask`=`...-mask.nii.gz` | |
-| `MissingMRIAlgorithms` | `missing_mri/BraTS-GLI-00001-000` (synth `t2w`) | `t1c,t1n,t2f` | exactly 3 inputs |
+| `MissingMRIAlgorithms` | `missing_mri/BraTS-GLI-00001-000` (synth `t2f`) | `t1c,t1n,t2w` | exactly 3 inputs |
 
 All files load as valid NIfTI (mostly `(240,240,155)`; `adult_glioma_postop`
 `(182,218,182)`, `adult_meningioma_24` `(512,512,321)`).

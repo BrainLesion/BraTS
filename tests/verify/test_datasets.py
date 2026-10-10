@@ -45,7 +45,31 @@ def test_inpainting_paths(tmp_path: Path):
 def test_missing_mri_has_three_inputs(tmp_path: Path):
     case = _case("missing_mri", "BraTS24_1")
     inputs = resolve_inputs(case, tmp_path)
-    assert set(inputs) == {"t1c", "t1n", "t2f"}
+    assert set(inputs) == {"t1c", "t1n", "t2w"}
+
+
+def test_adult_glioma_uses_unprefixed_filenames(tmp_path: Path):
+    case = _case("adult_glioma_pre_treatment", "BraTS23_1")
+    inputs = resolve_inputs(case, tmp_path)
+    subject = tmp_path / "adult_glioma" / "BraTS-GLI-00001-000"
+    assert inputs["t1c"] == subject / "t1c.nii.gz"
+    assert inputs["t2w"] == subject / "t2w.nii.gz"
+
+
+def test_pre_post_filename_conventions_differ(tmp_path: Path):
+    pre = _case("adult_glioma_pre_post", "BraTS25_1", timepoint="pre")
+    post = _case("adult_glioma_pre_post", "BraTS25_1", timepoint="post")
+    pre_inputs = resolve_inputs(pre, tmp_path)
+    post_inputs = resolve_inputs(post, tmp_path)
+    assert pre_inputs["t1c"] == (
+        tmp_path / "adult_glioma" / "BraTS-GLI-00001-000" / "t1c.nii.gz"
+    )
+    assert post_inputs["t1c"] == (
+        tmp_path
+        / "adult_glioma_postop"
+        / "BraTS-GLI-02073-100"
+        / "BraTS-GLI-02073-100-t1c.nii.gz"
+    )
 
 
 def test_meningioma_rt_uses_underscore_filename(tmp_path: Path):

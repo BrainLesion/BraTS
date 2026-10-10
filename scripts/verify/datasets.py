@@ -26,10 +26,17 @@ _FOUR_MOD: dict[str, str] = {
     "t2f": "{subject}-t2f.nii.gz",
     "t2w": "{subject}-t2w.nii.gz",
 }
+# Some tracks (adult glioma) store the modalities without the subject prefix.
+_FOUR_MOD_UNPREFIXED: dict[str, str] = {
+    "t1c": "t1c.nii.gz",
+    "t1n": "t1n.nii.gz",
+    "t2f": "t2f.nii.gz",
+    "t2w": "t2w.nii.gz",
+}
 _THREE_MOD: dict[str, str] = {
     "t1c": "{subject}-t1c.nii.gz",
     "t1n": "{subject}-t1n.nii.gz",
-    "t2f": "{subject}-t2f.nii.gz",
+    "t2w": "{subject}-t2w.nii.gz",
 }
 _T1C: dict[str, str] = {"t1c": "{subject}-t1c.nii.gz"}
 _INPAINTING: dict[str, str] = {
@@ -50,6 +57,7 @@ class DatasetSpec:
     synthesize: Optional[str] = None
     subject_dir_by_timepoint: dict[str, str] = field(default_factory=dict)
     subject_dir_by_year: dict[int, str] = field(default_factory=dict)
+    filenames_by_timepoint: dict[str, dict[str, str]] = field(default_factory=dict)
 
 
 _SPECS: dict[str, DatasetSpec] = {
@@ -57,7 +65,7 @@ _SPECS: dict[str, DatasetSpec] = {
         key="adult_glioma_pre_treatment",
         task="segmentation",
         subject_dir="adult_glioma/BraTS-GLI-00001-000",
-        filenames=_FOUR_MOD,
+        filenames=_FOUR_MOD_UNPREFIXED,
     ),
     "adult_glioma_pre_post": DatasetSpec(
         key="adult_glioma_pre_post",
@@ -67,6 +75,10 @@ _SPECS: dict[str, DatasetSpec] = {
         subject_dir_by_timepoint={
             "pre": "adult_glioma/BraTS-GLI-00001-000",
             "post": "adult_glioma_postop/BraTS-GLI-02073-100",
+        },
+        filenames_by_timepoint={
+            "pre": _FOUR_MOD_UNPREFIXED,
+            "post": _FOUR_MOD,
         },
     ),
     "meningioma": DatasetSpec(
@@ -107,7 +119,7 @@ _SPECS: dict[str, DatasetSpec] = {
         key="goat",
         task="segmentation",
         subject_dir="adult_glioma/BraTS-GLI-00001-000",
-        filenames=_FOUR_MOD,
+        filenames=_FOUR_MOD_UNPREFIXED,
     ),
     "inpainting": DatasetSpec(
         key="inpainting",
@@ -121,7 +133,7 @@ _SPECS: dict[str, DatasetSpec] = {
         task="missing_mri",
         subject_dir="missing_mri/BraTS-GLI-00001-000",
         filenames=_THREE_MOD,
-        synthesize="t2w",
+        synthesize="t2f",
     ),
 }
 
@@ -176,9 +188,14 @@ def resolve_inputs(case: AlgorithmCase, data_root: Path) -> dict[str, Path]:
     spec = spec_for(case)
     subject_dir = resolve_subject_dir(case, data_root)
     subject = subject_dir.name
+    filenames = spec.filenames
+    if case.treatment_timepoint and spec.filenames_by_timepoint:
+        filenames = spec.filenames_by_timepoint.get(
+            case.treatment_timepoint, spec.filenames
+        )
     return {
         keyword: subject_dir / template.format(subject=subject)
-        for keyword, template in spec.filenames.items()
+        for keyword, template in filenames.items()
     }
 
 

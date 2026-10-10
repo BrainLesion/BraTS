@@ -68,14 +68,15 @@ def download_sample_data(data_root: Path) -> Path:
     data_root = Path(data_root)
     segmentation_dir = data_root / "adult_glioma" / SUBJECT_ID
 
+    # The adult glioma track stores modalities without the subject prefix.
     for modality in _SEGMENTATION_MODALITIES:
         _download(
             _source_url("segmentation", modality),
-            segmentation_dir / f"{SUBJECT_ID}-{modality}.nii.gz",
+            segmentation_dir / f"{modality}.nii.gz",
         )
 
     missing_mri_dir = data_root / "missing_mri" / SUBJECT_ID
-    for modality in ("t1c", "t1n", "t2f"):
+    for modality in ("t1c", "t1n", "t2w"):
         _download(
             _source_url("segmentation", modality),
             missing_mri_dir / f"{SUBJECT_ID}-{modality}.nii.gz",
