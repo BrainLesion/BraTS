@@ -52,11 +52,11 @@ def check_additional_files_path(record_id: str) -> Path:
             raise ZenodoException(msg)
         logger.info("Additional files not found locally")
 
-        zenodo_metadata, archive_url = zenodo_response
+        zenodo_metadata, archive_urls = zenodo_response
         return _download_additional_files(
             zenodo_metadata=zenodo_metadata,
             record_id=record_id,
-            archive_url=archive_url,
+            archive_urls=archive_urls,
         )
 
     logger.info(
@@ -69,7 +69,7 @@ def check_additional_files_path(record_id: str) -> Path:
         )
         return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
-    zenodo_metadata, archive_url = zenodo_response
+    zenodo_metadata, archive_urls = zenodo_response
     # Compare the latest downloaded additional files with the latest Zenodo version
     if zenodo_metadata["version"] == latest_downloaded_additional_files.split("_v")[1]:
         logger.info(
@@ -90,7 +90,7 @@ def check_additional_files_path(record_id: str) -> Path:
         ),
     )
     return _download_additional_files(
-        zenodo_metadata=zenodo_metadata, record_id=record_id, archive_url=archive_url
+        zenodo_metadata=zenodo_metadata, record_id=record_id, archive_urls=archive_urls
     )
 
 
@@ -114,17 +114,56 @@ def _get_latest_version_folder_name(folders: list[Path]) -> str | None:
     return latest_downloaded_folder.name
 
 
+def _select_archive_urls(data: dict[str, Any], record_id: str) -> list[str]:
+    """Return the download URL(s) for a record's additional-files archive.
+
+    Zenodo's InvenioRDM API exposes files as ``files[].links.self`` (a direct
+    content URL); older responses also had ``links.archive``. Prefer the legacy
+    archive link when present, otherwise use the ``.zip`` files when the record
+    ships any, falling back to all files with a download link.
+
+    Args:
+        data (dict): Parsed Zenodo record JSON.
+        record_id (str): Zenodo record ID (for error messages).
+
+    Returns:
+        list[str]: One or more archive download URLs.
+
+    Raises:
+        ZenodoException: If the record exposes no downloadable archive.
+    """
+    links = data.get("links") or {}
+    archive = links.get("archive")
+    if isinstance(archive, str) and archive:
+        return [archive]
+
+    files = data.get("files") or []
+    downloadable = [file for file in files if (file.get("links") or {}).get("self")]
+    if not downloadable:
+        raise ZenodoException(
+            f"Zenodo record {record_id} exposes no downloadable additional files"
+        )
+
+    zips = [
+        file
+        for file in downloadable
+        if str(file.get("key", "")).lower().endswith(".zip")
+    ]
+    selected = zips or downloadable
+    return [file["links"]["self"] for file in selected]
+
+
 def _get_zenodo_metadata_and_archive_url(
     record_id: str,
-) -> tuple[dict[str, Any], str] | None:
-    """Get the metadata for the Zenodo record and the files archive url.
+) -> tuple[dict[str, Any], list[str]] | None:
+    """Get the metadata for the Zenodo record and the archive download url(s).
 
     Args:
         record_id (str): Zenodo record ID.
 
     Returns:
-        Union[Tuple[Dict,str], None]: Tuple with Metadata dict and archive
-            URL if the record exists, else None.
+        Union[Tuple[Dict,List[str]], None]: Tuple with the metadata dict and the
+            archive download URL(s) if the record exists, else None.
     """
     try:
         response = requests.get(f"{ZENODO_RECORD_BASE_URL}/{record_id}")
@@ -137,7 +176,7 @@ def _get_zenodo_metadata_and_archive_url(
             raise ZenodoException(error_msg)
 
         data = response.json()
-        return data["metadata"], data["links"]["archive"]
+        return data["metadata"], _select_archive_urls(data, record_id)
 
     except requests.exceptions.RequestException as e:
         logger.warning(f"Failed to fetch Zenodo metadata: {e}")
@@ -145,7 +184,9 @@ def _get_zenodo_metadata_and_archive_url(
 
 
 def _download_additional_files(
-    zenodo_metadata: dict[str, object], record_id: str, archive_url: str
+    zenodo_metadata: dict[str, object],
+    record_id: str,
+    archive_urls: str | list[str],
 ) -> Path:
     """Download the latest additional files from Zenodo for the requested
     record and extract them to the target folder.
@@ -153,7 +194,7 @@ def _download_additional_files(
     Args:
         zenodo_metadata (Dict): Metadata for the Zenodo record.
         record_id (str): Zenodo record ID.
-        archive_url (str): URL to the archive file.
+        archive_urls (Union[str, List[str]]): URL(s) to the archive file(s).
 
     Raises:
         ZenodoException: If the download fails or the response is not successful.
@@ -161,6 +202,7 @@ def _download_additional_files(
     Returns:
        Path: Path to the folder where the additional files were extracted.
     """
+    urls = [archive_urls] if isinstance(archive_urls, str) else list(archive_urls)
     record_folder = (
         ADDITIONAL_FILES_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
     )
@@ -168,17 +210,16 @@ def _download_additional_files(
     record_folder.mkdir(parents=True, exist_ok=True)
 
     logger.info("Downloading additional files from Zenodo. This might take a while...")
-    # Make a GET request to the URL
-    response = requests.get(archive_url, stream=True)
-    # Ensure the request was successful
-    if response.status_code != 200:
-        error_msg = (
-            f"Failed to download additional files. Status code: {response.status_code}"
-        )
-        logger.error(error_msg)
-        raise ZenodoException(error_msg)
+    for archive_url in urls:
+        # Make a GET request to the URL
+        response = requests.get(archive_url, stream=True)
+        # Ensure the request was successful
+        if response.status_code != 200:
+            error_msg = f"Failed to download additional files. Status code: {response.status_code}"
+            logger.error(error_msg)
+            raise ZenodoException(error_msg)
 
-    _extract_archive(response=response, record_folder=record_folder)
+        _extract_archive(response=response, record_folder=record_folder)
 
     logger.info(f"Zip file extracted successfully to {record_folder}")
     return record_folder
