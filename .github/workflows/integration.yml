@@ -1,27 +1,19 @@
 name: integration
 
-# Manual, resource-heavy end-to-end smoke tests. These run real containers and
+# Manual, resource-heavy end-to-end tests. These run real containers and
 # therefore require a self-hosted runner with a GPU (and access to Docker Hub,
 # Zenodo and GitHub). They are intentionally NOT triggered on push/PR.
 #
-# The Python script (scripts/smoke_test.py) is the single source of truth; this
+# The pytest suite under tests/integration is the single source of truth; this
 # workflow only wires it up for CI.
 
 on:
   workflow_dispatch:
     inputs:
       cases:
-        description: "Space-separated case ids to run (default: all manifest cases)"
+        description: "Space-separated case ids to run (default: all smoke cases)"
         required: false
         default: ""
-      backend:
-        description: "Container backend"
-        required: false
-        default: "docker"
-        type: choice
-        options:
-          - docker
-          - singularity
       force_cpu:
         description: "Force CPU execution (only CPU-compatible algorithms)"
         required: false
@@ -30,6 +22,10 @@ on:
         options:
           - "false"
           - "true"
+      cuda_devices:
+        description: "Comma-separated CUDA device ids"
+        required: false
+        default: "0"
       timeout:
         description: "Per-case timeout in seconds (0 disables the limit)"
         required: false
@@ -50,27 +46,29 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
-      - name: Run smoke tests
+      - name: Run integration smoke subset
         env:
-          BRATS_SMOKE_DATA: ${{ github.workspace }}/.smoke-data
-          BRATS_SMOKE_BACKEND: ${{ inputs.backend }}
-          BRATS_SMOKE_FORCE_CPU: ${{ inputs.force_cpu }}
-          BRATS_SMOKE_TIMEOUT: ${{ inputs.timeout }}
           CASES: ${{ inputs.cases }}
+          FORCE_CPU: ${{ inputs.force_cpu }}
+          CUDA_DEVICES: ${{ inputs.cuda_devices }}
+          TIMEOUT: ${{ inputs.timeout }}
         run: |
-          ARGS="--backend $BRATS_SMOKE_BACKEND --junit-xml smoke-report.xml"
-          if [ -n "$CASES" ]; then
-            for case in $CASES; do
-              ARGS="$ARGS --case $case"
-            done
-          fi
-          if [ "$BRATS_SMOKE_FORCE_CPU" = "true" ]; then
+          ARGS="tests/integration -m smoke --download-sample-data --junitxml smoke-report.xml"
+          ARGS="$ARGS --cuda-devices $CUDA_DEVICES"
+          if [ "$FORCE_CPU" = "true" ]; then
             ARGS="$ARGS --force-cpu"
           fi
-          if [ -n "$BRATS_SMOKE_TIMEOUT" ] && [ "$BRATS_SMOKE_TIMEOUT" != "0" ]; then
-            ARGS="$ARGS --timeout $BRATS_SMOKE_TIMEOUT"
+          if [ -n "$TIMEOUT" ] && [ "$TIMEOUT" != "0" ]; then
+            ARGS="$ARGS --timeout $TIMEOUT"
           fi
-          uv run python scripts/smoke_test.py $ARGS
+          if [ -n "$CASES" ]; then
+            K=""
+            for case in $CASES; do
+              K="${K:+$K or }$case"
+            done
+            ARGS="$ARGS -k \"$K\""
+          fi
+          uv run pytest $ARGS
 
       - name: Upload JUnit report
         if: always()

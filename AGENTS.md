@@ -11,8 +11,9 @@ uv sync                                    # install package and development dep
 uv sync --group docs                       # additionally install documentation dependencies
 uv run pytest                              # run test suite
 uv run pytest --cov=brats                  # run with coverage
-uv run pytest -m smoke                     # opt-in end-to-end smoke tests (Docker/GPU)
-uv run python scripts/smoke_test.py        # same checks via the standalone CLI
+uv run pytest tests/integration -m integration  # opt-in end-to-end verification (Docker/GPU)
+uv run pytest tests/integration -m smoke --download-sample-data  # quick sample subset
+uv run pytest -m network                   # container image / Zenodo reachability checks
 uv run ruff check .                        # lint
 uv run ruff format --check .               # check formatting
 uv run pre-commit run --all-files          # full pre-commit checks
@@ -20,11 +21,13 @@ uv run mkdocs build --strict               # validate the documentation site
 ```
 
 The package supports Python 3.9+. The optional preprocessing integration requires
-Python 3.10 or newer. Tests mock container execution; running the test suite does
-not require a Docker daemon or a GPU. The `smoke` marker is excluded from default
-runs and needs a container backend, network access and usually a GPU. The
+Python 3.10 or newer. Tests mock container execution; running the default test suite
+does not require a Docker daemon or a GPU. The `integration` marker (all
+container/GPU-backed verification cases) is excluded from default runs; the `smoke`
+marker selects a curated subset runnable from `--download-sample-data`. The
 `network` marker (container image and Zenodo registry checks) is also excluded by
-default; run it explicitly with `uv run pytest -m network`.
+default. The verification suite must not be run under `pytest-xdist` (its GPU gate
+assumes single-process execution).
 
 ## Architecture
 

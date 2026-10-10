@@ -30,15 +30,17 @@ Adopt a three-layer testing strategy:
    existence via `docker manifest inspect`, Zenodo record existence) are marked
    `network`, excluded from the default run, and executed explicitly via
    `pytest -m network` (they skip automatically when offline).
-3. **End-to-end smoke tests**: opt-in via `pytest -m smoke` or
-   `scripts/smoke_test.py`. They run a small, representative selection of
-   algorithms on de-identified sample data and validate the output
+3. **End-to-end verification tests**: opt-in via `pytest -m integration` (all
+   algorithms) or `-m smoke` (a curated, sample-runnable subset). They run a
+   selection of algorithms on de-identified data and validate the output
    structurally. They are excluded from default runs through `addopts`.
 
-Keep the smoke orchestration in `scripts/smoke_test.py` as the single source of
-truth. The pytest integration in `tests/integration/test_smoke.py` is a thin
-wrapper around it, so the same checks can run directly on any server. Wire the
-script into CI via a `workflow_dispatch` job on a self-hosted GPU runner.
+Keep the orchestration in a pytest-native suite under `tests/integration/`, with
+the reusable pieces (case discovery, dataset mapping, GPU gate, exact-artifact
+cleanup) in `scripts/verify/`. One harness runs every algorithm, is selectable
+with pytest's `-k`/`-m`, and reports through pytest's terminal summary plus a
+JSON artifact. There is no separate CLI to keep in sync. Wire the `smoke` subset
+into CI via a `workflow_dispatch` job on a self-hosted GPU runner.
 
 ## Rationale
 
@@ -57,7 +59,10 @@ script into CI via a `workflow_dispatch` job on a self-hosted GPU runner.
 - **Run smoke tests on every PR:** Rejected because GPU, network and large image
   downloads make this slow, flaky and unavailable on standard runners.
 - **Put orchestration only in a CI workflow:** Rejected because it cannot be run
-  directly on a server and duplicates logic that the script already needs.
+  directly on a server and duplicates logic that the suite already needs.
+- **A bespoke sweep CLI:** Rejected in favour of a pytest-native harness; pytest
+  already provides case selection, markers, result aggregation and reporting,
+  so a separate CLI/result model only added drift-prone duplication.
 - **Golden-baseline regression (Dice/HD95):** Deferred as a deliberate
   follow-up; structural validation is the first, cheaper step.
 
@@ -67,6 +72,7 @@ script into CI via a `workflow_dispatch` job on a self-hosted GPU runner.
   real container end to end; the suite degrades gracefully when offline.
 - Drawbacks: two test modes to maintain, and the network checks depend on
   external services (skipped, not failed, when unavailable).
-- Required follow-up actions: keep `scripts/smoke_manifest.yaml` representative,
-  update the ADR and CONTRIBUTING when the server or runner specifics change,
-  and add golden-baseline regression separately if needed.
+- Required follow-up actions: keep the curated `smoke` subset and the dataset
+  mapping in `scripts/verify/` representative, update the ADR and CONTRIBUTING
+  when the server or runner specifics change, and add golden-baseline
+  regression separately if needed.

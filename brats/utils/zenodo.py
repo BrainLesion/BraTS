@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import os
 import shutil
+import tempfile
 import zipfile
-from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -184,27 +185,36 @@ def _download_additional_files(
 
 
 def _extract_archive(response: requests.Response, record_folder: Path) -> None:
-    # Download with progress bar
+    # Stream the archive to disk instead of buffering it in memory: some
+    # additional-files records are several GB and would otherwise spike host RAM.
+    record_folder = Path(record_folder)
     chunk_size = 1024  # 1KB
-    bytes_io = BytesIO()
+    fd, tmp_name = tempfile.mkstemp(
+        dir=record_folder, prefix=".download-", suffix=".zip.part"
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with (
+            os.fdopen(fd, "wb") as tmp_file,
+            Progress(
+                SpinnerColumn(),
+                TextColumn("[cyan]Downloading additional files..."),
+                TextColumn("[cyan]{task.completed:.2f} MB"),
+                transient=True,
+            ) as progress,
+        ):
+            task = progress.add_task("", total=None)  # Indeterminate progress
+            for data in response.iter_content(chunk_size=chunk_size):
+                tmp_file.write(data)
+                progress.update(
+                    task, advance=len(data) / (chunk_size**2)
+                )  # Convert bytes to MB
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[cyan]Downloading additional files..."),
-        TextColumn("[cyan]{task.completed:.2f} MB"),
-        transient=True,
-    ) as progress:
-        task = progress.add_task("", total=None)  # Indeterminate progress
-
-        for data in response.iter_content(chunk_size=chunk_size):
-            bytes_io.write(data)
-            progress.update(
-                task, advance=len(data) / (chunk_size**2)
-            )  # Convert bytes to MB
-
-    # Extract the downloaded zip file to the target folder
-    with zipfile.ZipFile(bytes_io) as zip_ref:
-        zip_ref.extractall(record_folder)
+        # Extract the downloaded zip file to the target folder
+        with zipfile.ZipFile(tmp_path) as zip_ref:
+            zip_ref.extractall(record_folder)
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
     # check if the extracted file is still a zip
     for f in record_folder.iterdir():

@@ -252,6 +252,22 @@ def _build_command_args(
     return command_args
 
 
+def _container_labels() -> dict[str, str]:
+    """Return labels to attach to containers launched by this process.
+
+    Callers (for example the verification suite) can set the
+    ``BRATS_CONTAINER_LABEL`` environment variable to a unique value so that the
+    containers they start can be identified and torn down precisely, without
+    relying on the image reference (which other users may share).
+
+    Returns:
+        Dict[str, str]: Labels to pass to the container runtime, or an empty
+            mapping when no label was requested.
+    """
+    value = os.environ.get("BRATS_CONTAINER_LABEL", "").strip()
+    return {"brats.container_label": value} if value else {}
+
+
 def _get_container_user(
     algorithm: AlgorithmData,
 ) -> str:
@@ -456,6 +472,7 @@ def run_container(
     start_time = time.time()
 
     volume_mappings: dict[Any, dict[str, str]]
+    labels = _container_labels()
     if algorithm.meta.year <= 2024:
         volume_mappings = _get_volume_mappings_mlcube(
             data_path=data_path,
@@ -469,33 +486,39 @@ def run_container(
         logger.debug(f"Command args: {command_args}")
 
         # Run the container
-        container = client.containers.run(
-            image=algorithm.run_args.docker_image,
-            volumes=volume_mappings,
-            device_requests=device_requests,
-            command=f"infer {command_args}",
-            network_mode="none",
-            detach=True,
-            remove=True,
-            shm_size=algorithm.run_args.shm_size,
-            user=user,
-        )
+        run_kwargs: dict[str, Any] = {
+            "image": algorithm.run_args.docker_image,
+            "volumes": volume_mappings,
+            "device_requests": device_requests,
+            "command": f"infer {command_args}",
+            "network_mode": "none",
+            "detach": True,
+            "remove": True,
+            "shm_size": algorithm.run_args.shm_size,
+            "user": user,
+        }
+        if labels:
+            run_kwargs["labels"] = labels
+        container = client.containers.run(**run_kwargs)
     else:
         volume_mappings = _get_volume_mappings_docker_only(
             data_path=data_path,
             output_path=output_path,
         )
         logger.debug(f"Volume mappings: {volume_mappings}")
-        container = client.containers.run(
-            image=algorithm.run_args.docker_image,
-            volumes=volume_mappings,
-            device_requests=device_requests,
-            network_mode="none",
-            detach=True,
-            remove=True,
-            shm_size=algorithm.run_args.shm_size,
-            user=user,
-        )
+        run_kwargs = {
+            "image": algorithm.run_args.docker_image,
+            "volumes": volume_mappings,
+            "device_requests": device_requests,
+            "network_mode": "none",
+            "detach": True,
+            "remove": True,
+            "shm_size": algorithm.run_args.shm_size,
+            "user": user,
+        }
+        if labels:
+            run_kwargs["labels"] = labels
+        container = client.containers.run(**run_kwargs)
 
     container_output = _observe_docker_output(container=container)
     _sanity_check_output(

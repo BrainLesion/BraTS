@@ -24,45 +24,19 @@ from brats.constants import (
     META_DIR,
     ZENODO_RECORD_BASE_URL,
 )
+from brats.registry import iter_algorithms
 from brats.utils.algorithm_config import load_algorithms, parameters_file_path
-
-_NETWORK_ERROR_MARKERS = (
-    "no such host",
-    "dial tcp",
-    "connection refused",
-    "tls handshake timeout",
-    "context deadline exceeded",
-    "i/o timeout",
-    "network is unreachable",
-    "temporary failure in name resolution",
-    "request canceled",
-    "toomanyrequests",
-    "too many requests",
-)
-
-# Registry responses that indicate the manifest does not exist at all.
-_NOT_FOUND_ERROR_MARKERS = (
-    "manifest unknown",
-    "no such manifest",
-    "name unknown",
-    "not found",
-)
-
-# Registry responses that require authentication. These are reported but not
-# treated as failures: the image may exist but be private, which cannot be
-# distinguished without credentials.
-_AUTH_ERROR_MARKERS = (
-    "unauthorized",
-    "authentication required",
-    "requested access to the resource is denied",
+from scripts.verify.registry import (
+    _AUTH_ERROR_MARKERS,
+    _NETWORK_ERROR_MARKERS,
+    _NOT_FOUND_ERROR_MARKERS,
 )
 
 
 def _iter_registry():
     """Yield ``(enum_cls, meta_path, algorithm_key, algorithm_data)`` tuples."""
-    for enum_cls, meta_path in ALGORITHM_META_FILE_BY_ENUM.items():
-        for algorithm_key, algorithm_data in load_algorithms(meta_path).items():
-            yield enum_cls, meta_path, algorithm_key, algorithm_data
+    for record in iter_algorithms():
+        yield record.enum_cls, record.meta_path, record.member, record.data
 
 
 def _referenced_meta_paths() -> set[Path]:

@@ -36,50 +36,16 @@ The test suite is layered (see [ADR-0003](docs/adr/0003-layered-testing-strategy
   Zenodo record existence) are marked `network`; they are excluded from the
   default run and can be executed explicitly with
   `uv run pytest tests/config -m network`. They skip automatically when offline.
-- **End-to-end smoke tests** (`tests/integration/test_smoke.py`) are opt-in and
-  execute a representative algorithm per task category on de-identified sample
-  data. They are excluded from the default run through `addopts` and require a
-  container backend, network access and (for most algorithms) a GPU.
+- **End-to-end verification** (`tests/integration/`) is opt-in and runs
+  containerized algorithms on de-identified data, validating the output
+  structurally. `-m integration` runs every registered algorithm; `-m smoke`
+  runs a curated subset that can use auto-downloaded sample data. Both are
+  excluded from the default run through `addopts` and require a container
+  backend, network access and (for most algorithms) a GPU. The suite must not be
+  run under `pytest-xdist`: its GPU-free gate assumes single-process execution.
 
-### Running the smoke tests
-
-Run the CLI directly on a GPU host (recommended):
-
-```bash
-uv run python scripts/smoke_test.py                 # all cases in the manifest
-uv run python scripts/smoke_test.py --case inpainting --keep
-uv run python scripts/smoke_test.py --junit-xml smoke-report.xml
-uv run python scripts/smoke_test.py --force-cpu      # CPU-compatible algorithms only
-```
-
-Or through pytest (thin wrapper around the same script):
-
-```bash
-uv run pytest -m smoke
-uv run pytest -m smoke -k inpainting
-```
-
-Common options and environment variables:
-
-| Option / variable | Purpose |
-|-------------------|---------|
-| `--manifest PATH` | Alternative selection manifest |
-| `--case ID` | Run only the given case (repeatable) |
-| `--data PATH` / `BRATS_SMOKE_DATA` | Root for the cached sample data |
-| `--backend docker\|singularity` / `BRATS_SMOKE_BACKEND` | Container backend |
-| `--force-cpu` / `BRATS_SMOKE_FORCE_CPU` | Force CPU execution |
-| `--cuda-devices` / `BRATS_SMOKE_CUDA_DEVICES` | CUDA devices to expose |
-| `--timeout SECONDS` / `BRATS_SMOKE_TIMEOUT` | Per-case timeout (default: manifest `timeout`, or no limit) |
-| `--keep` / `BRATS_SMOKE_KEEP` | Keep outputs and logs for debugging |
-| `--junit-xml PATH` | Write a JUnit XML report |
-
-Sample data is downloaded once from a pinned commit of
-[BrainLesion/tutorials](https://github.com/BrainLesion/tutorials) and cached. The
-case selection lives in [`scripts/smoke_manifest.yaml`](scripts/smoke_manifest.yaml).
-
-The `.github/workflows/integration.yml` workflow runs the script manually
-(`workflow_dispatch`) on a self-hosted GPU runner. The Python script remains the
-single source of truth, so the same checks can be run directly on any server.
+See [`tests/integration/README.md`](tests/integration/README.md) for the full
+runbook (markers, options, safety model, server and background execution).
 
 ## Project Documentation
 

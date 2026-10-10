@@ -1,6 +1,6 @@
 # Implementation Plan: All-Algorithms Verification Suite (`scripts/verify`)
 
-**Status:** proposed
+**Status:** implemented (pytest-native)
 **Base branch:** `185-feature-integration-smoke-test-suite-for-containerized-algorithms`
 (PR #186, head `7119b66`)
 **Feature branch:** `feature/all-algorithms-verification-suite` (stacked PR, base = the
@@ -8,6 +8,15 @@ branch above)
 
 > This document is the handoff spec for implementing the verification suite. It is
 > intentionally implementation-focused and is not part of the published docs nav.
+>
+> **Post-implementation note:** the suite was ultimately built as a **pytest-native
+> harness** under `tests/integration/` (markers: `integration`, `smoke`, `network`)
+> with reusable logic in `scripts/verify/`. The earlier bespoke CLI/`__main__.py`
+> and reporting layer were dropped in favour of pytest selection/reporting, and the
+> standalone smoke script was subsumed. Sections below that describe the CLI
+> (`--track`, `python -m scripts.verify`, `known_failures.yaml`) are superseded by
+> the pytest commands in §11; the data mapping (§4), execution flow (§6), GPU gate
+> (§7), cleanup (§8) and validation (§9) still describe the actual behaviour.
 
 ## 0. Context
 
@@ -30,14 +39,14 @@ For **every** algorithm the package offers, verify the container is:
 2. **runnable** with the package's own configuration on real data,
 3. **structurally sensible** in its output.
 
-The algorithm set is enumerated dynamically (currently **72 members across 10 tracks**;
+The algorithm set is enumerated dynamically (currently **79 members across 10 tracks**;
 **16** require Zenodo weights; years span 2023–2026). Do not hardcode counts in logic.
 
 Requirements:
 
 - Slice runs **by challenge track** for focused reports, plus one **overall** report.
-- Persist a **JSON** report; print **Rich** console tables. **No HTML.**
-- **No CI wiring.**
+- Persist a **JSON** report; print a compact per-track terminal overview. **No HTML.**
+- CI: the curated `smoke` subset runs from a manual `workflow_dispatch` job.
 - **One subject per track.**
 - **Delete images and weights after each run**, precisely and safely (see §6).
 - **Check the target GPU is free immediately before every run** (see §7) — critical.
@@ -62,29 +71,40 @@ Out of scope: golden-baseline/Dice, batch inference, HTML, LRU image caching,
 ## 3. Architecture
 
 ```
+brats/
+└─ registry.py                     # iter_algorithms(): single source of truth over the meta registry
+
 scripts/
-├─ known_failures.yaml            # image ref -> human reason
+├─ known_failures.yaml             # image ref -> human reason
 └─ verify/
-   ├─ __main__.py                 # CLI entrypoint (python -m scripts.verify)
-   ├─ models.py                   # dataclasses + Status enum
-   ├─ discovery.py                # introspect brats -> AlgorithmCase list, grouped by track
-   ├─ datasets.py                 # track -> DatasetSpec, resolve input paths
-   ├─ gpu.py                      # GPU-free gate
-   ├─ registry.py                 # manifest preflight, image presence/size, pull
-   ├─ runner.py                   # per-case orchestration
-   ├─ cleanup.py                  # exact-artifact teardown
-   ├─ validation.py               # structural output checks
-   └─ reporting.py                # Rich console + JSON persistence
+   ├─ cases.py                     # introspect brats -> AlgorithmCase list (derive slug/timepoints/task)
+   ├─ models.py                    # dataclasses + Status enum
+   ├─ datasets.py                  # slug -> DatasetSpec, resolve input paths
+   ├─ gpu.py                       # GPU-free gate
+   ├─ registry.py                  # manifest preflight, image presence/size, pull (+ shared error markers)
+   ├─ runner.py                    # per-case orchestration
+   ├─ cleanup.py                   # exact-artifact teardown
+   ├─ validation.py                # structural output checks
+   ├─ sample.py                    # optional sample-data download
+   └─ reporting.py                 # terminal summary + JSON report
+
+tests/
+├─ integration/
+│  ├─ conftest.py                  # options, fixtures, env check, report hooks
+│  ├─ test_verify.py               # parametrized over build_cases() (-m integration / -m smoke)
+│  └─ test_verify_preflight.py     # zero-disk reachability (-m network)
+├─ config/test_registry_contract.py
+└─ verify/                         # unit tests for the pure logic
 ```
 
 Conventions: Google-style docstrings, type annotations on public functions, `ruff`
 (line length 88), no comments unless needed, conventional commits. `scripts/` is linted
 but excluded from the sdist. No new runtime deps (`rich`, `PyYAML` already present).
 
-Reuse `scripts/smoke_test.py` helpers where clean (`check_environment`,
-output validation, input building). Prefer extracting genuinely shared code into a small
-`scripts/_shared.py` imported by both; a small refactor of `smoke_test.py` on this branch
-is acceptable. Avoid copy-paste drift.
+Reuse the shared helpers in `scripts/_shared.py` (`check_environment`, `time_limit`,
+`validate_output`). The suite is pytest-native: all safety logic lives in plain
+functions under `scripts/verify/` and is invoked from fixtures/tests, so there is no
+parallel CLI to keep in sync.
 
 ## 4. Data mapping (verified working)
 
@@ -123,11 +143,12 @@ class Status(str, Enum):
     TIMEOUT = "timeout"
     ENV_ERROR = "env_error"
 
+
 @dataclass(frozen=True)
 class AlgorithmCase:
-    track: str            # enum class name, e.g. "InpaintingAlgorithms"
-    member: str           # e.g. "BraTS23_1"
-    class_name: str       # public class, e.g. "Inpainter"
+    track: str  # enum class name, e.g. "InpaintingAlgorithms"
+    member: str  # e.g. "BraTS23_1"
+    class_name: str  # public class, e.g. "Inpainter"
     algorithm: Algorithms
     docker_image: str
     year: int
@@ -138,6 +159,7 @@ class AlgorithmCase:
     parameters_file: bool
     known_failure_reason: str | None = None
 
+
 @dataclass
 class CaseResult:
     case: AlgorithmCase
@@ -147,6 +169,7 @@ class CaseResult:
     output_file: Path | None = None
     image_pulled_by_us: bool = False
     image_id: str | None = None
+
 
 @dataclass
 class RunReport:
@@ -226,19 +249,18 @@ Adapt the structural checks from `scripts/smoke_test.py::_validate_output`:
 
 ## 10. Reporting (`reporting.py`)
 
-- **Rich:** one table per track (`member | year | status | time | detail`), then an
-  overall summary (`track | total | ok | expected_fail | failed | skipped`) and a
-  consolidated failure detail.
-- **Persistent** (`--reports-dir`, default `reports/<UTC-timestamp>/`):
-  - `results.json` — all `CaseResult`s + aggregates + timestamps + versions + options.
-  - `summary.md` — human-readable aggregate.
-  - `logs/<track>/<member>.log` — `infer_single` log.
+- **Terminal:** a compact per-track overview
+  (`track | total | ok | expected_fail | failed | skipped`) plus the failure detail,
+  emitted from a pytest `terminal_summary` hook.
+- **Persistent** (`--verify-report`, default `reports/verify-results.json`):
+  - JSON — all `CaseResult`s + aggregates + per-track counts + status counts.
+  - `reports/verify/logs/<track>/<member>.log` — `infer_single` log.
 
 JSON shape (abridged):
 ```json
 {
   "started": "...", "finished": "...", "backend": "docker", "cuda_devices": "1",
-  "summary": {"total": 72, "ok": 0, "expected_fail": 4, "failed": 0, "skipped": 0},
+  "summary": {"total": 79, "ok": 0, "expected_fail": 4, "failed": 0, "skipped": 0},
   "tracks": {"InpaintingAlgorithms": {"total": 15, "ok": 0, "failed": 0,
                                        "skipped": 0, "expected_fail": 0}},
   "results": [
@@ -249,25 +271,27 @@ JSON shape (abridged):
 }
 ```
 
-## 11. CLI (`__main__.py`)
+## 11. Running the suite (pytest-native)
 
 ```
-uv run python -m scripts.verify                        # all tracks
-uv run python -m scripts.verify --preflight-only        # zero-disk reachability check
-uv run python -m scripts.verify --no-run                # resolve cases + inputs only
-uv run python -m scripts.verify --track inpainting --track missing_mri
-uv run python -m scripts.verify --year 2025 --cuda-devices 1
-uv run python -m scripts.verify --data ~/brats_data --min-free-gb 90
+uv run pytest tests/integration -m integration                  # every registered algorithm
+uv run pytest tests/integration -m smoke --download-sample-data # curated sample subset
+uv run pytest tests/integration -m network                      # zero-disk reachability preflight
+uv run pytest tests/integration -m integration -k inpainting    # narrow by case
+uv run pytest tests/integration -m integration --data ~/brats_data --cuda-devices 1
 ```
 
-Flags: `--track` (repeatable), `--year`, `--case`, `--data`, `--backend {docker,singularity}`,
-`--cuda-devices`, `--force-cpu`, `--timeout`, `--min-free-gb`, `--gpu-idle-mem-mb`,
-`--gpu-wait-seconds`, `--gpu-poll-seconds`, `--keep-images`, `--keep-weights`, `--keep`,
-`--reports-dir`, `--preflight-only`, `--no-run`.
+Flags: `--data`, `--download-sample-data`, `--cuda-devices`, `--force-cpu`, `--timeout`,
+`--min-free-gb`, `--disk-path`, `--workspace`, `--use-cached-weights`,
+`--gpu-idle-mem-mb`, `--gpu-wait-seconds`, `--gpu-poll-seconds`, `--keep`,
+`--verify-report` (plus pytest's `-m`, `-k`, `--lf`, `--junitxml`).
 
-Defaults: `--cuda-devices "0"`, `--timeout 3600`, `--min-free-gb 90`,
-`--gpu-idle-mem-mb 500`, `--gpu-wait-seconds 600`, `--gpu-poll-seconds 20`, strict delete,
-`--reports-dir reports/<timestamp>`.
+Defaults: `--data ~/brats_data`, `--cuda-devices "0"`, `--timeout 3600`,
+`--min-free-gb 30`, `--workspace <temp dir>`, fresh weight downloads,
+`--verify-report reports/verify-results.json`, strict cleanup.
+
+The GPU-free gate assumes single-process execution: do **not** run under
+`pytest-xdist` (`-n`); the suite raises a usage error if it detects workers.
 
 ## 12. Known failures (`known_failures.yaml`)
 
@@ -285,14 +309,16 @@ Reported as `expected_fail`. If one becomes pullable, flag it in the report.
 ## 13. Testing the tool
 
 - Unit tests under `tests/verify/` for pure logic:
-  - `discovery.build_cases()` → current counts (72 cases, 10 tracks) and stable mapping.
+  - `cases.build_cases()` → current counts (79 cases, 10 tracks) and stable mapping.
+  - `cases`/`datasets` contract guards (slugs, task vocabulary, timepoint derivation).
   - `datasets.resolve_inputs()` against a temp fixture tree.
   - `gpu.parse_device_ids()` and `ensure_free()` with injected fake `nvidia-smi` output.
   - `cleanup` exact-target selection (only ours).
-- `--no-run` and `--preflight-only` must not download/pull anything.
-- No CI workflows.
+- `-m network` (preflight) must not download/pull anything.
+- CI: `tests.yml` runs default unit tests; `integration.yml` runs the `smoke` subset
+  manually on a self-hosted GPU runner.
 
-## 14. Server runbook (after implementation)
+## 14. Server runbook
 
 ```bash
 git fetch origin
@@ -300,14 +326,15 @@ git worktree add ~/brats-verify feature/all-algorithms-verification-suite
 cd ~/brats-verify && uv sync --frozen
 
 # 1) zero-disk reachability pass
-uv run --frozen python -m scripts.verify --preflight-only --cuda-devices 1 --data ~/brats_data
+uv run --frozen pytest tests/integration -m network
 
 # 2) focused first run (image likely already present -> quick)
-uv run --frozen python -m scripts.verify --track inpainting --cuda-devices 1 --data ~/brats_data
+uv run --frozen pytest tests/integration -m integration -k inpainting \
+    --cuda-devices 1 --data ~/brats_data
 
 # 3) full sweep (long; ~tens of GB per image re-downloaded, hours to days)
-uv run --frozen python -m scripts.verify --cuda-devices 1 --data ~/brats_data \
-    --reports-dir ~/verify-reports
+uv run --frozen pytest tests/integration -m integration \
+    --cuda-devices 1 --data ~/brats_data
 ```
 
 After each session check: `df -h /`, `docker images` (no leftover test images),
@@ -315,18 +342,17 @@ After each session check: `df -h /`, `docker images` (no leftover test images),
 
 ## 15. Acceptance criteria
 
-- `--preflight-only` classifies all images; the 4 GoAT are `expected_fail`, rest
-  `pullable`.
-- A single-track run produces `results.json` + Rich output; images we pulled are removed;
-  weight folders we downloaded are removed; pre-existing images/weights untouched.
+- `-m network` classifies all images; the 4 GoAT are expected failures, rest reachable.
+- A run produces the terminal summary + `reports/verify-results.json`; images we pulled
+  are removed; weight folders we downloaded are removed; pre-existing images/weights
+  untouched.
 - GPU gate blocks/skips when the target GPU is busy and never runs concurrently.
-- Validation catches malformed/empty outputs.
+- Validation catches malformed/empty outputs; unknown label spaces warn rather than fail.
 - `ruff check .` and `ruff format --check .` clean; default `pytest` green.
 
 ## 16. Open items / assumptions
 
-1. `--reports-dir` default `reports/<timestamp>/` in the repo, gitignored.
-2. `--min-free-gb` default 90 as a floor combined with a dynamic image-size estimate.
-3. Extract shared helpers into `scripts/_shared.py` and have `smoke_test.py` import them
-   (small refactor on this branch), or duplicate locally — prefer extraction.
+1. JSON report default `reports/verify-results.json` in the repo, gitignored.
+2. Disk guard uses a fixed `--min-free-gb` floor plus a dynamic image-size estimate.
+3. Shared helpers live in `scripts/_shared.py` and are reused by the verification suite.
 4. Revisit `known_failures.yaml` when containers are republished.

@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import zipfile
 from io import BytesIO
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -172,23 +173,22 @@ class TestZenodoUtils(unittest.TestCase):
         mock_requests_get.assert_called_once_with(mock_archive_url, stream=True)
         mock_extract_archive.assert_not_called()
 
-    @patch("brats.utils.zenodo.zipfile.ZipFile")
-    @patch("brats.utils.zenodo.BytesIO", new_callable=MagicMock)
-    @patch("brats.utils.zenodo.Progress")
-    def test_extract_archive(self, mock_progress, mock_bytes_io, mock_zipfile):
-        # Setup
+    def test_extract_archive(self):
+        # Build a small zip in memory and stream it through the fake response.
+        payload_io = BytesIO()
+        with zipfile.ZipFile(payload_io, "w") as archive:
+            archive.writestr("weights.bin", b"data")
+        payload = payload_io.getvalue()
+
         mock_response = MagicMock(spec=requests.Response)
-        mock_response.iter_content.return_value = [b"data"]
-        mock_record_folder = MagicMock(spec=Path)
+        mock_response.iter_content.return_value = [payload]
 
-        mock_bytes_io_instance = MagicMock(spec=BytesIO)
-        mock_bytes_io.return_value = mock_bytes_io_instance  # Mock the instantiation
-
-        mock_zipfile_instance = MagicMock()
-        mock_zipfile.return_value.__enter__.return_value = mock_zipfile_instance
-
-        # Call the function
-        _extract_archive(mock_response, mock_record_folder)
+        with tempfile.TemporaryDirectory() as tmp:
+            record_folder = Path(tmp)
+            _extract_archive(mock_response, record_folder)
+            self.assertEqual((record_folder / "weights.bin").read_bytes(), b"data")
+            # the temporary download file must not be left behind
+            self.assertEqual(list(record_folder.glob("*.part")), [])
 
     def test_get_latest_version_folder_name(self):
         # Test case when folders are provided
