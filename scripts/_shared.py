@@ -195,14 +195,17 @@ def validate_output(
         # (voxel spacing and translation) identical and leaves the data on the
         # reference voxel grid, so it is reported as a non-fatal geometry
         # difference rather than a structural failure. Any scale, shear or
-        # translation mismatch changes the magnitudes and still fails.
+        # translation mismatch changes the magnitudes and still fails. The
+        # package-side header fix for this class of mismatch is tracked in
+        # https://github.com/BrainLesion/BraTS/issues/191.
         if np.allclose(
             np.abs(output_img.affine), np.abs(reference_img.affine), atol=1e-3
         ):
             if warn is not None:
                 warn(
                     "Output affine differs from the input by axis orientation "
-                    "(sign) only; shape and voxel spacing match"
+                    "(sign) only; shape and voxel spacing match "
+                    "(see BrainLesion/BraTS#191)"
                 )
         else:
             raise ValidationError("Output affine does not match the input affine")

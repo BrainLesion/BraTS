@@ -19,7 +19,9 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from loguru import logger
 
+from brats.utils import logging as brats_logging
 from scripts._shared import check_environment
 from scripts.verify.models import CaseResult
 from scripts.verify.reporting import render_summary, write_json
@@ -121,6 +123,13 @@ def verify_options(
     request: pytest.FixtureRequest, verify_data_root: Path
 ) -> RunOptions:
     """Build run options once and check the host environment."""
+    # `import brats` calls `logger.disable("brats")`, so the per-case log files
+    # written by `InferenceSetup` would stay empty. Re-enable the package logging
+    # (and keep the default stderr sink quiet) so failures stay debuggable.
+    logger.remove()
+    brats_logging.add_console_handler("WARNING")
+    brats_logging.enable()
+
     force_cpu = bool(request.config.getoption("--force-cpu"))
     problems = check_environment(
         backend="docker",
