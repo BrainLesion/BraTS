@@ -6,6 +6,8 @@ Excluded from the default test run; opt in with ``-m integration``. Use
 
 from __future__ import annotations
 
+from collections import Counter
+
 import pytest
 
 from scripts.verify.cases import SMOKE_CASE_IDS, build_cases
@@ -16,6 +18,11 @@ pytestmark = pytest.mark.integration
 
 CASES = build_cases()
 
+# Cases that share a multi-GB image (e.g. pre/post pairs) would otherwise remove
+# and immediately re-pull it. Keep the image for such cases; the session-level
+# cleanup still removes any leftover once no remaining case needs it.
+_IMAGE_USES = Counter(case.docker_image for case in CASES)
+
 
 def _param(case):
     marks = [pytest.mark.smoke] if case.case_id in SMOKE_CASE_IDS else []
@@ -24,7 +31,8 @@ def _param(case):
 
 @pytest.mark.parametrize("case", [_param(case) for case in CASES])
 def test_verify_case(case, verify_options, verify_records) -> None:
-    result = run_case(case, verify_options)
+    keep_image = _IMAGE_USES[case.docker_image] > 1
+    result = run_case(case, verify_options, keep_image=keep_image)
     verify_records.append(result)
 
     if result.status in (Status.OK, Status.EXPECTED_FAIL):

@@ -119,8 +119,10 @@ def _select_archive_urls(data: dict[str, Any], record_id: str) -> list[str]:
 
     Zenodo's InvenioRDM API exposes files as ``files[].links.self`` (a direct
     content URL); older responses also had ``links.archive``. Prefer the legacy
-    archive link when present, otherwise use the ``.zip`` files when the record
-    ships any, falling back to all files with a download link.
+    archive link when present, otherwise use the record's ``.zip`` file(s).
+
+    Only ``.zip`` archives are supported: the download path extracts every URL
+    with :mod:`zipfile`, so a non-archive file would fail with ``BadZipFile``.
 
     Args:
         data (dict): Parsed Zenodo record JSON.
@@ -130,7 +132,7 @@ def _select_archive_urls(data: dict[str, Any], record_id: str) -> list[str]:
         list[str]: One or more archive download URLs.
 
     Raises:
-        ZenodoException: If the record exposes no downloadable archive.
+        ZenodoException: If the record exposes no downloadable ``.zip`` archive.
     """
     links = data.get("links") or {}
     archive = links.get("archive")
@@ -138,19 +140,17 @@ def _select_archive_urls(data: dict[str, Any], record_id: str) -> list[str]:
         return [archive]
 
     files = data.get("files") or []
-    downloadable = [file for file in files if (file.get("links") or {}).get("self")]
-    if not downloadable:
-        raise ZenodoException(
-            f"Zenodo record {record_id} exposes no downloadable additional files"
-        )
-
     zips = [
         file
-        for file in downloadable
+        for file in files
         if str(file.get("key", "")).lower().endswith(".zip")
+        and (file.get("links") or {}).get("self")
     ]
-    selected = zips or downloadable
-    return [file["links"]["self"] for file in selected]
+    if not zips:
+        raise ZenodoException(
+            f"Zenodo record {record_id} exposes no downloadable .zip archive"
+        )
+    return [file["links"]["self"] for file in zips]
 
 
 def _get_zenodo_metadata_and_archive_url(
@@ -210,16 +210,22 @@ def _download_additional_files(
     record_folder.mkdir(parents=True, exist_ok=True)
 
     logger.info("Downloading additional files from Zenodo. This might take a while...")
-    for archive_url in urls:
-        # Make a GET request to the URL
-        response = requests.get(archive_url, stream=True)
-        # Ensure the request was successful
-        if response.status_code != 200:
-            error_msg = f"Failed to download additional files. Status code: {response.status_code}"
-            logger.error(error_msg)
-            raise ZenodoException(error_msg)
+    try:
+        for archive_url in urls:
+            # Make a GET request to the URL
+            response = requests.get(archive_url, stream=True)
+            # Ensure the request was successful
+            if response.status_code != 200:
+                error_msg = f"Failed to download additional files. Status code: {response.status_code}"
+                logger.error(error_msg)
+                raise ZenodoException(error_msg)
 
-        _extract_archive(response=response, record_folder=record_folder)
+            _extract_archive(response=response, record_folder=record_folder)
+    except Exception:
+        # A partially populated version folder would be mistaken for a complete
+        # cache by _get_latest_version_folder_name, so drop it on any failure.
+        shutil.rmtree(record_folder, ignore_errors=True)
+        raise
 
     logger.info(f"Zip file extracted successfully to {record_folder}")
     return record_folder

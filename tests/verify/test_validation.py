@@ -124,6 +124,40 @@ def test_orientation_only_affine_difference_warns(tmp_path: Path):
     assert warnings and "orientation" in warnings[0]
 
 
+def test_orientation_only_with_translation_warns(tmp_path: Path):
+    case = _segmentation_case()
+    reference = tmp_path / "ref.nii.gz"
+    output = tmp_path / "out.nii.gz"
+    reference_data = np.ones((4, 4, 4), dtype=np.float32)
+    reference_affine = np.eye(4)
+    reference_affine[:3, 3] = [10.0, 20.0, 30.0]
+    _write(reference, reference_data, affine=reference_affine)
+    # LPS -> RAS relabels the world frame: the flipped axes' translation flips too.
+    flipped = np.diag([-1.0, -1.0, 1.0, 1.0])
+    _write(output, reference_data.astype(np.int16), affine=flipped @ reference_affine)
+    warnings: list[str] = []
+    validate_case_output(case, output, reference, warn=warnings.append)
+    assert warnings and "orientation" in warnings[0]
+
+
+def test_inconsistent_sign_translation_rejected(tmp_path: Path):
+    case = _segmentation_case()
+    reference = tmp_path / "ref.nii.gz"
+    output = tmp_path / "out.nii.gz"
+    reference_data = np.ones((4, 4, 4), dtype=np.float32)
+    reference_affine = np.eye(4)
+    reference_affine[:3, 3] = [10.0, 20.0, 30.0]
+    _write(reference, reference_data, affine=reference_affine)
+    # Linear part is flipped but the translation sign does not follow the axes,
+    # so this is a genuine geometry mismatch, not an orientation relabel.
+    inconsistent = np.eye(4)
+    inconsistent[:3, :3] = np.diag([-1.0, -1.0, 1.0])
+    inconsistent[:3, 3] = [10.0, 20.0, 30.0]
+    _write(output, reference_data.astype(np.int16), affine=inconsistent)
+    with pytest.raises(ValidationError):
+        validate_case_output(case, output, reference)
+
+
 def test_translation_mismatch_rejected(tmp_path: Path):
     case = _segmentation_case()
     reference = tmp_path / "ref.nii.gz"

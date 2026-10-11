@@ -77,7 +77,7 @@ jobs:
             for case in $CASES; do
               K="${K:+$K or }$case"
             done
-            ARGS+=(-k "$K")
+            ARGS+=(-k "$K" -m "integration or network")
           else
             ARGS+=(-m smoke)
           fi

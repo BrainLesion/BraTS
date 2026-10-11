@@ -233,6 +233,12 @@ def test_docker_images_exist():
                 continue
             pytest.fail(f"Container image not available: {image}\n{proc.stderr}")
 
+        if image in known_failures:
+            pytest.fail(
+                "Container image is now pullable but still listed as a known "
+                f"failure; remove it from known_failures.yaml: {image}"
+            )
+
         digests = re.findall(r'"digest"\s*:\s*"(sha256:[0-9a-f]+)"', proc.stdout)
         digest = digests[0] if digests else "<unknown>"
         print(f"[docker manifest] {image} -> {digest}")

@@ -34,6 +34,11 @@ def test_parse_device_ids_invalid():
         parse_device_ids("gpu0")
 
 
+def test_parse_device_ids_empty():
+    with pytest.raises(GpuError):
+        parse_device_ids("")
+
+
 def test_ensure_free_when_idle():
     runner = _runner("0, GPU-aaa, 0, 10", "")
     assert ensure_free([0], runner=runner, wait_s=0) is True

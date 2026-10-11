@@ -178,6 +178,23 @@ class TestZenodoUtils(unittest.TestCase):
             _get_zenodo_metadata_and_archive_url("1")
 
     @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_requires_zip(self, mock_get):
+        # A record with only non-archive files must be rejected explicitly,
+        # otherwise the download path would fail later with BadZipFile.
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "metadata": {"version": "1.0.0"},
+            "files": [
+                {"key": "readme.txt", "links": {"self": "https://z/readme"}},
+            ],
+        }
+        mock_get.return_value = mock_response
+
+        with self.assertRaises(ZenodoException):
+            _get_zenodo_metadata_and_archive_url("1")
+
+    @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url_zenodo_error(self, mock_get):
         # Setup
         mock_response = MagicMock(spec=requests.Response)
@@ -251,6 +268,28 @@ class TestZenodoUtils(unittest.TestCase):
         _download_additional_files({"version": "1.0.0"}, "12345", ["u1", "u2"])
 
         self.assertEqual(mock_extract_archive.call_count, 2)
+
+    @patch("brats.utils.zenodo._extract_archive")
+    @patch("brats.utils.zenodo.requests.get")
+    def test_download_additional_files_partial_failure_cleans_up(
+        self,
+        mock_requests_get,
+        mock_extract_archive,
+    ):
+        cache = Path(tempfile.mkdtemp())
+        with patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", cache):
+            ok = MagicMock(spec=requests.Response)
+            ok.status_code = 200
+            bad = MagicMock(spec=requests.Response)
+            bad.status_code = 500
+            mock_requests_get.side_effect = [ok, bad]
+
+            with self.assertRaises(ZenodoException):
+                _download_additional_files({"version": "1.0.0"}, "12345", ["u1", "u2"])
+
+            # The partially populated version folder must not survive, otherwise
+            # it would be treated as a complete cache on the next invocation.
+            self.assertFalse((cache / "12345_v1.0.0").exists())
 
     def test_extract_archive(self):
         # Build a small zip in memory and stream it through the fake response.

@@ -26,6 +26,12 @@ def test_image_reachable(image: str) -> None:
     if result.state == "offline":
         pytest.skip(f"registry unreachable: {result.message}")
     if result.state == "pullable":
+        if image in _KNOWN_FAILURE_IMAGES:
+            pytest.fail(
+                "image is now pullable but still listed in known_failures.yaml; "
+                "remove the entry so the case is verified again",
+                pytrace=False,
+            )
         return
     if result.state == "private":
         pytest.skip("private image (auth required)")

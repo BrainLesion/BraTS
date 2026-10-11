@@ -7,6 +7,7 @@ validation can be reused across the tooling.
 
 from __future__ import annotations
 
+import itertools
 import os
 import shutil
 import signal
@@ -28,6 +29,30 @@ DEFAULT_SEGMENTATION_LABELS = [0, 1, 2, 3, 4]
 
 class ValidationError(RuntimeError):
     """Raised when an algorithm output does not pass structural validation."""
+
+
+def _is_orientation_only(
+    output_affine: np.ndarray,
+    reference_affine: np.ndarray,
+    atol: float = 1e-3,
+) -> bool:
+    """Return True if two affines differ only by whole-axis sign flips.
+
+    A change of orientation convention (e.g. LPS vs RAS) relabels the world
+    coordinate frame, which pre-multiplies the affine by ``diag(±1, ±1, ±1, 1)``:
+    the sign is applied to complete rows of the affine, including the matching
+    translation component. Comparing element-wise magnitudes alone would also
+    accept inconsistent sign flips (e.g. a translation whose sign does not match
+    the flipped axes), so the transform is required to be such a global diagonal.
+    Scale, shear and translation-only mismatches still return False.
+    """
+    if not np.allclose(np.abs(output_affine), np.abs(reference_affine), atol=atol):
+        return False
+    for signs in itertools.product((1.0, -1.0), repeat=3):
+        transform = np.diag((*signs, 1.0))
+        if np.allclose(output_affine, transform @ reference_affine, atol=atol):
+            return True
+    return False
 
 
 def env_truthy(name: str) -> bool:
@@ -192,15 +217,13 @@ def validate_output(
         )
     if not np.allclose(output_img.affine, reference_img.affine, atol=1e-3):
         # A pure axis-orientation (sign) difference keeps every affine magnitude
-        # (voxel spacing and translation) identical and leaves the data on the
-        # reference voxel grid, so it is reported as a non-fatal geometry
-        # difference rather than a structural failure. Any scale, shear or
-        # translation mismatch changes the magnitudes and still fails. The
-        # package-side header fix for this class of mismatch is tracked in
-        # https://github.com/BrainLesion/BraTS/issues/191.
-        if np.allclose(
-            np.abs(output_img.affine), np.abs(reference_img.affine), atol=1e-3
-        ):
+        # identical and leaves the data on the reference voxel grid, so it is
+        # reported as a non-fatal geometry difference rather than a structural
+        # failure. The sign must be applied to whole axes (including the matching
+        # translation component); any scale, shear or inconsistent sign mismatch
+        # still fails. The package-side header fix for this class of mismatch is
+        # tracked in https://github.com/BrainLesion/BraTS/issues/191.
+        if _is_orientation_only(output_img.affine, reference_img.affine):
             if warn is not None:
                 warn(
                     "Output affine differs from the input by axis orientation "

@@ -37,8 +37,8 @@ def parse_device_ids(cuda_devices: str) -> list[int]:
     Raises:
         GpuError: If the string is empty or a device id is not an integer
     """
-    normalized = normalize_cuda_devices(cuda_devices)
     try:
+        normalized = normalize_cuda_devices(cuda_devices)
         return [int(part) for part in normalized.split(",")]
     except ValueError as e:
         raise GpuError(f"Invalid CUDA device id in {cuda_devices!r}") from e
