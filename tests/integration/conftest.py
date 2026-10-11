@@ -133,6 +133,7 @@ def verify_options(
 
     timeout = float(request.config.getoption("--timeout"))
     use_cached_weights = bool(request.config.getoption("--use-cached-weights"))
+    keep = bool(request.config.getoption("--keep"))
     workspace_opt = request.config.getoption("--workspace")
     if workspace_opt:
         workspace = Path(workspace_opt).expanduser()
@@ -158,11 +159,11 @@ def verify_options(
         # A shared cache is never deleted, so keep_weights follows use_cached_weights.
         fresh_weights=not use_cached_weights,
         keep_weights=use_cached_weights,
+        keep=keep,
     )
     yield options
 
     cleanup_owned_images(options)
-    keep = bool(request.config.getoption("--keep"))
     if generated_workspace and not keep:
         shutil.rmtree(options.workspace, ignore_errors=True)
 
