@@ -23,14 +23,16 @@ _SLUG_ALIASES: dict[str, str] = {
 
 # Curated subset for a quick end-to-end check against server data. Covers the
 # main algorithm (Adult Glioma Pre&Post), the newest years (2025/2026) and one
-# Zenodo-weighted case exercising the additional-files download path.
+# lightweight Zenodo-weighted case exercising the additional-files download path.
+# Cases are kept fast: the slow `inpainting.BraTS24_3` (smint) is intentionally
+# not used here.
 SMOKE_CASE_IDS: frozenset[str] = frozenset(
     {
         "adult_glioma_pre_post.BraTS25_3B:pre",
         "adult_glioma_pre_post.BraTS25_3B:post",
         "inpainting.BraTS26_2B",
         "missing_mri.BraTS25_3",
-        "inpainting.BraTS24_3",
+        "missing_mri.BraTS24_2",
     }
 )
 
