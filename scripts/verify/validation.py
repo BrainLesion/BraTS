@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 from loguru import logger
 
@@ -31,6 +31,7 @@ def validate_case_output(
     case: AlgorithmCase,
     output_file: Path,
     reference_file: Path,
+    warn: Optional[Callable[[str], None]] = None,
 ) -> None:
     """Validate a case's output, raising ``ValidationError`` on failure.
 
@@ -38,6 +39,8 @@ def validate_case_output(
         case (AlgorithmCase): The case that produced the output
         output_file (Path): The output file to validate
         reference_file (Path): Input file for shape/affine comparison
+        warn (Optional[Callable[[str], None]]): Sink for non-fatal findings.
+            Defaults to logging a warning.
 
     Raises:
         scripts._shared.ValidationError: If the output is structurally invalid
@@ -62,7 +65,10 @@ def validate_case_output(
             synthesize = None
 
     def _warn(message: str) -> None:
-        logger.warning(f"{case.case_id}: {message}")
+        if warn is not None:
+            warn(message)
+        else:
+            logger.warning(f"{case.case_id}: {message}")
 
     validate_output(
         output_file=output_file,

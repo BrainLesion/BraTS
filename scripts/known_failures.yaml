@@ -7,7 +7,7 @@
 # When an image listed here becomes pullable, the preflight will flag it so the
 # entry can be removed.
 
-"brainles/brats25_goat_cmengynn:latest": "container not published (verified 404)"
-"brainles/brats25_goat_cmuh_aic:latest": "container not published (verified 404)"
-"brainles/brats25_goat_satushe:latest": "container not published (verified 404)"
-"brainles/brats25_goat_stockholmfederation:latest": "container not published (verified 404)"
+"brainles/brats25_goat_cmengynn:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_cmuh_aic:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_satushe:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_stockholmfederation:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"

@@ -14,8 +14,9 @@ from scripts.verify.cases import build_cases
 from scripts.verify.validation import validate_case_output
 
 
-def _write(path: Path, data: np.ndarray) -> None:
-    affine = np.eye(4)
+def _write(path: Path, data: np.ndarray, affine: np.ndarray | None = None) -> None:
+    if affine is None:
+        affine = np.eye(4)
     nib.save(nib.Nifti1Image(data.astype(np.float32), affine), str(path))
 
 
@@ -108,3 +109,41 @@ def test_override_accepts_matching_labels(tmp_path: Path, monkeypatch):
     monkeypatch.setattr(validation, "_ALLOWED_LABELS_BY_CASE", {})
     reference, output = _unexpected_label_output(tmp_path)
     validate_case_output(case, output, reference)
+
+
+def test_orientation_only_affine_difference_warns(tmp_path: Path):
+    case = _segmentation_case()
+    reference = tmp_path / "ref.nii.gz"
+    output = tmp_path / "out.nii.gz"
+    reference_data = np.ones((4, 4, 4), dtype=np.float32)
+    _write(reference, reference_data)
+    flipped = np.diag([-1.0, -1.0, 1.0, 1.0])
+    _write(output, reference_data.astype(np.int16), affine=flipped)
+    warnings: list[str] = []
+    validate_case_output(case, output, reference, warn=warnings.append)
+    assert warnings and "orientation" in warnings[0]
+
+
+def test_translation_mismatch_rejected(tmp_path: Path):
+    case = _segmentation_case()
+    reference = tmp_path / "ref.nii.gz"
+    output = tmp_path / "out.nii.gz"
+    reference_data = np.ones((4, 4, 4), dtype=np.float32)
+    _write(reference, reference_data)
+    shifted = np.eye(4)
+    shifted[:3, 3] = [1.0, 0.0, 0.0]
+    _write(output, reference_data.astype(np.int16), affine=shifted)
+    with pytest.raises(ValidationError):
+        validate_case_output(case, output, reference)
+
+
+def test_scale_mismatch_rejected(tmp_path: Path):
+    case = _segmentation_case()
+    reference = tmp_path / "ref.nii.gz"
+    output = tmp_path / "out.nii.gz"
+    reference_data = np.ones((4, 4, 4), dtype=np.float32)
+    _write(reference, reference_data)
+    scaled = np.diag([2.0, 1.0, 1.0, 1.0])
+    _write(output, reference_data.astype(np.int16), affine=scaled)
+    with pytest.raises(ValidationError):
+        validate_case_output(case, output, reference)

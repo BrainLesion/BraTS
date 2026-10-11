@@ -214,6 +214,7 @@ def run_case(
         log_file: Optional[Path] = None,
         image_pulled_by_us: bool = False,
         image_id: Optional[str] = None,
+        warnings: Optional[list[str]] = None,
     ) -> CaseResult:
         return CaseResult(
             case=case,
@@ -224,6 +225,7 @@ def run_case(
             log_file=log_file,
             image_pulled_by_us=image_pulled_by_us,
             image_id=image_id,
+            warnings=list(warnings or []),
         )
 
     if case.known_failure_reason:
@@ -451,7 +453,8 @@ def run_case(
         _kill_labeled_containers(label, options.docker_runner)
 
     try:
-        validate_case_output(case, output_file, reference)
+        warnings: list[str] = []
+        validate_case_output(case, output_file, reference, warn=warnings.append)
     except ValidationError as e:
         _teardown(
             case,
@@ -470,6 +473,7 @@ def run_case(
             log_file=log_file,
             image_pulled_by_us=image_pulled_by_us,
             image_id=image_id,
+            warnings=warnings,
         )
 
     _teardown(
@@ -488,6 +492,7 @@ def run_case(
         log_file=log_file,
         image_pulled_by_us=image_pulled_by_us,
         image_id=image_id,
+        warnings=warnings,
     )
 
 

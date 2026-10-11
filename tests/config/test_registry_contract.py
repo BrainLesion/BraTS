@@ -26,6 +26,7 @@ from brats.constants import (
 )
 from brats.registry import iter_algorithms
 from brats.utils.algorithm_config import load_algorithms, parameters_file_path
+from scripts.verify.cases import build_cases
 from scripts.verify.registry import (
     _AUTH_ERROR_MARKERS,
     _NETWORK_ERROR_MARKERS,
@@ -202,6 +203,9 @@ def test_docker_images_exist():
     if not _docker_cli_available():
         pytest.skip("docker CLI not available")
 
+    known_failures = {
+        case.docker_image for case in build_cases() if case.known_failure_reason
+    }
     images = sorted({data.run_args.docker_image for _, _, _, data in _iter_registry()})
     auth_required: list[str] = []
     for image in images:
@@ -221,6 +225,11 @@ def test_docker_images_exist():
                 pytest.skip(f"Offline, cannot resolve image {image}")
             if _looks_requires_auth(proc.stderr) and not _looks_not_found(proc.stderr):
                 auth_required.append(image)
+                continue
+            if image in known_failures:
+                print(
+                    f"[docker manifest] {image} -> missing (registered known failure)"
+                )
                 continue
             pytest.fail(f"Container image not available: {image}\n{proc.stderr}")
 

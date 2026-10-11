@@ -101,3 +101,5 @@ class CaseResult:
     log_file: Optional[Path] = None
     image_pulled_by_us: bool = False
     image_id: Optional[str] = None
+    warnings: list[str] = field(default_factory=list)
+    """Non-fatal findings collected during validation."""

@@ -105,6 +105,7 @@ def _result_to_dict(result: CaseResult) -> dict[str, object]:
         "image_pulled_by_us": result.image_pulled_by_us,
         "image_id": result.image_id,
         "requires_weights": result.case.requires_weights,
+        "warnings": list(result.warnings),
     }
 
 
