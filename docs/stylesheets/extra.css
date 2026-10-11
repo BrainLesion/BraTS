@@ -45,18 +45,18 @@
   --md-code-hl-color: #34548a;
   --md-code-hl-color--light: rgba(52, 84, 138, 0.1);
 
-  --md-code-hl-number-color: #965027;
+  --md-code-hl-number-color: #82431d;
   --md-code-hl-special-color: #5a4a78;
   --md-code-hl-function-color: #34548a;
   --md-code-hl-constant-color: #5a4a78;
   --md-code-hl-keyword-color: #5a4a78;
-  --md-code-hl-string-color: #33635c;
+  --md-code-hl-string-color: #2c5a4f;
   --md-code-hl-name-color: #343b58;
-  --md-code-hl-operator-color: #9699a3;
-  --md-code-hl-punctuation-color: #9699a3;
-  --md-code-hl-comment-color: #9699a3;
-  --md-code-hl-generic-color: #9699a3;
-  --md-code-hl-variable-color: #565a6e;
+  --md-code-hl-operator-color: #4c4f69;
+  --md-code-hl-punctuation-color: #4c4f69;
+  --md-code-hl-comment-color: #4c4f69;
+  --md-code-hl-generic-color: #4c4f69;
+  --md-code-hl-variable-color: #454a6b;
 
   /* Typeset */
   --md-typeset-color: var(--md-default-fg-color);
@@ -143,8 +143,8 @@
   --md-code-hl-name-color: #c0caf5;
   --md-code-hl-operator-color: #89ddff;
   --md-code-hl-punctuation-color: #89ddff;
-  --md-code-hl-comment-color: #565f89;
-  --md-code-hl-generic-color: #565f89;
+  --md-code-hl-comment-color: #8a91bd;
+  --md-code-hl-generic-color: #8a91bd;
   --md-code-hl-variable-color: #c0caf5;
 
   /* Typeset */
