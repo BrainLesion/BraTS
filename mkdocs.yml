@@ -95,4 +95,5 @@ nav:
           - Overview: adr/README.md
           - Container Orchestration: adr/0001-docker-container-wrapping.md
           - Algorithm Registry: adr/0002-yaml-driven-algorithm-registry.md
+          - Layered Testing Strategy: adr/0003-layered-testing-strategy.md
   - Citation: citation.md

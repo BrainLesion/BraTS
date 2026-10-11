@@ -1,0 +1,92 @@
+name: integration
+
+# Manual, resource-heavy end-to-end tests. These run real containers and
+# therefore require a self-hosted runner with a GPU (and access to Docker Hub,
+# Zenodo and GitHub). They are intentionally NOT triggered on push/PR.
+#
+# The pytest suite under tests/integration is the single source of truth; this
+# workflow only wires it up for CI.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: "Space-separated case ids to run (default: all smoke cases)"
+        required: false
+        default: ""
+      force_cpu:
+        description: "Force CPU execution (only CPU-compatible algorithms)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+      cuda_devices:
+        description: "Comma-separated CUDA device ids"
+        required: false
+        default: "0"
+      data:
+        description: "Root folder containing the challenge data"
+        required: false
+        default: ""
+      timeout:
+        description: "Per-case timeout in seconds (0 disables the limit)"
+        required: false
+        default: "3600"
+
+jobs:
+  smoke:
+    # Runner labels must match the self-hosted GPU machine registered for this
+    # repository; update them here if the server changes.
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 240
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run integration smoke subset
+        env:
+          CASES: ${{ inputs.cases }}
+          FORCE_CPU: ${{ inputs.force_cpu }}
+          CUDA_DEVICES: ${{ inputs.cuda_devices }}
+          TIMEOUT: ${{ inputs.timeout }}
+          DATA: ${{ inputs.data }}
+        run: |
+          # Use a bash array so values (especially the -k expression) are never
+          # word-split or quoted literally. When explicit cases are given, skip
+          # the `-m smoke` marker so non-smoke cases can still be selected.
+          ARGS=(tests/integration --junitxml smoke-report.xml --cuda-devices "$CUDA_DEVICES")
+          if [ -n "$DATA" ]; then
+            ARGS+=(--data "$DATA")
+          fi
+          if [ "$FORCE_CPU" = "true" ]; then
+            ARGS+=(--force-cpu)
+          fi
+          if [ -n "$TIMEOUT" ] && [ "$TIMEOUT" != "0" ]; then
+            ARGS+=(--timeout "$TIMEOUT")
+          fi
+          if [ -n "$CASES" ]; then
+            K=""
+            for case in $CASES; do
+              K="${K:+$K or }$case"
+            done
+            ARGS+=(-k "$K" -m "integration or network")
+          else
+            ARGS+=(-m smoke)
+          fi
+          uv run pytest "${ARGS[@]}"
+
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: smoke-report
+          path: smoke-report.xml
+          if-no-files-found: ignore

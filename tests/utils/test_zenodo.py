@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import zipfile
 from io import BytesIO
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -104,14 +105,94 @@ class TestZenodoUtils(unittest.TestCase):
         zenodo_response = _get_zenodo_metadata_and_archive_url("12345")
         if not zenodo_response:
             self.fail("Expected a valid response, but got None")
-        metadata, archive_url = zenodo_response
+        metadata, archive_urls = zenodo_response
         self.assertEqual(metadata, {"version": "1.0.0"})
-        self.assertEqual(archive_url, "http://test.url")
+        self.assertEqual(archive_urls, ["http://test.url"])
 
         # Test when the request fails
         mock_get.side_effect = requests.exceptions.RequestException("Failed")
         ret = _get_zenodo_metadata_and_archive_url("12345")
         self.assertIsNone(ret)
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_invenio_files(self, mock_get):
+        # InvenioRDM exposes files via files[].links.self (no links.archive)
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "metadata": {"version": "1.0.1"},
+            "links": {"self": "https://zenodo.org/api/records/1"},
+            "files": [
+                {
+                    "key": "weights.zip",
+                    "links": {"self": "https://zenodo.org/api/records/1/files/a"},
+                }
+            ],
+        }
+        mock_get.return_value = mock_response
+
+        metadata, archive_urls = _get_zenodo_metadata_and_archive_url("1")
+        self.assertEqual(metadata, {"version": "1.0.1"})
+        self.assertEqual(archive_urls, ["https://zenodo.org/api/records/1/files/a"])
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_selects_zip_only(self, mock_get):
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "metadata": {"version": "1.0.0"},
+            "files": [
+                {"key": "readme.txt", "links": {"self": "https://z/readme"}},
+                {"key": "weights.zip", "links": {"self": "https://z/weights"}},
+            ],
+        }
+        mock_get.return_value = mock_response
+
+        _, archive_urls = _get_zenodo_metadata_and_archive_url("1")
+        self.assertEqual(archive_urls, ["https://z/weights"])
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_multiple_zips(self, mock_get):
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "metadata": {"version": "1.0.0"},
+            "files": [
+                {"key": "a.zip", "links": {"self": "https://z/a"}},
+                {"key": "b.zip", "links": {"self": "https://z/b"}},
+            ],
+        }
+        mock_get.return_value = mock_response
+
+        _, archive_urls = _get_zenodo_metadata_and_archive_url("1")
+        self.assertEqual(archive_urls, ["https://z/a", "https://z/b"])
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_no_files(self, mock_get):
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"metadata": {"version": "1.0.0"}}
+        mock_get.return_value = mock_response
+
+        with self.assertRaises(ZenodoException):
+            _get_zenodo_metadata_and_archive_url("1")
+
+    @patch("brats.utils.zenodo.requests.get")
+    def test_get_zenodo_metadata_and_archive_url_requires_zip(self, mock_get):
+        # A record with only non-archive files must be rejected explicitly,
+        # otherwise the download path would fail later with BadZipFile.
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "metadata": {"version": "1.0.0"},
+            "files": [
+                {"key": "readme.txt", "links": {"self": "https://z/readme"}},
+            ],
+        }
+        mock_get.return_value = mock_response
+
+        with self.assertRaises(ZenodoException):
+            _get_zenodo_metadata_and_archive_url("1")
 
     @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url_zenodo_error(self, mock_get):
@@ -172,23 +253,60 @@ class TestZenodoUtils(unittest.TestCase):
         mock_requests_get.assert_called_once_with(mock_archive_url, stream=True)
         mock_extract_archive.assert_not_called()
 
-    @patch("brats.utils.zenodo.zipfile.ZipFile")
-    @patch("brats.utils.zenodo.BytesIO", new_callable=MagicMock)
-    @patch("brats.utils.zenodo.Progress")
-    def test_extract_archive(self, mock_progress, mock_bytes_io, mock_zipfile):
-        # Setup
+    @patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", Path(tempfile.mkdtemp()))
+    @patch("brats.utils.zenodo._extract_archive")
+    @patch("brats.utils.zenodo.requests.get")
+    def test_download_additional_files_multiple(
+        self,
+        mock_requests_get,
+        mock_extract_archive,
+    ):
         mock_response = MagicMock(spec=requests.Response)
-        mock_response.iter_content.return_value = [b"data"]
-        mock_record_folder = MagicMock(spec=Path)
+        mock_response.status_code = 200
+        mock_requests_get.return_value = mock_response
 
-        mock_bytes_io_instance = MagicMock(spec=BytesIO)
-        mock_bytes_io.return_value = mock_bytes_io_instance  # Mock the instantiation
+        _download_additional_files({"version": "1.0.0"}, "12345", ["u1", "u2"])
 
-        mock_zipfile_instance = MagicMock()
-        mock_zipfile.return_value.__enter__.return_value = mock_zipfile_instance
+        self.assertEqual(mock_extract_archive.call_count, 2)
 
-        # Call the function
-        _extract_archive(mock_response, mock_record_folder)
+    @patch("brats.utils.zenodo._extract_archive")
+    @patch("brats.utils.zenodo.requests.get")
+    def test_download_additional_files_partial_failure_cleans_up(
+        self,
+        mock_requests_get,
+        mock_extract_archive,
+    ):
+        cache = Path(tempfile.mkdtemp())
+        with patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", cache):
+            ok = MagicMock(spec=requests.Response)
+            ok.status_code = 200
+            bad = MagicMock(spec=requests.Response)
+            bad.status_code = 500
+            mock_requests_get.side_effect = [ok, bad]
+
+            with self.assertRaises(ZenodoException):
+                _download_additional_files({"version": "1.0.0"}, "12345", ["u1", "u2"])
+
+            # The partially populated version folder must not survive, otherwise
+            # it would be treated as a complete cache on the next invocation.
+            self.assertFalse((cache / "12345_v1.0.0").exists())
+
+    def test_extract_archive(self):
+        # Build a small zip in memory and stream it through the fake response.
+        payload_io = BytesIO()
+        with zipfile.ZipFile(payload_io, "w") as archive:
+            archive.writestr("weights.bin", b"data")
+        payload = payload_io.getvalue()
+
+        mock_response = MagicMock(spec=requests.Response)
+        mock_response.iter_content.return_value = [payload]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            record_folder = Path(tmp)
+            _extract_archive(mock_response, record_folder)
+            self.assertEqual((record_folder / "weights.bin").read_bytes(), b"data")
+            # the temporary download file must not be left behind
+            self.assertEqual(list(record_folder.glob("*.part")), [])
 
     def test_get_latest_version_folder_name(self):
         # Test case when folders are provided
