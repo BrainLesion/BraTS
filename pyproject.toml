@@ -84,7 +84,7 @@ pythonpath = ["."]
 addopts = "-m 'not integration and not network'"
 markers = [
   "integration: end-to-end tests that run real containers/GPU (opt-in, excluded by default)",
-  "smoke: curated subset of integration tests runnable from the downloaded sample data",
+  "smoke: curated fast subset of integration tests",
   "network: tests that access external services (skipped automatically when offline)",
 ]
 

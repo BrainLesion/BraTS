@@ -55,7 +55,7 @@ def check_environment(
         backend (str): Container backend to use
         force_cpu (bool): Whether CPU execution was requested
         min_free_gb (float): Minimum required free disk space in GB
-        data_root (Optional[Path]): Folder the sample data is cached in. The
+        data_root (Optional[Path]): Folder the challenge data lives in. The
             disk-space check runs against its nearest existing ancestor
 
     Returns:

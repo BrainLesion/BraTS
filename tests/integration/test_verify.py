@@ -1,7 +1,7 @@
 """End-to-end verification of every registered containerized algorithm.
 
 Excluded from the default test run; opt in with ``-m integration``. Use
-``-m smoke`` for the curated, sample-runner-friendly subset.
+``-m smoke`` for the curated, fast subset.
 """
 
 from __future__ import annotations
@@ -23,10 +23,7 @@ def _param(case):
 
 
 @pytest.mark.parametrize("case", [_param(case) for case in CASES])
-def test_verify_case(case, verify_options, verify_records, sample_mode) -> None:
-    if sample_mode and case.case_id not in SMOKE_CASE_IDS:
-        pytest.skip("not part of the downloadable sample subset")
-
+def test_verify_case(case, verify_options, verify_records) -> None:
     result = run_case(case, verify_options)
     verify_records.append(result)
 

@@ -21,13 +21,16 @@ _SLUG_ALIASES: dict[str, str] = {
     "adult_glioma_pre_and_post_treatment": "adult_glioma_pre_post",
 }
 
-# Curated subset that can run from the auto-downloaded sample data and is fast
-# enough for a quick end-to-end check. These cases carry the ``smoke`` marker.
+# Curated subset for a quick end-to-end check against server data. Covers the
+# main algorithm (Adult Glioma Pre&Post), the newest years (2025/2026) and one
+# Zenodo-weighted case exercising the additional-files download path.
 SMOKE_CASE_IDS: frozenset[str] = frozenset(
     {
-        "adult_glioma_pre_treatment.BraTS23_1",
-        "inpainting.BraTS23_1",
-        "missing_mri.BraTS24_1",
+        "adult_glioma_pre_post.BraTS25_3B:pre",
+        "adult_glioma_pre_post.BraTS25_3B:post",
+        "inpainting.BraTS26_2B",
+        "missing_mri.BraTS25_3",
+        "inpainting.BraTS24_3",
     }
 )
 

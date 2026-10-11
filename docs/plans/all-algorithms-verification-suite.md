@@ -85,7 +85,6 @@ scripts/
    ├─ runner.py                    # per-case orchestration
    ├─ cleanup.py                   # exact-artifact teardown
    ├─ validation.py                # structural output checks
-   ├─ sample.py                    # optional sample-data download
    └─ reporting.py                 # terminal summary + JSON report
 
 tests/
@@ -275,13 +274,13 @@ JSON shape (abridged):
 
 ```
 uv run pytest tests/integration -m integration                  # every registered algorithm
-uv run pytest tests/integration -m smoke --download-sample-data # curated sample subset
+uv run pytest tests/integration -m smoke --data ~/brats_data     # curated smoke subset
 uv run pytest tests/integration -m network                      # zero-disk reachability preflight
 uv run pytest tests/integration -m integration -k inpainting    # narrow by case
 uv run pytest tests/integration -m integration --data ~/brats_data --cuda-devices 1
 ```
 
-Flags: `--data`, `--download-sample-data`, `--cuda-devices`, `--force-cpu`, `--timeout`,
+Flags: `--data`, `--cuda-devices`, `--force-cpu`, `--timeout`,
 `--min-free-gb`, `--disk-path`, `--workspace`, `--use-cached-weights`,
 `--gpu-idle-mem-mb`, `--gpu-wait-seconds`, `--gpu-poll-seconds`, `--keep`,
 `--verify-report` (plus pytest's `-m`, `-k`, `--lf`, `--junitxml`).

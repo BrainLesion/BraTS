@@ -39,7 +39,7 @@ The test suite is layered (see [ADR-0003](docs/adr/0003-layered-testing-strategy
 - **End-to-end verification** (`tests/integration/`) is opt-in and runs
   containerized algorithms on de-identified data, validating the output
   structurally. `-m integration` runs every registered algorithm; `-m smoke`
-  runs a curated subset that can use auto-downloaded sample data. Both are
+  runs a curated fast subset against the same `--data` root. Both are
   excluded from the default run through `addopts` and require a container
   backend, network access and (for most algorithms) a GPU. The suite must not be
   run under `pytest-xdist`: its GPU-free gate assumes single-process execution.

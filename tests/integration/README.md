@@ -14,7 +14,7 @@ The suite is pytest-native — there is no separate CLI. All safety-critical log
 | Marker | Selects |
 |--------|---------|
 | `integration` | Every registered algorithm case (excluded from default runs) |
-| `smoke` | Curated, fast subset runnable from auto-downloaded sample data |
+| `smoke` | Curated, fast subset (main algorithm, newest years, one Zenodo-weighted case) |
 | `network` | Zero-disk container-image reachability preflight (no pulls) |
 
 Default `addopts` excludes `integration` and `network`, so a plain
@@ -25,16 +25,14 @@ Default `addopts` excludes `integration` and `network`, so a plain
 - A working Docker daemon and `docker login` (for images/registry access).
 - `nvidia-smi` and a free GPU for most algorithms (pass `--force-cpu` only for
   CPU-compatible algorithms).
-- Network access to Docker Hub, Zenodo and GitHub (sample data).
+- Network access to Docker Hub and Zenodo.
 - The suite **must not run under `pytest-xdist`** (`-n`): the GPU-free gate
   assumes single-process execution and raises a usage error otherwise.
 
 ## Data
 
-- Full run: point `--data` at a preprocessed data root (default `~/brats_data`).
-- Sample run: `--download-sample-data` fetches a pinned
-  [BrainLesion/tutorials](https://github.com/BrainLesion/tutorials) subject and
-  runs only the `smoke` subset.
+Point `--data` at a preprocessed data root (default `~/brats_data`). The `smoke`
+subset uses the same root as the full run.
 
 ## Commands
 
@@ -45,8 +43,8 @@ uv run pytest tests/integration -m network
 # Every registered algorithm against a local data root
 uv run pytest tests/integration -m integration --data ~/brats_data --cuda-devices 1
 
-# Curated, fast subset using auto-downloaded sample data
-uv run pytest tests/integration -m smoke --download-sample-data
+# Curated, fast subset against a local data root
+uv run pytest tests/integration -m smoke --data ~/brats_data --cuda-devices 1
 
 # Narrow the selection
 uv run pytest tests/integration -m integration -k inpainting
@@ -57,7 +55,6 @@ uv run pytest tests/integration -m integration -k inpainting
 | Option / variable | Purpose |
 |-------------------|---------|
 | `--data PATH` / `BRATS_VERIFY_DATA` | Root folder containing the challenge data (default `~/brats_data`) |
-| `--download-sample-data` | Download the small sample dataset and run only the `smoke` subset |
 | `--cuda-devices IDS` / `BRATS_VERIFY_CUDA_DEVICES` | CUDA devices to expose (default `0`) |
 | `--force-cpu` | Force CPU execution (only CPU-compatible algorithms) |
 | `--timeout SECONDS` | Per-case timeout (0 disables the limit) |
@@ -106,8 +103,8 @@ uv run pytest tests/integration -m integration \
     --data ~/brats_data --timeout 1800 --keep -q
 docker ps -a; docker images; ls brats/data/additional_files
 
-# 3) curated sample subset, then the full sweep
-uv run pytest tests/integration -m smoke --download-sample-data --cuda-devices 1 -q
+# 3) curated smoke subset, then the full sweep
+uv run pytest tests/integration -m smoke --data ~/brats_data --cuda-devices 1 -q
 uv run pytest tests/integration -m integration \
     --data ~/brats_data --cuda-devices 1 --timeout 7200
 ```

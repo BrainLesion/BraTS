@@ -3,8 +3,8 @@
 The heavy, container/GPU-backed cases are excluded from the default test run
 (see ``addopts`` in ``pyproject.toml``). Run them with::
 
-    uv run pytest tests/integration -m integration
-    uv run pytest tests/integration -m smoke --download-sample-data
+    uv run pytest tests/integration -m integration --data ~/brats_data
+    uv run pytest tests/integration -m smoke --data ~/brats_data
     uv run pytest tests/integration -m network      # registry reachability only
 
 The GPU gate is applied per case inside ``run_case``; this module only wires up
@@ -37,11 +37,6 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         "--data",
         default=os.environ.get("BRATS_VERIFY_DATA", str(_DEFAULT_DATA_ROOT)),
         help="Root folder containing the challenge data",
-    )
-    group.addoption(
-        "--download-sample-data",
-        action="store_true",
-        help="Download the small sample dataset and run only the `smoke` subset",
     )
     group.addoption(
         "--cuda-devices",
@@ -116,19 +111,8 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 @pytest.fixture(scope="session")
-def sample_mode(request: pytest.FixtureRequest) -> bool:
-    """Whether the suite is running against the downloaded sample dataset."""
-    return bool(request.config.getoption("--download-sample-data"))
-
-
-@pytest.fixture(scope="session")
-def verify_data_root(request: pytest.FixtureRequest, tmp_path_factory) -> Path:
-    """Return the data root, downloading the sample dataset when requested."""
-    if request.config.getoption("--download-sample-data"):
-        from scripts.verify.sample import download_sample_data
-
-        root = tmp_path_factory.mktemp("brats_sample")
-        return download_sample_data(root)
+def verify_data_root(request: pytest.FixtureRequest) -> Path:
+    """Return the root folder containing the challenge data."""
     return Path(request.config.getoption("--data")).expanduser()
 
 

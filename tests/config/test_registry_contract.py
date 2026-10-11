@@ -258,3 +258,38 @@ def test_zenodo_additional_files_records_exist():
         assert response.status_code == 200, (
             f"Zenodo record {record_id} is not reachable (HTTP {response.status_code})"
         )
+
+
+@pytest.mark.network
+def test_zenodo_records_resolve_to_archive_urls():
+    """Check the package can resolve a download URL for every record.
+
+    Exercises the same parsing path used at runtime
+    (:func:`brats.utils.zenodo._get_zenodo_metadata_and_archive_url`), so a
+    Zenodo API change (e.g. the removal of ``links.archive``) is caught here
+    without downloading the archives.
+    """
+    from brats.utils.zenodo import _get_zenodo_metadata_and_archive_url
+
+    record_ids = sorted(
+        {
+            data.additional_files.record_id
+            for _, _, _, data in _iter_registry()
+            if data.additional_files is not None
+        }
+    )
+    assert record_ids, "Expected at least one algorithm with additional files"
+
+    for record_id in record_ids:
+        resolved = _get_zenodo_metadata_and_archive_url(record_id)
+        if resolved is None:
+            pytest.skip(f"Zenodo unreachable for record {record_id}")
+        metadata, archive_urls = resolved
+        assert metadata, f"Zenodo record {record_id} returned empty metadata"
+        assert archive_urls, (
+            f"Zenodo record {record_id} resolved to no archive download URL"
+        )
+        for url in archive_urls:
+            assert url.startswith(("http://", "https://")), (
+                f"Zenodo record {record_id} returned a non-URL archive entry: {url!r}"
+            )

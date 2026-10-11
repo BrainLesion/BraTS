@@ -26,6 +26,10 @@ on:
         description: "Comma-separated CUDA device ids"
         required: false
         default: "0"
+      data:
+        description: "Root folder containing the challenge data"
+        required: false
+        default: ""
       timeout:
         description: "Per-case timeout in seconds (0 disables the limit)"
         required: false
@@ -52,9 +56,13 @@ jobs:
           FORCE_CPU: ${{ inputs.force_cpu }}
           CUDA_DEVICES: ${{ inputs.cuda_devices }}
           TIMEOUT: ${{ inputs.timeout }}
+          DATA: ${{ inputs.data }}
         run: |
-          ARGS="tests/integration -m smoke --download-sample-data --junitxml smoke-report.xml"
+          ARGS="tests/integration -m smoke --junitxml smoke-report.xml"
           ARGS="$ARGS --cuda-devices $CUDA_DEVICES"
+          if [ -n "$DATA" ]; then
+            ARGS="$ARGS --data $DATA"
+          fi
           if [ "$FORCE_CPU" = "true" ]; then
             ARGS="$ARGS --force-cpu"
           fi
