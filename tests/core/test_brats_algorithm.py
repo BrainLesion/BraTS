@@ -53,9 +53,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
         )
 
         def create_output_file(*args, **kwargs):
-            subject_id = self.segmenter.algorithm.run_args.input_name_schema.format(
-                id=0
-            )
+            subject_id = self.segmenter._format_input_name(i=0)
             alg_output_file = self.output_folder / OUTPUT_NAME_SCHEMA[
                 self.segmenter.task
             ].format(subject_id=subject_id)
@@ -90,9 +88,7 @@ class TestBraTSAlgorithm(unittest.TestCase):
         )
 
         def create_output_file(*args, **kwargs):
-            subject_id = self.segmenter.algorithm.run_args.input_name_schema.format(
-                id=0
-            )
+            subject_id = self.segmenter._format_input_name(i=0)
             alg_output_file = self.output_folder / OUTPUT_NAME_SCHEMA[
                 self.segmenter.task
             ].format(subject_id=subject_id)

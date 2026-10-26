@@ -4,7 +4,7 @@ import shutil
 from abc import abstractmethod
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
 from loguru import logger
 
@@ -31,6 +31,7 @@ from brats.constants import (
 )
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
+from brats.utils.exceptions import AlgorithmConfigException
 
 
 class SegmentationAlgorithm(BraTSAlgorithm):
@@ -135,7 +136,9 @@ class SegmentationAlgorithm(BraTSAlgorithm):
         """
         internal_external_name_map = {}
         for i, subject in enumerate(subjects):
-            internal_name = input_name_schema.format(id=i)
+            internal_name = self._format_input_name(
+                i=i, input_name_schema=input_name_schema
+            )
             internal_external_name_map[internal_name] = subject.name
 
             inputs = {
@@ -274,6 +277,13 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
     """Provides algorithms to perform tumor segmentation on adult glioma pre
     and post treatment MRI data.
 
+    The BraTS pre & post treatment containers use the timepoint suffix of the
+    standardized subject ID to infer whether the image is a pre- or post-
+    treatment scan and select the corresponding pipeline. By default the suffix
+    declared in the algorithm metadata is used (currently "100", post
+    treatment), which matches the behavior of previous releases. Use "pre" for
+    pre-operative scans to avoid spurious resection cavity labels.
+
     Args:
         algorithm (AdultGliomaPreAndPostTreatmentAlgorithms, optional):
             Select an algorithm. Defaults to
@@ -283,6 +293,10 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
         force_cpu (bool, optional): Execution will default to GPU, this flag
             allows forced CPU execution if the algorithm is compatible.
             Defaults to False.
+        treatment_timepoint (Literal["pre", "post"], optional): Whether the
+            images are pre- or post-treatment scans. Determines the timepoint
+            suffix ("-000" vs "-100") resolved from the algorithm metadata.
+            Defaults to "post".
     """
 
     def __init__(
@@ -292,6 +306,7 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
         ),
         cuda_devices: str = "0",
         force_cpu: bool = False,
+        treatment_timepoint: Literal["pre", "post"] = "post",
     ):
         super().__init__(
             algorithm=algorithm,
@@ -299,6 +314,13 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
+        suffix_by_timepoint = self.algorithm.run_args.suffix_by_timepoint or {}
+        if treatment_timepoint not in suffix_by_timepoint:
+            raise AlgorithmConfigException(
+                f"Unsupported treatment_timepoint: {treatment_timepoint}. "
+                f"Must be one of {sorted(suffix_by_timepoint)}"
+            )
+        self.timepoint_suffix = suffix_by_timepoint[treatment_timepoint]
 
 
 class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):

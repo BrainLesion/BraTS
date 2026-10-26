@@ -131,6 +131,8 @@ Available wrappers:
 | `preprocess_deface_only` | Defacing only |
 | `preprocess_for_challenge` | Router that picks the right pipeline for a given challenge; source-dataset-specific GoAT, inpainting, and Missing MRI atlas choices may require custom preprocessing |
 
+All wrappers accept an optional `normalizer`. When one is provided, the brain-extracted outputs are normalized with it; when omitted, the raw brain-extracted images are written instead.
+
 ## Custom Preprocessing
 
 The modular architecture of BraTS Orchestrator allows you to use your own preprocessing routines. The [preprocessing package](https://github.com/BrainLesion/preprocessing) can also be used independently to design custom pipelines tailored to your specific needs.

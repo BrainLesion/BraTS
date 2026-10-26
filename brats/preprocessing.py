@@ -5,7 +5,12 @@ from typing import Optional, Union, cast
 
 from brats.constants import (
     AdultGliomaPreAndPostTreatmentAlgorithms,
+    AdultGliomaPreTreatmentAlgorithms,
+    AfricaAlgorithms,
     Algorithms,
+    GoATAlgorithms,
+    InpaintingAlgorithms,
+    MeningiomaAlgorithms,
     MeningiomaRTAlgorithms,
     MetastasesAlgorithms,
     MissingMRIAlgorithms,
@@ -42,6 +47,11 @@ def _coreg_atlasreg_bet(
     allow_missing: bool = False,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
+    # Use normalized outputs when a normalizer is provided, raw outputs otherwise
+    output_key = "raw_bet_output_path"
+    if normalizer is not None:
+        output_key = "normalized_bet_output_path"
+
     # Build modality mapping in a cleaner way
     modality_pairs = [
         ("t1", t1_input, t1_output),
@@ -52,7 +62,7 @@ def _coreg_atlasreg_bet(
 
     # Filter valid modalities (both input and output must be provided)
     valid_modalities = {
-        name: {"input_path": inp, "raw_bet_output_path": out}
+        name: {"input_path": inp, output_key: out}
         for name, inp, out in modality_pairs
         if inp is not None and out is not None
     }
@@ -72,9 +82,9 @@ def _coreg_atlasreg_bet(
     center = CenterModality(
         modality_name=center_name,
         input_path=center_data["input_path"],
-        raw_bet_output_path=center_data["raw_bet_output_path"],
         atlas_correction=False,
         normalizer=normalizer,
+        **{output_key: center_data[output_key]},
     )
 
     # Create moving modalities (all except center)
@@ -82,9 +92,9 @@ def _coreg_atlasreg_bet(
         Modality(
             modality_name=name,
             input_path=data["input_path"],
-            raw_bet_output_path=data["raw_bet_output_path"],
             atlas_correction=False,
             normalizer=normalizer,
+            **{output_key: data[output_key]},
         )
         for name, data in valid_modalities.items()
         if name != center_name
@@ -111,6 +121,11 @@ def _coreg_native_space_bet(
     allow_missing: bool = False,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
+    # Use normalized outputs when a normalizer is provided, raw outputs otherwise
+    output_key = "raw_bet_output_path"
+    if normalizer is not None:
+        output_key = "normalized_bet_output_path"
+
     modality_pairs = [
         ("t1", t1_input, t1_output),
         ("t1c", t1c_input, t1c_output),
@@ -119,7 +134,7 @@ def _coreg_native_space_bet(
     ]
 
     valid_modalities = {
-        name: {"input_path": inp, "raw_bet_output_path": out}
+        name: {"input_path": inp, output_key: out}
         for name, inp, out in modality_pairs
         if inp is not None and out is not None
     }
@@ -137,18 +152,18 @@ def _coreg_native_space_bet(
     center = CenterModality(
         modality_name=center_name,
         input_path=center_data["input_path"],
-        raw_bet_output_path=center_data["raw_bet_output_path"],
         atlas_correction=False,
         normalizer=normalizer,
+        **{output_key: center_data[output_key]},
     )
 
     moving_modalities = [
         Modality(
             modality_name=name,
             input_path=data["input_path"],
-            raw_bet_output_path=data["raw_bet_output_path"],
             atlas_correction=False,
             normalizer=normalizer,
+            **{output_key: data[output_key]},
         )
         for name, data in valid_modalities.items()
         if name != center_name
@@ -474,6 +489,7 @@ def preprocess_for_challenge(
 
     Raises:
         ValueError: If required modalities are missing for the challenge
+        TypeError: If challenge is not a supported Algorithms enum member
     """
     challenge_name = str(challenge)
 
@@ -496,7 +512,7 @@ def preprocess_for_challenge(
         return cast(list[Union[str, Path]], all_paths)
 
     # Route to appropriate preprocessing function
-    if str(AdultGliomaPreAndPostTreatmentAlgorithms.__name__) in challenge_name:
+    if isinstance(challenge, AdultGliomaPreAndPostTreatmentAlgorithms):
         paths = _require_all_modalities()
         preprocess_coreg_mni152reg_bet(
             *paths,
@@ -516,14 +532,14 @@ def preprocess_for_challenge(
                 normalizer=normalizer,
             )
 
-    elif str(PediatricAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, PediatricAlgorithms):
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(
             *paths,
             normalizer=normalizer,
         )
 
-    elif str(MissingMRIAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, MissingMRIAlgorithms):
         preprocess_coreg_sri24reg_bet_allow_missing(
             t1_input,
             t1c_input,
@@ -535,7 +551,7 @@ def preprocess_for_challenge(
             flair_output,
             normalizer=normalizer,
         )
-    elif str(MeningiomaRTAlgorithms.__name__) in challenge_name:
+    elif isinstance(challenge, MeningiomaRTAlgorithms):
         if t1c_input is None or t1c_output is None:
             raise ValueError(
                 f"T1c modality required for {challenge_name} preprocessing"
@@ -545,9 +561,23 @@ def preprocess_for_challenge(
             t1c_output=t1c_output,
             normalizer=normalizer,
         )
-    else:  # Most challenges use SRI24 with BET
+    elif isinstance(
+        challenge,
+        (
+            AdultGliomaPreTreatmentAlgorithms,
+            AfricaAlgorithms,
+            GoATAlgorithms,
+            InpaintingAlgorithms,
+            MeningiomaAlgorithms,
+        ),
+    ):
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_bet(
             *paths,
             normalizer=normalizer,
+        )
+    else:
+        raise TypeError(
+            "challenge must be a supported Algorithms enum member, "
+            f"not {type(challenge).__name__}"
         )

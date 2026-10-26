@@ -49,6 +49,10 @@ class RunArgs:
     subject_modality_separator: str = "-"
     """The separator between the subject ID and the modality, differs e.g.
     for BraTS24 Meningioma Challenge"""
+    suffix_by_timepoint: Optional[dict[str, str]] = None
+    """Mapping from a treatment timepoint (e.g. ``"pre"``/``"post"``) to the
+    suffix substituted into the ``{timepoint_suffix}`` placeholder of
+    ``input_name_schema``. ``None`` for tracks that do not encode a timepoint"""
 
 
 @dataclass

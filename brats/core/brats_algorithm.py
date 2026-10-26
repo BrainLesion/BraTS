@@ -21,6 +21,11 @@ class BraTSAlgorithm(ABC):
     interface and implements the logic for single and batch inference.
     """
 
+    timepoint_suffix: Optional[str] = None
+    """Suffix substituted into the ``{timepoint_suffix}`` placeholder of an
+    ``input_name_schema``. ``None`` for algorithms that do not encode a
+    treatment timepoint"""
+
     def __init__(
         self,
         algorithm: Algorithms,
@@ -79,6 +84,31 @@ class BraTSAlgorithm(ABC):
         """
         return "-".join(subject_id.split("-")[-2:])
 
+    def _format_input_name(self, i: int, input_name_schema: str | None = None) -> str:
+        """Format an input name schema for subject index @i.
+
+        Schemas that contain a ``{timepoint_suffix}`` placeholder (used by the
+        adult glioma pre & post treatment track) are formatted with the
+        instance's :attr:`timepoint_suffix`.
+
+        Args:
+            i (int): Subject index
+            input_name_schema (str, optional): Schema to format. Defaults to
+                the schema of the selected algorithm.
+
+        Returns:
+            str: Standardized internal subject name
+        """
+        schema = input_name_schema or self.algorithm.run_args.input_name_schema
+        if "{timepoint_suffix}" not in schema:
+            return schema.format(id=i)
+        if self.timepoint_suffix is None:
+            raise AlgorithmConfigException(
+                f"Algorithm {self.algorithm_key} requires a timepoint suffix, "
+                "but none was configured"
+            )
+        return schema.format(id=i, timepoint_suffix=self.timepoint_suffix)
+
     def _process_single_output(
         self,
         tmp_output_folder: Path | str,
@@ -97,16 +127,21 @@ class BraTSAlgorithm(ABC):
         if self.task == Task.MISSING_MRI:
             # Missing MRI has no fixed names since the missing modality
             # differs and is included in the name
-            algorithm_output = Path(tmp_output_folder).iterdir().__next__()
-        else:
-            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
-            identifier = self.extract_identifier_from_subject_id(subject_id)
-            possible_output = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
-            if len(possible_output) == 0:
+            algorithm_output = next(Path(tmp_output_folder).iterdir(), None)
+            if algorithm_output is None:
                 raise FileNotFoundError(
                     f"No output found for subject {subject_id} in {tmp_output_folder}"
                 )
-            algorithm_output = possible_output[0]
+        else:
+            # extract id from subject id, i.e. BraTS-MEN-00000-000 => 00000-000
+            identifier = self.extract_identifier_from_subject_id(subject_id)
+            algorithm_output = next(
+                Path(tmp_output_folder).glob(f"*{identifier}*"), None
+            )
+            if algorithm_output is None:
+                raise FileNotFoundError(
+                    f"No output found for subject {subject_id} in {tmp_output_folder}"
+                )
 
         # ensure path exists and rename output to the desired path
         output_file = Path(output_file).absolute()
@@ -134,9 +169,14 @@ class BraTSAlgorithm(ABC):
             if self.task == Task.MISSING_MRI:
                 # Missing MRI has no fixed names since the missing modality differs
                 # and is included in the name
-                algorithm_output = (
-                    Path(tmp_output_folder).glob(f"*{internal_name}*").__next__()
+                algorithm_output = next(
+                    Path(tmp_output_folder).glob(f"*{internal_name}*"), None
                 )
+                if algorithm_output is None:
+                    raise FileNotFoundError(
+                        f"No output found for subject {internal_name} "
+                        f"in {tmp_output_folder}"
+                    )
                 try:
                     modality = algorithm_output.name.split("-")[-1].split(".")[0]
                 except IndexError:
@@ -150,13 +190,14 @@ class BraTSAlgorithm(ABC):
                 )
             else:
                 identifier = self.extract_identifier_from_subject_id(internal_name)
-                possible_outputs = list(Path(tmp_output_folder).glob(f"*{identifier}*"))
-                if len(possible_outputs) == 0:
+                algorithm_output = next(
+                    Path(tmp_output_folder).glob(f"*{identifier}*"), None
+                )
+                if algorithm_output is None:
                     logger.error(
                         f"No output found for subject {internal_name} in {tmp_output_folder}"
                     )
                     continue
-                algorithm_output = possible_outputs[0]
 
                 output_file = output_folder / f"{external_name}.nii.gz"
             shutil.move(algorithm_output, output_file)
@@ -196,7 +237,7 @@ class BraTSAlgorithm(ABC):
             logger.info("Performing single inference")
 
             # the id here is arbitrary
-            subject_id = self.algorithm.run_args.input_name_schema.format(id=0)
+            subject_id = self._format_input_name(i=0)
 
             self._standardize_single_inputs(
                 data_folder=tmp_data_folder,

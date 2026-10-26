@@ -94,6 +94,52 @@ class TestMissingMRIAlgorithms(unittest.TestCase):
         )
         mock_standardize_single_inputs.assert_called_once()
 
+    @patch("brats.core.missing_mri_algorithms.input_sanity_check")
+    @patch("brats.core.brats_algorithm.run_docker_container")
+    @patch("brats.core.brats_algorithm.InferenceSetup")
+    def test_infer_single_raises_file_not_found_for_missing_output(
+        self, mock_inference_setup, mock_run_container, mock_input_sanity_check
+    ):
+        output_folder = self.test_dir / "single_tmp_output"
+        output_folder.mkdir()
+        mock_inference_setup.return_value.__enter__.return_value = (
+            self.tmp_data_folder,
+            output_folder,
+        )
+
+        with self.assertRaisesRegex(FileNotFoundError, "No output found for subject"):
+            self.missing_mri.infer_single(
+                t1c=self.t1c,
+                t1n=self.t1n,
+                t2w=self.t2w,
+                output_file=self.test_dir / "output.nii.gz",
+            )
+
+        mock_run_container.assert_called_once()
+        mock_input_sanity_check.assert_called_once()
+
+    @patch("brats.core.missing_mri_algorithms.input_sanity_check")
+    @patch("brats.core.brats_algorithm.run_docker_container")
+    @patch("brats.core.brats_algorithm.InferenceSetup")
+    def test_infer_batch_raises_file_not_found_for_missing_output(
+        self, mock_inference_setup, mock_run_container, mock_input_sanity_check
+    ):
+        output_folder = self.test_dir / "batch_tmp_output"
+        output_folder.mkdir()
+        mock_inference_setup.return_value.__enter__.return_value = (
+            self.tmp_data_folder,
+            output_folder,
+        )
+
+        with self.assertRaisesRegex(FileNotFoundError, "No output found for subject"):
+            self.missing_mri.infer_batch(
+                data_folder=self.data_folder,
+                output_folder=self.test_dir / "outputs",
+            )
+
+        mock_run_container.assert_called_once()
+        mock_input_sanity_check.assert_called_once()
+
     # Initialization tests
 
     def test_missing_mri_initialization(self):
