@@ -6,12 +6,14 @@ from typing import Optional
 
 from loguru import logger
 
-from brats.constants import INPAINTING_ALGORITHMS, Backends, InpaintingAlgorithms, Task
+from brats.constants import Backends, InpaintingAlgorithms, Task
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
 
 
 class Inpainter(BraTSAlgorithm):
+    algorithm_enum = InpaintingAlgorithms
+
     def __init__(
         self,
         algorithm: InpaintingAlgorithms = InpaintingAlgorithms.BraTS23_1,
@@ -20,7 +22,6 @@ class Inpainter(BraTSAlgorithm):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=INPAINTING_ALGORITHMS,
             task=Task.INPAINTING,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
