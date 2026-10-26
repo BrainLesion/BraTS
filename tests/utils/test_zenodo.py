@@ -5,6 +5,7 @@ from io import BytesIO
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
 import requests
 
 # Import the module that contains the functions
@@ -44,7 +45,7 @@ class TestZenodoUtils(unittest.TestCase):
         mock_get_latest_version.return_value = f"{mock_record_id}_v1.0.0"
         mock_get_zenodo_metadata.return_value = (
             {"version": "1.0.0"},
-            "http://test.url",
+            ["http://test.url"],
         )
 
         # Test when local additional_files are up-to-date
@@ -56,7 +57,7 @@ class TestZenodoUtils(unittest.TestCase):
         # Test when new additional_files are available
         mock_get_zenodo_metadata.return_value = (
             {"version": "2.0.0"},
-            "http://test.url",
+            ["http://test.url"],
         )
         result = check_additional_files_path(mock_record_id)
         mock_rmtree.assert_called_once()
@@ -92,6 +93,61 @@ class TestZenodoUtils(unittest.TestCase):
         mock_rmtree.assert_not_called()
         mock_download_additional_files.assert_not_called()
 
+    @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
+    @patch("brats.utils.zenodo._get_latest_version_folder_name")
+    @patch("brats.utils.zenodo._download_additional_files")
+    @patch("brats.utils.zenodo.shutil.rmtree")
+    @patch("brats.utils.zenodo.Path.mkdir")
+    @patch("brats.utils.zenodo.Path.glob")
+    def test_check_additional_files_path_falls_back_to_cache(
+        self,
+        mock_glob,
+        mock_mkdir,
+        mock_rmtree,
+        mock_download_additional_files,
+        mock_get_latest_version,
+        mock_get_zenodo_metadata,
+    ):
+        # A record with no downloadable archive must not abort the run when a
+        # valid local cache already exists.
+        mock_record_id = "12345"
+        mock_matching_folder = MagicMock(spec=Path)
+        mock_matching_folder.name = f"{mock_record_id}_v1.0.0"
+        mock_glob.return_value = [mock_matching_folder]
+        mock_get_latest_version.return_value = f"{mock_record_id}_v1.0.0"
+        mock_get_zenodo_metadata.side_effect = ZenodoException("no zip archive")
+
+        result = check_additional_files_path(mock_record_id)
+
+        self.assertEqual(result, ADDITIONAL_FILES_FOLDER / f"{mock_record_id}_v1.0.0")
+        mock_download_additional_files.assert_not_called()
+
+    @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
+    @patch("brats.utils.zenodo._get_latest_version_folder_name")
+    @patch("brats.utils.zenodo._download_additional_files")
+    @patch("brats.utils.zenodo.shutil.rmtree")
+    @patch("brats.utils.zenodo.Path.mkdir")
+    @patch("brats.utils.zenodo.Path.glob")
+    def test_check_additional_files_path_raises_without_cache(
+        self,
+        mock_glob,
+        mock_mkdir,
+        mock_rmtree,
+        mock_download_additional_files,
+        mock_get_latest_version,
+        mock_get_zenodo_metadata,
+    ):
+        # Without a local cache, an unresolvable archive must still raise.
+        mock_record_id = "12345"
+        mock_glob.return_value = []
+        mock_get_latest_version.return_value = None
+        mock_get_zenodo_metadata.side_effect = ZenodoException("no zip archive")
+
+        with self.assertRaises(ZenodoException):
+            check_additional_files_path(mock_record_id)
+
+        mock_download_additional_files.assert_not_called()
+
     @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url(self, mock_get):
         # Setup
@@ -117,12 +173,13 @@ class TestZenodoUtils(unittest.TestCase):
 
     @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url_invenio_files(self, mock_get):
-        # InvenioRDM exposes files via files[].links.self (no links.archive)
+        # InvenioRDM exposes files via files[].links.self (no links.archive);
+        # this is the shape that caused the KeyError in issue #193.
         mock_response = MagicMock(spec=requests.Response)
         mock_response.status_code = 200
         mock_response.json.return_value = {
             "metadata": {"version": "1.0.1"},
-            "links": {"self": "https://zenodo.org/api/records/1"},
+            "links": {"files": "https://zenodo.org/api/records/1/files"},
             "files": [
                 {
                     "key": "weights.zip",
@@ -224,9 +281,7 @@ class TestZenodoUtils(unittest.TestCase):
         _download_additional_files(mock_zenodo_metadata, "12345", mock_archive_url)
 
         # Assertions
-        # mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
         mock_requests_get.assert_called_once_with(mock_archive_url, stream=True)
-        # mock_zipfile_instance.extractall.assert_called_once_with(result_path)
         mock_extract_archive.assert_called_once()
 
     @patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", Path(tempfile.mkdtemp()))
@@ -250,7 +305,6 @@ class TestZenodoUtils(unittest.TestCase):
             _download_additional_files(mock_zenodo_metadata, "12345", mock_archive_url)
 
         # Assertions
-        # mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
         mock_requests_get.assert_called_once_with(mock_archive_url, stream=True)
         mock_extract_archive.assert_not_called()
 
@@ -359,11 +413,14 @@ class TestZenodoUtils(unittest.TestCase):
         mock_response.iter_content.return_value = [payload]
 
         with tempfile.TemporaryDirectory() as tmp:
-            record_folder = Path(tmp)
+            record_folder = Path(tmp) / "12345_v1.0.0"
+            record_folder.mkdir()
             _extract_archive(mock_response, record_folder)
             self.assertEqual((record_folder / "weights.bin").read_bytes(), b"data")
-            # the temporary download file must not be left behind
+            # The temp download must not be left behind, and must live outside the
+            # version folder so it cannot be mistaken for a complete cache.
             self.assertEqual(list(record_folder.glob("*.part")), [])
+            self.assertEqual(list(record_folder.parent.glob("*.part")), [])
 
     def test_get_latest_version_folder_name(self):
         # Test case when folders are provided
@@ -392,3 +449,20 @@ class TestZenodoUtils(unittest.TestCase):
         folder2.glob.return_value = []
         result = _get_latest_version_folder_name([folder1, folder2])
         self.assertIsNone(result)
+
+
+@pytest.mark.network
+def test_zenodo_invenio_record_reachable():
+    """Live check for issue #193: record 14413387 has no ``links.archive``.
+
+    Opt-in with ``pytest -m network``; skips when Zenodo is unreachable.
+    """
+    record_id = "14413387"
+    zenodo_response = _get_zenodo_metadata_and_archive_url(record_id)
+    if zenodo_response is None:
+        pytest.skip("Zenodo unreachable")
+
+    metadata, archive_urls = zenodo_response
+    assert metadata.get("version")
+    assert archive_urls, "expected at least one archive URL"
+    assert all(url.startswith("http") for url in archive_urls)

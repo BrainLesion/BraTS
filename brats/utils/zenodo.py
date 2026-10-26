@@ -60,7 +60,13 @@ def check_additional_files_path(record_id: str) -> Path:
         Path: Path to the additional files folder.
     """
 
-    zenodo_response = _get_zenodo_metadata_and_archive_url(record_id=record_id)
+    try:
+        zenodo_response = _get_zenodo_metadata_and_archive_url(record_id=record_id)
+    except ZenodoException as e:
+        # A record with no downloadable archive (or an unexpected API error) must
+        # not abort the run when a valid local cache already exists.
+        logger.warning(f"Could not resolve a Zenodo archive for {record_id}: {e}")
+        zenodo_response = None
 
     record_additional_files_pattern = f"{record_id}_v*.*.*"
     matching_folders = list(
@@ -123,7 +129,9 @@ def check_additional_files_path(record_id: str) -> Path:
         ),
     )
     return _download_additional_files(
-        zenodo_metadata=zenodo_metadata, record_id=record_id, archive_urls=archive_urls
+        zenodo_metadata=zenodo_metadata,
+        record_id=record_id,
+        archive_urls=archive_urls,
     )
 
 
@@ -277,6 +285,9 @@ def _download_additional_files(
 def _extract_archive(response: requests.Response, record_folder: Path) -> None:
     # Stream the archive to disk instead of buffering it in memory: some
     # additional-files records are several GB and would otherwise spike host RAM.
+    # ``record_folder`` is the hidden staging folder during a real download, so
+    # the temporary ``.zip.part`` never lands in a folder that cache discovery
+    # could mistake for a complete version.
     record_folder = Path(record_folder)
     chunk_size = 1024  # 1KB
     fd, tmp_name = tempfile.mkstemp(
