@@ -16,6 +16,7 @@ from brats.utils.zenodo import (
     _get_latest_version_folder_name,
     _get_zenodo_metadata_and_archive_url,
     check_additional_files_path,
+    read_only_cache,
 )
 
 
@@ -290,6 +291,62 @@ class TestZenodoUtils(unittest.TestCase):
             # The partially populated version folder must not survive, otherwise
             # it would be treated as a complete cache on the next invocation.
             self.assertFalse((cache / "12345_v1.0.0").exists())
+
+    @patch("brats.utils.zenodo._extract_archive")
+    @patch("brats.utils.zenodo.requests.get")
+    def test_download_additional_files_stages_before_publishing(
+        self,
+        mock_requests_get,
+        mock_extract_archive,
+    ):
+        cache = Path(tempfile.mkdtemp())
+        observed = {}
+
+        def fake_get(url, stream=True):
+            # While the download streams, nothing matching the cache glob must be
+            # visible: an in-progress download must not look like a full cache.
+            observed["matching"] = list(cache.glob("12345_v*.*.*"))
+            response = MagicMock(spec=requests.Response)
+            response.status_code = 200
+            return response
+
+        mock_requests_get.side_effect = fake_get
+        with patch("brats.utils.zenodo.ADDITIONAL_FILES_FOLDER", cache):
+            result = _download_additional_files({"version": "1.0.0"}, "12345", "u1")
+
+        staging = mock_extract_archive.call_args.kwargs["record_folder"]
+        self.assertNotEqual(staging, cache / "12345_v1.0.0")
+        self.assertTrue(staging.name.startswith(".12345_v1.0.0.staging-"))
+        self.assertEqual(observed["matching"], [])
+        self.assertEqual(result, cache / "12345_v1.0.0")
+        self.assertTrue(result.is_dir())
+        # staging folder is published (renamed), not left behind
+        self.assertEqual([p for p in cache.iterdir() if "staging" in p.name], [])
+
+    @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
+    @patch("brats.utils.zenodo._get_latest_version_folder_name")
+    @patch("brats.utils.zenodo._download_additional_files")
+    @patch("brats.utils.zenodo.shutil.rmtree")
+    @patch("brats.utils.zenodo.Path.glob")
+    def test_read_only_cache_never_evicts(
+        self,
+        mock_glob,
+        mock_rmtree,
+        mock_download,
+        mock_get_latest_version,
+        mock_get_zenodo_metadata,
+    ):
+        mock_record_id = "12345"
+        mock_glob.return_value = [Path(f"{mock_record_id}_v1.0.0")]
+        mock_get_latest_version.return_value = f"{mock_record_id}_v1.0.0"
+        mock_get_zenodo_metadata.return_value = ({"version": "2.0.0"}, ["u1"])
+
+        with read_only_cache():
+            result = check_additional_files_path(mock_record_id)
+
+        self.assertEqual(result, ADDITIONAL_FILES_FOLDER / f"{mock_record_id}_v1.0.0")
+        mock_rmtree.assert_not_called()
+        mock_download.assert_not_called()
 
     def test_extract_archive(self):
         # Build a small zip in memory and stream it through the fake response.

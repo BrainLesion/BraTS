@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+import tempfile
 from dataclasses import replace
 from pathlib import Path
 
@@ -12,6 +13,7 @@ import numpy as np
 from scripts.verify import runner as runner_module
 from scripts.verify.cases import build_cases
 from scripts.verify.models import Status
+from scripts.verify.registry import PreflightResult
 from scripts.verify.runner import RunOptions, run_case
 
 
@@ -267,6 +269,45 @@ def test_fresh_weights_redirected_and_cleaned(monkeypatch, tmp_path: Path):
     assert real_before == real_after
     # Freshly downloaded weights (in the temp cache) were removed.
     assert not list(options.workspace.rglob("weights.bin"))
+
+
+def test_required_gb_uses_lazy_preflight(monkeypatch, tmp_path: Path):
+    calls: list[str] = []
+
+    def fake_inspect(image, *, runner=None):
+        calls.append(image)
+        return PreflightResult(image, "pullable", size_gb=40.0)
+
+    monkeypatch.setattr(runner_module, "manifest_inspect", fake_inspect)
+    options = _options(tmp_path, min_free_gb=0.0)
+
+    first = runner_module._required_gb(options, "img:1")
+    second = runner_module._required_gb(options, "img:1")
+
+    assert calls == ["img:1"]  # inspected once, then cached
+    assert first == second == 40.0 * 1.5 + 10.0
+
+
+def test_disk_guard_includes_tempdir(monkeypatch, tmp_path: Path):
+    case = _case("pediatric.BraTS25_1")
+    _materialize_inputs(case, tmp_path / "data")
+
+    captured: dict[str, list[Path]] = {}
+
+    def fake_free(paths):
+        captured["paths"] = paths
+        return 1e9
+
+    monkeypatch.setattr(runner_module, "_free_gb", fake_free)
+    monkeypatch.setattr(runner_module, "_resolve_class", lambda name: _FakeAlgorithm)
+    monkeypatch.setattr(runner_module, "image_present", lambda image, runner=None: True)
+    monkeypatch.setattr(
+        runner_module, "resolve_image_id", lambda image, runner=None: "sha256:x"
+    )
+
+    run_case(case, _options(tmp_path))
+
+    assert Path(tempfile.gettempdir()) in captured["paths"]
 
 
 def test_keep_image_defers_removal(monkeypatch, tmp_path: Path):

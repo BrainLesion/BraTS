@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import tempfile
 import time
 import uuid
 from contextlib import nullcontext, suppress
@@ -16,6 +17,7 @@ from rich.console import Console
 
 import brats
 from brats.constants import Backends
+from brats.utils.zenodo import read_only_cache
 from scripts._shared import ValidationError, time_limit
 from scripts.verify import datasets
 from scripts.verify.cleanup import (
@@ -29,6 +31,7 @@ from scripts.verify.models import AlgorithmCase, CaseResult, Status
 from scripts.verify.registry import (
     PreflightResult,
     image_present,
+    manifest_inspect,
     pull_image,
     resolve_image_id,
 )
@@ -133,10 +136,25 @@ def _free_gb(paths: list[Path]) -> float:
     return min(frees) if frees else float("inf")
 
 
+def _preflight(options: RunOptions, image: str) -> PreflightResult:
+    """Return the registry preflight for ``image``, inspecting it lazily.
+
+    The integration suite never pre-populates ``RunOptions.preflight``, so the
+    manifest is inspected on first use and cached for later cases sharing the
+    same image (e.g. pre/post pairs). ``manifest_inspect`` never pulls the
+    image and degrades to an ``offline``/``not_found`` result when unavailable.
+    """
+    result = options.preflight.get(image)
+    if result is None:
+        result = manifest_inspect(image, runner=options.docker_runner)
+        options.preflight[image] = result
+    return result
+
+
 def _required_gb(options: RunOptions, image: str) -> float:
     estimate = 0.0
-    preflight = options.preflight.get(image)
-    if preflight is not None and preflight.size_gb is not None:
+    preflight = _preflight(options, image)
+    if preflight.size_gb is not None:
         estimate = preflight.size_gb
     return max(options.min_free_gb, estimate * 1.5 + 10.0)
 
@@ -267,6 +285,9 @@ def run_case(
     # The workspace receives weights and intermediate outputs, so its filesystem
     # must have headroom too (it is often /tmp or a separate scratch volume).
     disk_paths.append(options.workspace)
+    # InferenceSetup materializes its input/output dirs under the default temp
+    # directory (bare tempfile.mkdtemp), so guard that filesystem as well.
+    disk_paths.append(Path(tempfile.gettempdir()))
     docker_root = _docker_root_dir(options.docker_runner)
     if docker_root is not None:
         disk_paths.append(docker_root)
@@ -389,11 +410,13 @@ def run_case(
         else:
             weights_before = existing_weight_folders(case.record_id)
 
-    weights_ctx = (
-        weights_cache_override(weights_dir)
-        if weights_dir is not None
-        else nullcontext()
-    )
+    if weights_dir is not None:
+        weights_ctx = weights_cache_override(weights_dir)
+    elif case.record_id and not options.fresh_weights:
+        # Shared cache: never evict an existing version underneath another job.
+        weights_ctx = read_only_cache()
+    else:
+        weights_ctx = nullcontext()
 
     label = f"brats-verify-{case.slug}-{uuid.uuid4().hex}"
     previous_label = os.environ.get("BRATS_CONTAINER_LABEL")

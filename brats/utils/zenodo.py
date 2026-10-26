@@ -3,7 +3,10 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+import uuid
 import zipfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +16,29 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from brats.constants import ADDITIONAL_FILES_FOLDER, ZENODO_RECORD_BASE_URL
 from brats.utils.exceptions import ZenodoException
+
+# When set, an existing cached version is used as-is and never evicted, even if
+# Zenodo advertises a newer one. See ``read_only_cache``.
+_read_only_cache = False
+
+
+@contextmanager
+def read_only_cache() -> Iterator[None]:
+    """Temporarily make the additional-files cache non-evicting.
+
+    While active, :func:`check_additional_files_path` will not delete an
+    existing cached version when Zenodo advertises a newer one. This protects a
+    shared cache from being evicted underneath another job (used by the
+    verification suite's ``--use-cached-weights`` mode). Downloads of missing
+    files still occur, since those only add to the cache.
+    """
+    global _read_only_cache
+    previous = _read_only_cache
+    _read_only_cache = True
+    try:
+        yield
+    finally:
+        _read_only_cache = previous
 
 
 def get_dummy_path() -> Path:
@@ -66,6 +92,13 @@ def check_additional_files_path(record_id: str) -> Path:
     if not zenodo_response:
         logger.warning(
             "Zenodo server could not be reached. Using the latest downloaded additional files."
+        )
+        return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
+
+    if _read_only_cache:
+        logger.info(
+            "Read-only cache mode: using locally downloaded additional files "
+            f"({latest_downloaded_additional_files}) without evicting them."
         )
         return ADDITIONAL_FILES_FOLDER / latest_downloaded_additional_files
 
@@ -206,8 +239,14 @@ def _download_additional_files(
     record_folder = (
         ADDITIONAL_FILES_FOLDER / f"{record_id}_v{zenodo_metadata['version']}"
     )
-    # ensure folder exists
-    record_folder.mkdir(parents=True, exist_ok=True)
+    # Extract into a hidden staging folder and publish it atomically at the end.
+    # Writing directly into ``record_folder`` would make it non-empty for the
+    # whole download, so a concurrent ``check_additional_files_path`` could
+    # mistake the in-progress download for a complete cache.
+    staging_folder = (
+        ADDITIONAL_FILES_FOLDER / f".{record_folder.name}.staging-{uuid.uuid4().hex}"
+    )
+    staging_folder.mkdir(parents=True, exist_ok=False)
 
     logger.info("Downloading additional files from Zenodo. This might take a while...")
     try:
@@ -220,11 +259,15 @@ def _download_additional_files(
                 logger.error(error_msg)
                 raise ZenodoException(error_msg)
 
-            _extract_archive(response=response, record_folder=record_folder)
-    except Exception:
-        # A partially populated version folder would be mistaken for a complete
-        # cache by _get_latest_version_folder_name, so drop it on any failure.
+            _extract_archive(response=response, record_folder=staging_folder)
+
+        # Atomically publish the completed version folder. ``os.replace`` is
+        # atomic on the same filesystem, so concurrent readers never observe a
+        # half-populated cache; drop any stale (empty) leftover first.
         shutil.rmtree(record_folder, ignore_errors=True)
+        os.replace(staging_folder, record_folder)
+    except Exception:
+        shutil.rmtree(staging_folder, ignore_errors=True)
         raise
 
     logger.info(f"Zip file extracted successfully to {record_folder}")

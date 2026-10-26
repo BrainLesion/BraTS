@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+import uuid
 from pathlib import Path
 
 import pytest
@@ -145,12 +146,16 @@ def verify_options(
     keep = bool(request.config.getoption("--keep"))
     workspace_opt = request.config.getoption("--workspace")
     if workspace_opt:
-        workspace = Path(workspace_opt).expanduser()
-        workspace.mkdir(parents=True, exist_ok=True)
-        generated_workspace = False
+        base_workspace = Path(workspace_opt).expanduser()
+        generated_root = False
     else:
-        workspace = Path(tempfile.mkdtemp(prefix="brats_verify_"))
-        generated_workspace = True
+        base_workspace = Path(tempfile.mkdtemp(prefix="brats_verify_"))
+        generated_root = True
+    # Always create a session-unique subdirectory: teardown removes the
+    # workspace, so reusing a user-provided root must never delete artifacts
+    # left behind by an earlier run.
+    workspace = base_workspace / f"session-{uuid.uuid4().hex[:8]}"
+    workspace.mkdir(parents=True, exist_ok=True)
 
     disk_path_opt = request.config.getoption("--disk-path")
     options = RunOptions(
@@ -173,8 +178,10 @@ def verify_options(
     yield options
 
     cleanup_owned_images(options)
-    if generated_workspace and not keep:
+    if not keep:
         shutil.rmtree(options.workspace, ignore_errors=True)
+        if generated_root:
+            shutil.rmtree(base_workspace, ignore_errors=True)
 
 
 @pytest.fixture(scope="session")

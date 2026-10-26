@@ -69,7 +69,9 @@ jobs:
           if [ "$FORCE_CPU" = "true" ]; then
             ARGS+=(--force-cpu)
           fi
-          if [ -n "$TIMEOUT" ] && [ "$TIMEOUT" != "0" ]; then
+          if [ -n "$TIMEOUT" ]; then
+            # Forward 0 too: the fixture maps non-positive values to None so the
+            # limit is disabled instead of silently falling back to the default.
             ARGS+=(--timeout "$TIMEOUT")
           fi
           if [ -n "$CASES" ]; then

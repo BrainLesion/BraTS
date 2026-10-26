@@ -19,8 +19,9 @@ pytestmark = pytest.mark.integration
 CASES = build_cases()
 
 # Cases that share a multi-GB image (e.g. pre/post pairs) would otherwise remove
-# and immediately re-pull it. Keep the image for such cases; the session-level
-# cleanup still removes any leftover once no remaining case needs it.
+# and immediately re-pull it. Keep the image while a later executed case still
+# needs it and release it on the last one; the session-level cleanup remains the
+# safety net (e.g. when a later case is deselected with -k/-m).
 _IMAGE_USES = Counter(case.docker_image for case in CASES)
 
 
@@ -32,6 +33,7 @@ def _param(case):
 @pytest.mark.parametrize("case", [_param(case) for case in CASES])
 def test_verify_case(case, verify_options, verify_records) -> None:
     keep_image = _IMAGE_USES[case.docker_image] > 1
+    _IMAGE_USES[case.docker_image] -= 1
     result = run_case(case, verify_options, keep_image=keep_image)
     verify_records.append(result)
 
