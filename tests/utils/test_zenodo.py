@@ -92,6 +92,61 @@ class TestZenodoUtils(unittest.TestCase):
         mock_rmtree.assert_not_called()
         mock_download_additional_files.assert_not_called()
 
+    @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
+    @patch("brats.utils.zenodo._get_latest_version_folder_name")
+    @patch("brats.utils.zenodo._download_additional_files")
+    @patch("brats.utils.zenodo.shutil.rmtree")
+    @patch("brats.utils.zenodo.Path.mkdir")
+    @patch("brats.utils.zenodo.Path.glob")
+    def test_check_additional_files_path_falls_back_to_cache(
+        self,
+        mock_glob,
+        mock_mkdir,
+        mock_rmtree,
+        mock_download_additional_files,
+        mock_get_latest_version,
+        mock_get_zenodo_metadata,
+    ):
+        # A record with no downloadable archive must not abort the run when a
+        # valid local cache already exists.
+        mock_record_id = "12345"
+        mock_matching_folder = MagicMock(spec=Path)
+        mock_matching_folder.name = f"{mock_record_id}_v1.0.0"
+        mock_glob.return_value = [mock_matching_folder]
+        mock_get_latest_version.return_value = f"{mock_record_id}_v1.0.0"
+        mock_get_zenodo_metadata.side_effect = ZenodoException("no zip archive")
+
+        result = check_additional_files_path(mock_record_id)
+
+        self.assertEqual(result, ADDITIONAL_FILES_FOLDER / f"{mock_record_id}_v1.0.0")
+        mock_download_additional_files.assert_not_called()
+
+    @patch("brats.utils.zenodo._get_zenodo_metadata_and_archive_url")
+    @patch("brats.utils.zenodo._get_latest_version_folder_name")
+    @patch("brats.utils.zenodo._download_additional_files")
+    @patch("brats.utils.zenodo.shutil.rmtree")
+    @patch("brats.utils.zenodo.Path.mkdir")
+    @patch("brats.utils.zenodo.Path.glob")
+    def test_check_additional_files_path_raises_without_cache(
+        self,
+        mock_glob,
+        mock_mkdir,
+        mock_rmtree,
+        mock_download_additional_files,
+        mock_get_latest_version,
+        mock_get_zenodo_metadata,
+    ):
+        # Without a local cache, an unresolvable archive must still raise.
+        mock_record_id = "12345"
+        mock_glob.return_value = []
+        mock_get_latest_version.return_value = None
+        mock_get_zenodo_metadata.side_effect = ZenodoException("no zip archive")
+
+        with self.assertRaises(ZenodoException):
+            check_additional_files_path(mock_record_id)
+
+        mock_download_additional_files.assert_not_called()
+
     @patch("brats.utils.zenodo.requests.get")
     def test_get_zenodo_metadata_and_archive_url(self, mock_get):
         # Setup
@@ -301,11 +356,14 @@ class TestZenodoUtils(unittest.TestCase):
         mock_response.iter_content.return_value = [payload]
 
         with tempfile.TemporaryDirectory() as tmp:
-            record_folder = Path(tmp)
+            record_folder = Path(tmp) / "12345_v1.0.0"
+            record_folder.mkdir()
             _extract_archive(mock_response, record_folder)
             self.assertEqual((record_folder / "weights.bin").read_bytes(), b"data")
-            # the temporary download file must not be left behind
+            # The temp download must not be left behind, and must live outside the
+            # version folder so it cannot be mistaken for a complete cache.
             self.assertEqual(list(record_folder.glob("*.part")), [])
+            self.assertEqual(list(record_folder.parent.glob("*.part")), [])
 
     def test_get_latest_version_folder_name(self):
         # Test case when folders are provided
@@ -343,12 +401,10 @@ def test_zenodo_invenio_record_reachable():
     Opt-in with ``pytest -m network``; skips when Zenodo is unreachable.
     """
     record_id = "14413387"
-    try:
-        zenodo_response = _get_zenodo_metadata_and_archive_url(record_id)
-    except requests.exceptions.RequestException as e:
-        pytest.skip(f"Zenodo unreachable: {e}")
+    zenodo_response = _get_zenodo_metadata_and_archive_url(record_id)
+    if zenodo_response is None:
+        pytest.skip("Zenodo unreachable")
 
-    assert zenodo_response is not None
     metadata, archive_urls = zenodo_response
     assert metadata.get("version")
     assert archive_urls, "expected at least one archive URL"
