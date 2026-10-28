@@ -80,6 +80,12 @@ docs = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+addopts = "-m 'not integration and not network'"
+markers = [
+  "integration: end-to-end tests that run real containers/GPU (opt-in, excluded by default)",
+  "smoke: curated fast subset of integration tests",
+  "network: tests that access external services (skipped automatically when offline)",
+]
 
 [tool.ruff]
 line-length = 88
