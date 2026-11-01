@@ -47,6 +47,11 @@ def _coreg_atlasreg_bet(
     allow_missing: bool = False,
     normalizer: Optional[Normalizer] = None,
 ) -> None:
+    # Use normalized outputs when a normalizer is provided, raw outputs otherwise
+    output_key = "raw_bet_output_path"
+    if normalizer is not None:
+        output_key = "normalized_bet_output_path"
+
     # Build modality mapping in a cleaner way
     modality_pairs = [
         ("t1", t1_input, t1_output),
@@ -57,7 +62,7 @@ def _coreg_atlasreg_bet(
 
     # Filter valid modalities (both input and output must be provided)
     valid_modalities = {
-        name: {"input_path": inp, "raw_bet_output_path": out}
+        name: {"input_path": inp, output_key: out}
         for name, inp, out in modality_pairs
         if inp is not None and out is not None
     }
@@ -77,9 +82,9 @@ def _coreg_atlasreg_bet(
     center = CenterModality(
         modality_name=center_name,
         input_path=center_data["input_path"],
-        raw_bet_output_path=center_data["raw_bet_output_path"],
         atlas_correction=False,
         normalizer=normalizer,
+        **{output_key: center_data[output_key]},
     )
 
     # Create moving modalities (all except center)
@@ -87,9 +92,9 @@ def _coreg_atlasreg_bet(
         Modality(
             modality_name=name,
             input_path=data["input_path"],
-            raw_bet_output_path=data["raw_bet_output_path"],
             atlas_correction=False,
             normalizer=normalizer,
+            **{output_key: data[output_key]},
         )
         for name, data in valid_modalities.items()
         if name != center_name
@@ -99,6 +104,74 @@ def _coreg_atlasreg_bet(
         center_modality=center,
         moving_modalities=moving_modalities,
         atlas_image_path=atlas,
+    )
+
+    preprocessor.run()
+
+
+def _coreg_native_space_bet(
+    t1_input: Optional[Union[str, Path]] = None,
+    t1c_input: Optional[Union[str, Path]] = None,
+    t2_input: Optional[Union[str, Path]] = None,
+    flair_input: Optional[Union[str, Path]] = None,
+    t1_output: Optional[Union[str, Path]] = None,
+    t1c_output: Optional[Union[str, Path]] = None,
+    t2_output: Optional[Union[str, Path]] = None,
+    flair_output: Optional[Union[str, Path]] = None,
+    allow_missing: bool = False,
+    normalizer: Optional[Normalizer] = None,
+) -> None:
+    # Use normalized outputs when a normalizer is provided, raw outputs otherwise
+    output_key = "raw_bet_output_path"
+    if normalizer is not None:
+        output_key = "normalized_bet_output_path"
+
+    modality_pairs = [
+        ("t1", t1_input, t1_output),
+        ("t1c", t1c_input, t1c_output),
+        ("t2", t2_input, t2_output),
+        ("flair", flair_input, flair_output),
+    ]
+
+    valid_modalities = {
+        name: {"input_path": inp, output_key: out}
+        for name, inp, out in modality_pairs
+        if inp is not None and out is not None
+    }
+
+    min_required = 3 if allow_missing else 4
+    if len(valid_modalities) < min_required:
+        missing_desc = "at least three" if allow_missing else "all four"
+        raise ValueError(
+            f"Need {missing_desc} modalities with valid input/output paths"
+        )
+
+    center_name = "t1c" if "t1c" in valid_modalities else "t1"
+    center_data = valid_modalities[center_name]
+
+    center = CenterModality(
+        modality_name=center_name,
+        input_path=center_data["input_path"],
+        atlas_correction=False,
+        normalizer=normalizer,
+        **{output_key: center_data[output_key]},
+    )
+
+    moving_modalities = [
+        Modality(
+            modality_name=name,
+            input_path=data["input_path"],
+            atlas_correction=False,
+            normalizer=normalizer,
+            **{output_key: data[output_key]},
+        )
+        for name, data in valid_modalities.items()
+        if name != center_name
+    ]
+
+    preprocessor = NativeSpacePreprocessor(
+        center_modality=center,
+        moving_modalities=moving_modalities,
     )
 
     preprocessor.run()
@@ -178,6 +251,43 @@ def preprocess_deface_only(
     )
 
     preprocessor.run()
+
+
+def preprocess_coreg_native_space_bet(
+    t1_input: Union[str, Path],
+    t1c_input: Union[str, Path],
+    t2_input: Union[str, Path],
+    flair_input: Union[str, Path],
+    t1_output: Union[str, Path],
+    t1c_output: Union[str, Path],
+    t2_output: Union[str, Path],
+    flair_output: Union[str, Path],
+    normalizer: Optional[Normalizer] = None,
+) -> None:
+    """Co-register four modalities in native space and apply brain extraction.
+
+    Args:
+        t1_input (Union[str, Path]): Path to the input T1 image.
+        t1c_input (Union[str, Path]): Path to the input T1c image.
+        t2_input (Union[str, Path]): Path to the input T2 image.
+        flair_input (Union[str, Path]): Path to the input FLAIR image.
+        t1_output (Union[str, Path]): Path to the output preprocessed T1 image.
+        t1c_output (Union[str, Path]): Path to the output preprocessed T1c image.
+        t2_output (Union[str, Path]): Path to the output preprocessed T2 image.
+        flair_output (Union[str, Path]): Path to the output preprocessed FLAIR image.
+        normalizer (Optional[Normalizer]): Normalizer to apply during preprocessing.
+    """
+    _coreg_native_space_bet(
+        t1_input=t1_input,
+        t1c_input=t1c_input,
+        t2_input=t2_input,
+        flair_input=flair_input,
+        t1_output=t1_output,
+        t1c_output=t1c_output,
+        t2_output=t2_output,
+        flair_output=flair_output,
+        normalizer=normalizer,
+    )
 
 
 def preprocess_coreg_sri24reg_bet(
@@ -409,6 +519,19 @@ def preprocess_for_challenge(
             normalizer=normalizer,
         )
 
+    elif isinstance(challenge, MetastasesAlgorithms):
+        paths = _require_all_modalities()
+        if challenge.value.startswith("BraTS23"):
+            preprocess_coreg_sri24reg_bet(
+                *paths,
+                normalizer=normalizer,
+            )
+        else:
+            preprocess_coreg_native_space_bet(
+                *paths,
+                normalizer=normalizer,
+            )
+
     elif isinstance(challenge, PediatricAlgorithms):
         paths = _require_all_modalities()
         preprocess_coreg_sri24reg_defacing(
@@ -446,7 +569,6 @@ def preprocess_for_challenge(
             GoATAlgorithms,
             InpaintingAlgorithms,
             MeningiomaAlgorithms,
-            MetastasesAlgorithms,
         ),
     ):
         paths = _require_all_modalities()

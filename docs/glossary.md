@@ -17,8 +17,8 @@ Domain terminology for the BraTS orchestrator.
 
 | Term | Definition |
 |------|------------|
-| **SRI24** | MRI-based brain atlas used for spatial registration in 2023 and most pre-2024 challenges |
-| **MNI152** | Montreal Neurological Institute 152 template; used for 2024+ Adult Glioma (Pre & Post-Treatment) challenges |
+| **SRI24** | MRI-based brain atlas used for spatial registration. |
+| **MNI152** | Montreal Neurological Institute 152 template used for spatial registration. |
 
 ## Algorithm Naming
 
@@ -41,45 +41,48 @@ Algorithms are named using the pattern `BraTS{YY}_{rank}`, where `YY` is the cha
 
 ### Adult Glioma Pre-Treatment Segmentation
 
-Segmentation of glioma on pre-treatment brain MRI. Uses 4 modalities (t1c, t1n, t2f, t2w), registered to SRI24 atlas. Covers BraTS 2023 challenge year.
+Segmentation of glioma on pre-treatment brain MRI. Uses 4 modalities (t1c, t1n, t2f, t2w). Covers BraTS 2023 challenge year.
 
 ### Adult Glioma Pre and Post-Treatment Segmentation
 
-Segmentation of glioma on both pre- and post-treatment MRI. Uses 4 modalities, registered to MNI152 atlas. Covers BraTS 2024 and 2025 challenge years.
+Segmentation of glioma on both pre- and post-treatment MRI. Uses 4 modalities. Covers BraTS 2024 and 2025 challenge years.
 
 ### BraTS-Africa (SSA) Segmentation
 
-Glioma segmentation on Sub-Saharan Africa patient populations. Uses 4 modalities, registered to SRI24 atlas.
+Glioma segmentation on Sub-Saharan Africa patient populations. Uses 4 modalities.
 
 ### Meningioma Segmentation
 
-Segmentation of meningioma — typically benign tumors arising from the brain covering membranes (meninges). Uses 4 modalities, registered to SRI24 atlas.
+Segmentation of meningioma — typically benign tumors arising from the brain covering membranes (meninges). Uses 4 modalities.
 
 ### Meningioma Radio Therapy (RT) Segmentation
 
-Segmentation of meningioma from radiotherapy-planning MRI. T1C-only modality. Data is in native space (no atlas registration).
+Segmentation of meningioma from radiotherapy-planning MRI. T1C-only modality.
 
 ### Brain Metastases Segmentation
 
-Segmentation of brain metastases — secondary tumors that have spread to the brain from cancers elsewhere in the body. Uses 4 modalities, registered to SRI24 atlas.
+Segmentation of brain metastases — secondary tumors that have spread to the brain from cancers elsewhere in the body. Uses 4 modalities.
 
 ### Pediatric Segmentation
 
-Segmentation of pediatric brain tumors. Uses 4 modalities, registered to SRI24 atlas. Preprocessing uses defacing instead of skull-stripping for privacy.
+Segmentation of pediatric brain tumors. Uses 4 modalities.
 
 ### Generalizability Across Tumors (BraTS-GoAT)
 
-Segmentation across different tumor types, testing generalization to unseen tumor categories. Uses 4 modalities. Atlas requirements depend on the source dataset (adapted from other segmentation challenges). The current preprocessing router falls back to the SRI24 pipeline for this task, so use custom preprocessing when the source dataset requires another atlas.
+Segmentation across different tumor types, testing generalization to unseen tumor categories. Uses 4 modalities. The task is adapted from other segmentation challenges.
 
 ### Inpainting
 
-Synthesize healthy brain tissue in a glioma-affected region. Input: voided T1n (t1n-voided) + binary mask. Output: restored T1n image. Atlas depends on the source dataset.
+Synthesize healthy brain tissue in a glioma-affected region. Input: voided T1n (t1n-voided) + binary mask. Output: restored T1n image.
 
 ### Missing MRI (BraSyn)
 
-Synthesize a missing MRI modality from 3 available modalities. Input: any 3 of t1c, t1n, t2f, t2w. Output: the missing 4th modality. Atlas requirements depend on the source dataset; the current preprocessing router uses the SRI24 pipeline for this task. Formal challenge name: Brain MRI Synthesis Challenge (BraSyn).
+Synthesize a missing MRI modality from 3 available modalities. Input: any 3 of t1c, t1n, t2f, t2w. Output: the missing 4th modality. Formal challenge name: Brain MRI Synthesis Challenge (BraSyn).
 
 ## Preprocessing
+
+See the [preprocessing guide](guides/preprocessing.md) for task-specific
+requirements and wrapper settings.
 
 | Term | Definition |
 |------|------------|
