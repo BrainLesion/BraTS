@@ -131,7 +131,7 @@ Available wrappers:
 | `preprocess_deface_only` | Defacing only |
 | `preprocess_for_challenge` | Router that picks the right pipeline for a given challenge; source-dataset-specific GoAT, inpainting, and Missing MRI atlas choices may require custom preprocessing |
 
-All wrappers accept an optional `normalizer`. When one is provided, the brain-extracted outputs are normalized with it; when omitted, the raw brain-extracted images are written instead.
+All wrappers accept an optional `normalizer`. For the brain-extraction wrappers, the brain-extracted outputs are normalized with it when provided; when omitted, the raw brain-extracted images are written instead. The defacing wrappers (`preprocess_coreg_sri24reg_defacing`, `preprocess_deface_only`) currently always write raw defaced images and ignore the `normalizer`.
 
 ## Custom Preprocessing
 
