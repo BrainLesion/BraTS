@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 import tempfile
@@ -11,6 +12,7 @@ from rich.progress import Progress
 from brats.constants import PARAMETERS_DIR
 from brats.core.docker import (
     _build_command_args,
+    _container_labels,
     _ensure_image,
     _get_additional_files_path,
     _get_container_user,
@@ -123,6 +125,15 @@ class TestDockerHelpers(unittest.TestCase):
             }
             _show_docker_pull_progress(tasks, progress, line)
             self.assertIn("[Extracting id2]", tasks)
+
+    def test_container_labels_from_env(self):
+        with patch.dict(os.environ, {"BRATS_CONTAINER_LABEL": "run-1"}):
+            self.assertEqual(_container_labels(), {"brats.container_label": "run-1"})
+
+    def test_container_labels_empty_when_unset(self):
+        env = {k: v for k, v in os.environ.items() if k != "BRATS_CONTAINER_LABEL"}
+        with patch.dict(os.environ, env, clear=True):
+            self.assertEqual(_container_labels(), {})
 
     @patch("brats.core.docker.client")
     def test_ensure_image(self, MockClient):
@@ -259,7 +270,7 @@ class TestDockerHelpers(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_get_parameters_arg_file(self):
-        with patch("brats.core.docker.PARAMETERS_DIR", self.test_dir):
+        with patch("brats.utils.algorithm_config.PARAMETERS_DIR", self.test_dir):
             identifier = self.algorithm_gpu.run_args.docker_image.split(":")[0].split(
                 "/"
             )[-1]
@@ -581,4 +592,37 @@ class TestDockerHelpers(unittest.TestCase):
         mock_client.containers.run.assert_called_once()
         self.assertEqual(
             mock_client.containers.run.call_args.kwargs.get("user"), "1234:5678"
+        )
+
+    @patch("brats.core.docker._log_algorithm_info")
+    @patch("brats.core.docker._ensure_image")
+    @patch("brats.core.docker._get_additional_files_path")
+    @patch("brats.core.docker._get_container_user")
+    @patch("brats.core.docker._get_volume_mappings_docker_only")
+    @patch("brats.core.docker._handle_device_requests")
+    @patch("brats.core.docker._observe_docker_output")
+    @patch("brats.core.docker.client")
+    def test_run_container_passes_label_from_env(
+        self,
+        mock_client,
+        mock_observe_docker_output,
+        mock_handle_device_requests,
+        mock_get_volume_mappings_docker_only,
+        mock_get_container_user,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+    ):
+        mock_get_container_user.return_value = "1234:5678"
+        with patch.dict(os.environ, {"BRATS_CONTAINER_LABEL": "run-42"}):
+            run_container(
+                algorithm=self.algorithm_gpu_2025,
+                data_path=self.data_folder,
+                output_path=self.output_folder,
+                cuda_devices="0",
+                force_cpu=False,
+            )
+        self.assertEqual(
+            mock_client.containers.run.call_args.kwargs.get("labels"),
+            {"brats.container_label": "run-42"},
         )

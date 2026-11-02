@@ -1,0 +1,13 @@
+# Known-failure registry for the all-algorithms verification suite.
+#
+# Maps a container image reference to a human-readable reason why it cannot be
+# verified. Cases whose image is listed here are reported as `expected_fail`
+# instead of being counted as regressions.
+#
+# When an image listed here becomes pullable, the preflight will flag it so the
+# entry can be removed.
+
+"brainles/brats25_goat_cmengynn:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_cmuh_aic:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_satushe:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"
+"brainles/brats25_goat_stockholmfederation:latest": "not published on Docker Hub (verified 404; no brats25_goat_* repo exists) - see #189"

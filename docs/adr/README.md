@@ -40,3 +40,4 @@ Not every decision needs an ADR — routine refactoring, bug fixes, and cosmetic
 |--------|--------------------------------------------|----------|
 | 0001   | Container orchestration via Template Method and Strategy | Accepted |
 | 0002   | YAML-driven algorithm registry             | Accepted |
+| 0003   | Layered testing strategy for containerized algorithms | Accepted |

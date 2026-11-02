@@ -5,6 +5,7 @@ from typing import Optional
 import yaml
 from dacite import DaciteError, from_dict
 
+from brats.constants import DUMMY_PARAMETERS, PARAMETERS_DIR
 from brats.utils.exceptions import AlgorithmConfigException
 
 
@@ -112,3 +113,22 @@ def load_algorithms(file_path: Path) -> dict[str, AlgorithmData]:
     except DaciteError as e:
         raise AlgorithmConfigException(f"Error loading algorithm data: {e}") from e
     return algorithms
+
+
+def parameters_file_path(docker_image: str) -> Path:
+    """Resolve the parameters file for a container image.
+
+    The docker image name is used as the identifier for the parameters file.
+    Some algorithms require a parameters file to be present but do not actually
+    use its contents; in that case the dummy fallback is returned.
+
+    Args:
+        docker_image (str): The Docker image reference of the algorithm
+
+    Returns:
+        Path: Path to the algorithm-specific parameters file, or the dummy
+            fallback if no algorithm-specific file exists
+    """
+    identifier = docker_image.split(":")[0].split("/")[-1]
+    file = PARAMETERS_DIR / f"{identifier}.yml"
+    return file if file.exists() else DUMMY_PARAMETERS

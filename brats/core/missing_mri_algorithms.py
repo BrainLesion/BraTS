@@ -6,12 +6,14 @@ from typing import Optional, Union
 
 from loguru import logger
 
-from brats.constants import MISSING_MRI_ALGORITHMS, Backends, MissingMRIAlgorithms, Task
+from brats.constants import Backends, MissingMRIAlgorithms, Task
 from brats.core.brats_algorithm import BraTSAlgorithm
 from brats.utils.data_handling import input_sanity_check
 
 
 class MissingMRI(BraTSAlgorithm):
+    algorithm_enum = MissingMRIAlgorithms
+
     def __init__(
         self,
         algorithm: MissingMRIAlgorithms = MissingMRIAlgorithms.BraTS24_1,
@@ -20,7 +22,6 @@ class MissingMRI(BraTSAlgorithm):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=MISSING_MRI_ALGORITHMS,
             task=Task.MISSING_MRI,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,

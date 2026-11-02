@@ -3,11 +3,16 @@ from __future__ import annotations
 import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, ClassVar, Optional
 
 from loguru import logger
 
-from brats.constants import Algorithms, Backends, Task
+from brats.constants import (
+    ALGORITHM_META_FILE_BY_ENUM,
+    Algorithms,
+    Backends,
+    Task,
+)
 from brats.core.docker import run_container as run_docker_container
 from brats.core.singularity import run_container as run_singularity_container
 from brats.utils.algorithm_config import load_algorithms
@@ -26,10 +31,13 @@ class BraTSAlgorithm(ABC):
     ``input_name_schema``. ``None`` for algorithms that do not encode a
     treatment timepoint"""
 
+    algorithm_enum: ClassVar[type[Algorithms]]
+    """Enum class whose members are accepted by this algorithm class. It also
+    selects the metadata file through ``ALGORITHM_META_FILE_BY_ENUM``."""
+
     def __init__(
         self,
         algorithm: Algorithms,
-        algorithms_file_path: Path,
         task: Task,
         cuda_devices: str = "0",
         force_cpu: bool = False,
@@ -39,6 +47,12 @@ class BraTSAlgorithm(ABC):
         self.cuda_devices = cuda_devices
 
         self.task = task
+        if not isinstance(algorithm, self.algorithm_enum):
+            raise AlgorithmConfigException(
+                f"{self.__class__.__name__} expects an algorithm of type "
+                f"{self.algorithm_enum.__name__}, got {type(algorithm).__name__}"
+            )
+        algorithms_file_path = ALGORITHM_META_FILE_BY_ENUM[self.algorithm_enum]
         self.algorithm_list = load_algorithms(file_path=algorithms_file_path)
         # save algorithm identifier for logging etc.
         self.algorithm_key = algorithm.value
