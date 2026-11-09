@@ -79,7 +79,7 @@ algorithms:
   BraTS24_1:
     meta:
       authors: André Ferreira, et al.
-      paper: https://arxiv.org/pdf/2411.04632
+      paper: https://doi.org/10.1007/978-3-032-31709-4_36
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -95,7 +95,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: Heejong Kim, et al.
-      paper: https://arxiv.org/abs/2409.08143
+      paper: https://doi.org/10.1007/978-3-032-31709-4_32
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -114,7 +114,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Adrian Celaya
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-032-31709-4_27
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3

@@ -74,7 +74,7 @@ algorithms:
   BraTS24_1:
     meta:
       authors: Mehdi Astaraki, et al.
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-032-31709-4_22
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -89,7 +89,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: Tim Mulvany, et al.
-      paper: https://doi.org/10.48550/arXiv.2410.14020
+      paper: https://doi.org/10.1007/978-3-032-31709-4_34
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -106,7 +106,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Sarim Hashmi, et al.
-      paper: https://arxiv.org/abs/2411.15872
+      paper: https://doi.org/10.1007/978-3-032-31709-4_31
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3

@@ -64,7 +64,7 @@ algorithms:
   BraTS24_1:
     meta:
       authors: Valeria Abramova
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-032-31709-4_29
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -95,7 +95,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Andre Ferreira, et al.
-      paper: https://arxiv.org/html/2411.04632v1
+      paper: https://doi.org/10.1007/978-3-032-31709-4_36
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
