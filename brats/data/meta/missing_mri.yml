@@ -61,7 +61,7 @@ algorithms:
   BraTS24_1:
     meta:
       authors: Jihoon Cho et al.
-      paper: https://arxiv.org/abs/2410.10269
+      paper: https://doi.org/10.1007/978-3-032-31709-4_47
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_1
@@ -79,7 +79,7 @@ algorithms:
   BraTS24_2:
     meta:
       authors: Haowen Pang
-      paper: N/A
+      paper: https://doi.org/10.1007/978-3-032-31709-4_46
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_2
@@ -95,7 +95,7 @@ algorithms:
   BraTS24_3:
     meta:
       authors: Minjoo Lim et al.
-      paper: https://arxiv.org/abs/2502.19390
+      paper: https://doi.org/10.1007/978-3-032-31709-4_52
       challenge: *challenge
       challenge_manuscript: *challenge_manuscript_2024
       rank: *rank_3
