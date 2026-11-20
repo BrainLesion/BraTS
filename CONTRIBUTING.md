@@ -24,6 +24,29 @@ Fork the repository, clone it and implement your contribution.
 
 Once done, create a Pull Request to integrate the code into our project!
 
+## Testing
+
+The test suite is layered (see [ADR-0003](docs/adr/0003-layered-testing-strategy.md)):
+
+- **Unit tests** mock all Docker/Singularity and GPU interaction and run on every
+  pull request via `uv run pytest`.
+- **Config-contract tests** (`tests/config/`) check that the public enums, YAML
+  metadata, parameter files and name schemas stay consistent. They need no
+  container daemon or GPU. Checks that require the network (container image and
+  Zenodo record existence) are marked `network`; they are excluded from the
+  default run and can be executed explicitly with
+  `uv run pytest tests/config -m network`. They skip automatically when offline.
+- **End-to-end verification** (`tests/integration/`) is opt-in and runs
+  containerized algorithms on de-identified data, validating the output
+  structurally. `-m integration` runs every registered algorithm; `-m smoke`
+  runs a curated fast subset against the same `--data` root. Both are
+  excluded from the default run through `addopts` and require a container
+  backend, network access and (for most algorithms) a GPU. The suite must not be
+  run under `pytest-xdist`: its GPU-free gate assumes single-process execution.
+
+See [`tests/integration/README.md`](tests/integration/README.md) for the full
+runbook (markers, options, safety model, server and background execution).
+
 ## Project Documentation
 
 - **[AGENTS.md](AGENTS.md)** — Build commands, architecture overview, source-of-truth map, and conventions (for human contributors and AI coding assistants)

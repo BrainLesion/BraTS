@@ -167,3 +167,4 @@ workspace
 .vscode
 local
 site/
+reports/

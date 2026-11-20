@@ -9,14 +9,6 @@ from typing import Literal, Optional, Union
 from loguru import logger
 
 from brats.constants import (
-    ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
-    ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
-    AFRICA_SEGMENTATION_ALGORITHMS,
-    GOAT_SEGMENTATION_ALGORITHMS,
-    MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
-    MENINGIOMA_SEGMENTATION_ALGORITHMS,
-    METASTASES_SEGMENTATION_ALGORITHMS,
-    PEDIATRIC_SEGMENTATION_ALGORITHMS,
     AdultGliomaPreAndPostTreatmentAlgorithms,
     AdultGliomaPreTreatmentAlgorithms,
     AfricaAlgorithms,
@@ -42,13 +34,11 @@ class SegmentationAlgorithm(BraTSAlgorithm):
     def __init__(
         self,
         algorithm: Algorithms,
-        algorithms_file_path: Path,
         cuda_devices: str = "0",
         force_cpu: bool = False,
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=algorithms_file_path,
             task=Task.SEGMENTATION,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
@@ -259,6 +249,8 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = AdultGliomaPreTreatmentAlgorithms
+
     def __init__(
         self,
         algorithm: AdultGliomaPreTreatmentAlgorithms = AdultGliomaPreTreatmentAlgorithms.BraTS23_1,
@@ -267,7 +259,6 @@ class AdultGliomaPreTreatmentSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_PRE_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -299,6 +290,8 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
             Defaults to "post".
     """
 
+    algorithm_enum = AdultGliomaPreAndPostTreatmentAlgorithms
+
     def __init__(
         self,
         algorithm: AdultGliomaPreAndPostTreatmentAlgorithms = (
@@ -310,7 +303,6 @@ class AdultGliomaPreAndPostTreatmentSegmenter(SegmentationAlgorithmWith4Modaliti
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=ADULT_GLIOMA_PRE_AND_POST_TREATMENT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -337,6 +329,8 @@ class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = MeningiomaAlgorithms
+
     def __init__(
         self,
         algorithm: MeningiomaAlgorithms = MeningiomaAlgorithms.BraTS25_1,
@@ -345,7 +339,6 @@ class MeningiomaSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=MENINGIOMA_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -364,6 +357,8 @@ class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = PediatricAlgorithms
+
     def __init__(
         self,
         algorithm: PediatricAlgorithms = PediatricAlgorithms.BraTS25_1,
@@ -372,7 +367,6 @@ class PediatricSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=PEDIATRIC_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -391,6 +385,8 @@ class AfricaSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = AfricaAlgorithms
+
     def __init__(
         self,
         algorithm: AfricaAlgorithms = AfricaAlgorithms.BraTS25_1,
@@ -399,7 +395,6 @@ class AfricaSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=AFRICA_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -418,6 +413,8 @@ class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = MetastasesAlgorithms
+
     def __init__(
         self,
         algorithm: MetastasesAlgorithms = MetastasesAlgorithms.BraTS25_1,
@@ -426,7 +423,6 @@ class MetastasesSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=METASTASES_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -446,6 +442,8 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
             Defaults to False.
     """
 
+    algorithm_enum = GoATAlgorithms
+
     def __init__(
         self,
         algorithm: GoATAlgorithms = GoATAlgorithms.BraTS25_1A,
@@ -454,7 +452,6 @@ class GoATSegmenter(SegmentationAlgorithmWith4Modalities):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=GOAT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )
@@ -477,6 +474,8 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
             Defaults to False.
     """
 
+    algorithm_enum = MeningiomaRTAlgorithms
+
     def __init__(
         self,
         algorithm: MeningiomaRTAlgorithms = MeningiomaRTAlgorithms.BraTS25_1,
@@ -485,7 +484,6 @@ class MeningiomaRTSegmenter(SegmentationAlgorithm):
     ):
         super().__init__(
             algorithm=algorithm,
-            algorithms_file_path=MENINGIOMA_RT_SEGMENTATION_ALGORITHMS,
             cuda_devices=cuda_devices,
             force_cpu=force_cpu,
         )

@@ -11,6 +11,9 @@ uv sync                                    # install package and development dep
 uv sync --group docs                       # additionally install documentation dependencies
 uv run pytest                              # run test suite
 uv run pytest --cov=brats                  # run with coverage
+uv run pytest tests/integration -m integration  # opt-in end-to-end verification (Docker/GPU)
+uv run pytest tests/integration -m smoke --data ~/brats_data  # quick smoke subset
+uv run pytest -m network                   # container image / Zenodo reachability checks
 uv run ruff check .                        # lint
 uv run ruff format --check .               # check formatting
 uv run pre-commit run --all-files          # full pre-commit checks
@@ -18,8 +21,13 @@ uv run mkdocs build --strict               # validate the documentation site
 ```
 
 The package supports Python 3.9+. The optional preprocessing integration requires
-Python 3.10 or newer. Tests mock container execution; running the test suite does
-not require a Docker daemon or a GPU.
+Python 3.10 or newer. Tests mock container execution; running the default test suite
+does not require a Docker daemon or a GPU. The `integration` marker (all
+container/GPU-backed verification cases) is excluded from default runs; the `smoke`
+marker selects a curated fast subset run against the same `--data` root. The
+`network` marker (container image and Zenodo registry checks) is also excluded by
+default. The verification suite must not be run under `pytest-xdist` (its GPU gate
+assumes single-process execution).
 
 ## Architecture
 
@@ -101,7 +109,7 @@ For an existing challenge with the existing input layout, no runner or algorithm
 class changes should be necessary. The YAML registry is data-driven, but it is not
 independent of the public enum API.
 
-**For a new challenge type with a novel input layout:** (1) add a `.yml` metadata file and a metadata path constant; (2) add an `Algorithms` enum subclass in `constants.py`; (3) add a concrete class inheriting from `BraTSAlgorithm` or `SegmentationAlgorithm` implementing the required input standardization and public inference methods; (4) update `Task` or preprocessing dispatch if the workflow requires it; (5) export the class in `brats/__init__.py`; (6) add tests and documentation.
+**For a new challenge type with a novel input layout:** (1) add a `.yml` metadata file and a metadata path constant; (2) add an `Algorithms` enum subclass in `constants.py` and register it in `ALGORITHM_META_FILE_BY_ENUM`; (3) add a concrete class inheriting from `BraTSAlgorithm` or `SegmentationAlgorithm` implementing the required input standardization and public inference methods, and declare `algorithm_enum` pointing at the enum subclass; (4) update `Task` or preprocessing dispatch if the workflow requires it; (5) export the class in `brats/__init__.py`; (6) add tests and documentation.
 
 ## Conventions
 
