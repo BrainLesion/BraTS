@@ -114,6 +114,64 @@ class TestSingularityHelpers(unittest.TestCase):
         working_dir = _get_docker_working_dir(image)
         self.assertEqual(working_dir, Path("/workspace"))
 
+    @patch("brats.core.singularity.docker_client")
+    def test_get_working_dir_returns_none_for_empty_or_missing_workdir(
+        self, MockDockerClient
+    ):
+        for attrs in (
+            {"Config": {"WorkingDir": ""}},
+            {"Config": {"WorkingDir": "   "}},
+            {"Config": {"WorkingDir": None}},
+            {"Config": {}},
+            {"Config": None},
+        ):
+            MockDockerClient.images.get.return_value = MagicMock(attrs=attrs)
+            self.assertIsNone(_get_docker_working_dir("brainles/test-image:latest"))
+
+    @patch("brats.core.singularity._log_algorithm_info")
+    @patch("brats.core.singularity._ensure_image")
+    @patch("brats.core.singularity._get_additional_files_path")
+    @patch("brats.core.singularity._get_volume_mappings_mlcube")
+    @patch("brats.core.singularity._build_command_args")
+    @patch("brats.core.singularity._handle_device_requests")
+    @patch("brats.core.singularity._convert_volume_mappings_to_singularity_format")
+    @patch("brats.core.singularity.Client")
+    @patch("brats.core.singularity.subprocess.run")
+    @patch("brats.core.singularity.docker_client")
+    def test_run_container_omits_cwd_when_docker_workdir_empty(
+        self,
+        mock_docker_client,
+        mock_subprocess_run,
+        mock_client,
+        mock_convert_volume_mappings_to_singularity_format,
+        mock_handle_device_requests,
+        mock_build_command_args,
+        mock_get_volume_mappings_mlcube,
+        mock_get_additional_files_path,
+        mock_ensure_image,
+        mock_log_algorithm_info,
+    ):
+        mock_handle_device_requests.return_value = []
+        mock_build_command_args.return_value = ["--data_path=/mlcube_io0"]
+        mock_ensure_image.return_value = str(
+            self.test_dir / "brats_singularity_images" / "brainles_test-image_latest"
+        )
+        mock_client.run.return_value = iter([])
+        mock_docker_client.images.get.return_value = MagicMock(
+            attrs={"Config": {"WorkingDir": ""}}
+        )
+
+        run_container(
+            algorithm=self.algorithm_gpu,
+            data_path=self.data_folder,
+            output_path=self.output_folder,
+            cuda_devices="0",
+            force_cpu=False,
+        )
+
+        options = mock_client.run.call_args.kwargs["options"]
+        self.assertNotIn("--cwd", options)
+
     @patch("brats.core.singularity.subprocess.run")
     @patch("brats.core.singularity.Path.exists")
     @patch("tempfile.gettempdir")
