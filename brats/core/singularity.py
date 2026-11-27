@@ -151,12 +151,11 @@ def _get_docker_working_dir(image: str) -> Optional[Path]:
         logger.debug(f"Image {image} not found locally.")
         _ensure_docker_image(image)
         image_obj = docker_client.images.get(image)
-    workdir = image_obj.attrs["Config"].get("WorkingDir", None)
+    workdir = (image_obj.attrs.get("Config") or {}).get("WorkingDir")
     logger.debug(f"Working directory: {workdir}")
-    if workdir is None:
+    if not workdir or not workdir.strip():
         return None
-    else:
-        return Path(workdir)
+    return Path(workdir)
 
 
 _SINGULARITY_CUDA_ENV_VAR = "SINGULARITYENV_CUDA_VISIBLE_DEVICES"
